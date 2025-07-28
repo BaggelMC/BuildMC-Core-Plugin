@@ -1,0 +1,9 @@
+name: BuildMC-Core-Plugin
+version: '1.0-SNAPSHOT'
+main: net.mathias2246.buildmc.Main
+api-version: '1.21'
+prefix: BuildMC
+load: STARTUP
+authors: [ Mathias2246, Darkyl ]
+description: The Core plugin for the BuildMC SMP. This plugin provides basic functionality to the server.
+website: https://discord.gg/p8wBMZXAfb
