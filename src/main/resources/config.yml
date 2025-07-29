@@ -25,3 +25,10 @@ spawn-elytra:
 end-event:
   # NOTE: Can be overwritten by the '/endevent' command
   allow-end: false
+
+  # The messages broadcasted to the entire server upon closing and opening the end.
+  broadcast-opened: "§6--------------------------------\n\n§eThe End has been §aOPENED§e!\n\n§6--------------------------------"
+  broadcast-closed: "§6--------------------------------\n\n§eThe End has been §cCLOSED§e!\n\n§6--------------------------------"
+
+  # Message sent to players when they try to enter the end dimension while it's disabled
+  end-disabled-message: "§cYou cannot enter the End."

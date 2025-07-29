@@ -1,10 +1,19 @@
 package net.mathias2246.buildmc.endEvent;
 
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPortalEvent;
+import org.bukkit.event.player.PlayerPortalEvent;
 
 import static net.mathias2246.buildmc.Main.config;
 
@@ -17,8 +26,31 @@ public class EndListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onPortalEvent(EntityPortalEvent event) {
-        if (!event.getFrom().getBlock().getType().equals(Material.END_PORTAL)) return;
-        if (!allowEnd) event.setCancelled(true);
+    public void onEntityPortal(EntityPortalEvent event) {
+        if (allowEnd) return;
+
+        if (event.getTo() == null || event.getTo().getWorld() == null) return;
+
+        if (event.getTo().getWorld().getEnvironment() == World.Environment.THE_END) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerPortal(PlayerPortalEvent event) {
+        if (allowEnd) return;
+
+        if (event.getTo() == null || event.getTo().getWorld() == null) return;
+
+        if (event.getTo().getWorld().getEnvironment() == World.Environment.THE_END) {
+            event.setCancelled(true);
+            String rawMessage = config.getString("end-event.end-disabled-message", "§cYou cannot enter the End.");
+            BaseComponent component = TextComponent.fromLegacy(rawMessage);
+
+            event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR,
+                    new ComponentBuilder()
+                            .append(component)
+                            .create());
+        }
     }
 }
