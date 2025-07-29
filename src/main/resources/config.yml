@@ -1,3 +1,21 @@
 # BuildMC-Core-Plugin Configuration
 # Join our discord server https://discord.gg/p8wBMZXAfb
 
+SpawnElytra:
+
+  Enabled: true
+
+  Message: "Press %key% to boost!"
+
+  Strenght: 5
+
+  Zone:
+    world:
+    pos1:
+      x:
+      y:
+      z:
+    pos2:
+      x:
+      y:
+      z:
