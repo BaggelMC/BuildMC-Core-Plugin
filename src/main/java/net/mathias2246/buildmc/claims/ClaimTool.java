@@ -2,6 +2,7 @@ package net.mathias2246.buildmc.claims;
 
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.serializer.json.JSONComponentSerializer;
 import net.mathias2246.buildmc.util.LocationUtil;
@@ -39,6 +40,10 @@ public class ClaimTool implements Listener {
 
     public static Component selected_position;
 
+    public static Component other_claim_in_selection;
+
+    public static Component successfully_claimed_area;
+
     public static void setup() {
         missing_first_selection = JSONComponentSerializer.json().deserialize(config.getString(
                 "claims.tool.missing-first-pos",
@@ -47,6 +52,14 @@ public class ClaimTool implements Listener {
         selected_position = JSONComponentSerializer.json().deserialize(config.getString(
                 "claims.tool.successfully-set-pos",
                 "{\"text\": \"Successfully set position!\", \"color\": \"green\"}"
+        ));
+        other_claim_in_selection = JSONComponentSerializer.json().deserialize(config.getString(
+                "claims.tool.other-claim-in-selection",
+                "{\"text\": \"There is someone else's claim in your selection!.\", \"color\": \"red\"}"
+        ));
+        successfully_claimed_area = JSONComponentSerializer.json().deserialize(config.getString(
+                "claims.tool.successfully-claimed-area",
+                "{\"text\":\"Successfully claimed area!\", \"color\":\"green\"}"
         ));
     }
 
@@ -118,18 +131,17 @@ public class ClaimTool implements Listener {
                 Sounds.playSound(player, Sounds.MISTAKE);
                 return;
             }
-            Sounds.playSound(player, Sounds.SUCCESS);
-
             var team = ClaimManager.getPlayerTeam(player);
             if (team == null) {
                 audiences.player(player).sendMessage(
                         Component.text("You need to be in a team to set a claim!").color(TextColor.color(255, 85, 85))
                 );
+                Sounds.playSound(player, Sounds.MISTAKE);
                 return;
             }
-            audiences.player(player).sendMessage(selected_position);
 
             tryClaimArea(
+                    player,
                     team,
                     LocationUtil.deserialize(player.getMetadata("claim_tool_pos1").getFirst().asString()),
                     player.getLocation()
@@ -137,16 +149,41 @@ public class ClaimTool implements Listener {
         }
     }
 
-    private static void tryClaimArea(@NotNull Team team, @NotNull Location from, @NotNull Location to) {
-        int sx = Math.min(from.getBlockX(), to.getBlockX());
-        int sz = Math.min(from.getBlockZ(), to.getBlockZ());
-        int ex = Math.max(from.getBlockZ(), to.getBlockZ());
-        int ez = Math.max(from.getBlockZ(), to.getBlockZ());
+    private static void tryClaimArea(@NotNull Player player, @NotNull Team team, @NotNull Location from, @NotNull Location to) {
+        int sx = Math.min(from.getChunk().getX(), to.getChunk().getX());
+        int sz = Math.min(from.getChunk().getZ(), to.getChunk().getZ());
+        int ex = Math.max(from.getChunk().getX(), to.getChunk().getX());
+        int ez = Math.max(from.getChunk().getZ(), to.getChunk().getZ());
+
+        World world = from.getWorld();
+        if (world == null) return;
 
         for (int z = sz; z < ez; z++) {
             for (int x = sx; x < ex; x++) {
-
+                Chunk chunk = world.getChunkAt(x, z);
+                if (!ClaimManager.isNotClaimedOrOwn(team, chunk)) {
+                    audiences.player(player).sendMessage(other_claim_in_selection);
+                    Sounds.playSound(player, Sounds.MISTAKE);
+                    return;
+                }
             }
         }
+
+        ClaimManager.forceClaimArea(team, world, sx, sz, ex, ez);
+
+        Sounds.playSound(player, Sounds.SUCCESS);
+        audiences.player(player).sendMessage(
+            buildSuccessMessage(team)
+        );
+    }
+
+
+
+    private static Component buildSuccessMessage(@NotNull Team team) {
+        int i = ClaimManager.getChunksLeft(team);
+        Component c = successfully_claimed_area.asComponent();
+        var r = TextReplacementConfig.builder().matchLiteral("%chunks_left%").replacement(Integer.toString(i));
+
+        return c.replaceText(r.build());
     }
 }
