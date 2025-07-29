@@ -61,3 +61,9 @@ claims:
     missing-first-pos: '{"text": "You need to select the other corner first!", "color": "red"}'
     # Small Action-Bar message for when selecting a position
     successfully-set-pos: '{"text": "Successfully set position!", "color": "green"}'
+
+    successfully-claimed-area: >
+      [{"text": "--------------------------------\n", "color": "gold"}, {"text": "Successfully claimed area!\n", "color": "green"}, {"text": "You have ", "color": "blue"}, {"text": "%chunks_left%", "color": "#ff7626", "italic": true}, {"text":" chunks left to claim\n", "color": "blue"}, {"text": "--------------------------------", "color": "gold"}]
+
+    other-claim-in-selection: >
+      {"text": "\nThere is someone else's claim in your selection!.\n", "color": "red"}

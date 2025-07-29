@@ -1,8 +1,6 @@
 package net.mathias2246.buildmc.claims;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scoreboard.Team;
@@ -27,6 +25,18 @@ public class ClaimManager {
         );
     }
 
+    /**Forcefully sets the owner of the chunk at the given location.
+     * @param team The team that should own the chunk or null if the current owner should be removed.*/
+    public static void forceClaimChunk(@Nullable Team team, @NotNull Chunk chunk) {
+        if (team == null) {
+            chunk.getPersistentDataContainer().remove(CLAIM_PCD_KEY); // TODO: Test if contains check is needed
+            return;
+        }
+        chunk.getPersistentDataContainer().set(
+                CLAIM_PCD_KEY, PersistentDataType.STRING, team.getName()
+        );
+    }
+
     // Gets the owner string directly form PDC or null if no owner was set
     private static @Nullable String getOwnerString(@NotNull Location location) {
 
@@ -36,6 +46,32 @@ public class ClaimManager {
         return chunk.getPersistentDataContainer().get(
                 CLAIM_PCD_KEY, PersistentDataType.STRING
         );
+    }
+
+    // Gets the owner string directly form PDC or null if no owner was set
+    private static @Nullable String getOwnerString(@NotNull Chunk chunk) {
+        if (!chunk.getPersistentDataContainer().has(CLAIM_PCD_KEY)) return null;
+        return chunk.getPersistentDataContainer().get(
+                CLAIM_PCD_KEY, PersistentDataType.STRING
+        );
+    }
+
+    /**Checks if the chunk has an owner or if it is already owned by the given team.*/
+    public static boolean isNotClaimedOrOwn(Team team, @NotNull Location location) {
+        Team c = getClaimTeam(location);
+        return Objects.equals(
+                team,
+                c
+        ) || c == null;
+    }
+
+    /**Checks if the chunk has an owner or if it is already owned by the given team.*/
+    public static boolean isNotClaimedOrOwn(Team team, @NotNull Chunk chunk) {
+        Team c = getClaimTeam(chunk);
+        return Objects.equals(
+                team,
+                c
+        ) || c == null;
     }
 
     /** Gets the players team
@@ -53,6 +89,15 @@ public class ClaimManager {
         return Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeam(owner);
     }
 
+    /**Gets the team that claims the chunk at the given location.
+     * @return The team that owns the given chunk or null if no one owns this chunk*/
+    public static @Nullable Team getClaimTeam(@NotNull Chunk chunk) {
+        var owner = getOwnerString(chunk);
+        if (owner == null) return null;
+
+        return Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeam(owner);
+    }
+
     public static boolean isPlayerAllowed(@NotNull Player player, @NotNull Location location) {
         return false;
     }
@@ -60,5 +105,18 @@ public class ClaimManager {
 
     public static void forceClaimArea(Team team, @NotNull Location from, @NotNull Location to) {
 
+    }
+
+    public static void forceClaimArea(Team team, @NotNull World world, int startX, int startZ, int endX, int endZ) {
+        for (int z = startZ; z < endZ; z++) {
+            for (int x = startZ; x < endZ; x++) {
+                Chunk chunk = world.getChunkAt(x, z);
+                forceClaimChunk(team, chunk);
+            }
+        }
+    }
+
+    public static int getChunksLeft(@NotNull Team team) {
+        return Integer.MAX_VALUE;
     }
 }
