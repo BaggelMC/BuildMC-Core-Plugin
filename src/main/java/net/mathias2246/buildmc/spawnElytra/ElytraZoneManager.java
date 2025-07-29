@@ -54,13 +54,13 @@ public class ElytraZoneManager {
     }
 
     private void saveZoneToConfig() {
-        config.set("SpawnElytra.Zone.world", world.getName());
-        config.set("SpawnElytra.Zone.pos1.x", pos1.getX());
-        config.set("SpawnElytra.Zone.pos1.y", pos1.getY());
-        config.set("SpawnElytra.Zone.pos1.z", pos1.getZ());
-        config.set("SpawnElytra.Zone.pos2.x", pos2.getX());
-        config.set("SpawnElytra.Zone.pos2.y", pos2.getY());
-        config.set("SpawnElytra.Zone.pos2.z", pos2.getZ());
+        config.set("spawn-elytra.zone.world", world.getName());
+        config.set("spawn-elytra.zone.pos1.x", pos1.getX());
+        config.set("spawn-elytra.zone.pos1.y", pos1.getY());
+        config.set("spawn-elytra.zone.pos1.z", pos1.getZ());
+        config.set("spawn-elytra.zone.pos2.x", pos2.getX());
+        config.set("spawn-elytra.zone.pos2.y", pos2.getY());
+        config.set("spawn-elytra.zone.pos2.z", pos2.getZ());
 
         try {
             config.save(configFile);
@@ -70,7 +70,7 @@ public class ElytraZoneManager {
     }
 
     public void loadZoneFromConfig() {
-        String worldName = config.getString("SpawnElytra.Zone.world");
+        String worldName = config.getString("spawn-elytra.zone.world");
         if (worldName == null) return;
 
         world = Bukkit.getWorld(worldName);
@@ -80,13 +80,13 @@ public class ElytraZoneManager {
         }
 
         try {
-            double x1 = config.getDouble("SpawnElytra.Zone.pos1.x");
-            double y1 = config.getDouble("SpawnElytra.Zone.pos1.y");
-            double z1 = config.getDouble("SpawnElytra.Zone.pos1.z");
+            double x1 = config.getDouble("spawn-elytra.zone.pos1.x");
+            double y1 = config.getDouble("spawn-elytra.zone.pos1.y");
+            double z1 = config.getDouble("spawn-elytra.zone.pos1.z");
 
-            double x2 = config.getDouble("SpawnElytra.Zone.pos2.x");
-            double y2 = config.getDouble("SpawnElytra.Zone.pos2.y");
-            double z2 = config.getDouble("SpawnElytra.Zone.pos2.z");
+            double x2 = config.getDouble("spawn-elytra.zone.pos2.x");
+            double y2 = config.getDouble("spawn-elytra.zone.pos2.y");
+            double z2 = config.getDouble("spawn-elytra.zone.pos2.z");
 
             pos1 = new Location(world, x1, y1, z1);
             pos2 = new Location(world, x2, y2, z2);

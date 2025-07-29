@@ -1,15 +1,15 @@
 # BuildMC-Core-Plugin Configuration
 # Join our discord server https://discord.gg/p8wBMZXAfb
 
-SpawnElytra:
-
-  Enabled: true
-
-  Message: "Press %key% to boost!"
-
-  Strenght: 5
-
-  Zone:
+spawn-elytra:
+  enabled: true
+  # Small Action-Bar message to show how to boost
+  message: "Press %key% to boost!"
+  # The strength of the spawn elytra boost
+  strength: 5
+  # The Zone in which you can use the spawn elytra
+  # You are able to set the elytra zone using the command '/buildmc elytrazone setup ...'
+  zone:
     world:
     pos1:
       x:
@@ -19,3 +19,9 @@ SpawnElytra:
       x:
       y:
       z:
+
+# The End-Event settings
+# Use '/endevent allow true/false' to set if players should be able to enter the end dimension
+end-event:
+  # NOTE: Can be overwritten by the '/endevent' command
+  allow-end: false

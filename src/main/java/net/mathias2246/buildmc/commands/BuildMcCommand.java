@@ -2,6 +2,7 @@ package net.mathias2246.buildmc.commands;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandAPIConfig;
+import net.mathias2246.buildmc.endEvent.EndEventCommand;
 import org.bukkit.command.CommandException;
 import org.bukkit.permissions.Permission;
 
@@ -29,6 +30,8 @@ public class BuildMcCommand implements CustomCommand {
                         (c) -> c.hasPermission(new Permission("buildmc.operator"))
                 );
 
+        var endSub = new EndEventCommand().getCommand();
+        cmd.withSubcommand(endSub);
 
         // Register /buildmc sub-commands
         cmd.withSubcommand(

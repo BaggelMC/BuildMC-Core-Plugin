@@ -51,7 +51,11 @@ public class SetStatusCommand implements CustomCommand {
 
         setSub.executes(
                 (command) -> {
-
+                    if (!(command.sender() instanceof Player player)) {
+                        command.sender().sendMessage("Only a player can have a status!");
+                        return;
+                    }
+                    PlayerStatus.setPlayerStatus(player, (String) command.args().get("set"));
                 }
         );
 

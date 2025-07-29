@@ -41,9 +41,9 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
         this.zoneManager = zoneManager;
 
         var config = plugin.getConfig();
-        this.multiplyValue = config.getInt("SpawnElytra.Strenght", 2);
-        this.boostEnabled = config.getBoolean("SpawnElytra.Enabled", true);
-        this.message = config.getString("SpawnElytra.Message", "Press %key% to boost!");
+        this.multiplyValue = config.getInt("spawn-elytra.strength", 2);
+        this.boostEnabled = config.getBoolean("spawn-elytra.enabled", true);
+        this.message = config.getString("spawn-elytra.message", "Press %key% to boost!");
 
         this.runTaskTimer(this.plugin, 0, 3);
     }

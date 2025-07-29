@@ -1,12 +1,13 @@
 package net.mathias2246.buildmc.status;
 
+import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class PlayerStatus {
 
     public static void setPlayerStatus(@NotNull Player player, String status) {
-        player.setDisplayName("");
+
     }
 
     public static void removePlayerStatus(@NotNull Player player) {
