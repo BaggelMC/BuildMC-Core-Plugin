@@ -1,17 +1,10 @@
 package net.mathias2246.buildmc.status;
 
-import com.mojang.brigadier.arguments.ArgumentType;
-import com.mojang.brigadier.builder.ArgumentBuilder;
 import dev.jorel.commandapi.CommandAPICommand;
-import dev.jorel.commandapi.arguments.Argument;
-import dev.jorel.commandapi.arguments.ArgumentSubType;
-import dev.jorel.commandapi.arguments.IntegerArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
 import net.mathias2246.buildmc.commands.CustomCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.help.HelpTopic;
-
-import static com.mojang.brigadier.arguments.IntegerArgumentType.integer;
 
 public class SetStatusCommand implements CustomCommand {
 

@@ -1,6 +1,5 @@
 package net.mathias2246.buildmc.status;
 
-import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 

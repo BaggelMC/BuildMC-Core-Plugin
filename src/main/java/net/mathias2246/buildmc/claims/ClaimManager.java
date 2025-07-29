@@ -1,0 +1,64 @@
+package net.mathias2246.buildmc.claims;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
+import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.scoreboard.Team;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
+
+public class ClaimManager {
+
+    public static final @NotNull NamespacedKey CLAIM_PCD_KEY = Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_owner"));
+
+    /**Forcefully sets the owner of the chunk at the given location.
+     * @param team The team that should own the chunk or null if the current owner should be removed.*/
+    public static void forceClaimChunk(@Nullable Team team, @NotNull Location location) {
+        if (team == null) {
+            location.getChunk().getPersistentDataContainer().remove(CLAIM_PCD_KEY); // TODO: Test if contains check is needed
+            return;
+        }
+        location.getChunk().getPersistentDataContainer().set(
+                CLAIM_PCD_KEY, PersistentDataType.STRING, team.getName()
+        );
+    }
+
+    // Gets the owner string directly form PDC or null if no owner was set
+    private static @Nullable String getOwnerString(@NotNull Location location) {
+
+        var chunk = location.getChunk();
+
+        if (!chunk.getPersistentDataContainer().has(CLAIM_PCD_KEY)) return null;
+        return chunk.getPersistentDataContainer().get(
+                CLAIM_PCD_KEY, PersistentDataType.STRING
+        );
+    }
+
+    /** Gets the players team
+     * @return the team the player is currently on, or null if he has no team*/
+    public static @Nullable Team getPlayerTeam(@NotNull Player player) {
+        return player.getScoreboard().getEntryTeam(player.getName());
+    }
+
+    /**Gets the team that claims the chunk at the given location.
+     * @return The team that owns the given chunk or null if no one owns this chunk*/
+    public static @Nullable Team getClaimTeam(@NotNull Location location) {
+        var owner = getOwnerString(location);
+        if (owner == null) return null;
+
+        return Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeam(owner);
+    }
+
+    public static boolean isPlayerAllowed(@NotNull Player player, @NotNull Location location) {
+        return false;
+    }
+
+
+    public static void forceClaimArea(Team team, @NotNull Location from, @NotNull Location to) {
+
+    }
+}

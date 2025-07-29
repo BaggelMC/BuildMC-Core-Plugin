@@ -1,10 +1,8 @@
 package net.mathias2246.buildmc.spawnElytra;
 
-import net.mathias2246.buildmc.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 

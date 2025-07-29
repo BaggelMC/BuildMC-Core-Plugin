@@ -2,11 +2,11 @@
 # Join our discord server https://discord.gg/p8wBMZXAfb
 
 spawn-elytra:
-  enabled: true
+  enabled: true # Default: true
   # Small Action-Bar message to show how to boost
   message: "Press %key% to boost!"
   # The strength of the spawn elytra boost
-  strength: 5
+  strength: 5 # Default: 5
   # The Zone in which you can use the spawn elytra
   # You are able to set the elytra zone using the command '/buildmc elytrazone setup ...'
   zone:
@@ -20,15 +20,39 @@ spawn-elytra:
       y:
       z:
 
+
 # The End-Event settings
 # Use '/endevent allow true/false' to set if players should be able to enter the end dimension
 end-event:
   # NOTE: Can be overwritten by the '/endevent' command
-  allow-end: false
+  allow-end: false # Default: false
 
-  # The messages broadcasted to the entire server upon closing and opening the end.
+  # The messages broadcast to the entire server upon closing and opening the end.
+  # TODO: Use the JSON component format for all texts possible (see claims.tool.missing-first-pos)
   broadcast-opened: "§6--------------------------------\n\n§eThe End has been §aOPENED§e!\n\n§6--------------------------------"
   broadcast-closed: "§6--------------------------------\n\n§eThe End has been §cCLOSED§e!\n\n§6--------------------------------"
 
   # Message sent to players when they try to enter the end dimension while it's disabled
   end-disabled-message: "§cYou cannot enter the End."
+
+
+# Some sounds that are used generally
+sounds:
+  mistake: "minecraft:block.note_block.snare" # Default: "minecraft:block.note_block.snare"
+  success: "minecraft:block.note_block.bell" # Default: "minecraft:block.note_block.bell"
+
+
+# Here are all settings related to team claims.
+# A team can use the claim-tool or the '/buildmc claim ...' command to create or remove their claims.
+# On Claims, things like any explosion, withers, block breaking or opening containers don't work.
+# Team players can give other players access to their claims using '/buildmc claim allow <player name>'.
+claims:
+  # Settings related to the claim-tool. The claim-tool (if enabled) can be obtained using '/buildmc claimtool'
+  tool:
+    # If true, players even without permissions can get the claim-tool using '/buildmc claimtool'
+    enable-give-command: true # Default: true
+
+    # Small Action-Bar message for when no first position was selected
+    missing-first-pos: '{"text": "You need to select the other corner first!", "color": "red"}'
+    # Small Action-Bar message for when selecting a position
+    successfully-set-pos: '{"text": "Successfully set position!", "color": "green"}'

@@ -2,6 +2,8 @@ package net.mathias2246.buildmc;
 
 
 import dev.jorel.commandapi.CommandAPI;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.mathias2246.buildmc.claims.ClaimTool;
 import net.mathias2246.buildmc.commands.BuildMcCommand;
 import net.mathias2246.buildmc.commands.CommandRegister;
 import net.mathias2246.buildmc.commands.ElytraZoneCommand;
@@ -9,10 +11,11 @@ import net.mathias2246.buildmc.endEvent.EndListener;
 import net.mathias2246.buildmc.spawnElytra.ElytraZoneManager;
 import net.mathias2246.buildmc.spawnElytra.SpawnBoostListener;
 import net.mathias2246.buildmc.status.SetStatusCommand;
+import net.mathias2246.buildmc.util.Sounds;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
+import org.intellij.lang.annotations.Subst;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +27,7 @@ public final class Main extends JavaPlugin {
 
     public static Plugin plugin;
 
+    @Subst("")
     public static FileConfiguration config;
     public static File configFile;
 
@@ -31,6 +35,7 @@ public final class Main extends JavaPlugin {
 
     private static final ElytraZoneManager zoneManager = new ElytraZoneManager();
 
+    public static BukkitAudiences audiences;
 
     @Override
     public void onEnable() {
@@ -49,13 +54,20 @@ public final class Main extends JavaPlugin {
         if (!configFile.exists()) this.saveResource("config.yml", false);
         config = this.getConfig();
 
+        audiences = BukkitAudiences.create(plugin);
+
         EndListener.loadFromConfig();
+
+        Sounds.setup();
+        ClaimTool.setup();
 
         CommandRegister.setupCommandAPI();
         CommandRegister.register(new BuildMcCommand());
         CommandRegister.register(new SetStatusCommand());
 
         getServer().getPluginManager().registerEvents(new EndListener(), this);
+
+        getServer().getPluginManager().registerEvents(new ClaimTool(), this);
 
         if (config.getBoolean("spawn-elytra.enabled")) {
             getServer().getPluginManager().registerEvents(new SpawnBoostListener(this, zoneManager), this);
@@ -68,12 +80,7 @@ public final class Main extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-        try {
-            config.save(configFile);
-        } catch (IOException e) {
-
-        }
-
+        audiences.close();
         CommandAPI.onDisable();
     }
 }
