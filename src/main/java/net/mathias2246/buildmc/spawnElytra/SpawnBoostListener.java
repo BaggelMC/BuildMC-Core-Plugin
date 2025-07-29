@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -27,6 +28,7 @@ import java.util.*;
 public class SpawnBoostListener extends BukkitRunnable implements Listener {
 
     private final Plugin plugin;
+    private final FileConfiguration config;
     private final ElytraZoneManager zoneManager;
     private final int multiplyValue;
     private final boolean boostEnabled;
@@ -38,7 +40,7 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
         this.plugin = plugin;
         this.zoneManager = zoneManager;
 
-        var config = plugin.getConfig();
+        this.config = plugin.getConfig();
         this.multiplyValue = config.getInt("spawn-elytra.strength", 2);
         this.boostEnabled = config.getBoolean("spawn-elytra.enabled", true);
         this.message = config.getString("spawn-elytra.message", "Press %key% to boost!");
@@ -117,6 +119,8 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
 
     @EventHandler
     public void onFireworkUse(PlayerInteractEvent event) {
+        if (!config.getBoolean("spawn-elytra.disable-rockets")) return;
+
         Player player = event.getPlayer();
 
         if (!flying.contains(player)) return;

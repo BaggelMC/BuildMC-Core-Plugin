@@ -2,11 +2,14 @@
 # Join our discord server https://discord.gg/p8wBMZXAfb
 
 spawn-elytra:
+  # Enable or Disable the spawn elytra feature
   enabled: true # Default: true
   # Small Action-Bar message to show how to boost
   message: "Press %key% to boost!"
   # The strength of the spawn elytra boost
   strength: 5 # Default: 5
+  # Should the use of firework rockets with the spawn elytra be blocked?
+  disable-rockets: true
   # The Zone in which you can use the spawn elytra
   # You are able to set the elytra zone using the command '/buildmc elytrazone setup ...'
   zone:
@@ -22,9 +25,9 @@ spawn-elytra:
 
 
 # The End-Event settings
-# Use '/endevent allow true/false' to set if players should be able to enter the end dimension
+# Use '/buildmc endevent allow true/false' to set if players should be able to enter the end dimension
 end-event:
-  # NOTE: Can be overwritten by the '/endevent' command
+  # NOTE: Can be overwritten by the '/buildmc endevent' command
   allow-end: false # Default: false
 
   # The messages broadcast to the entire server upon closing and opening the end.
@@ -34,6 +37,8 @@ end-event:
 
   # Message sent to players when they try to enter the end dimension while it's disabled
   end-disabled-message: "§cYou cannot enter the End."
+
+disallow-tnt-through-end: true
 
 
 # Some sounds that are used generally

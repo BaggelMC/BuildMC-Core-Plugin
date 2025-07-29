@@ -5,6 +5,8 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -23,6 +25,17 @@ public class EndListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityPortal(EntityPortalEvent event) {
+
+        if (config.getBoolean("disallow-tnt-through-end")) {
+            Entity entity = event.getEntity();
+            EntityType type = entity.getType();
+
+            if (type == EntityType.TNT || type == EntityType.TNT_MINECART || type == EntityType.CREEPER) {
+                event.setCancelled(true);
+                return;
+            }
+        }
+
         if (allowEnd) return;
 
         if (event.getTo() == null || event.getTo().getWorld() == null) return;
@@ -31,6 +44,7 @@ public class EndListener implements Listener {
             event.setCancelled(true);
         }
     }
+
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerPortal(PlayerPortalEvent event) {
