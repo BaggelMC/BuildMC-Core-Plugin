@@ -22,6 +22,8 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
+
 import static net.mathias2246.buildmc.Main.plugin;
 
 import static net.mathias2246.buildmc.Main.audiences;
@@ -131,7 +133,7 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
 
         setPlayerFlying(player);
 
-        if (boostEnabled && !boosted.contains(player)) {
+        if (boostEnabled && !isPlayerBoosted(player)) {
             Component message = Message.msg(player, "messages.spawn-elytra.boost-hint", Map.of("key", new KeybindComponent("key.swapOffhand").getKeybind()));
             audiences.player(player).sendActionBar(message);
         }
