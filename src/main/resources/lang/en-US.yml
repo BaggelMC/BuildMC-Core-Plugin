@@ -2,6 +2,7 @@ messages:
 
   spawn-elytra:
     boost-hint: "Press %key% to boost!"
+    firework-disabled-hint: "<red>Firework boost is disabled for spawn elytra.</red>"
 
     pos1-set: "<green>Position 1 set.</green>"
     pos2-set: "<green>Position 2 set.</green>"
@@ -26,3 +27,5 @@ messages:
     no-permission-str: "You do not have permission to perform this action."
     not-a-player: "<red>This command can only be used by players.</red>"
     not-a-player-str: "This command can only be used by players."
+
+    command-disabled: "<red>This command has been disabled.</red>"

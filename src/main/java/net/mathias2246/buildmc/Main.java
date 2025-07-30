@@ -1,6 +1,5 @@
 package net.mathias2246.buildmc;
 
-
 import dev.jorel.commandapi.CommandAPI;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.mathias2246.buildmc.claims.ClaimTool;
@@ -14,12 +13,20 @@ import net.mathias2246.buildmc.status.SetStatusCommand;
 import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.Sounds;
 import net.mathias2246.buildmc.util.language.LanguageManager;
+import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandMap;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.intellij.lang.annotations.Subst;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.util.Map;
 import java.util.logging.Logger;
 
 public final class Main extends JavaPlugin {
@@ -34,7 +41,6 @@ public final class Main extends JavaPlugin {
 
     public static File pluginFolder;
 
-    public static LanguageManager languageManager;
     private static final ElytraZoneManager zoneManager = new ElytraZoneManager();
 
     public static BukkitAudiences audiences;
@@ -78,6 +84,16 @@ public final class Main extends JavaPlugin {
             zoneManager.loadZoneFromConfig();
         }
 
+        if (config.getBoolean("disable-reload-command")) {
+            disableCommand("bukkit", "reload");
+            disableCommand("bukkit", "rl");
+            disableCommand("bukkit", "bukkitreload");
+        }
+        if (config.getBoolean("disable-seed-command")) {
+            disableCommand("minecraft", "seed");
+        }
+
+
     }
 
     @Override
@@ -85,5 +101,56 @@ public final class Main extends JavaPlugin {
         // Plugin shutdown logic
         audiences.close();
         CommandAPI.onDisable();
+    }
+
+    private void disableCommand(String namespace, String commandName) {
+        try {
+            Field commandMapField = Bukkit.getServer().getClass().getDeclaredField("commandMap");
+            commandMapField.setAccessible(true);
+            CommandMap commandMap = (CommandMap) commandMapField.get(Bukkit.getServer());
+
+            if (!(commandMap instanceof SimpleCommandMap)) {
+                logger.warning("Unsupported CommandMap implementation. Cannot disable command: " + commandName);
+                return;
+            }
+
+            // Cast to access knownCommands
+            Field knownCommandsField = SimpleCommandMap.class.getDeclaredField("knownCommands");
+            knownCommandsField.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            Map<String, Command> knownCommands = (Map<String, Command>) knownCommandsField.get(commandMap);
+
+            // Remove all relevant keys
+            knownCommands.keySet().removeIf(key ->
+                    key.equalsIgnoreCase(commandName) ||
+                            key.equalsIgnoreCase(namespace + ":" + commandName) ||
+                            key.endsWith(":" + commandName));
+
+            // Register dummy override
+            Command blockedCommand = new Command(commandName) {
+                @Override
+                public boolean execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
+                    audiences.sender(sender).sendMessage(Message.msg(sender, "messages.error.command-disabled"));
+                    return true;
+                }
+            };
+
+            commandMap.register(namespace, blockedCommand);
+
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            logger.warning("Failed to fully disable command '" + commandName + "': " + e.getMessage());
+        }
+    }
+
+
+    private CommandMap getCommandMap() {
+        try {
+            Field commandMapField = Bukkit.getServer().getClass().getDeclaredField("commandMap");
+            commandMapField.setAccessible(true);
+            return (CommandMap) commandMapField.get(Bukkit.getServer());
+        } catch (Exception e) {
+            logger.warning("Failed to retrieve the command map.");
+            return null;
+        }
     }
 }

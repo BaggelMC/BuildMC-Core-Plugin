@@ -69,3 +69,8 @@ claims:
 
     other-claim-in-selection: >
       {"text": "\nThere is someone else's claim in your selection!.\n", "color": "red"}
+
+# Disables the vanilla /reload command. WE DO NOT RECOMMEND TO USE THIS COMMAND. PLEASE RESTART THE SERVER.
+disable-reload-command: true
+# Disables the vanilla /seed command. This is done to prevent the seed from being accessible, even to admins.
+disable-seed-command: true

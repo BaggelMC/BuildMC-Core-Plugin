@@ -1,5 +1,6 @@
 package net.mathias2246.buildmc.spawnElytra;
 
+import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
@@ -28,6 +29,8 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
+
+import static net.mathias2246.buildmc.Main.audiences;
 
 public class SpawnBoostListener extends BukkitRunnable implements Listener {
 
@@ -157,13 +160,8 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
         if (item != null && item.getType() == Material.FIREWORK_ROCKET) {
             event.setCancelled(true);
 
-            var text = new TextComponent("Firework boost is disabled for spawn elytra.");
-            text.setColor(ChatColor.RED);
-
-            player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-                    new ComponentBuilder()
-                            .append(text)
-                            .create());
+            Component text = Message.msg(player, "messages.spawn-elytra.firework-disabled-hint");
+            audiences.player(player).sendActionBar(text);
         }
     }
 
