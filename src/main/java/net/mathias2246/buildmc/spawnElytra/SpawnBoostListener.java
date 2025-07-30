@@ -9,9 +9,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -50,19 +48,20 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
     }
 
     @Override
+    @SuppressWarnings("deprecation") // player.isOnGround() is deprecated as it can be spoofed by mods, but this check is non-critical, and we will use this method until removed.
     public void run() {
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (player.getGameMode() != GameMode.SURVIVAL && player.getGameMode() != GameMode.ADVENTURE) return;
 
-            boolean inZone = zoneManager.isInZone(player);
-            player.setAllowFlight(inZone);
-
-            if (flying.contains(player) && !((Entity) player).isOnGround()) {
+            if (flying.contains(player) && player.isOnGround()) {
                 player.setAllowFlight(false);
                 player.setGliding(false);
                 boosted.remove(player);
-                Bukkit.getScheduler().runTaskLater(plugin, () -> flying.remove(player), 5);
+                flying.remove(player);
             }
+
+            boolean inZone = zoneManager.isInZone(player);
+            player.setAllowFlight(inZone);
         }
     }
 
@@ -95,7 +94,7 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
 
         String message = Message.msgStr(player, "messages.spawn-elytra.boost-hint");
 
-        if (boostEnabled) {
+        if (boostEnabled && !boosted.contains(player)) {
             String[] messageParts = message.split("%key%");
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
                     new ComponentBuilder(messageParts[0])
@@ -115,7 +114,6 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
         player.setVelocity(player.getLocation().getDirection().multiply(multiplyValue).setY(1.2)); // vertical boost
     }
 
-    // FIXME: Cancels fall damage even if player is not currently flying
     @EventHandler
     public void onDamage(EntityDamageEvent event) {
         if (event.getEntityType() != EntityType.PLAYER) return;
