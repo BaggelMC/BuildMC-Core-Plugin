@@ -10,5 +10,8 @@ messages:
 
   error:
     general: "<red>An error occurred: <red>%error_message%"
+    general-str: "An error occurred: %error_message%"
     no-permission: "<red>You do not have permission to perform this action.</red>"
+    no-permission-str: "You do not have permission to perform this action."
     not-a-player: "<red>This command can only be used by players.</red>"
+    not-a-player-str: "This command can only be used by players."
