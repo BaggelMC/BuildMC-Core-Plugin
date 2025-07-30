@@ -1,9 +1,9 @@
 package net.mathias2246.buildmc.endEvent;
 
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.Component;
+import net.mathias2246.buildmc.Main;
+import net.mathias2246.buildmc.util.Message;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -25,7 +25,6 @@ public class EndListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityPortal(EntityPortalEvent event) {
-
         if (config.getBoolean("disallow-tnt-through-end")) {
             Entity entity = event.getEntity();
             EntityType type = entity.getType();
@@ -45,7 +44,6 @@ public class EndListener implements Listener {
         }
     }
 
-
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerPortal(PlayerPortalEvent event) {
         if (allowEnd) return;
@@ -54,13 +52,9 @@ public class EndListener implements Listener {
 
         if (event.getTo().getWorld().getEnvironment() == World.Environment.THE_END) {
             event.setCancelled(true);
-            String rawMessage = config.getString("end-event.end-disabled-message", "§cYou cannot enter the End.");
-            BaseComponent component = TextComponent.fromLegacy(rawMessage);
 
-            event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR,
-                    new ComponentBuilder()
-                            .append(component)
-                            .create());
+            Component message = Message.msg(event.getPlayer(), "messages.end-event.closed-message");
+            Main.audiences.player(event.getPlayer()).sendActionBar(message);
         }
     }
 }

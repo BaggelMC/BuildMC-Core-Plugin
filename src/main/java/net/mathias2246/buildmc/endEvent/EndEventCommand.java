@@ -1,10 +1,14 @@
 package net.mathias2246.buildmc.endEvent;
 
 import dev.jorel.commandapi.CommandAPICommand;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.mathias2246.buildmc.commands.CustomCommand;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 
 import java.io.IOException;
 
@@ -12,6 +16,12 @@ import static net.mathias2246.buildmc.Main.config;
 import static net.mathias2246.buildmc.Main.configFile;
 
 public class EndEventCommand implements CustomCommand {
+
+    private final BukkitAudiences audiences;
+
+    public EndEventCommand(BukkitAudiences audiences) {
+        this.audiences = audiences;
+    }
 
     @Override
     public CommandAPICommand getCommand() {
@@ -31,14 +41,32 @@ public class EndEventCommand implements CustomCommand {
                     } catch (IOException ignored) {
                     }
 
-                    String messageKey = allowEnd ? "end-event.broadcast-opened" : "end-event.broadcast-closed";
-                    String rawMessage = config.getString(messageKey,
-                            allowEnd ? "§eThe End has been §aOPENED§e!" : "§eThe End has been §cCLOSED§e!");
+                    String senderMessageKey = allowEnd ? "messages.end-event.opened" : "messages.end-event.closed";
+                    Component senderMessage = Message.msg(command.sender(), senderMessageKey);
 
-                    BaseComponent broadcast = TextComponent.fromLegacy(rawMessage);
-                    Bukkit.spigot().broadcast(broadcast);
+                    CommandSender sender = command.sender();
+                    if (sender instanceof Player player) {
+                        audiences.player(player).sendMessage(senderMessage);
+                    } else if (sender instanceof ConsoleCommandSender) {
+                        audiences.console().sendMessage(senderMessage);
+                    } else {
+                        // Fallback to legacy if no audience
+                        sender.sendMessage(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().serialize(senderMessage));
+                    }
 
-                    command.sender().sendMessage("§aSet 'allow end' to: '" + (allowEnd ? "open" : "close") + "'.");
+                    String messageKey = allowEnd ? "messages.end-event.broadcast-opened" : "messages.end-event.broadcast-closed";
+                    String broadcastFormat = config.getString("broadcast-format",
+                            "§6--------------------------------\n\n%message%\n\n§6--------------------------------");
+
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        Component localizedMessage = Message.msg(player, messageKey);
+                        String formatted = broadcastFormat.replace(
+                                "%message%",
+                                net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().serialize(localizedMessage)
+                        );
+                        Component finalMessage = net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(formatted);
+                        audiences.player(player).sendMessage(finalMessage);
+                    }
                 });
     }
 }

@@ -1,51 +1,46 @@
 package net.mathias2246.buildmc.util.language;
 
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.chat.ComponentSerializer;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.translation.MiniMessageTranslationStore;
+import net.kyori.adventure.translation.GlobalTranslator;
+import net.kyori.adventure.translation.Translator;
+import net.mathias2246.buildmc.Main;
 import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.Yaml;
+import static net.mathias2246.buildmc.Main.*;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.util.*;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class LanguageManager {
 
     private static final Locale DEFAULT_LOCALE = Locale.forLanguageTag("en-US");
+    private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
+    private static final File LANG_FOLDER;
+    private static final Key TRANSLATOR_KEY = Key.key("easyone:lang");
+    private static boolean initialized = false;
 
-    private final JavaPlugin plugin;
-    private final File langFolder;
-    private final Logger logger;
-    private final Map<Locale, Map<String, String>> translations = new HashMap<>();
-    private boolean initialized = false;
-
-    public LanguageManager(@NotNull JavaPlugin plugin) {
-        this.plugin = plugin;
-        this.logger = plugin.getLogger();
-        this.langFolder = new File(plugin.getDataFolder(), "lang");
-
-        if (!langFolder.exists() && !langFolder.mkdirs()) {
-            logger.severe("Could not create language folder: " + langFolder.getPath());
+    static {
+        LANG_FOLDER = new File(plugin.getDataFolder(), "lang");
+        if (!LANG_FOLDER.exists() && !LANG_FOLDER.mkdirs()) {
+            logger.severe("Could not create language folder: " + LANG_FOLDER.getPath());
         }
     }
 
-    public void init() {
+    public static void init() {
         if (initialized) return;
         initialized = true;
         loadLanguages();
     }
 
-    private void loadLanguages() {
+    private static void loadLanguages() {
         ensureDefaultLanguageFiles();
 
-        File[] files = langFolder.listFiles((dir, name) -> name.endsWith(".yml"));
+        File[] files = LANG_FOLDER.listFiles((dir, name) -> name.endsWith(".yml"));
         if (files == null) return;
 
         for (File file : files) {
@@ -55,9 +50,15 @@ public class LanguageManager {
                 if (yamlData == null) continue;
 
                 Locale locale = toLocale(file.getName());
-                Map<String, String> flatMap = flatten("", yamlData);
-                translations.put(locale, flatMap);
+                MiniMessageTranslationStore store = MiniMessageTranslationStore.create(TRANSLATOR_KEY);
 
+                flatten("", yamlData).forEach((key, value) -> {
+                    if (value instanceof String str) {
+                        store.register(key, locale, str);
+                    }
+                });
+
+                GlobalTranslator.translator().addSource(store);
                 logger.info("Loaded language file: " + file.getName());
 
             } catch (Exception e) {
@@ -66,16 +67,15 @@ public class LanguageManager {
         }
     }
 
-    private void ensureDefaultLanguageFiles() {
+    private static void ensureDefaultLanguageFiles() {
         List<String> defaultFiles = List.of("en-US.yml");
 
         for (String fileName : defaultFiles) {
-            File targetFile = new File(langFolder, fileName);
+            File targetFile = new File(LANG_FOLDER, fileName);
             if (!targetFile.exists()) {
-                try (InputStream in = plugin.getResource("lang/" + fileName)) {
+                try (var in = Main.class.getResourceAsStream("/lang/" + fileName)) {
                     if (in != null) {
-                        Files.copy(in, targetFile.toPath());
-                        logger.info("Copied default language file: " + fileName);
+                        java.nio.file.Files.copy(in, targetFile.toPath());
                     } else {
                         logger.warning("Default language file not found in JAR: " + fileName);
                     }
@@ -86,54 +86,41 @@ public class LanguageManager {
         }
     }
 
-    private Locale toLocale(String filename) {
+    private static Locale toLocale(String filename) {
         String baseName = filename.replace(".yml", "").replace('-', '_');
         return Locale.forLanguageTag(baseName.replace('_', '-'));
     }
 
-    private Map<String, String> flatten(String prefix, Map<?, ?> input) {
-        Map<String, String> map = new HashMap<>();
+    private static Map<String, Object> flatten(String prefix, Map<?, ?> input) {
+        Map<String, Object> map = new HashMap<>();
         input.forEach((key, value) -> {
             String fullKey = prefix.isEmpty() ? key.toString() : prefix + "." + key;
             if (value instanceof Map<?, ?> nested) {
                 map.putAll(flatten(fullKey, nested));
             } else {
-                map.put(fullKey, value.toString());
+                map.put(fullKey, value);
             }
         });
         return map;
     }
 
-    public BaseComponent[] translate(@NotNull Locale locale, @NotNull String key, @NotNull Map<String, String> placeholders) {
-        String json = getRawMessage(locale, key);
+    public static Component translate(@NotNull Locale playerLocale, @NotNull String key, @NotNull Map<String, String> replacements, Component... args) {
+        Component base = Component.translatable(key, Arrays.asList(args));
+        Component translated = GlobalTranslator.render(base, playerLocale);
 
-        if (json == null) {
-            json = getRawMessage(DEFAULT_LOCALE, key);
+        if (translated.equals(base)) {
+            translated = GlobalTranslator.render(base, DEFAULT_LOCALE);
         }
 
-        if (json == null) {
-            return new BaseComponent[]{new TextComponent("Missing translation: " + key)};
+        String serialized = MINI_MESSAGE.serialize(translated);
+        for (Map.Entry<String, String> entry : replacements.entrySet()) {
+            serialized = serialized.replace("{" + entry.getKey() + "}", entry.getValue());
         }
 
-        for (Map.Entry<String, String> entry : placeholders.entrySet()) {
-            json = json.replace("%" + entry.getKey() + "%", entry.getValue());
-        }
-
-        try {
-            return ComponentSerializer.parse(json);
-        } catch (Exception e) {
-            logger.log(Level.WARNING, "Failed to parse JSON message for key: " + key, e);
-            return new BaseComponent[]{new TextComponent("Invalid JSON for key: " + key)};
-        }
+        return MINI_MESSAGE.deserialize(serialized);
     }
 
-    public String getRawMessage(Locale locale, String key) {
-        Map<String, String> langMap = translations.get(locale);
-        return langMap != null ? langMap.get(key) : null;
-    }
-
-    private Locale getLocaleForPlayer(Player player) {
-        // You can replace this logic to support per-player locale
-        return DEFAULT_LOCALE;
+    public static Translator getTranslator() {
+        return GlobalTranslator.translator();
     }
 }

@@ -32,11 +32,11 @@ end-event:
 
   # The messages broadcast to the entire server upon closing and opening the end.
   # TODO: Use the JSON component format for all texts possible (see claims.tool.missing-first-pos)
+
+  broadcast-format: "§6--------------------------------\n\n%message%\n\n§6--------------------------------"
+
   broadcast-opened: "§6--------------------------------\n\n§eThe End has been §aOPENED§e!\n\n§6--------------------------------"
   broadcast-closed: "§6--------------------------------\n\n§eThe End has been §cCLOSED§e!\n\n§6--------------------------------"
-
-  # Message sent to players when they try to enter the end dimension while it's disabled
-  end-disabled-message: "§cYou cannot enter the End."
 
 disallow-tnt-through-end: true
 

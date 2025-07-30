@@ -50,10 +50,7 @@ public final class Main extends JavaPlugin {
             boolean mkdir = pluginFolder.mkdir();
         }
 
-        languageManager = new LanguageManager(this);
-        languageManager.init();
-        Message.init(languageManager);
-
+        LanguageManager.init();
 
         configFile = new File(plugin.getDataFolder(), "config.yml");
 

@@ -1,6 +1,7 @@
 package net.mathias2246.buildmc.commands;
 
 import dev.jorel.commandapi.CommandAPICommand;
+import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.claims.ClaimTool;
 import net.mathias2246.buildmc.endEvent.EndEventCommand;
 import org.bukkit.entity.Player;
@@ -30,7 +31,7 @@ public class BuildMcCommand implements CustomCommand {
                         (c) -> c.hasPermission(new Permission("buildmc.operator"))
                 );
 
-        var endSub = new EndEventCommand().getCommand();
+        var endSub = new EndEventCommand(Main.audiences).getCommand();
         cmd.withSubcommand(endSub);
 
         var giveClaimTool = new CommandAPICommand("claimtool");
