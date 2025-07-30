@@ -2,11 +2,7 @@ package net.mathias2246.buildmc.spawnElytra;
 
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.util.Message;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.KeybindComponent;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -20,49 +16,84 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityMountEvent;
 import org.bukkit.event.entity.EntityToggleGlideEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerSwapHandItemsEvent;
-import org.bukkit.event.player.PlayerToggleFlightEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import static net.mathias2246.buildmc.Main.plugin;
 
 import static net.mathias2246.buildmc.Main.audiences;
 
 public class SpawnBoostListener extends BukkitRunnable implements Listener {
 
-    private final Plugin plugin;
     private final FileConfiguration config;
     private final ElytraZoneManager zoneManager;
     private final int multiplyValue;
     private final boolean boostEnabled;
-    private final List<Player> flying = new ArrayList<>();
-    private final List<Player> boosted = new ArrayList<>();
 
-    public SpawnBoostListener(Plugin plugin, ElytraZoneManager zoneManager) {
-        this.plugin = plugin;
+    /**Checks if the given Player uses the spawn elytra.
+     * @return True if, the player has the uses_spawn_elytra metadata*/
+    public static boolean isUsingSpawnElytra(@NotNull Player player) {
+        return player.hasMetadata("uses_spawn_elytra");
+    }
+
+    /**Checks if the given Player uses the spawn elytra.
+     * @return True if, the player has the uses_spawn_elytra metadata*/
+    public static boolean isUsingSpawnElytra(@NotNull Entity player) {
+        return player.hasMetadata("uses_spawn_elytra");
+    }
+
+    /**Checks if the given Player uses the spawn elytra boost.
+     * @return True if, the player has the uses_spawn_elytra_boost metadata*/
+    public static boolean isPlayerBoosted(@NotNull Player player) {
+        return player.hasMetadata("uses_spawn_elytra_boost");
+    }
+
+    /**Checks if the player is in survival or adventure mode.*/
+    public static boolean isSurvival(@NotNull Player player) {
+        return player.getGameMode() != GameMode.SURVIVAL && player.getGameMode() != GameMode.ADVENTURE;
+    }
+
+    /**Stops the player from flying.
+     * Removes all spawn-elytra related metadata and resets all flight related attributes.*/
+    public static void stopFlying(@NotNull Player player) {
+        player.removeMetadata("uses_spawn_elytra_boost", plugin);
+        player.removeMetadata("uses_spawn_elytra", plugin);
+        if (isSurvival(player)) player.setAllowFlight(false);
+        player.setFlying(false);
+        player.setGliding(false);
+    }
+
+    /**Makes the player glide using the spawn-elytra.*/
+    public static void setPlayerFlying(@NotNull Player player) {
+        var mode = player.getGameMode();
+        if (!isSurvival(player)) return;
+        player.setGliding(true);
+        player.setAllowFlight(false);
+        player.setFlying(false);
+        player.setMetadata("uses_spawn_elytra", new FixedMetadataValue(plugin, null));
+    }
+
+    public SpawnBoostListener(ElytraZoneManager zoneManager) {
         this.zoneManager = zoneManager;
 
         this.config = plugin.getConfig();
         this.multiplyValue = config.getInt("spawn-elytra.strength", 2);
         this.boostEnabled = config.getBoolean("spawn-elytra.enabled", true);
 
-        this.runTaskTimer(this.plugin, 0, 3);
+        this.runTaskTimer(plugin, 0, 3);
     }
 
+    // TODO: Try find better approach than a BukkitRunnable implementation (see Issue #9)
     @Override
     public void run() {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player.getGameMode() != GameMode.SURVIVAL && player.getGameMode() != GameMode.ADVENTURE) return;
+            if (!isSurvival(player)) return;
 
-            if (flying.contains(player) && !player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType().isAir()) {
-                player.setAllowFlight(false);
-                player.setGliding(false);
-                boosted.remove(player);
-                flying.remove(player);
+            if (isUsingSpawnElytra(player) && !player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType().isAir()) {
+                stopFlying(player);
             }
 
             if (!player.isGliding()) {
@@ -72,18 +103,16 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
         }
     }
 
+    // Fixes player state not resetting when reconnecting
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         if (!config.getBoolean("spawn-elytra.on-join-elytra-check", true)) return;
 
         Player player = event.getPlayer();
 
-        flying.remove(player);
-        boosted.remove(player);
+        stopFlying(player);
 
-        player.setGliding(false);
-
-        if (player.getGameMode() == GameMode.SURVIVAL || player.getGameMode() == GameMode.ADVENTURE) {
+        if (isSurvival(player)) {
             player.setAllowFlight(false);
         }
 
@@ -92,7 +121,7 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
     @EventHandler
     public void onDoubleJump(PlayerToggleFlightEvent event) {
         Player player = event.getPlayer();
-        if (player.getGameMode() != GameMode.SURVIVAL && player.getGameMode() != GameMode.ADVENTURE) return;
+        if (!isSurvival(player)) return;
 
         if (!zoneManager.isInZone(player)) return;
 
@@ -100,9 +129,7 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
 
         if (player.isGliding()) return;
 
-        player.setGliding(true);
-        player.setAllowFlight(false);
-        flying.add(player);
+        setPlayerFlying(player);
 
         if (boostEnabled && !boosted.contains(player)) {
             Component message = Message.msg(player, "messages.spawn-elytra.boost-hint", Map.of("key", new KeybindComponent("key.swapOffhand").getKeybind()));
@@ -113,10 +140,11 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
     @EventHandler
     public void onSwapItem(PlayerSwapHandItemsEvent event) {
         Player player = event.getPlayer();
-        if (!boostEnabled || !flying.contains(player) || boosted.contains(player)) return;
+        if (!boostEnabled) return;
+        if (!isUsingSpawnElytra(player) || isPlayerBoosted(player)) return;
 
         event.setCancelled(true);
-        boosted.add(player);
+        player.setMetadata("uses_spawn_elytra_boost", new FixedMetadataValue(plugin, null));
         player.setVelocity(player.getLocation().getDirection().multiply(multiplyValue).setY(1.2)); // vertical boost
     }
 
@@ -125,7 +153,7 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
         if (event.getEntityType() != EntityType.PLAYER) return;
         if (!(event.getEntity() instanceof Player player)) return;
 
-        if (flying.contains(player) && (
+        if (isUsingSpawnElytra(player) && (
                 event.getCause() == EntityDamageEvent.DamageCause.FALL ||
                         event.getCause() == EntityDamageEvent.DamageCause.FLY_INTO_WALL)) {
             event.setCancelled(true);
@@ -137,7 +165,7 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
         if (event.getEntityType() != EntityType.PLAYER) return;
         if (!(event.getEntity() instanceof Player player)) return;
 
-        if (flying.contains(player)) {
+        if (isUsingSpawnElytra(player)) {
             event.setCancelled(true);
         }
     }
@@ -148,7 +176,7 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
 
         Player player = event.getPlayer();
 
-        if (!flying.contains(player)) return;
+        if (!isUsingSpawnElytra(player)) return;
 
         ItemStack item = event.getItem();
         if (item != null && item.getType() == Material.FIREWORK_ROCKET) {
@@ -159,15 +187,12 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
         }
     }
 
+    // Fixes Issue where players are gliding when riding entities that are not on the ground
     @EventHandler
     public void onEntityMount(EntityMountEvent event) {
         Entity entity = event.getEntity();
-        if (!(entity instanceof Player player)) return;
-        if (flying.contains(player)) {
-            player.setGliding(false);
-            boosted.remove(player);
-            flying.remove(player);
-            player.setAllowFlight(false);
+        if (isUsingSpawnElytra(entity)) {
+            if (entity instanceof Player player) stopFlying(player);
         }
     }
 

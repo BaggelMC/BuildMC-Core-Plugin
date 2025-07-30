@@ -26,6 +26,12 @@ spawn-elytra:
       z:
 
 
+#
+status:
+  # If players should be able to use the '/status' command
+  enabled: true # Default: true
+
+
 # The End-Event settings
 # Use '/buildmc endevent allow true/false' to set if players should be able to enter the end dimension
 end-event:
@@ -54,23 +60,37 @@ sounds:
 # On Claims, things like any explosion, withers, block breaking or opening containers don't work.
 # Team players can give other players access to their claims using '/buildmc claim allow <player name>'.
 claims:
+  # If true, players can manage their team claims using '/claim ...'.
+  # Admins can also set certain regions as server-claims that no one can do anything in
+  enabled: true # Default: true
+
   # Settings related to the claim-tool. The claim-tool (if enabled) can be obtained using '/buildmc claimtool'
   tool:
     # If true, players even without permissions can get the claim-tool using '/buildmc claimtool'
     enable-give-command: true # Default: true
+
+    # Limits the maximum size in chunks of the selection
+    limit-selection: 16 # Default: 16
 
     # Small Action-Bar message for when no first position was selected
     missing-first-pos: '{"text": "You need to select the other corner first!", "color": "red"}'
     # Small Action-Bar message for when selecting a position
     successfully-set-pos: '{"text": "Successfully set position!", "color": "green"}'
 
+    # A chat message that is shown when a player successfully claimed a certain area
+    # The placeholder %chunks_left% is replaced with the number of chunks your team has left to claim
     successfully-claimed-area: >
-      [{"text": "--------------------------------\n", "color": "gold"}, {"text": "Successfully claimed area!\n", "color": "green"}, {"text": "You have ", "color": "blue"}, {"text": "%chunks_left%", "color": "#ff7626", "italic": true}, {"text":" chunks left to claim\n", "color": "blue"}, {"text": "--------------------------------", "color": "gold"}]
+      [{"text": "------------------------------------\n", "color": "gold"}, {"text": "Successfully claimed area!\n", "color": "green"}, {"text": "You have ", "color": "blue"}, {"text": "%chunks_left%", "color": "#ff7626", "italic": true}, {"text":" chunks left to claim\n", "color": "blue"}, {"text": "------------------------------------", "color": "gold"}]
 
+    # A chat message shown when there is someone else's claim in your selection
     other-claim-in-selection: >
       {"text": "\nThere is someone else's claim in your selection!.\n", "color": "red"}
 
-# Disables the vanilla /reload command. WE DO NOT RECOMMEND TO USE THIS COMMAND. PLEASE RESTART THE SERVER.
+    # A chat message shown when your team doesn't have any chunks left to claim
+    no-chunks-left: >
+      {"text":"You don't have any chunks left to claim!", "color":"red"}
+
+# Disables the vanilla /reload command. WE DO NOT RECOMMEND USING THIS COMMAND. PLEASE RESTART THE SERVER.
 disable-reload-command: true
 # Disables the vanilla /seed command. This is done to prevent the seed from being accessible, even to admins.
 disable-seed-command: true

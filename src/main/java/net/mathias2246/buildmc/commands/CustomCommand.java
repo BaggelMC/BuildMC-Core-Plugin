@@ -4,6 +4,6 @@ import dev.jorel.commandapi.CommandAPICommand;
 
 public interface CustomCommand {
 
-    public abstract CommandAPICommand getCommand();
+    CommandAPICommand getCommand();
 
 }

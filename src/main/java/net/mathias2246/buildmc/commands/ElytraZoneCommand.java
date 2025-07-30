@@ -24,14 +24,22 @@ public class ElytraZoneCommand implements CustomCommand {
                                         .withSubcommand(new CommandAPICommand("pos1")
                                                 .withArguments(new LocationArgument("location", LocationType.PRECISE_POSITION))
                                                 .executesPlayer((player, args) -> {
-                                                    Location loc = (Location) args.get("location");
+                                                    Location loc = args.getByClass("location", Location.class);
+                                                    if (loc == null) {
+                                                        // TODO: Implement error handling
+                                                        return;
+                                                    }
                                                     zoneManager.setPos1(player, loc);
                                                 })
                                         )
                                         .withSubcommand(new CommandAPICommand("pos2")
                                                 .withArguments(new LocationArgument("location", LocationType.PRECISE_POSITION))
                                                 .executesPlayer((player, args) -> {
-                                                    Location loc = (Location) args.get("location");
+                                                    Location loc = args.getByClass("location", Location.class);
+                                                    if (loc == null) {
+                                                        // TODO: Implement error handling
+                                                        return;
+                                                    }
                                                     zoneManager.setPos2(player, loc);
                                                 })
                                         )

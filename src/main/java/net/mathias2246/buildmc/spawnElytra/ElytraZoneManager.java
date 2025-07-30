@@ -6,12 +6,14 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Objects;
 
 import static net.mathias2246.buildmc.Main.*;
 
+/**Class for storing and managing the spawn-elytra zone*/
 public class ElytraZoneManager {
 
     private Location pos1;
@@ -19,19 +21,19 @@ public class ElytraZoneManager {
     private BoundingBox boundingBox;
     private World world;
 
-    public void setPos1(Player player, Location loc) {
+    public void setPos1(@NotNull Player player, @NotNull Location loc) {
         pos1 = loc;
         audiences.player(player).sendMessage(Message.msg(player, "messages.spawn-elytra.pos1-set"));
         tryCreateZone(player);
     }
 
-    public void setPos2(Player player, Location loc) {
+    public void setPos2(@NotNull Player player, @NotNull Location loc) {
         pos2 = loc;
         audiences.player(player).sendMessage(Message.msg(player, "messages.spawn-elytra.pos2-set"));
         tryCreateZone(player);
     }
 
-    private void tryCreateZone(Player player) {
+    private void tryCreateZone(@NotNull Player player) {
         if (pos1 == null || pos2 == null) return;
 
         if (!Objects.equals(pos1.getWorld(), pos2.getWorld())) {
@@ -45,7 +47,7 @@ public class ElytraZoneManager {
         audiences.player(player).sendMessage(Message.msg(player, "messages.spawn-elytra.success"));
     }
 
-    public boolean isInZone(Player player) {
+    public boolean isInZone(@NotNull Player player) {
         if (boundingBox == null || world == null) return false;
         Location loc = player.getLocation();
         return world.equals(loc.getWorld()) &&

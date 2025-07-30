@@ -50,9 +50,6 @@ public class BuildMcCommand implements CustomCommand {
         cmd.withSubcommand(
                 debugSub
         );
-        cmd.withSubcommand(
-                giveClaimTool
-        );
 
         return cmd;
     }

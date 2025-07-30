@@ -21,7 +21,7 @@ public class LanguageManager {
     private static final Locale DEFAULT_LOCALE = Locale.forLanguageTag("en-US");
     private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
     private static final File LANG_FOLDER;
-    private static final Key TRANSLATOR_KEY = Key.key("easyone:lang");
+    private static final Key TRANSLATOR_KEY = Key.key("buildmc:lang");
     private static boolean initialized = false;
 
     static {

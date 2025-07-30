@@ -8,6 +8,13 @@ authors: [ Mathias2246, Darkyl ]
 description: The Core plugin for the BuildMC SMP. This plugin provides basic functionality to the server.
 website: https://discord.gg/p8wBMZXAfb
 permissions:
+  buildmc.player:
+    default: true
+    description: The default permission every player gets, no matter what.
+
   buildmc.operator:
     default: op
     description: The default op permission for buildmc
+  buildmc.admin:
+    default: false
+    description: The BuildMC admin permission

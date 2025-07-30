@@ -52,7 +52,7 @@ Here’s what you can configure:
     * Verify that the elytra zone is correctly defined.
     * Confirm the feature is `enabled` in the config.
 
-* **Zone changes not taking effect?**
+* **Are zone changes not taking effect?**
 
     * Reload the plugin or restart the server after editing `config.yml`.
 

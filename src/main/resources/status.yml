@@ -1,0 +1,22 @@
+# BuildMC-Core-Plugin Status Configuration
+# Join our discord server https://discord.gg/p8wBMZXAfb
+
+# Here you can create new statuses for players to use.
+# Players can set their status using '/status set <status id>'
+
+# # An example admin status that requires the 'buildmc.admin' permission
+#admin: # the status id
+#  display-name: > # the prefix for the player using this status
+#    [{"text": "[", "color": "red", "bold": true}, {"text": "Admin", "bold": false, "color": "#ad3d3d"}, {"text": "]", "color": "red", "bold": true}]
+#  permissions: # the permission that can use this status
+#    - buildmc.admin
+#
+# # An example team status that requires no permissions, but requires you to be a member of the red team
+# # Here you can see how to use teams: https://minecraft.wiki/w/Commands/team
+#red-team:
+#  display-name: >
+#    {"text": "[Red]", "color": "red"}
+#  permissions:
+#    - buildmc.player # Built-in permission every player has by default
+#  team: # The teams that can use this status
+#    - red

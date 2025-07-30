@@ -2,6 +2,7 @@ package net.mathias2246.buildmc;
 
 import dev.jorel.commandapi.CommandAPI;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.mathias2246.buildmc.claims.ClaimCommand;
 import net.mathias2246.buildmc.claims.ClaimTool;
 import net.mathias2246.buildmc.commands.BuildMcCommand;
 import net.mathias2246.buildmc.commands.CommandRegister;
@@ -10,6 +11,7 @@ import net.mathias2246.buildmc.endEvent.EndListener;
 import net.mathias2246.buildmc.spawnElytra.ElytraZoneManager;
 import net.mathias2246.buildmc.spawnElytra.SpawnBoostListener;
 import net.mathias2246.buildmc.status.SetStatusCommand;
+import net.mathias2246.buildmc.status.StatusConfig;
 import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.Sounds;
 import net.mathias2246.buildmc.util.language.LanguageManager;
@@ -43,6 +45,8 @@ public final class Main extends JavaPlugin {
 
     private static final ElytraZoneManager zoneManager = new ElytraZoneManager();
 
+    public static StatusConfig statusConfig;
+
     public static BukkitAudiences audiences;
 
     @Override
@@ -53,7 +57,8 @@ public final class Main extends JavaPlugin {
 
         pluginFolder = plugin.getDataFolder();
         if (!pluginFolder.exists()) {
-            boolean mkdir = pluginFolder.mkdir();
+            //noinspection ResultOfMethodCallIgnored
+            pluginFolder.mkdir();
         }
 
         LanguageManager.init();
@@ -72,18 +77,26 @@ public final class Main extends JavaPlugin {
 
         CommandRegister.setupCommandAPI();
         CommandRegister.register(new BuildMcCommand());
-        CommandRegister.register(new SetStatusCommand());
 
         getServer().getPluginManager().registerEvents(new EndListener(), this);
 
         getServer().getPluginManager().registerEvents(new ClaimTool(), this);
 
         if (config.getBoolean("spawn-elytra.enabled")) {
-            getServer().getPluginManager().registerEvents(new SpawnBoostListener(this, zoneManager), this);
+            getServer().getPluginManager().registerEvents(new SpawnBoostListener(zoneManager), this);
             CommandRegister.register(new ElytraZoneCommand(zoneManager));
             zoneManager.loadZoneFromConfig();
         }
 
+        if (config.getBoolean("claims.enabled")) {
+            CommandRegister.register(new ClaimCommand());
+            // TODO: Add event listener to suppress interactions, etc.
+        }
+
+        if (config.getBoolean("status.enabled")) {
+            statusConfig = new StatusConfig();
+            CommandRegister.register(new SetStatusCommand(statusConfig));
+        }
         if (config.getBoolean("disable-reload-command")) {
             disableCommand("bukkit", "reload");
             disableCommand("bukkit", "rl");

@@ -2,7 +2,6 @@ package net.mathias2246.buildmc.commands;
 
 import dev.jorel.commandapi.CommandAPI;
 import net.mathias2246.buildmc.Main;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;

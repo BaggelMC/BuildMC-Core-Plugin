@@ -1,6 +1,5 @@
 package net.mathias2246.buildmc.endEvent;
 
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.util.Message;

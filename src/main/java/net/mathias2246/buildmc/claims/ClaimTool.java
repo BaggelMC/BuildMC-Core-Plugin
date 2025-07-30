@@ -44,6 +44,8 @@ public class ClaimTool implements Listener {
 
     public static Component successfully_claimed_area;
 
+    public static Component no_chunks_left;
+
     public static void setup() {
         missing_first_selection = JSONComponentSerializer.json().deserialize(config.getString(
                 "claims.tool.missing-first-pos",
@@ -60,6 +62,10 @@ public class ClaimTool implements Listener {
         successfully_claimed_area = JSONComponentSerializer.json().deserialize(config.getString(
                 "claims.tool.successfully-claimed-area",
                 "{\"text\":\"Successfully claimed area!\", \"color\":\"green\"}"
+        ));
+        no_chunks_left = JSONComponentSerializer.json().deserialize(config.getString(
+                "claims.tool.no-chunks-left",
+                "{\"text\":\"You don't have any chunks left to claim!\", \"color\":\"red\"}"
         ));
     }
 
@@ -105,9 +111,6 @@ public class ClaimTool implements Listener {
         return Boolean.TRUE.equals(pdc.get(CLAIM_TOOL_ITEM_PDC_KEY, PersistentDataType.BOOLEAN));
     }
 
-    public static final @NotNull NamespacedKey PLAYER_META_CLAIM_POS1 = Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool_pos1"));
-    public static final @NotNull NamespacedKey PLAYER_META_CLAIM_POS2 = Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool_pos2"));
-
     @EventHandler
     public void onPlayerUseHoe(PlayerInteractEvent event) {
         if (!isClaimTool(event.getItem())) return;
@@ -126,12 +129,15 @@ public class ClaimTool implements Listener {
             );
             audiences.player(player).sendMessage(selected_position);
         } else {
+            // Fail if the player has no first position set
             if (!player.hasMetadata("claim_tool_pos1")) {
                 audiences.player(player).sendActionBar(missing_first_selection);
                 Sounds.playSound(player, Sounds.MISTAKE);
                 return;
             }
+
             var team = ClaimManager.getPlayerTeam(player);
+            // Fail if the player is in no team
             if (team == null) {
                 audiences.player(player).sendMessage(
                         Component.text("You need to be in a team to set a claim!").color(TextColor.color(255, 85, 85))
@@ -158,13 +164,23 @@ public class ClaimTool implements Listener {
         World world = from.getWorld();
         if (world == null) return;
 
-        for (int z = sz; z < ez; z++) {
-            for (int x = sx; x < ex; x++) {
+        int count = 0;
+
+        for (int z = sz; z <= ez; z++) {
+            for (int x = sx; x <= ex; x++) {
                 Chunk chunk = world.getChunkAt(x, z);
+                // If someone else's claim is in this selection, fail
                 if (!ClaimManager.isNotClaimedOrOwn(team, chunk)) {
                     audiences.player(player).sendMessage(other_claim_in_selection);
                     Sounds.playSound(player, Sounds.MISTAKE);
                     return;
+                } else if (!ClaimManager.hasOwner(chunk)) {
+                    count++;
+                    if (count > ClaimManager.getChunksLeft(team)) { // If your team has no chunks left to claim, fail
+                        audiences.player(player).sendMessage(no_chunks_left);
+                        Sounds.playSound(player, Sounds.MISTAKE);
+                        return;
+                    }
                 }
             }
         }
@@ -178,7 +194,7 @@ public class ClaimTool implements Listener {
     }
 
 
-
+    // Replaces the %chunks_left% inside the message with the number of chunks left
     private static Component buildSuccessMessage(@NotNull Team team) {
         int i = ClaimManager.getChunksLeft(team);
         Component c = successfully_claimed_area.asComponent();

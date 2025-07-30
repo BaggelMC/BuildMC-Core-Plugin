@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+@SuppressWarnings("unused")
 public class ClaimManager {
 
     public static final @NotNull NamespacedKey CLAIM_PCD_KEY = Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_owner"));
@@ -54,6 +55,11 @@ public class ClaimManager {
         return chunk.getPersistentDataContainer().get(
                 CLAIM_PCD_KEY, PersistentDataType.STRING
         );
+    }
+
+    /**Checks if the given chunk has an owner or not*/
+    public static boolean hasOwner(@NotNull Chunk chunk) {
+        return chunk.getPersistentDataContainer().has(CLAIM_PCD_KEY);
     }
 
     /**Checks if the chunk has an owner or if it is already owned by the given team.*/
@@ -104,18 +110,27 @@ public class ClaimManager {
 
 
     public static void forceClaimArea(Team team, @NotNull Location from, @NotNull Location to) {
-
+        if (!Objects.equals(from.getWorld(), to.getWorld())) {
+            return;
+        }
+        for (int z = from.getChunk().getZ(); z <= to.getChunk().getZ(); z++) {
+            for (int x = from.getChunk().getX(); x <= to.getChunk().getX(); x++) {
+                Chunk chunk = Objects.requireNonNull(from.getWorld()).getChunkAt(x, z);
+                forceClaimChunk(team, chunk);
+            }
+        }
     }
 
     public static void forceClaimArea(Team team, @NotNull World world, int startX, int startZ, int endX, int endZ) {
-        for (int z = startZ; z < endZ; z++) {
-            for (int x = startZ; x < endZ; x++) {
+        for (int z = startZ; z <= endZ; z++) {
+            for (int x = startZ; x <= endZ; x++) {
                 Chunk chunk = world.getChunkAt(x, z);
                 forceClaimChunk(team, chunk);
             }
         }
     }
 
+    /**Gets the number of chunks the given team has left to claim*/
     public static int getChunksLeft(@NotNull Team team) {
         return Integer.MAX_VALUE;
     }
