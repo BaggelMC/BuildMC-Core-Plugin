@@ -1,5 +1,16 @@
 messages:
 
+  spawn-elytra:
+    boost-hint: "Press %key% to boost!"
+
+    pos1-set: "<green>Position 1 set.</green>"
+    pos2-set: "<green>Position 2 set.</green>"
+
+    success: "<green>Elytra zone created.</green>"
+
+    error:
+      different-worlds: "<red>Error: Positions must be in the same world.</red>"
+
   end-event:
     opened: "<green>The end is now 'open'."
     closed: "<green>The end is now 'closed'."

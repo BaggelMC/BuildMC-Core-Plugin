@@ -1,5 +1,6 @@
 package net.mathias2246.buildmc.spawnElytra;
 
+import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -20,13 +21,13 @@ public class ElytraZoneManager {
 
     public void setPos1(Player player, Location loc) {
         pos1 = loc;
-        player.sendMessage("§aPosition 1 set.");
+        audiences.player(player).sendMessage(Message.msg(player, "messages.spawn-elytra.pos1-set"));
         tryCreateZone(player);
     }
 
     public void setPos2(Player player, Location loc) {
         pos2 = loc;
-        player.sendMessage("§aPosition 2 set.");
+        audiences.player(player).sendMessage(Message.msg(player, "messages.spawn-elytra.pos2-set"));
         tryCreateZone(player);
     }
 
@@ -34,14 +35,14 @@ public class ElytraZoneManager {
         if (pos1 == null || pos2 == null) return;
 
         if (!Objects.equals(pos1.getWorld(), pos2.getWorld())) {
-            player.sendMessage("§cPositions must be in the same world.");
+            audiences.player(player).sendMessage(Message.msg(player, "messages.spawn-elytra.error.different-worlds"));
             return;
         }
 
         boundingBox = BoundingBox.of(pos1.toVector(), pos2.toVector());
         world = pos1.getWorld();
         saveZoneToConfig();
-        player.sendMessage("§aElytra zone created.");
+        audiences.player(player).sendMessage(Message.msg(player, "messages.spawn-elytra.success"));
     }
 
     public boolean isInZone(Player player) {

@@ -1,5 +1,6 @@
 package net.mathias2246.buildmc.spawnElytra;
 
+import net.mathias2246.buildmc.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -10,6 +11,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,6 +19,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityToggleGlideEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.inventory.ItemStack;
@@ -34,7 +37,6 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
     private final boolean boostEnabled;
     private final List<Player> flying = new ArrayList<>();
     private final List<Player> boosted = new ArrayList<>();
-    private final String message;
 
     public SpawnBoostListener(Plugin plugin, ElytraZoneManager zoneManager) {
         this.plugin = plugin;
@@ -43,7 +45,6 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
         this.config = plugin.getConfig();
         this.multiplyValue = config.getInt("spawn-elytra.strength", 2);
         this.boostEnabled = config.getBoolean("spawn-elytra.enabled", true);
-        this.message = config.getString("spawn-elytra.message", "Press %key% to boost!");
 
         this.runTaskTimer(this.plugin, 0, 3);
     }
@@ -56,13 +57,30 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
             boolean inZone = zoneManager.isInZone(player);
             player.setAllowFlight(inZone);
 
-            if (flying.contains(player) && !player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType().isAir()) {
+            if (flying.contains(player) && !((Entity) player).isOnGround()) {
                 player.setAllowFlight(false);
                 player.setGliding(false);
                 boosted.remove(player);
                 Bukkit.getScheduler().runTaskLater(plugin, () -> flying.remove(player), 5);
             }
         }
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        if (!config.getBoolean("spawn-elytra.on-join-elytra-check", true)) return;
+
+        Player player = event.getPlayer();
+
+        flying.remove(player);
+        boosted.remove(player);
+
+        player.setGliding(false);
+
+        if (player.getGameMode() == GameMode.SURVIVAL || player.getGameMode() == GameMode.ADVENTURE) {
+            player.setAllowFlight(false);
+        }
+
     }
 
     @EventHandler
@@ -74,6 +92,8 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
         event.setCancelled(true);
         player.setGliding(true);
         flying.add(player);
+
+        String message = Message.msgStr(player, "messages.spawn-elytra.boost-hint");
 
         if (boostEnabled) {
             String[] messageParts = message.split("%key%");
@@ -95,6 +115,7 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
         player.setVelocity(player.getLocation().getDirection().multiply(multiplyValue).setY(1.2)); // vertical boost
     }
 
+    // FIXME: Cancels fall damage even if player is not currently flying
     @EventHandler
     public void onDamage(EntityDamageEvent event) {
         if (event.getEntityType() != EntityType.PLAYER) return;

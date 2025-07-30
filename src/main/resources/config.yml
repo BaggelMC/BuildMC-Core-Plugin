@@ -10,6 +10,8 @@ spawn-elytra:
   strength: 5 # Default: 5
   # Should the use of firework rockets with the spawn elytra be blocked?
   disable-rockets: true
+  # Disable gliding for players when joining. Used to prevent bugs.
+  on-join-elytra-check: true
   # The Zone in which you can use the spawn elytra
   # You are able to set the elytra zone using the command '/buildmc elytrazone setup ...'
   zone:

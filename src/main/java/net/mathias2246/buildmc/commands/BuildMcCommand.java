@@ -4,6 +4,7 @@ import dev.jorel.commandapi.CommandAPICommand;
 import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.claims.ClaimTool;
 import net.mathias2246.buildmc.endEvent.EndEventCommand;
+import net.mathias2246.buildmc.util.Message;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 
@@ -38,7 +39,7 @@ public class BuildMcCommand implements CustomCommand {
         giveClaimTool.executes(
                 (command) -> {
                     if (!(command.sender() instanceof Player player)) {
-                        command.sender().sendMessage("Only Players can use this command!");
+                        Main.audiences.sender(command.sender()).sendMessage(Message.noPlayerErrorMsg(command.sender()));
                         return;
                     }
                     ClaimTool.giveToolToPlayer(player);
