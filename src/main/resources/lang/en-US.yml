@@ -1,0 +1,4 @@
+# I would like it to be publicly known that I personally prefer the convenience of MiniMessages over this, but I am not allowed to do that. - Darkyl 30.07.2025 15:54
+messages:
+  error:
+    general: '{"text": "","extra":[{"color": "red", "text": "An error occurred: %error_message%"}]}'

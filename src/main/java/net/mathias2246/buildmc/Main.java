@@ -11,14 +11,15 @@ import net.mathias2246.buildmc.endEvent.EndListener;
 import net.mathias2246.buildmc.spawnElytra.ElytraZoneManager;
 import net.mathias2246.buildmc.spawnElytra.SpawnBoostListener;
 import net.mathias2246.buildmc.status.SetStatusCommand;
+import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.Sounds;
+import net.mathias2246.buildmc.util.language.LanguageManager;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.intellij.lang.annotations.Subst;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.logging.Logger;
 
 public final class Main extends JavaPlugin {
@@ -33,6 +34,7 @@ public final class Main extends JavaPlugin {
 
     public static File pluginFolder;
 
+    public static LanguageManager languageManager;
     private static final ElytraZoneManager zoneManager = new ElytraZoneManager();
 
     public static BukkitAudiences audiences;
@@ -47,6 +49,10 @@ public final class Main extends JavaPlugin {
         if (!pluginFolder.exists()) {
             boolean mkdir = pluginFolder.mkdir();
         }
+
+        languageManager = new LanguageManager(this);
+        languageManager.init();
+        Message.init(languageManager);
 
 
         configFile = new File(plugin.getDataFolder(), "config.yml");
