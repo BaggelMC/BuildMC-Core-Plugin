@@ -104,15 +104,9 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
         player.setAllowFlight(false);
         flying.add(player);
 
-        String message = Message.msgStr(player, "messages.spawn-elytra.boost-hint");
-
         if (boostEnabled && !boosted.contains(player)) {
-            String[] messageParts = message.split("%key%");
-            player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-                    new ComponentBuilder(messageParts[0])
-                            .append(new KeybindComponent("key.swapOffhand"))
-                            .append(messageParts.length > 1 ? messageParts[1] : "")
-                            .create());
+            Component message = Message.msg(player, "messages.spawn-elytra.boost-hint", Map.of("key", new KeybindComponent("key.swapOffhand").getKeybind()));
+            audiences.player(player).sendActionBar(message);
         }
     }
 
