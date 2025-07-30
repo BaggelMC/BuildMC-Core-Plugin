@@ -9,12 +9,15 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityMountEvent;
 import org.bukkit.event.entity.EntityToggleGlideEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -48,20 +51,21 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
     }
 
     @Override
-    @SuppressWarnings("deprecation") // player.isOnGround() is deprecated as it can be spoofed by mods, but this check is non-critical, and we will use this method until removed.
     public void run() {
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (player.getGameMode() != GameMode.SURVIVAL && player.getGameMode() != GameMode.ADVENTURE) return;
 
-            if (flying.contains(player) && player.isOnGround()) {
+            if (flying.contains(player) && !player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType().isAir()) {
                 player.setAllowFlight(false);
                 player.setGliding(false);
                 boosted.remove(player);
                 flying.remove(player);
             }
 
-            boolean inZone = zoneManager.isInZone(player);
-            player.setAllowFlight(inZone);
+            if (!player.isGliding()) {
+                boolean inZone = zoneManager.isInZone(player);
+                player.setAllowFlight(inZone);
+            }
         }
     }
 
@@ -86,10 +90,15 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
     public void onDoubleJump(PlayerToggleFlightEvent event) {
         Player player = event.getPlayer();
         if (player.getGameMode() != GameMode.SURVIVAL && player.getGameMode() != GameMode.ADVENTURE) return;
+
         if (!zoneManager.isInZone(player)) return;
 
         event.setCancelled(true);
+
+        if (player.isGliding()) return;
+
         player.setGliding(true);
+        player.setAllowFlight(false);
         flying.add(player);
 
         String message = Message.msgStr(player, "messages.spawn-elytra.boost-hint");
@@ -155,6 +164,18 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
                     new ComponentBuilder()
                             .append(text)
                             .create());
+        }
+    }
+
+    @EventHandler
+    public void onEntityMount(EntityMountEvent event) {
+        Entity entity = event.getEntity();
+        if (!(entity instanceof Player player)) return;
+        if (flying.contains(player)) {
+            player.setGliding(false);
+            boosted.remove(player);
+            flying.remove(player);
+            player.setAllowFlight(false);
         }
     }
 
