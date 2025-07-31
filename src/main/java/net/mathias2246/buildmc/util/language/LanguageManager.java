@@ -19,6 +19,7 @@ import java.util.logging.Level;
 public class LanguageManager {
 
     private static final Locale DEFAULT_LOCALE = Locale.forLanguageTag("en-US");
+    private static final List<String> DEFAULT_FILES = List.of("en-US.yml");
     private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
     private static final File LANG_FOLDER;
     private static final Key TRANSLATOR_KEY = Key.key("buildmc:lang");
@@ -68,9 +69,7 @@ public class LanguageManager {
     }
 
     private static void ensureDefaultLanguageFiles() {
-        List<String> defaultFiles = List.of("en-US.yml");
-
-        for (String fileName : defaultFiles) {
+        for (String fileName : DEFAULT_FILES) {
             File targetFile = new File(LANG_FOLDER, fileName);
             if (!targetFile.exists()) {
                 try (var in = Main.class.getResourceAsStream("/lang/" + fileName)) {

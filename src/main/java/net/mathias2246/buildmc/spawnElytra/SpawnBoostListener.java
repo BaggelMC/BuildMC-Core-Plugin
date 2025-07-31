@@ -1,15 +1,11 @@
 package net.mathias2246.buildmc.spawnElytra;
 
-import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.util.Message;
-import net.md_5.bungee.api.chat.KeybindComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,12 +13,9 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityMountEvent;
 import org.bukkit.event.entity.EntityToggleGlideEvent;
 import org.bukkit.event.player.*;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Map;
 
 import static net.mathias2246.buildmc.Main.plugin;
 
@@ -90,7 +83,6 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
         this.runTaskTimer(plugin, 0, 3);
     }
 
-    // TODO: Try find better approach than a BukkitRunnable implementation (see Issue #9)
     @Override
     public void run() {
         for (Player player : Bukkit.getOnlinePlayers()) {
@@ -140,7 +132,6 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
         setPlayerFlying(player);
 
         if (boostEnabled && !isPlayerBoosted(player)) {
-
             audiences.player(player).sendActionBar(Message.msg(player, "messages.spawn-elytra.boost-hint"));
         }
     }
@@ -173,7 +164,6 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
         if (!(event.getEntity() instanceof Player player)) return;
 
         if (isUsingSpawnElytra(player)) {
-
             event.setCancelled(true);
         }
     }
