@@ -1,9 +1,11 @@
 package net.mathias2246.buildmc.commands;
 
-import dev.jorel.commandapi.CommandAPICommand;
+import com.mojang.brigadier.tree.LiteralCommandNode;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 
+@SuppressWarnings("UnstableApiUsage")
 public interface CustomCommand {
 
-    CommandAPICommand getCommand();
+    LiteralCommandNode<CommandSourceStack> getCommand();
 
 }

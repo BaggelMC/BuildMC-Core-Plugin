@@ -1,33 +1,29 @@
 package net.mathias2246.buildmc.claims;
 
-import dev.jorel.commandapi.CommandAPICommand;
+import com.mojang.brigadier.tree.LiteralCommandNode;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
 import net.mathias2246.buildmc.commands.CustomCommand;
 import org.bukkit.entity.Player;
 
 public class ClaimCommand implements CustomCommand {
     @Override
-    public CommandAPICommand getCommand() {
-        return new CommandAPICommand("claim")
-                .withSubcommand(
-                    new CommandAPICommand("claimtool")
-                    .executes(
-                            (command) -> {
-                                if (!(command.sender() instanceof Player player)) {
-                                    command.sender().sendMessage("Only Players can use this command!");
-                                    return;
-                                }
-                                ClaimTool.giveToolToPlayer(player);
-                            })
-                )
-
-
-                .withHelp("Manage your team claims", "Use this command to manage your claims.")
-
+    public LiteralCommandNode<CommandSourceStack> getCommand() {
+        var cmd = Commands.literal("claim");
+        cmd.then(
+                Commands.literal("claimtool")
                 .executes(
                         (command) -> {
-                            if (!(command.sender() instanceof Player player)) return;
+                            if (!(command.getSource().getExecutor() instanceof Player player)) {
+                                command.getSource().getSender().sendMessage("Only Players can use this command!");
+                                return 0;
+                            }
+                            ClaimTool.giveToolToPlayer(player);
+                            return 1;
+                        })
+            );
 
-                        }
-                );
+
+        return cmd.build();
     }
 }

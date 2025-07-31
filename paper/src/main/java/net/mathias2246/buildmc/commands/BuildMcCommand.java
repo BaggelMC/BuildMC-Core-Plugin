@@ -1,56 +1,53 @@
 package net.mathias2246.buildmc.commands;
 
-import dev.jorel.commandapi.CommandAPICommand;
-import net.mathias2246.buildmc.Main;
-import net.mathias2246.buildmc.claims.ClaimTool;
+import com.mojang.brigadier.tree.LiteralCommandNode;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
 import net.mathias2246.buildmc.endEvent.EndEventCommand;
-import net.mathias2246.buildmc.util.Message;
-import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 
 public class BuildMcCommand implements CustomCommand {
 
     @Override
-    public CommandAPICommand getCommand() {
-        var cmd = new CommandAPICommand("buildmc");
+    public LiteralCommandNode<CommandSourceStack> getCommand() {
+        var cmd = Commands.literal("buildmc");
 
         cmd.executes(
                 (executionInfo -> {
-                    executionInfo.sender().sendMessage("/buildmc <args>");
+                    executionInfo.getSource().getSender().sendMessage("/buildmc <args>");
+                    return 1;
                 })
         );
 
-        var debugSub = new CommandAPICommand(
-                "debug"
-        );
+        var debugSub = Commands.literal("debug");
         debugSub.executes(
                 (executionInfo) -> {
-                    executionInfo.sender().sendMessage("/buildmc debug <args>");
+                    executionInfo.getSource().getSender().sendMessage("/buildmc debug <args>");
+                    return 1;
                 }
         );
-        debugSub.setRequirements(
-                        (c) -> c.hasPermission(new Permission("buildmc.operator"))
+        debugSub.requires(
+                        (c) -> c.getSender().hasPermission(new Permission("buildmc.operator"))
                 );
 
-        var endSub = new EndEventCommand().getCommand();
-        cmd.withSubcommand(endSub);
+        var endSub = new EndEventCommand().getCommandBuilder();
+        cmd.then(endSub);
 
-        var giveClaimTool = new CommandAPICommand("claimtool");
-        giveClaimTool.executes(
-                (command) -> {
-                    if (!(command.sender() instanceof Player player)) {
-                        command.sender().sendMessage(Message.noPlayerErrorMsg(command.sender()));
-                        return;
-                    }
-                    ClaimTool.giveToolToPlayer(player);
-                }
-        );
+//        var giveClaimTool = Commands.literal("claimtool");
+//        giveClaimTool.executes(
+//                (command) -> {
+//                    if (!(command.getSource().getSender() instanceof Player player)) {
+//                        command.getSource().getSender().sendMessage(Message.noPlayerErrorMsg(command.getSource().getSender()));
+//                        return 0;
+//                    }
+//                    ClaimTool.giveToolToPlayer(player);
+//                    return 1;
+//                }
+//        );
 
         // Register /buildmc sub-commands
-        cmd.withSubcommand(
-                debugSub
-        );
+        cmd.then(debugSub);
 
-        return cmd;
+        return cmd.build();
     }
 }

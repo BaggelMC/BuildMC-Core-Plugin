@@ -1,10 +1,9 @@
 package net.mathias2246.buildmc;
 
-import dev.jorel.commandapi.CommandAPI;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.mathias2246.buildmc.claims.ClaimCommand;
 import net.mathias2246.buildmc.claims.ClaimTool;
 import net.mathias2246.buildmc.commands.BuildMcCommand;
-import net.mathias2246.buildmc.commands.CommandRegister;
 import net.mathias2246.buildmc.commands.ElytraZoneCommand;
 import net.mathias2246.buildmc.endEvent.EndListener;
 import net.mathias2246.buildmc.spawnElytra.DisableRocketListener;
@@ -66,14 +65,10 @@ public final class Main extends JavaPlugin {
         if (!configFile.exists()) this.saveResource("config.yml", false);
         config = this.getConfig();
 
-
         EndListener.loadFromConfig();
 
         Sounds.setup();
         ClaimTool.setup();
-
-        CommandRegister.setupCommandAPI();
-        CommandRegister.register(new BuildMcCommand());
 
         getServer().getPluginManager().registerEvents(new EndListener(), this);
 
@@ -82,19 +77,28 @@ public final class Main extends JavaPlugin {
         if (config.getBoolean("spawn-elytra.enabled")) {
             getServer().getPluginManager().registerEvents(new SpawnBoostListener(zoneManager), this);
             if (config.getBoolean("spawn-elytra.disable-rockets")) getServer().getPluginManager().registerEvents(new DisableRocketListener(), this);
-            CommandRegister.register(new ElytraZoneCommand(zoneManager));
+
             zoneManager.loadZoneFromConfig();
         }
 
         if (config.getBoolean("claims.enabled")) {
-            CommandRegister.register(new ClaimCommand());
             // TODO: Add event listener to suppress interactions, etc.
         }
 
         if (config.getBoolean("status.enabled")) {
             statusConfig = new StatusConfig();
-            CommandRegister.register(new SetStatusCommand(statusConfig));
         }
+
+        this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
+            commands.registrar().register(new BuildMcCommand().getCommand());
+            if (config.getBoolean("spawn-elytra.enabled")) commands.registrar().register(new ElytraZoneCommand(zoneManager).getCommand());
+
+            if (config.getBoolean("status.enabled")) commands.registrar().register(new SetStatusCommand(statusConfig).getCommand());
+
+            if (config.getBoolean("claims.enabled")) commands.registrar().register(new ClaimCommand().getCommand());
+        });
+
+
         if (config.getBoolean("disable-reload-command")) {
             disableCommand("bukkit", "reload");
             disableCommand("bukkit", "rl");
@@ -104,13 +108,11 @@ public final class Main extends JavaPlugin {
             disableCommand("minecraft", "seed");
         }
 
-
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-        CommandAPI.onDisable();
     }
 
     private void disableCommand(String namespace, String commandName) {

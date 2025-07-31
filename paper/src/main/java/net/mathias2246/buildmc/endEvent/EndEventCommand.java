@@ -1,8 +1,9 @@
 package net.mathias2246.buildmc.endEvent;
 
-import dev.jorel.commandapi.CommandAPICommand;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
-import net.mathias2246.buildmc.commands.CustomCommand;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -14,18 +15,25 @@ import java.io.IOException;
 import static net.mathias2246.buildmc.Main.config;
 import static net.mathias2246.buildmc.Main.configFile;
 
-public class EndEventCommand implements CustomCommand {
-    @Override
-    public CommandAPICommand getCommand() {
-        return new CommandAPICommand("endevent")
-                .withPermission("buildmc.operator")
-                .withSubcommand(getSubCommand("open", true))
-                .withSubcommand(getSubCommand("close", false));
+public class EndEventCommand {
+
+    public LiteralArgumentBuilder<CommandSourceStack> getCommandBuilder() {
+        var cmd = Commands.literal("endevent");
+        cmd.requires(
+                (command) -> command.getSender().hasPermission("buildmc.admin")
+        );
+
+        cmd.then(getSubCommand("open", true));
+        cmd.then(getSubCommand("close", false));
+
+        return cmd;
+
     }
 
-    private CommandAPICommand getSubCommand(String name, boolean allowEnd) {
-        return new CommandAPICommand(name)
-                .executes((command) -> {
+    private LiteralArgumentBuilder<CommandSourceStack> getSubCommand(String name, boolean allowEnd) {
+        var cmd = Commands.literal(name);
+        cmd.executes(
+                (command) -> {
                     EndListener.allowEnd = allowEnd;
                     config.set("end-event.allow-end", allowEnd);
                     try {
@@ -34,9 +42,9 @@ public class EndEventCommand implements CustomCommand {
                     }
 
                     String senderMessageKey = allowEnd ? "messages.end-event.opened" : "messages.end-event.closed";
-                    Component senderMessage = Message.msg(command.sender(), senderMessageKey);
+                    Component senderMessage = Message.msg(command.getSource().getSender(), senderMessageKey);
 
-                    CommandSender sender = command.sender();
+                    CommandSender sender = command.getSource().getSender();
                     if (sender instanceof Player player) {
                         player.sendMessage(senderMessage);
                     } else if (sender instanceof ConsoleCommandSender) {
@@ -59,6 +67,10 @@ public class EndEventCommand implements CustomCommand {
                         Component finalMessage = net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(formatted);
                         player.sendMessage(finalMessage);
                     }
-                });
+                    return 1;
+                }
+        );
+        cmd.requires((command) -> command.getSender().hasPermission("buildmc.admin"));
+        return cmd;
     }
 }

@@ -1,11 +1,14 @@
 package net.mathias2246.buildmc.status;
 
-import dev.jorel.commandapi.CommandAPICommand;
-import dev.jorel.commandapi.arguments.StringArgument;
+import com.mojang.brigadier.suggestion.SuggestionProvider;
+import com.mojang.brigadier.tree.LiteralCommandNode;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
 import net.mathias2246.buildmc.commands.CustomCommand;
 import org.bukkit.entity.Player;
-import org.bukkit.help.HelpTopic;
 import org.jetbrains.annotations.NotNull;
+
+import static com.mojang.brigadier.arguments.StringArgumentType.string;
 
 public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCommand {
 
@@ -14,73 +17,70 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
     //  - 'remove': Removes your current status
     //  - 'set': Sets your current status
     @Override
-    public CommandAPICommand getCommand() {
-        var cmd = new CommandAPICommand("status");
+    public LiteralCommandNode<CommandSourceStack> getCommand() {
+        var cmd = Commands.literal("status");
         cmd.executes(
                 (command) -> {
+                    command.getSource().getSender().sendMessage("/status <args>");
+                    return 1;
                 }
         );
-        HelpTopic help = new StatusCommandHelp();
-        cmd.withHelp(
-                help
-        );
-
-        cmd.withUsage(
-                "remove",
-                "set <status>"
-        );
 
 
-        var removeSub = new CommandAPICommand("remove");
+        var removeSub = Commands.literal("remove");
         removeSub.executes(
                 (command) -> {
-                    if (!(command.sender() instanceof Player player)) {
-                        command.sender().sendMessage("Only a player can have a status!");
-                        return;
+                    if (!(command.getSource().getSender() instanceof Player player)) {
+                        command.getSource().getSender().sendMessage("Only a player can have a status!");
+                        return 0;
                     }
                     PlayerStatus.removePlayerStatus(player);
+                    return 1;
                 }
         );
 
-        var setSub = new CommandAPICommand("set")
+        var setSub = Commands.literal("set")
             .executes(
                     (command) -> {
-                        if (!(command.sender() instanceof Player player)) {
-                            command.sender().sendMessage("Only a player can have a status!");
-                            return;
+                        if (!(command.getSource().getSender() instanceof Player player)) {
+                            command.getSource().getSender().sendMessage("Only a player can have a status!");
+                            return 0;
                         }
-                        //PlayerStatus.setPlayerStatus(player, (String) command.args().get("set"));
+                        return 1;
                     }
-            )
-                .withArguments(
-                        new StringArgument("status")
-                                .executes(
-                                        (command) -> {
-                                            if (!(command.sender() instanceof Player player)) {
-                                                command.sender().sendMessage("Only a player can have a status!");
-                                                return;
-                                            }
-                                            PlayerStatus.setPlayerStatus(player, (String) command.args().get("status"));
-                                        }
-                                )
-                                .replaceSuggestions(
-                                        (info, builder) -> {
-                                            for (var k : StatusConfig.loadedStatuses.keySet()) {
-                                                builder.suggest(k);
-                                            }
-                                            return builder.buildFuture();
-                                        }
-                                )
-                )
-            .withUsage("set <status>");
-        cmd.withSubcommand(
-                removeSub
+            );
+
+        var setSubArg = Commands.argument("status_id", string())
+                .executes(
+                        (command) -> {
+                            if (!(command.getSource().getSender() instanceof Player player)) {
+                                command.getSource().getSender().sendMessage("Only a player can have a status!");
+                                return 0;
+                            }
+                            PlayerStatus.setPlayerStatus(player, command.getArgument("status_id", String.class));
+                            return 1;
+                        }
+                );
+
+        setSubArg.suggests(
+                (ctx, builder) -> {
+
+                    for (var statusId : StatusConfig.loadedStatuses.keySet()) {
+                        builder.suggest(statusId);
+                    }
+
+                    return builder.buildFuture();
+                }
         );
-        cmd.withSubcommand(
-                setSub
+
+        setSub.then(
+                setSubArg
         );
 
 
-        return cmd;
+        cmd.then(removeSub);
+        cmd.then(setSubArg);
+
+        return cmd.build();
     }
 }
