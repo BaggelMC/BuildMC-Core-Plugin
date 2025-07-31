@@ -1,6 +1,6 @@
 # 🌍 BuildMC-Core
 
-*A powerful, core plugin for the BuildMC SMP project. Made for modern Minecraft development, crafted with care for 1.21.*
+*A powerful, core plugin for the BuildMC SMP project. Made for modern Minecraft development, crafted with care for 1.21.*\*
 
 ---
 

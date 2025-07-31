@@ -3,9 +3,8 @@ package net.mathias2246.buildmc.claims;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
-import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.serializer.json.JSONComponentSerializer;
 import net.mathias2246.buildmc.util.LocationUtil;
+import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.Sounds;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -36,37 +35,8 @@ public class ClaimTool implements Listener {
 
     public static final ItemStack CLAIM_TOOL_ITEMSTACK;
 
-    public static Component missing_first_selection;
-
-    public static Component selected_position;
-
-    public static Component other_claim_in_selection;
-
-    public static Component successfully_claimed_area;
-
-    public static Component no_chunks_left;
-
     public static void setup() {
-        missing_first_selection = JSONComponentSerializer.json().deserialize(config.getString(
-                "claims.tool.missing-first-pos",
-                "{\"text\": \"You need to select the other corner first!\", \"color\": \"red\"}"
-        ));
-        selected_position = JSONComponentSerializer.json().deserialize(config.getString(
-                "claims.tool.successfully-set-pos",
-                "{\"text\": \"Successfully set position!\", \"color\": \"green\"}"
-        ));
-        other_claim_in_selection = JSONComponentSerializer.json().deserialize(config.getString(
-                "claims.tool.other-claim-in-selection",
-                "{\"text\": \"There is someone else's claim in your selection!.\", \"color\": \"red\"}"
-        ));
-        successfully_claimed_area = JSONComponentSerializer.json().deserialize(config.getString(
-                "claims.tool.successfully-claimed-area",
-                "{\"text\":\"Successfully claimed area!\", \"color\":\"green\"}"
-        ));
-        no_chunks_left = JSONComponentSerializer.json().deserialize(config.getString(
-                "claims.tool.no-chunks-left",
-                "{\"text\":\"You don't have any chunks left to claim!\", \"color\":\"red\"}"
-        ));
+
     }
 
     static {
@@ -127,11 +97,11 @@ public class ClaimTool implements Listener {
                             LocationUtil.serialize(player.getLocation())
                     )
             );
-            audiences.player(player).sendMessage(selected_position);
+            audiences.player(player).sendMessage(Message.msg(player, "messages.claims.tool.successfully-set-pos"));
         } else {
             // Fail if the player has no first position set
             if (!player.hasMetadata("claim_tool_pos1")) {
-                audiences.player(player).sendActionBar(missing_first_selection);
+                audiences.player(player).sendActionBar(Message.msg(player, "messages.claims.tool.missing-first-pos"));
                 Sounds.playSound(player, Sounds.MISTAKE);
                 return;
             }
@@ -140,7 +110,7 @@ public class ClaimTool implements Listener {
             // Fail if the player is in no team
             if (team == null) {
                 audiences.player(player).sendMessage(
-                        Component.text("You need to be in a team to set a claim!").color(TextColor.color(255, 85, 85))
+                        Message.msg(player, "messages.claims.tool.no-team-to-select")
                 );
                 Sounds.playSound(player, Sounds.MISTAKE);
                 return;
@@ -171,13 +141,13 @@ public class ClaimTool implements Listener {
                 Chunk chunk = world.getChunkAt(x, z);
                 // If someone else's claim is in this selection, fail
                 if (!ClaimManager.isNotClaimedOrOwn(team, chunk)) {
-                    audiences.player(player).sendMessage(other_claim_in_selection);
+                    audiences.player(player).sendMessage(Message.msg(player, "messages.claims.tool.other-claim-in-selection"));
                     Sounds.playSound(player, Sounds.MISTAKE);
                     return;
                 } else if (!ClaimManager.hasOwner(chunk)) {
                     count++;
                     if (count > ClaimManager.getChunksLeft(team)) { // If your team has no chunks left to claim, fail
-                        audiences.player(player).sendMessage(no_chunks_left);
+                        audiences.player(player).sendMessage(Message.msg(player, "messages.claims.tool.no-chunks-left"));
                         Sounds.playSound(player, Sounds.MISTAKE);
                         return;
                     }
@@ -189,17 +159,16 @@ public class ClaimTool implements Listener {
 
         Sounds.playSound(player, Sounds.SUCCESS);
         audiences.player(player).sendMessage(
-            buildSuccessMessage(team)
+            buildSuccessMessage(player, team)
         );
     }
 
 
-    // Replaces the %chunks_left% inside the message with the number of chunks left
-    private static Component buildSuccessMessage(@NotNull Team team) {
+    // Replaces the %chunks_left% placeholder with the number of chunks left
+    private static Component buildSuccessMessage(@NotNull Player player, @NotNull Team team) {
         int i = ClaimManager.getChunksLeft(team);
-        Component c = successfully_claimed_area.asComponent();
         var r = TextReplacementConfig.builder().matchLiteral("%chunks_left%").replacement(Integer.toString(i));
 
-        return c.replaceText(r.build());
+        return Message.msg(player, "messages.claims.tool.successfully-claimed-area").replaceText(r.build());
     }
 }

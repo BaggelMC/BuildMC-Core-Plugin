@@ -1,7 +1,7 @@
 messages:
 
   spawn-elytra:
-    boost-hint: "Press %key% to boost!"
+    boost-hint: "Press <key:key.swapOffhand> to boost!"
     firework-disabled-hint: "<red>Firework boost is disabled for spawn elytra.</red>"
 
     pos1-set: "<green>Position 1 set.</green>"
@@ -29,3 +29,21 @@ messages:
     not-a-player-str: "This command can only be used by players."
 
     command-disabled: "<red>This command has been disabled.</red>"
+
+  claims:
+    tool:
+
+      missing-first-pos: "<red>You need to select the other corner first!</red>"
+      successfully-set-pos: "<green>Successfully set position!</green>"
+
+      no-team-to-select: "<red>You need to be in a team to set a claim!</red>"
+
+      successfully-claimed-area: |-
+        <gold>---------------------------------------</gold>
+        <green>Successfully claimed area!</green>
+        <blue>You have </blue>%chunks_left%<blue> chunks left to claim</blue>
+        <gold>---------------------------------------</gold>
+
+      other-claim-in-selection: "\n<red>There is someone else's claim in your selection!</red>\n"
+
+      no-chunks-left: "<red>You don't have any chunks left to claim!</red>"

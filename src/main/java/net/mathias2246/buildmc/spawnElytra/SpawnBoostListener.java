@@ -55,7 +55,7 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
 
     /**Checks if the player is in survival or adventure mode.*/
     public static boolean isSurvival(@NotNull Player player) {
-        return player.getGameMode() != GameMode.SURVIVAL && player.getGameMode() != GameMode.ADVENTURE;
+        return player.getGameMode() == GameMode.SURVIVAL || player.getGameMode() == GameMode.ADVENTURE;
     }
 
     /**Stops the player from flying.
@@ -134,8 +134,7 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
         setPlayerFlying(player);
 
         if (boostEnabled && !isPlayerBoosted(player)) {
-            Component message = Message.msg(player, "messages.spawn-elytra.boost-hint", Map.of("key", new KeybindComponent("key.swapOffhand").getKeybind()));
-            audiences.player(player).sendActionBar(message);
+            audiences.player(player).sendActionBar(Message.msg(player, "messages.spawn-elytra.boost-hint"));
         }
     }
 

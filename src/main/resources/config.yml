@@ -39,7 +39,7 @@ end-event:
   allow-end: false # Default: false
 
   # The messages broadcast to the entire server upon closing and opening the end.
-  # TODO: Use the JSON component format for all texts possible (see claims.tool.missing-first-pos)
+  # TODO: Put into language
 
   broadcast-format: "§6--------------------------------\n\n%message%\n\n§6--------------------------------"
 
@@ -72,23 +72,6 @@ claims:
     # Limits the maximum size in chunks of the selection
     limit-selection: 16 # Default: 16
 
-    # Small Action-Bar message for when no first position was selected
-    missing-first-pos: '{"text": "You need to select the other corner first!", "color": "red"}'
-    # Small Action-Bar message for when selecting a position
-    successfully-set-pos: '{"text": "Successfully set position!", "color": "green"}'
-
-    # A chat message that is shown when a player successfully claimed a certain area
-    # The placeholder %chunks_left% is replaced with the number of chunks your team has left to claim
-    successfully-claimed-area: >
-      [{"text": "------------------------------------\n", "color": "gold"}, {"text": "Successfully claimed area!\n", "color": "green"}, {"text": "You have ", "color": "blue"}, {"text": "%chunks_left%", "color": "#ff7626", "italic": true}, {"text":" chunks left to claim\n", "color": "blue"}, {"text": "------------------------------------", "color": "gold"}]
-
-    # A chat message shown when there is someone else's claim in your selection
-    other-claim-in-selection: >
-      {"text": "\nThere is someone else's claim in your selection!.\n", "color": "red"}
-
-    # A chat message shown when your team doesn't have any chunks left to claim
-    no-chunks-left: >
-      {"text":"You don't have any chunks left to claim!", "color":"red"}
 
 # Disables the vanilla /reload command. WE DO NOT RECOMMEND USING THIS COMMAND. PLEASE RESTART THE SERVER.
 disable-reload-command: true
