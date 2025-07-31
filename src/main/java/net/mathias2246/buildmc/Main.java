@@ -8,6 +8,7 @@ import net.mathias2246.buildmc.commands.BuildMcCommand;
 import net.mathias2246.buildmc.commands.CommandRegister;
 import net.mathias2246.buildmc.commands.ElytraZoneCommand;
 import net.mathias2246.buildmc.endEvent.EndListener;
+import net.mathias2246.buildmc.spawnElytra.DisableRocketListener;
 import net.mathias2246.buildmc.spawnElytra.ElytraZoneManager;
 import net.mathias2246.buildmc.spawnElytra.SpawnBoostListener;
 import net.mathias2246.buildmc.status.SetStatusCommand;
@@ -84,6 +85,7 @@ public final class Main extends JavaPlugin {
 
         if (config.getBoolean("spawn-elytra.enabled")) {
             getServer().getPluginManager().registerEvents(new SpawnBoostListener(zoneManager), this);
+            if (config.getBoolean("spawn-elytra.disable-rockets")) getServer().getPluginManager().registerEvents(new DisableRocketListener(), this);
             CommandRegister.register(new ElytraZoneCommand(zoneManager));
             zoneManager.loadZoneFromConfig();
         }

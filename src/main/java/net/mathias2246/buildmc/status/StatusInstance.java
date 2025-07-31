@@ -1,5 +1,7 @@
 package net.mathias2246.buildmc.status;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
@@ -18,6 +20,7 @@ public class StatusInstance implements ConfigurationSerializable {
     private final @NotNull String statusId;
     private final @Nullable Set<Permission> permissions;
     private final @Nullable Set<Team> teams;
+    private final @NotNull Component display;
     private final boolean hasRequirements; // Only for caching
 
     public @NotNull String getStatusId() {
@@ -32,11 +35,13 @@ public class StatusInstance implements ConfigurationSerializable {
         return teams;
     }
 
-    public StatusInstance(@NotNull String statusId, @Nullable Set<Permission> permissions, @Nullable Set<Team> teams) {
+    public StatusInstance(@NotNull String statusId, @Nullable Set<Permission> permissions, @Nullable Set<Team> teams, @Nullable Component display) {
         this.statusId = statusId;
         this.permissions = permissions;
         this.teams = teams;
         hasRequirements = (permissions != null || teams != null);
+        if (display == null) this.display = Component.text("null");
+        else this.display = display;
     }
 
     /**Checks if the given player can have this status.
@@ -81,6 +86,7 @@ public class StatusInstance implements ConfigurationSerializable {
         if (teams != null) {
             map.put("teams", teams.stream().map(Team::getName).collect(Collectors.toList()));
         }
+        map.put("display-name", MiniMessage.miniMessage().serialize(display));
         return map;
     }
 
@@ -107,7 +113,15 @@ public class StatusInstance implements ConfigurationSerializable {
             }
         }
 
-        return new StatusInstance(statusId, perms, teams);
+        // display-name as MiniMessage Component
+        Component display = null;
+        if (map.containsKey("display-name")) {
+            if (map.get("display-name") instanceof String s) {
+                display = MiniMessage.miniMessage().deserialize(s);
+            }
+        }
+
+        return new StatusInstance(statusId, perms, teams, display);
     }
 
 }

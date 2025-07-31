@@ -87,8 +87,8 @@ public class LanguageManager {
     }
 
     private static Locale toLocale(String filename) {
-        String baseName = filename.replace(".yml", "").replace('-', '_');
-        return Locale.forLanguageTag(baseName.replace('_', '-'));
+        String baseName = filename.replace(".yml", "").replace('_', '-');
+        return Locale.forLanguageTag(baseName);
     }
 
     private static Map<String, Object> flatten(String prefix, Map<?, ?> input) {

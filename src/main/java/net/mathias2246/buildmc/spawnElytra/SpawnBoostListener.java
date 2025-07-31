@@ -63,9 +63,11 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
     public static void stopFlying(@NotNull Player player) {
         player.removeMetadata("uses_spawn_elytra_boost", plugin);
         player.removeMetadata("uses_spawn_elytra", plugin);
+        player.setFallDistance(0);
         if (isSurvival(player)) player.setAllowFlight(false);
         player.setFlying(false);
         player.setGliding(false);
+
     }
 
     /**Makes the player glide using the spawn-elytra.*/
@@ -96,13 +98,17 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
 
             if (isUsingSpawnElytra(player) && !player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType().isAir()) {
                 stopFlying(player);
-            }
-
-            if (!player.isGliding()) {
+            } else if (!player.isGliding()) {
                 boolean inZone = zoneManager.isInZone(player);
                 player.setAllowFlight(inZone);
             }
         }
+    }
+
+    // Fixes elytra not closing when changing gamemode
+    @EventHandler
+    public void onGamemodeChange(PlayerGameModeChangeEvent event) {
+        if (event.getNewGameMode() != GameMode.SURVIVAL && event.getNewGameMode() != GameMode.ADVENTURE) stopFlying(event.getPlayer());
     }
 
     // Fixes player state not resetting when reconnecting
@@ -134,14 +140,16 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
         setPlayerFlying(player);
 
         if (boostEnabled && !isPlayerBoosted(player)) {
+
             audiences.player(player).sendActionBar(Message.msg(player, "messages.spawn-elytra.boost-hint"));
         }
     }
 
     @EventHandler
     public void onSwapItem(PlayerSwapHandItemsEvent event) {
-        Player player = event.getPlayer();
         if (!boostEnabled) return;
+
+        Player player = event.getPlayer();
         if (!isUsingSpawnElytra(player) || isPlayerBoosted(player)) return;
 
         event.setCancelled(true);
@@ -151,7 +159,6 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
 
     @EventHandler
     public void onDamage(EntityDamageEvent event) {
-        if (event.getEntityType() != EntityType.PLAYER) return;
         if (!(event.getEntity() instanceof Player player)) return;
 
         if (isUsingSpawnElytra(player) && (
@@ -163,30 +170,15 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
 
     @EventHandler
     public void onToggleGlide(EntityToggleGlideEvent event) {
-        if (event.getEntityType() != EntityType.PLAYER) return;
         if (!(event.getEntity() instanceof Player player)) return;
 
         if (isUsingSpawnElytra(player)) {
+
             event.setCancelled(true);
         }
     }
 
-    @EventHandler
-    public void onFireworkUse(PlayerInteractEvent event) {
-        if (!config.getBoolean("spawn-elytra.disable-rockets")) return;
 
-        Player player = event.getPlayer();
-
-        if (!isUsingSpawnElytra(player)) return;
-
-        ItemStack item = event.getItem();
-        if (item != null && item.getType() == Material.FIREWORK_ROCKET) {
-            event.setCancelled(true);
-
-            Component text = Message.msg(player, "messages.spawn-elytra.firework-disabled-hint");
-            audiences.player(player).sendActionBar(text);
-        }
-    }
 
     // Fixes Issue where players are gliding when riding entities that are not on the ground
     @EventHandler

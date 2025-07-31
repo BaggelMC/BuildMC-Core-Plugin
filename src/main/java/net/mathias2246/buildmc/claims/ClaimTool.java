@@ -33,15 +33,11 @@ public class ClaimTool implements Listener {
 
     public static final Material CLAIM_TOOL_ITEM = Material.WOODEN_HOE;
 
-    public static final ItemStack CLAIM_TOOL_ITEMSTACK;
+    public static ItemStack claimToolItemstack;
 
     public static void setup() {
-
-    }
-
-    static {
-        CLAIM_TOOL_ITEMSTACK = new ItemStack(CLAIM_TOOL_ITEM);
-        ItemMeta m = CLAIM_TOOL_ITEMSTACK.getItemMeta();
+        claimToolItemstack = new ItemStack(CLAIM_TOOL_ITEM);
+        ItemMeta m = claimToolItemstack.getItemMeta();
         if (m != null) {
 
             m.setTool(null);
@@ -62,13 +58,13 @@ public class ClaimTool implements Listener {
             m.setEnchantmentGlintOverride(true);
             m.setEnchantable(null);
             m.getPersistentDataContainer().set(CLAIM_TOOL_ITEM_PDC_KEY, PersistentDataType.BOOLEAN, true);
-            CLAIM_TOOL_ITEMSTACK.setItemMeta(m);
+            claimToolItemstack.setItemMeta(m);
         }
     }
 
     /**Gives the custom claim-tool to the given player*/
     public static void giveToolToPlayer(@NotNull Player player) {
-        player.getInventory().addItem(CLAIM_TOOL_ITEMSTACK);
+        player.getInventory().addItem(claimToolItemstack);
     }
 
     /**Checks if the given ItemStack is a claim-tool item*/
@@ -77,8 +73,7 @@ public class ClaimTool implements Listener {
         var meta = item.getItemMeta();
         if (meta == null) return false;
         var pdc = meta.getPersistentDataContainer();
-        if (!pdc.has(CLAIM_TOOL_ITEM_PDC_KEY)) return false;
-        return Boolean.TRUE.equals(pdc.get(CLAIM_TOOL_ITEM_PDC_KEY, PersistentDataType.BOOLEAN));
+        return pdc.has(CLAIM_TOOL_ITEM_PDC_KEY);
     }
 
     @EventHandler
@@ -89,6 +84,11 @@ public class ClaimTool implements Listener {
         Player player = event.getPlayer();
 
         if (!player.isSneaking()) {
+            if (!ClaimManager.isNotClaimedOrOwn(ClaimManager.getPlayerTeam(player), player.getLocation())) {
+                audiences.player(player).sendMessage(Message.msg(player, "messages.claims.tool.other-claim-in-selection"));
+                Sounds.playSound(player, Sounds.MISTAKE);
+                return;
+            }
             Sounds.playSound(player, Sounds.SUCCESS);
             player.setMetadata(
                     "claim_tool_pos1",
@@ -156,6 +156,8 @@ public class ClaimTool implements Listener {
         }
 
         ClaimManager.forceClaimArea(team, world, sx, sz, ex, ez);
+
+        player.removeMetadata("claim_tool_pos1", plugin);
 
         Sounds.playSound(player, Sounds.SUCCESS);
         audiences.player(player).sendMessage(

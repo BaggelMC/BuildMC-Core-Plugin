@@ -51,7 +51,7 @@ public class ElytraZoneManager {
         if (boundingBox == null || world == null) return false;
         Location loc = player.getLocation();
         return world.equals(loc.getWorld()) &&
-                boundingBox.contains(loc.getX(), loc.getY(), loc.getZ());
+                boundingBox.contains(loc.toVector());
     }
 
     private void saveZoneToConfig() {
