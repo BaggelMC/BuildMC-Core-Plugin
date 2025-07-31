@@ -1,0 +1,176 @@
+package net.mathias2246.buildmc.claims;
+
+
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
+import net.mathias2246.buildmc.util.LocationUtil;
+import net.mathias2246.buildmc.util.Message;
+import net.mathias2246.buildmc.util.Sounds;
+import org.bukkit.*;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemRarity;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.metadata.*;
+import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.scoreboard.Team;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.Objects;
+
+import static net.mathias2246.buildmc.Main.*;
+
+@SuppressWarnings("UnstableApiUsage")
+public class ClaimTool implements Listener {
+
+    public static final @NotNull NamespacedKey CLAIM_TOOL_ITEM_PDC_KEY = Objects.requireNonNull(NamespacedKey.fromString("buildmc:is_claim_tool_item"));
+
+    public static final Material CLAIM_TOOL_ITEM = Material.WOODEN_HOE;
+
+    public static ItemStack claimToolItemstack;
+
+    public static void setup() {
+        claimToolItemstack = new ItemStack(CLAIM_TOOL_ITEM);
+        ItemMeta m = claimToolItemstack.getItemMeta();
+        if (m != null) {
+
+            m.setTool(null);
+            m.setItemName("Select Claim Corners");
+            m.setLore(
+                    List.of(
+                            "Use this tool to set the corners of your teams claim.",
+                            "After setting the first corner by clicking with the tool select the second corner by sneak clicking.",
+                            "When selecting on of your existing claims it is removed."
+                    )
+            );
+            m.addItemFlags(
+                    ItemFlag.HIDE_ATTRIBUTES,
+                    ItemFlag.HIDE_UNBREAKABLE
+            );
+            m.setUnbreakable(true);
+            m.setRarity(ItemRarity.UNCOMMON);
+            m.setEnchantmentGlintOverride(true);
+            m.setEnchantable(null);
+            m.getPersistentDataContainer().set(CLAIM_TOOL_ITEM_PDC_KEY, PersistentDataType.BOOLEAN, true);
+            claimToolItemstack.setItemMeta(m);
+        }
+    }
+
+    /**Gives the custom claim-tool to the given player*/
+    public static void giveToolToPlayer(@NotNull Player player) {
+        player.getInventory().addItem(claimToolItemstack);
+    }
+
+    /**Checks if the given ItemStack is a claim-tool item*/
+    public static boolean isClaimTool(@Nullable ItemStack item) {
+        if (item == null) return false;
+        var meta = item.getItemMeta();
+        if (meta == null) return false;
+        var pdc = meta.getPersistentDataContainer();
+        return pdc.has(CLAIM_TOOL_ITEM_PDC_KEY);
+    }
+
+    @EventHandler
+    public void onPlayerUseHoe(PlayerInteractEvent event) {
+        if (!isClaimTool(event.getItem())) return;
+
+        event.setCancelled(true);
+        Player player = event.getPlayer();
+
+        if (!player.isSneaking()) {
+            if (!ClaimManager.isNotClaimedOrOwn(ClaimManager.getPlayerTeam(player), player.getLocation())) {
+                player.sendMessage(Message.msg(player, "messages.claims.tool.other-claim-in-selection"));
+                Sounds.playSound(player, Sounds.MISTAKE);
+                return;
+            }
+            Sounds.playSound(player, Sounds.SUCCESS);
+            player.setMetadata(
+                    "claim_tool_pos1",
+                    new FixedMetadataValue(
+                            plugin,
+                            LocationUtil.serialize(player.getLocation())
+                    )
+            );
+            player.sendMessage(Message.msg(player, "messages.claims.tool.successfully-set-pos"));
+        } else {
+            // Fail if the player has no first position set
+            if (!player.hasMetadata("claim_tool_pos1")) {
+                player.sendActionBar(Message.msg(player, "messages.claims.tool.missing-first-pos"));
+                Sounds.playSound(player, Sounds.MISTAKE);
+                return;
+            }
+
+            var team = ClaimManager.getPlayerTeam(player);
+            // Fail if the player is in no team
+            if (team == null) {
+                player.sendMessage(
+                        Message.msg(player, "messages.claims.tool.no-team-to-select")
+                );
+                Sounds.playSound(player, Sounds.MISTAKE);
+                return;
+            }
+
+            tryClaimArea(
+                    player,
+                    team,
+                    LocationUtil.deserialize(player.getMetadata("claim_tool_pos1").getFirst().asString()),
+                    player.getLocation()
+            );
+        }
+    }
+
+    private static void tryClaimArea(@NotNull Player player, @NotNull Team team, @NotNull Location from, @NotNull Location to) {
+        int sx = Math.min(from.getChunk().getX(), to.getChunk().getX());
+        int sz = Math.min(from.getChunk().getZ(), to.getChunk().getZ());
+        int ex = Math.max(from.getChunk().getX(), to.getChunk().getX());
+        int ez = Math.max(from.getChunk().getZ(), to.getChunk().getZ());
+
+        World world = from.getWorld();
+        if (world == null) return;
+
+        int count = 0;
+
+        for (int z = sz; z <= ez; z++) {
+            for (int x = sx; x <= ex; x++) {
+                Chunk chunk = world.getChunkAt(x, z);
+                // If someone else's claim is in this selection, fail
+                if (!ClaimManager.isNotClaimedOrOwn(team, chunk)) {
+                    player.sendMessage(Message.msg(player, "messages.claims.tool.other-claim-in-selection"));
+                    Sounds.playSound(player, Sounds.MISTAKE);
+                    return;
+                } else if (!ClaimManager.hasOwner(chunk)) {
+                    count++;
+                    if (count > ClaimManager.getChunksLeft(team)) { // If your team has no chunks left to claim, fail
+                        player.sendMessage(Message.msg(player, "messages.claims.tool.no-chunks-left"));
+                        Sounds.playSound(player, Sounds.MISTAKE);
+                        return;
+                    }
+                }
+            }
+        }
+
+        ClaimManager.forceClaimArea(team, world, sx, sz, ex, ez);
+
+        player.removeMetadata("claim_tool_pos1", plugin);
+
+        Sounds.playSound(player, Sounds.SUCCESS);
+        player.sendMessage(
+            buildSuccessMessage(player, team)
+        );
+    }
+
+
+    // Replaces the %chunks_left% placeholder with the number of chunks left
+    private static Component buildSuccessMessage(@NotNull Player player, @NotNull Team team) {
+        int i = ClaimManager.getChunksLeft(team);
+        var r = TextReplacementConfig.builder().matchLiteral("%chunks_left%").replacement(Integer.toString(i));
+
+        return Message.msg(player, "messages.claims.tool.successfully-claimed-area").replaceText(r.build());
+    }
+}
