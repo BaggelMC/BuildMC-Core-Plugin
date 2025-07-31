@@ -10,7 +10,7 @@ public class StatusConfig extends ConfigurationManager {
     public static final Map<String, StatusInstance> loadedStatuses = new HashMap<>();
 
     public StatusConfig() {
-        super("src/resources/status.yml");
+        super("status.yml");
     }
 
     @Override

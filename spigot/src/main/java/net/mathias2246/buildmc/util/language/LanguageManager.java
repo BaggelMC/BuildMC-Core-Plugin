@@ -26,7 +26,7 @@ public class LanguageManager {
     private static boolean initialized = false;
 
     static {
-        LANG_FOLDER = new File(plugin.getDataFolder(), "src/resources/lang");
+        LANG_FOLDER = new File(plugin.getDataFolder(), "lang");
         if (!LANG_FOLDER.exists() && !LANG_FOLDER.mkdirs()) {
             logger.severe("Could not create language folder: " + LANG_FOLDER.getPath());
         }
@@ -72,7 +72,7 @@ public class LanguageManager {
         for (String fileName : DEFAULT_FILES) {
             File targetFile = new File(LANG_FOLDER, fileName);
             if (!targetFile.exists()) {
-                try (var in = Main.class.getResourceAsStream("/src/resources/lang/" + fileName)) {
+                try (var in = Main.class.getResourceAsStream("/lang/" + fileName)) {
                     if (in != null) {
                         java.nio.file.Files.copy(in, targetFile.toPath());
                     } else {

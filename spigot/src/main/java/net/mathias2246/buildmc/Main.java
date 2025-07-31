@@ -64,9 +64,9 @@ public final class Main extends JavaPlugin {
 
         LanguageManager.init();
 
-        configFile = new File(plugin.getDataFolder(), "src/resources/config.yml");
+        configFile = new File(plugin.getDataFolder(), "config.yml");
 
-        if (!configFile.exists()) this.saveResource("src/resources/config.yml", false);
+        if (!configFile.exists()) this.saveResource("config.yml", false);
         config = this.getConfig();
 
         audiences = BukkitAudiences.create(plugin);
