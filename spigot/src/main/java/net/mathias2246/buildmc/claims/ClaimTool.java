@@ -41,14 +41,6 @@ public class ClaimTool implements Listener {
         if (m != null) {
 
             m.setTool(null);
-            m.setItemName("Select Claim Corners");
-            m.setLore(
-                    List.of(
-                            "Use this tool to set the corners of your teams claim.",
-                            "After setting the first corner by clicking with the tool select the second corner by sneak clicking.",
-                            "When selecting on of your existing claims it is removed."
-                    )
-            );
             m.addItemFlags(
                     ItemFlag.HIDE_ATTRIBUTES,
                     ItemFlag.HIDE_UNBREAKABLE
@@ -64,6 +56,23 @@ public class ClaimTool implements Listener {
 
     /**Gives the custom claim-tool to the given player*/
     public static void giveToolToPlayer(@NotNull Player player) {
+        var i = claimToolItemstack.clone();
+        ItemMeta m = i.getItemMeta();
+
+        if (m != null) {
+
+            m.setItemName(Message.msgStr(player, "messages.claims.tool.tool-name"));
+            m.setLore(
+                    List.of(
+                            Message.msgStr(player, "messages.claims.tool.tool-tooltip-line1"),
+                            Message.msgStr(player, "messages.claims.tool.tool-tooltip-line2"),
+                            Message.msgStr(player, "messages.claims.tool.tool-tooltip-line3"),
+                            Message.msgStr(player, "messages.claims.tool.tool-tooltip-line4")
+                    )
+            );
+            i.setItemMeta(m);
+        }
+
         player.getInventory().addItem(claimToolItemstack);
     }
 

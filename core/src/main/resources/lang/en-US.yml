@@ -36,11 +36,11 @@ messages:
       # Tool-name will only display formating on the paper version of this plugin.
       # When on spigot formating is ignored.
       tool-name: "Select Claim Corners"
-      # TODO: tool-tooltip currently doesn't support formating even on paper
-      tool-tooltip: |
-        Use this tool to set the corners of your teams claim.
-        After setting the first corner by clicking with the tool select the second corner by sneak clicking.
-        When selecting on of your existing claims it is removed.
+
+      tool-tooltip-line1: "Use this tool to set the corners of your teams claim."
+      tool-tooltip-line2: "After setting the first corner by clicking with the tool select the second corner by sneak clicking."
+      tool-tooltip-line3: "When selecting on of your existing claims it is removed."
+      tool-tooltip-line4: ""
 
       missing-first-pos: "<red>You need to select the other corner first!</red>"
       successfully-set-pos: "<green>Successfully set position!</green>"
