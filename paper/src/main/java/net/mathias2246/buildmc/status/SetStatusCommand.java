@@ -1,9 +1,9 @@
 package net.mathias2246.buildmc.status;
 
-import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
+import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.commands.CustomCommand;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +35,7 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
                         return 0;
                     }
                     PlayerStatus.removePlayerStatus(player);
+                    player.sendMessage(Component.translatable( "messages.status.successfully-removed"));
                     return 1;
                 }
         );
@@ -54,7 +55,7 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
                 .executes(
                         (command) -> {
                             if (!(command.getSource().getSender() instanceof Player player)) {
-                                command.getSource().getSender().sendMessage("Only a player can have a status!");
+                                command.getSource().getSender().sendMessage(Component.translatable("messages.status.only-players"));
                                 return 0;
                             }
                             PlayerStatus.setPlayerStatus(player, command.getArgument("status_id", String.class));
@@ -73,13 +74,10 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
                 }
         );
 
-        setSub.then(
-                setSubArg
-        );
-
+        setSub.then(setSubArg);
 
         cmd.then(removeSub);
-        cmd.then(setSubArg);
+        cmd.then(setSub);
 
         return cmd.build();
     }

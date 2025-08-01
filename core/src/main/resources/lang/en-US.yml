@@ -33,6 +33,15 @@ messages:
   claims:
     tool:
 
+      # Tool-name will only display formating on the paper version of this plugin.
+      # When on spigot formating is ignored.
+      tool-name: "Select Claim Corners"
+      # TODO: tool-tooltip currently doesn't support formating even on paper
+      tool-tooltip: |
+        Use this tool to set the corners of your teams claim.
+        After setting the first corner by clicking with the tool select the second corner by sneak clicking.
+        When selecting on of your existing claims it is removed.
+
       missing-first-pos: "<red>You need to select the other corner first!</red>"
       successfully-set-pos: "<green>Successfully set position!</green>"
 
@@ -47,3 +56,11 @@ messages:
       other-claim-in-selection: "\n<red>There is someone else's claim in your selection!</red>\n"
 
       no-chunks-left: "<red>You don't have any chunks left to claim!</red>"
+
+  status:
+    only-players: "<red>Only players can have a status!</red>"
+    successfully-removed: "<green>Successfully removed your status!</green>"
+    not-found: "<red>Seems like this team doesn't exist</red>"
+    successfully-set: "<green>Successfully set Set status!</green>"
+    not-in-team: "<red>You are not in the required team for this status!</red>"
+    no-permission: "<red>You don't have the required permissions for this status!</red>"

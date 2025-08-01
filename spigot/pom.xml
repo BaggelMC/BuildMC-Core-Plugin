@@ -96,9 +96,14 @@
                             <pattern>dev.jorel.commandapi</pattern>
                             <shadedPattern>net.mathias2246.buildmc.commandAPI</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>net.mathias2246</pattern>
+                            <shadedPattern>net.mathias2246</shadedPattern>
+                        </relocation>
                     </relocations>
                 </configuration>
             </plugin>
+
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>3.3.1</version>

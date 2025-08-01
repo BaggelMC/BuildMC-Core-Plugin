@@ -23,6 +23,10 @@ public class StatusInstance implements ConfigurationSerializable {
     private final @NotNull Component display;
     private final boolean hasRequirements; // Only for caching
 
+    public @NotNull Component getDisplay() {
+        return display;
+    }
+
     public @NotNull String getStatusId() {
         return statusId;
     }
@@ -46,9 +50,9 @@ public class StatusInstance implements ConfigurationSerializable {
 
     /**Checks if the given player can have this status.
      * @return True if, the player has the optional permissions and or team and is not null.*/
-    public boolean allowPlayer(Player player) {
-        if (player == null) return false;
-        if (!hasRequirements) return true;
+    public AllowStatus allowPlayer(Player player) {
+        if (player == null) return AllowStatus.NOT_ALLOWED;
+        if (!hasRequirements) return AllowStatus.ALLOW;
 
         boolean allow = false;
         if (permissions != null) {
@@ -58,22 +62,20 @@ public class StatusInstance implements ConfigurationSerializable {
                     break;
                 }
             }
-        }
-        if (!allow) return false;
+        } else allow = true;
+        if (!allow) return AllowStatus.MISSING_PERMISSION;
 
         if (teams != null) {
-            allow = false;
             Team team = ClaimManager.getPlayerTeam(player);
-            if (team == null) return false;
+            if (team == null) return AllowStatus.NOT_IN_TEAM;
 
             for (var t : teams) {
                 if (team.equals(t)) {
-                    allow = true;
-                    break;
+                    return AllowStatus.ALLOW;
                 }
             }
         }
-        return allow;
+        return AllowStatus.NOT_IN_TEAM;
     }
 
     @Override
@@ -104,7 +106,7 @@ public class StatusInstance implements ConfigurationSerializable {
         // Teams as names -> get from Bukkit Scoreboard
         Set<Team> teams = null;
         if (map.containsKey("teams")) {
-            if ((map.get("team") instanceof List<?> teamNames)) {
+            if ((map.get("teams") instanceof List<?> teamNames)) {
                 teams = teamNames.stream()
                         .map(name -> Objects.requireNonNull(
                                 Objects.requireNonNull(org.bukkit.Bukkit.getScoreboardManager())
@@ -124,4 +126,11 @@ public class StatusInstance implements ConfigurationSerializable {
         return new StatusInstance(statusId, perms, teams, display);
     }
 
+
+    public enum AllowStatus {
+        ALLOW,
+        NOT_ALLOWED,
+        MISSING_PERMISSION,
+        NOT_IN_TEAM
+    }
 }

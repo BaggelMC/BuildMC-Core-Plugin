@@ -33,20 +33,11 @@ public class BuildMcCommand implements CustomCommand {
         var endSub = new EndEventCommand().getCommandBuilder();
         cmd.then(endSub);
 
-//        var giveClaimTool = Commands.literal("claimtool");
-//        giveClaimTool.executes(
-//                (command) -> {
-//                    if (!(command.getSource().getSender() instanceof Player player)) {
-//                        command.getSource().getSender().sendMessage(Message.noPlayerErrorMsg(command.getSource().getSender()));
-//                        return 0;
-//                    }
-//                    ClaimTool.giveToolToPlayer(player);
-//                    return 1;
-//                }
-//        );
+        var elytraSub = new ElytraZoneCommand().getSubCommand();
+        cmd.then(elytraSub);
 
-        // Register /buildmc sub-commands
         cmd.then(debugSub);
+
 
         return cmd.build();
     }

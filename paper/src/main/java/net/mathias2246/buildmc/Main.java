@@ -4,11 +4,11 @@ import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.mathias2246.buildmc.claims.ClaimCommand;
 import net.mathias2246.buildmc.claims.ClaimTool;
 import net.mathias2246.buildmc.commands.BuildMcCommand;
-import net.mathias2246.buildmc.commands.ElytraZoneCommand;
 import net.mathias2246.buildmc.endEvent.EndListener;
-import net.mathias2246.buildmc.spawnElytra.DisableRocketListener;
+import net.mathias2246.buildmc.spawnElytra.DisableBoostListener;
 import net.mathias2246.buildmc.spawnElytra.ElytraZoneManager;
 import net.mathias2246.buildmc.spawnElytra.SpawnBoostListener;
+import net.mathias2246.buildmc.status.PlayerStatus;
 import net.mathias2246.buildmc.status.SetStatusCommand;
 import net.mathias2246.buildmc.status.StatusConfig;
 import net.mathias2246.buildmc.util.Message;
@@ -42,7 +42,7 @@ public final class Main extends JavaPlugin {
 
     public static File pluginFolder;
 
-    private static final ElytraZoneManager zoneManager = new ElytraZoneManager();
+    public static final ElytraZoneManager zoneManager = new ElytraZoneManager();
 
     public static StatusConfig statusConfig;
 
@@ -76,7 +76,7 @@ public final class Main extends JavaPlugin {
 
         if (config.getBoolean("spawn-elytra.enabled")) {
             getServer().getPluginManager().registerEvents(new SpawnBoostListener(zoneManager), this);
-            if (config.getBoolean("spawn-elytra.disable-rockets")) getServer().getPluginManager().registerEvents(new DisableRocketListener(), this);
+            if (config.getBoolean("spawn-elytra.disable-rockets")) getServer().getPluginManager().registerEvents(new DisableBoostListener(), this);
 
             zoneManager.loadZoneFromConfig();
         }
@@ -87,11 +87,11 @@ public final class Main extends JavaPlugin {
 
         if (config.getBoolean("status.enabled")) {
             statusConfig = new StatusConfig();
+            getServer().getPluginManager().registerEvents(new PlayerStatus(), this);
         }
 
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
             commands.registrar().register(new BuildMcCommand().getCommand());
-            if (config.getBoolean("spawn-elytra.enabled")) commands.registrar().register(new ElytraZoneCommand(zoneManager).getCommand());
 
             if (config.getBoolean("status.enabled")) commands.registrar().register(new SetStatusCommand(statusConfig).getCommand());
 

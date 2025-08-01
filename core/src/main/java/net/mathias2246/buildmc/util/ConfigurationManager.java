@@ -3,15 +3,20 @@ package net.mathias2246.buildmc.util;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
 
-import static net.mathias2246.buildmc.Main.plugin;
-import static net.mathias2246.buildmc.Main.pluginFolder;
 
 public abstract class ConfigurationManager {
+
+    private final Plugin plugin;
+
+    public Plugin getPlugin() {
+        return plugin;
+    }
 
     private File configFile;
 
@@ -19,9 +24,10 @@ public abstract class ConfigurationManager {
 
     public final FileConfiguration configuration;
 
-    public ConfigurationManager(@NotNull String resourceName) {
+    public ConfigurationManager(@NotNull Plugin plugin, @NotNull String resourceName) {
+        this.plugin = plugin;
         this.resourceName = resourceName;
-        this.configFile = new File(pluginFolder, resourceName);
+        this.configFile = new File(plugin.getDataFolder(), resourceName);
 
         saveFromResource();
         configuration = YamlConfiguration.loadConfiguration(configFile);

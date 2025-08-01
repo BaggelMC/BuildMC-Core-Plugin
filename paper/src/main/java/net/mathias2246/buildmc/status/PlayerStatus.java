@@ -1,5 +1,6 @@
 package net.mathias2246.buildmc.status;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,13 +21,31 @@ public class PlayerStatus implements Listener {
 
     public static boolean doesStatusExist(String status) {
         if (status == null) return false;
-
-        return true;
+        return StatusConfig.loadedStatuses.containsKey(status);
     }
 
     public static void setPlayerStatus(@NotNull Player player, String status) {
-        if (!doesStatusExist(status)) return;
+        if (!doesStatusExist(status)) {
+            player.sendMessage(Component.translatable("messages.status.not-found"));
+            return;
+        }
 
+        StatusInstance s = StatusConfig.loadedStatuses.get(status);
+        var allowed = s.allowPlayer(player);
+        if (!allowed.equals(StatusInstance.AllowStatus.ALLOW)) {
+            switch (allowed) {
+                case NOT_IN_TEAM -> player.sendMessage(Component.translatable("messages.status.not-in-team"));
+                case MISSING_PERMISSION -> player.sendMessage(Component.translatable("messages.status.no-permission"));
+            }
+            return;
+        }
+
+        Component c = s.getDisplay().asComponent().append(player.name());
+
+        player.playerListName(c);
+        player.displayName(c);
+        player.customName(c);
+        player.setCustomNameVisible(true);
 
         player.getPersistentDataContainer().set(
                 PLAYER_STATUS_PDC,
@@ -34,10 +53,16 @@ public class PlayerStatus implements Listener {
                 status
         );
 
+        player.sendMessage(Component.translatable("messages.status.successfully-set"));
     }
 
     public static void removePlayerStatus(@NotNull Player player) {
         player.getPersistentDataContainer().remove(PLAYER_STATUS_PDC);
+
+        player.playerListName(null);
+        player.displayName(null);
+        player.customName(null);
+        player.setCustomNameVisible(false);
     }
 
     @EventHandler

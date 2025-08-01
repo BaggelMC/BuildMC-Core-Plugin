@@ -1,5 +1,6 @@
 package net.mathias2246.buildmc.status;
 
+import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.util.ConfigurationManager;
 
 import java.util.HashMap;
@@ -10,7 +11,7 @@ public class StatusConfig extends ConfigurationManager {
     public static final Map<String, StatusInstance> loadedStatuses = new HashMap<>();
 
     public StatusConfig() {
-        super("status.yml");
+        super(Main.plugin, "status.yml");
     }
 
     @Override

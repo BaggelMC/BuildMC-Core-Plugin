@@ -2,10 +2,13 @@ package net.mathias2246.buildmc.status;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.StringArgument;
+import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.commands.CustomCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.help.HelpTopic;
 import org.jetbrains.annotations.NotNull;
+
+import static net.mathias2246.buildmc.Main.audiences;
 
 public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCommand {
 
@@ -47,7 +50,7 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
                     (command) -> {
                         if (!(command.sender() instanceof Player player)) {
                             command.sender().sendMessage("Only a player can have a status!");
-                            return;
+
                         }
                         //PlayerStatus.setPlayerStatus(player, (String) command.args().get("set"));
                     }
@@ -57,7 +60,7 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
                                 .executes(
                                         (command) -> {
                                             if (!(command.sender() instanceof Player player)) {
-                                                command.sender().sendMessage("Only a player can have a status!");
+                                                audiences.sender(command.sender()).sendMessage(Component.translatable("messages.status.only-players"));
                                                 return;
                                             }
                                             PlayerStatus.setPlayerStatus(player, (String) command.args().get("status"));
@@ -66,6 +69,7 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
                                 .replaceSuggestions(
                                         (info, builder) -> {
                                             for (var k : StatusConfig.loadedStatuses.keySet()) {
+
                                                 builder.suggest(k);
                                             }
                                             return builder.buildFuture();

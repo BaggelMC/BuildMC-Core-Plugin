@@ -5,18 +5,16 @@
 # Players can set their status using '/status set <status id>'
 
 # # An example admin status that requires the 'buildmc.admin' permission
-#admin: # the status id
-#  display-name: > # the prefix for the player using this status
-#    <bold><red>[</red></bold><#ad3d3d>Admin<bold><red>]</red></bold>
+# admin: # the status id
+#  display-name: "<bold><red>[</red></bold><#ad3d3d>Admin<bold><red>]</red></bold> <reset>" # the prefix for the player using this status
 #  permissions: # the permission that can use this status
 #    - buildmc.admin
 #
 # # An example team status that requires no permissions, but requires you to be a member of the red team
 # # Here you can see how to use teams: https://minecraft.wiki/w/Commands/team
 #red-team:
-#  display-name: >
-#    <red>[Red]</red>
+#  display-name: "<red>[Red]</red> <reset>"
 #  permissions:
 #    - buildmc.player # Built-in permission every player has by default
-#  team: # The teams that can use this status
+#  teams: # The teams that can use this status
 #    - red

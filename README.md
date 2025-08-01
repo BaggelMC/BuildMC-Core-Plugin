@@ -25,13 +25,13 @@ BuildMC-Core provides a solid foundation for any Minecraft project. Designed for
 
 ---
 
-# For Players:
+# For Server Owners:
 
 If you're running your own server and want to use BuildMC-Core, here's how to install it:
 
 ### ✅ Requirements
 
-- A **Minecraft 1.21** server (Paper or Spigot recommended)
+- A **Minecraft 1.21.**\* server (Paper or Spigot recommended)
 - Java **17+** (Java 23 recommended)
 - BuildMC-Core plugin `.jar` file
 
@@ -54,7 +54,7 @@ If you're running your own server and want to use BuildMC-Core, here's how to in
   - [Spawn Elytra](docs/usage/spawn_elytra.md)
   - [End Event](docs/usage/end_event.md)
 - Compatible with most standard Paper/Spigot setups.
-- May require a permission setup for players/admins using permission managers like LuckPerms.
+- May require a permission setup for players/admins using permission managers like [LuckPerms](https://luckperms.net/).
 
 ---
 

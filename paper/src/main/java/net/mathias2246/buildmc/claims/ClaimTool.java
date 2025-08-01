@@ -21,6 +21,7 @@ import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -41,14 +42,6 @@ public class ClaimTool implements Listener {
         if (m != null) {
 
             m.setTool(null);
-            m.setItemName("Select Claim Corners");
-            m.setLore(
-                    List.of(
-                            "Use this tool to set the corners of your teams claim.",
-                            "After setting the first corner by clicking with the tool select the second corner by sneak clicking.",
-                            "When selecting on of your existing claims it is removed."
-                    )
-            );
             m.addItemFlags(
                     ItemFlag.HIDE_ATTRIBUTES,
                     ItemFlag.HIDE_UNBREAKABLE
@@ -64,7 +57,19 @@ public class ClaimTool implements Listener {
 
     /**Gives the custom claim-tool to the given player*/
     public static void giveToolToPlayer(@NotNull Player player) {
-        player.getInventory().addItem(claimToolItemstack);
+        var i = claimToolItemstack.clone();
+        var m = i.getItemMeta();
+        if (m != null) {
+            m.itemName(Message.msg(player, "messages.claims.tool.tool-name"));
+            List<Component> lore = new ArrayList<>();
+            for (var s : Message.msgStr(player, "messages.claims.tool.tool-tooltip").split("\n")) {
+                lore.add(Component.text(s));
+            }
+            m.lore(lore);
+            i.setItemMeta(m);
+        }
+
+        player.getInventory().addItem(i);
     }
 
     /**Checks if the given ItemStack is a claim-tool item*/

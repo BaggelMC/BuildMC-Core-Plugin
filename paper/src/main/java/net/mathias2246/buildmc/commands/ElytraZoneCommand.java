@@ -1,23 +1,20 @@
 package net.mathias2246.buildmc.commands;
 
-import com.mojang.brigadier.tree.LiteralCommandNode;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
-import net.mathias2246.buildmc.spawnElytra.ElytraZoneManager;
+import io.papermc.paper.command.brigadier.argument.resolvers.BlockPositionResolver;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public class ElytraZoneCommand implements CustomCommand {
+import static net.mathias2246.buildmc.Main.zoneManager;
 
-    private final ElytraZoneManager zoneManager;
+public class ElytraZoneCommand {
 
-    public ElytraZoneCommand(ElytraZoneManager zoneManager) {
-        this.zoneManager = zoneManager;
-    }
 
-    @Override
-    public LiteralCommandNode<CommandSourceStack> getCommand() {
+    public LiteralArgumentBuilder<CommandSourceStack> getSubCommand() {
+
         var cmd = Commands.literal("elytrazone");
         cmd.requires((command) -> command.getSender().hasPermission("buildmc.operator"));
 
@@ -28,12 +25,9 @@ public class ElytraZoneCommand implements CustomCommand {
                                         .executes((command) -> {
 
                                                     if (!(command.getSource().getExecutor() instanceof Player player)) return 0;
-                                                    Location loc = command.getArgument("loc", Location.class);
-                                                    if (loc == null) {
-                                                        // TODO: Implement error handling
-                                                        return 0;
-                                                    }
-                                                    zoneManager.setPos1(player, loc);
+                                                    BlockPositionResolver res = command.getArgument("loc", BlockPositionResolver.class);
+                                                    var loc = res.resolve(command.getSource());
+                                                    zoneManager.setPos1(player, new Location(player.getWorld(), loc.x(), loc.y(), loc.z()));
                                                     return 1;
                                                 })
                                         );
@@ -42,15 +36,18 @@ public class ElytraZoneCommand implements CustomCommand {
                                         .executes((command) -> {
 
                                                     if (!(command.getSource().getExecutor() instanceof Player player)) return 0;
-                                                    Location loc = command.getArgument("loc", Location.class);
-                                                    if (loc == null) {
-                                                        // TODO: Implement error handling
-                                                        return 0;
-                                                    }
-                                                    zoneManager.setPos2(player, loc);
+                                                    BlockPositionResolver res = command.getArgument("loc", BlockPositionResolver.class);
+                                                    var loc = res.resolve(command.getSource());
+                                                    zoneManager.setPos2(player, new Location(player.getWorld(), loc.x(), loc.y(), loc.z()));
                                                     return 1;
                                                 })
                                 );
-        return cmd.build();
+
+                setup.then(pos1);
+                setup.then(pos2);
+
+                cmd.then(setup);
+
+        return cmd;
     }
 }

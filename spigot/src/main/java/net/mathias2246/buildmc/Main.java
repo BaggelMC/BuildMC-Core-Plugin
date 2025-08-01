@@ -11,6 +11,7 @@ import net.mathias2246.buildmc.endEvent.EndListener;
 import net.mathias2246.buildmc.spawnElytra.DisableRocketListener;
 import net.mathias2246.buildmc.spawnElytra.ElytraZoneManager;
 import net.mathias2246.buildmc.spawnElytra.SpawnBoostListener;
+import net.mathias2246.buildmc.status.PlayerStatus;
 import net.mathias2246.buildmc.status.SetStatusCommand;
 import net.mathias2246.buildmc.status.StatusConfig;
 import net.mathias2246.buildmc.util.Message;
@@ -64,9 +65,9 @@ public final class Main extends JavaPlugin {
 
         LanguageManager.init();
 
-        configFile = new File(plugin.getDataFolder(), "src/resources/config.yml");
+        configFile = new File(plugin.getDataFolder(), "config.yml");
 
-        if (!configFile.exists()) this.saveResource("src/resources/config.yml", false);
+        if (!configFile.exists()) this.saveResource("config.yml", false);
         config = this.getConfig();
 
         audiences = BukkitAudiences.create(plugin);
@@ -98,7 +99,9 @@ public final class Main extends JavaPlugin {
         if (config.getBoolean("status.enabled")) {
             statusConfig = new StatusConfig();
             CommandRegister.register(new SetStatusCommand(statusConfig));
+            getServer().getPluginManager().registerEvents(new PlayerStatus(), this);
         }
+
         if (config.getBoolean("disable-reload-command")) {
             disableCommand("bukkit", "reload");
             disableCommand("bukkit", "rl");

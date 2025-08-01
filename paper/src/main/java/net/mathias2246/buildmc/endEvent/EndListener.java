@@ -1,8 +1,8 @@
 package net.mathias2246.buildmc.endEvent;
 
 import net.kyori.adventure.text.Component;
-import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.util.Message;
+import org.bukkit.PortalType;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -18,36 +18,37 @@ public class EndListener implements Listener {
 
     public static boolean allowEnd = false;
 
+    public static boolean disallowTntThroughEnd = true;
+
     public static void loadFromConfig() {
         allowEnd = config.getBoolean("end-event.allow-end", false);
+        disallowTntThroughEnd = config.getBoolean("disallow-tnt-through-end");
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityPortal(EntityPortalEvent event) {
-        if (config.getBoolean("disallow-tnt-through-end")) {
-            Entity entity = event.getEntity();
-            EntityType type = entity.getType();
 
-            if (type == EntityType.TNT || type == EntityType.TNT_MINECART || type == EntityType.CREEPER) {
-                event.setCancelled(true);
-                return;
+        if (!event.getPortalType().equals(PortalType.ENDER)) return;
+
+        if (allowEnd) {
+            if (disallowTntThroughEnd) {
+                Entity entity = event.getEntity();
+                EntityType type = entity.getType();
+
+                if (type == EntityType.TNT || type == EntityType.TNT_MINECART || type == EntityType.CREEPER) {
+                    event.setCancelled(true);
+                    return;
+                }
             }
+            return;
         }
-
-        if (allowEnd) return;
-
-        if (event.getTo() == null || event.getTo().getWorld() == null) return;
-
-        if (event.getTo().getWorld().getEnvironment() == World.Environment.THE_END) {
-            event.setCancelled(true);
-        }
+        event.setCancelled(true);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerPortal(PlayerPortalEvent event) {
-        if (allowEnd) return;
 
-        if (event.getTo() == null || event.getTo().getWorld() == null) return;
+        if (allowEnd) return;
 
         if (event.getTo().getWorld().getEnvironment() == World.Environment.THE_END) {
             event.setCancelled(true);
