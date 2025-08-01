@@ -38,7 +38,7 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
         removeSub.executes(
                 (command) -> {
                     if (!(command.sender() instanceof Player player)) {
-                        command.sender().sendMessage("Only a player can have a status!");
+                        audiences.sender(command.sender()).sendMessage(Component.translatable("messages.status.only-players"));
                         return;
                     }
                     PlayerStatus.removePlayerStatus(player);

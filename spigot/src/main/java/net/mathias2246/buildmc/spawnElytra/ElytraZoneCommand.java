@@ -1,9 +1,9 @@
-package net.mathias2246.buildmc.commands;
+package net.mathias2246.buildmc.spawnElytra;
 
 import dev.jorel.commandapi.arguments.LocationArgument;
 import dev.jorel.commandapi.arguments.LocationType;
 import dev.jorel.commandapi.CommandAPICommand;
-import net.mathias2246.buildmc.spawnElytra.ElytraZoneManager;
+import net.mathias2246.buildmc.commands.CustomCommand;
 import org.bukkit.Location;
 
 public class ElytraZoneCommand implements CustomCommand {

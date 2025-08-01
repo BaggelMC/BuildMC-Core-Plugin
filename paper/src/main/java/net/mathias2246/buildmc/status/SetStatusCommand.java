@@ -5,6 +5,7 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.commands.CustomCommand;
+import net.mathias2246.buildmc.util.Message;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,7 +32,7 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
         removeSub.executes(
                 (command) -> {
                     if (!(command.getSource().getSender() instanceof Player player)) {
-                        command.getSource().getSender().sendMessage("Only a player can have a status!");
+                        command.getSource().getSender().sendMessage(Component.translatable("messages.status.only-players"));
                         return 0;
                     }
                     PlayerStatus.removePlayerStatus(player);
@@ -44,7 +45,7 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
             .executes(
                     (command) -> {
                         if (!(command.getSource().getSender() instanceof Player player)) {
-                            command.getSource().getSender().sendMessage("Only a player can have a status!");
+                            command.getSource().getSender().sendMessage(Component.translatable("messages.status.only-players"));
                             return 0;
                         }
                         return 1;

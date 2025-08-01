@@ -6,7 +6,7 @@ import net.mathias2246.buildmc.claims.ClaimCommand;
 import net.mathias2246.buildmc.claims.ClaimTool;
 import net.mathias2246.buildmc.commands.BuildMcCommand;
 import net.mathias2246.buildmc.commands.CommandRegister;
-import net.mathias2246.buildmc.commands.ElytraZoneCommand;
+import net.mathias2246.buildmc.spawnElytra.ElytraZoneCommand;
 import net.mathias2246.buildmc.endEvent.EndListener;
 import net.mathias2246.buildmc.spawnElytra.DisableRocketListener;
 import net.mathias2246.buildmc.spawnElytra.ElytraZoneManager;

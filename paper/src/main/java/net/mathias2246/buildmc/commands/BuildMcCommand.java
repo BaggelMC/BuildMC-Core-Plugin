@@ -4,6 +4,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.mathias2246.buildmc.endEvent.EndEventCommand;
+import net.mathias2246.buildmc.spawnElytra.ElytraZoneCommand;
 import org.bukkit.permissions.Permission;
 
 public class BuildMcCommand implements CustomCommand {

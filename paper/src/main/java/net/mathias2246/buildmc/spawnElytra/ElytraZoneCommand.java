@@ -1,4 +1,4 @@
-package net.mathias2246.buildmc.commands;
+package net.mathias2246.buildmc.spawnElytra;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
