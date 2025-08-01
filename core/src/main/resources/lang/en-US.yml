@@ -59,6 +59,10 @@ messages:
 
       no-chunks-left: "<red>You don't have any chunks left to claim!</red>"
 
+    who:
+      message: "<gold>This chunk is owned by <white>%owner%</white>.</gold>"
+      unclaimed: "<gold>This chunk belongs to nobody.</gold>"
+
     successfully-whitelisted: "<green>You have successfully whitelisted player!</green>"
     successfully-removed-whitelisted: "<green>You have successfully removed a player from your whitelist!</green>"
 
