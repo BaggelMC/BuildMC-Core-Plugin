@@ -2,6 +2,8 @@ package net.mathias2246.buildmc;
 
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.mathias2246.buildmc.claims.ClaimCommand;
+import net.mathias2246.buildmc.claims.ClaimListener;
+import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.claims.ClaimTool;
 import net.mathias2246.buildmc.commands.BuildMcCommand;
 import net.mathias2246.buildmc.endEvent.EndListener;
@@ -46,6 +48,8 @@ public final class Main extends JavaPlugin {
 
     public static StatusConfig statusConfig;
 
+    public static ClaimManager claimManager;
+
     @Override
     public void onEnable() {
         // Plugin startup logic
@@ -82,7 +86,8 @@ public final class Main extends JavaPlugin {
         }
 
         if (config.getBoolean("claims.enabled")) {
-            // TODO: Add event listener to suppress interactions, etc.
+            getServer().getPluginManager().registerEvents(new ClaimListener(), this);
+            claimManager = new ClaimManager(this, "claim-whitelists.yml");
         }
 
         if (config.getBoolean("status.enabled")) {
@@ -113,6 +118,7 @@ public final class Main extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+
     }
 
     private void disableCommand(String namespace, String commandName) {

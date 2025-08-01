@@ -74,8 +74,9 @@ public class StatusInstance implements ConfigurationSerializable {
                     return AllowStatus.ALLOW;
                 }
             }
+            return AllowStatus.NOT_IN_TEAM;
         }
-        return AllowStatus.NOT_IN_TEAM;
+        return AllowStatus.ALLOW;
     }
 
     @Override

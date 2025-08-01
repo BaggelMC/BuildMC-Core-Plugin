@@ -28,6 +28,8 @@ messages:
     not-a-player: "<red>This command can only be used by players.</red>"
     not-a-player-str: "This command can only be used by players."
 
+    not-in-a-team: "<red>You need to be in a team to perform this action.</red>"
+
     command-disabled: "<red>This command has been disabled.</red>"
 
   claims:
@@ -56,6 +58,9 @@ messages:
       other-claim-in-selection: "\n<red>There is someone else's claim in your selection!</red>\n"
 
       no-chunks-left: "<red>You don't have any chunks left to claim!</red>"
+
+    successfully-whitelisted: "<green>You have successfully whitelisted player!</green>"
+    successfully-removed-whitelisted: "<green>You have successfully removed a player from your whitelist!</green>"
 
     help-message: |-
       <gold>------------- <green>Claims Help</green> -------------</gold>
