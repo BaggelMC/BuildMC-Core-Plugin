@@ -72,6 +72,12 @@ messages:
       <gray>- Select your claimed area again to delete it.
       <gold>------------------------------------</gold>
 
+    not-accessible:
+      container: "<red>This container is protected by a land claim.</red>"
+      entity-container: "<red>This entity is protected by a land claim.</red>"
+      block-break: "<red>This block is protected by a land claim.</red>"
+      block-place: "<red>This area is protected by a land claim.</red>"
+
   status:
     only-players: "<red>Only players can have a status!</red>"
     successfully-removed: "<green>Successfully removed your status!</green>"

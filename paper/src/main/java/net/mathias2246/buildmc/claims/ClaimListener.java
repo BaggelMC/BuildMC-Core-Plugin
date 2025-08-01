@@ -1,5 +1,6 @@
 package net.mathias2246.buildmc.claims;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -29,19 +30,42 @@ public class ClaimListener implements Listener {
     public void onPlayerPlace(BlockPlaceEvent event) {
         Player player = event.getPlayer();
 
-        if (!ClaimManager.isPlayerAllowed(claimManager, player, event.getBlock().getLocation())) event.setCancelled(true);
+        if (!ClaimManager.isPlayerAllowed(claimManager, player, event.getBlock().getLocation())) {
+            player.sendActionBar(Component.translatable("messages.claims.not-accessible.block-place"));
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler
     public void onPlayerMine(BlockBreakEvent event) {
         Player player = event.getPlayer();
 
-        if (!ClaimManager.isPlayerAllowed(claimManager, player, event.getBlock().getLocation())) event.setCancelled(true);
+        if (!ClaimManager.isPlayerAllowed(claimManager, player, event.getBlock().getLocation())) {
+            player.sendActionBar(Component.translatable("messages.claims.not-accessible.block-break"));
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onOpenContainer(InventoryOpenEvent event) {
         HumanEntity player = event.getPlayer();
-        if (!(ClaimManager.isPlayerAllowed(claimManager, player, event.getPlayer().getLocation()))) event.setCancelled(true);
+
+        if (event.getInventory().getHolder() instanceof org.bukkit.block.BlockState holder) {
+            if (!ClaimManager.isPlayerAllowed(claimManager, player, holder.getLocation())) {
+                player.sendActionBar(Component.translatable("messages.claims.not-accessible.container"));
+                event.setCancelled(true);
+            }
+        } else if (event.getInventory().getHolder() instanceof org.bukkit.entity.Entity entity) {
+            if (!ClaimManager.isPlayerAllowed(claimManager, player, entity.getLocation())) {
+                player.sendActionBar(Component.translatable("messages.claims.not-accessible.entity-container"));
+                event.setCancelled(true);
+            }
+        } else {
+            // Fallback logic. Fails if player opens protected inventory from unprotected chunk
+            if (!ClaimManager.isPlayerAllowed(claimManager, player, player.getLocation())) {
+                player.sendActionBar(Component.translatable("messages.claims.not-accessible.container"));
+                event.setCancelled(true);
+            }
+        }
     }
 }
