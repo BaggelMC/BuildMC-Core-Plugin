@@ -4,10 +4,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
-import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import java.io.IOException;
@@ -42,30 +39,13 @@ public class EndEventCommand {
                     }
 
                     String senderMessageKey = allowEnd ? "messages.end-event.opened" : "messages.end-event.closed";
-                    Component senderMessage = Message.msg(command.getSource().getSender(), senderMessageKey);
-
-                    CommandSender sender = command.getSource().getSender();
-                    if (sender instanceof Player player) {
-                        player.sendMessage(senderMessage);
-                    } else if (sender instanceof ConsoleCommandSender) {
-                        sender.sendMessage(senderMessage);
-                    } else {
-                        // Fallback to legacy if no audience
-                        sender.sendMessage(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().serialize(senderMessage));
-                    }
+                    Component senderMessage = Component.translatable(senderMessageKey);
+                    command.getSource().getSender().sendMessage(senderMessage);
 
                     String messageKey = allowEnd ? "messages.end-event.broadcast-opened" : "messages.end-event.broadcast-closed";
-                    String broadcastFormat = config.getString("broadcast-format",
-                            "§6--------------------------------\n\n%message%\n\n§6--------------------------------");
-
                     for (Player player : Bukkit.getOnlinePlayers()) {
-                        Component localizedMessage = Message.msg(player, messageKey);
-                        String formatted = broadcastFormat.replace(
-                                "%message%",
-                                net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().serialize(localizedMessage)
-                        );
-                        Component finalMessage = net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(formatted);
-                        player.sendMessage(finalMessage);
+                        Component msg = Component.translatable(messageKey);
+                        player.sendMessage(msg);
                     }
                     return 1;
                 }

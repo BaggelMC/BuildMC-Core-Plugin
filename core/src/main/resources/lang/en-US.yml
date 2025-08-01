@@ -16,8 +16,8 @@ messages:
     opened: "<green>The end is now 'open'."
     closed: "<green>The end is now 'closed'."
 
-    broadcast-closed: "<yellow>The End has been <red>CLOSED<yellow>!"
-    broadcast-opened: "<yellow>The End has been <green>OPENED<yellow>!"
+    broadcast-closed: "<gold>--------------------------------</gold>\n\n<yellow>The End has been <red>CLOSED</red>!</yellow>\n\n<gold>--------------------------------</gold>"
+    broadcast-opened: "<gold>--------------------------------</gold>\n\n<yellow>The End has been <green>OPENED</green>!</yellow>\n\n<gold>--------------------------------</gold>"
     closed-message: "<red>The End is currently closed."
 
   error:

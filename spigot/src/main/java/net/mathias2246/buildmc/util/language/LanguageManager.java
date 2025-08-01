@@ -72,7 +72,7 @@ public class LanguageManager {
         for (String fileName : DEFAULT_FILES) {
             File targetFile = new File(LANG_FOLDER, fileName);
             if (!targetFile.exists()) {
-                try (var in = Main.class.getResourceAsStream("lang/" + fileName)) {
+                try (var in = Main.class.getResourceAsStream("/lang/" + fileName)) {
                     if (in != null) {
                         java.nio.file.Files.copy(in, targetFile.toPath());
                     } else {
