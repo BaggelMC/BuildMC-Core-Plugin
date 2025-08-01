@@ -41,6 +41,8 @@ public class ClaimTool implements Listener {
         ItemMeta m = claimToolItemstack.getItemMeta();
         if (m != null) {
 
+            m.itemName(Component.translatable("messages.claims.tool.tool-name"));
+
             m.setTool(null);
             m.addItemFlags(
                     ItemFlag.HIDE_ATTRIBUTES,
@@ -60,7 +62,6 @@ public class ClaimTool implements Listener {
         var i = claimToolItemstack.clone();
         var m = i.getItemMeta();
         if (m != null) {
-            m.itemName(Message.msg(player, "messages.claims.tool.tool-name"));
             List<Component> lore = new ArrayList<>();
             for (var s : Message.msgStr(player, "messages.claims.tool.tool-tooltip").split("\n")) {
                 lore.add(Component.text(s));

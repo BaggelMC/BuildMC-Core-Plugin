@@ -105,6 +105,7 @@ public class ClaimManager {
     }
 
     public static boolean isPlayerAllowed(@NotNull Player player, @NotNull Location location) {
+
         return false;
     }
 
