@@ -70,6 +70,21 @@ claims:
     # Limits the maximum size in chunks of the selection
     limit-selection: 16 # Default: 16
 
+  # What aspects are protected when claimed
+  protections:
+    # Players cannot break blocks
+    player-break: true
+    # Players cannot place blocks
+    player-place: true
+
+    # Players cannot open containers (e.g. Chests, Barrels...)
+    containers: true
+
+    # Blocks cannot be destroyed from explosions
+    explosion-block-damage: true
+    # Entities cannot get damage from explosions
+    explosion-entity-damage: true
+
 
 # Disables the vanilla /reload command. WE DO NOT RECOMMEND USING THIS COMMAND. PLEASE RESTART THE SERVER.
 disable-reload-command: true

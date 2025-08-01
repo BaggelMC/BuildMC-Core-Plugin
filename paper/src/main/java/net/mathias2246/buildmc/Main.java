@@ -1,10 +1,7 @@
 package net.mathias2246.buildmc;
 
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
-import net.mathias2246.buildmc.claims.ClaimCommand;
-import net.mathias2246.buildmc.claims.ClaimListener;
-import net.mathias2246.buildmc.claims.ClaimManager;
-import net.mathias2246.buildmc.claims.ClaimTool;
+import net.mathias2246.buildmc.claims.*;
 import net.mathias2246.buildmc.commands.BuildMcCommand;
 import net.mathias2246.buildmc.endEvent.EndListener;
 import net.mathias2246.buildmc.spawnElytra.DisableBoostListener;
@@ -86,7 +83,22 @@ public final class Main extends JavaPlugin {
         }
 
         if (config.getBoolean("claims.enabled")) {
-            getServer().getPluginManager().registerEvents(new ClaimListener(), this);
+            if (config.getBoolean("claims.protections.containers")) {
+                getServer().getPluginManager().registerEvents(new ClaimContainerListener(), this);
+            }
+
+            if (config.getBoolean("claims.protections.explosion-block-damage") || config.getBoolean("claims.protections.explosion-entity-damage")) {
+                getServer().getPluginManager().registerEvents(new ClaimExplosionsListener(), this);
+            }
+
+            if (config.getBoolean("claims.protections.player-break")) {
+                getServer().getPluginManager().registerEvents(new ClaimBreakListener(), this);
+            }
+
+            if (config.getBoolean("claims.protections.player-place")) {
+                getServer().getPluginManager().registerEvents(new ClaimPlaceListener(), this);
+            }
+
             claimManager = new ClaimManager(this, "claim-whitelists.yml");
         }
 
