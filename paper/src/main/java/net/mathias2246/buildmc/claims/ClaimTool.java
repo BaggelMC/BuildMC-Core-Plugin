@@ -52,15 +52,6 @@ public class ClaimTool implements Listener {
             m.setEnchantmentGlintOverride(true);
             m.setEnchantable(null);
             m.getPersistentDataContainer().set(CLAIM_TOOL_ITEM_PDC_KEY, PersistentDataType.BOOLEAN, true);
-            m.itemName(Component.translatable("messages.claims.tool.tool-name"));
-            m.lore(
-                    List.of(
-                            Component.translatable("messages.claims.tool.tool-tooltip-line1"),
-                            Component.translatable("messages.claims.tool.tool-tooltip-line2"),
-                            Component.translatable("messages.claims.tool.tool-tooltip-line3"),
-                            Component.translatable("messages.claims.tool.tool-tooltip-line4")
-                    )
-            );
             claimToolItemstack.setItemMeta(m);
         }
     }
@@ -68,6 +59,18 @@ public class ClaimTool implements Listener {
     /**Gives the custom claim-tool to the given player*/
     public static void giveToolToPlayer(@NotNull Player player) {
         var i = claimToolItemstack.clone();
+        ItemMeta m = i.getItemMeta();
+
+        m.itemName(Message.msg(player, "messages.claims.tool.tool-name"));
+        m.lore(
+                List.of(
+                        Message.msg(player, "messages.claims.tool.tool-tooltip-line1"),
+                        Message.msg(player, "messages.claims.tool.tool-tooltip-line2"),
+                        Message.msg(player, "messages.claims.tool.tool-tooltip-line3"),
+                        Message.msg(player, "messages.claims.tool.tool-tooltip-line4")
+                )
+        );
+        i.setItemMeta(m);
 
         player.getInventory().addItem(i);
     }

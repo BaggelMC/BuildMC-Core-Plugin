@@ -33,7 +33,7 @@ messages:
   claims:
     tool:
 
-      # Tool-name will only display formating on the paper version of this plugin.
+      # tool-name and tool-tooltip will only display formating on the paper version of this plugin.
       # When on spigot formating is ignored.
       tool-name: "Select Claim Corners"
 
@@ -56,6 +56,16 @@ messages:
       other-claim-in-selection: "\n<red>There is someone else's claim in your selection!</red>\n"
 
       no-chunks-left: "<red>You don't have any chunks left to claim!</red>"
+
+    help-message: |-
+      <gold>------------- <green>Claims Help</green> -------------</gold>
+      <gray>- Use '<gold>/claim claimtool</gold>' to get the claim tool.</gray>
+      <gray>- Click to select your first chunk.</gray>
+      <gray>- Sneak + Click to select your second chunk.</gray>
+      <gray>- That area will then be claimed.</gray>
+      
+      <gray>- Select your claimed area again to delete it.
+      <gold>------------------------------------</gold>
 
   status:
     only-players: "<red>Only players can have a status!</red>"
