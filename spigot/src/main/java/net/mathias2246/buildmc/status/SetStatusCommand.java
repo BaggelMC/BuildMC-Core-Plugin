@@ -49,23 +49,14 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
             .executes(
                     (command) -> {
                         if (!(command.sender() instanceof Player player)) {
-                            command.sender().sendMessage("Only a player can have a status!");
-
+                            audiences.sender(command.sender()).sendMessage(Component.translatable("messages.status.only-players"));
+                            return;
                         }
-                        //PlayerStatus.setPlayerStatus(player, (String) command.args().get("set"));
+                        PlayerStatus.setPlayerStatus(player, command.args().getByClass("status", String.class));
                     }
             )
                 .withArguments(
                         new StringArgument("status")
-                                .executes(
-                                        (command) -> {
-                                            if (!(command.sender() instanceof Player player)) {
-                                                audiences.sender(command.sender()).sendMessage(Component.translatable("messages.status.only-players"));
-                                                return;
-                                            }
-                                            PlayerStatus.setPlayerStatus(player, (String) command.args().get("status"));
-                                        }
-                                )
                                 .replaceSuggestions(
                                         (info, builder) -> {
                                             for (var k : StatusConfig.loadedStatuses.keySet()) {

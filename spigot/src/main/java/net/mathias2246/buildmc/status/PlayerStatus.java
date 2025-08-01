@@ -1,6 +1,8 @@
 package net.mathias2246.buildmc.status;
 
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -44,9 +46,11 @@ public class PlayerStatus implements Listener {
 
         Component c = s.getDisplay().asComponent().append(Component.text(player.getName()));
 
-        player.setPlayerListName(c.toString());
-        player.setDisplayName(c.toString());
-        player.setCustomName(c.toString());
+        String legacy = LegacyComponentSerializer.legacySection().serialize(c);
+
+        player.setPlayerListName(legacy);
+        player.setDisplayName(legacy);
+        player.setCustomName(legacy);
         player.setCustomNameVisible(true);
 
         player.getPersistentDataContainer().set(
