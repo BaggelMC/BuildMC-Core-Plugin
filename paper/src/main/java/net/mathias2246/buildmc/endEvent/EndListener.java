@@ -12,37 +12,35 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 
+import java.util.List;
+
 import static net.mathias2246.buildmc.Main.config;
 
 public class EndListener implements Listener {
 
     public static boolean allowEnd = false;
 
-    public static boolean disallowTntThroughEnd = true;
+    private static List<String> blockedEntities;
 
     public static void loadFromConfig() {
         allowEnd = config.getBoolean("end-event.allow-end", false);
-        disallowTntThroughEnd = config.getBoolean("disallow-tnt-through-end");
+        blockedEntities = config.getStringList("end-event.blocked-entities");
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityPortal(EntityPortalEvent event) {
-
         if (!event.getPortalType().equals(PortalType.ENDER)) return;
 
-        if (allowEnd) {
-            if (disallowTntThroughEnd) {
-                Entity entity = event.getEntity();
-                EntityType type = entity.getType();
+        Entity entity = event.getEntity();
+        EntityType type = entity.getType();
 
-                if (type == EntityType.TNT || type == EntityType.TNT_MINECART || type == EntityType.CREEPER) {
-                    event.setCancelled(true);
-                    return;
-                }
+        if (allowEnd) {
+            if (blockedEntities.contains(type.name())) {
+                event.setCancelled(true);
             }
-            return;
+        } else {
+            event.setCancelled(true);
         }
-        event.setCancelled(true);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)

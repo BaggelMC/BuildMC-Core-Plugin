@@ -12,36 +12,44 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 
+import java.util.List;
+
 import static net.mathias2246.buildmc.Main.config;
 
 public class EndListener implements Listener {
 
     public static boolean allowEnd = false;
+    private static List<String> blockedEntities;
 
     public static void loadFromConfig() {
         allowEnd = config.getBoolean("end-event.allow-end", false);
+        blockedEntities = config.getStringList("end-event.blocked-entities");
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityPortal(EntityPortalEvent event) {
-        if (config.getBoolean("disallow-tnt-through-end")) {
-            Entity entity = event.getEntity();
-            EntityType type = entity.getType();
+        Entity entity = event.getEntity();
+        EntityType type = entity.getType();
 
-            if (type == EntityType.TNT || type == EntityType.TNT_MINECART || type == EntityType.CREEPER) {
+        World fromWorld = entity.getWorld();
+        World toWorld = event.getTo() != null ? event.getTo().getWorld() : null;
+        if (toWorld == null) return;
+
+        if (allowEnd) {
+            if ((fromWorld.getEnvironment() == World.Environment.THE_END ||
+                    (toWorld.getEnvironment() == World.Environment.THE_END)) &&
+                    blockedEntities.contains(type.name())) {
+
                 event.setCancelled(true);
-                return;
+            }
+        } else {
+
+            if (toWorld.getEnvironment() == World.Environment.THE_END) {
+                event.setCancelled(true);
             }
         }
-
-        if (allowEnd) return;
-
-        if (event.getTo() == null || event.getTo().getWorld() == null) return;
-
-        if (event.getTo().getWorld().getEnvironment() == World.Environment.THE_END) {
-            event.setCancelled(true);
-        }
     }
+
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerPortal(PlayerPortalEvent event) {

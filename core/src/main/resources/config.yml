@@ -39,7 +39,12 @@ end-event:
   # NOTE: Can be overwritten by the '/buildmc endevent' command
   allow-end: false # Default: false
 
-disallow-tnt-through-end: true
+  # List of entity types that should be blocked from going through end portals.
+  # Done to prevent destruction of the spawn
+  blocked-entities:
+    - TNT
+    - TNT_MINECART
+    - CREEPER
 
 
 # Some sounds that are used generally
