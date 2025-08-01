@@ -44,6 +44,8 @@ messages:
       tool-tooltip-line3: "When selecting on of your existing claims it is removed."
       tool-tooltip-line4: ""
 
+      full-inventory: "<red>Your inventory is full! Please make space for the claim tool.</red>"
+
       missing-first-pos: "<red>You need to select the other corner first!</red>"
       successfully-set-pos: "<green>Successfully set position!</green>"
 

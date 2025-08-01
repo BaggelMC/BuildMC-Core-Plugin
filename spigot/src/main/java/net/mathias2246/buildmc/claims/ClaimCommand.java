@@ -19,6 +19,14 @@ public class ClaimCommand implements CustomCommand {
                                     command.sender().sendMessage(Message.noPlayerErrorMsgStr(command.sender()));
                                     return;
                                 }
+
+                                // Überprüfen, ob Platz im Inventar ist
+                                if (player.getInventory().firstEmpty() == -1) {
+                                    Main.audiences.sender(player).sendMessage(Message.msg(player, "messages.claims.tool.full-inventory"));
+
+                                    return;
+                                }
+
                                 ClaimTool.giveToolToPlayer(player);
                             })
                 )

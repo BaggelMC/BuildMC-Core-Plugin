@@ -30,6 +30,13 @@ public class ClaimCommand implements CustomCommand {
                                 command.getSource().getSender().sendMessage(Component.translatable("messages.error.not-a-player"));
                                 return 0;
                             }
+
+                            // Überprüfen, ob Platz im Inventar ist
+                            if (player.getInventory().firstEmpty() == -1) {
+                                player.sendMessage(Component.translatable("messages.claims.tool.full-inventory"));
+                                return 0;
+                            }
+
                             ClaimTool.giveToolToPlayer(player);
                             return 1;
                         })
