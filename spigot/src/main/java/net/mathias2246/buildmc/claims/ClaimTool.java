@@ -31,12 +31,13 @@ public class ClaimTool implements Listener {
 
     public static final @NotNull NamespacedKey CLAIM_TOOL_ITEM_PDC_KEY = Objects.requireNonNull(NamespacedKey.fromString("buildmc:is_claim_tool_item"));
 
-    public static final Material CLAIM_TOOL_ITEM = Material.WOODEN_HOE;
-
     public static ItemStack claimToolItemstack;
 
     public static void setup() {
-        claimToolItemstack = new ItemStack(CLAIM_TOOL_ITEM);
+        var claimToolItem = Material.getMaterial(config.getString("claims.tool.tool-item", "carrot_on_a_stick").toUpperCase());
+        if (claimToolItem == null) claimToolItem = Material.CARROT_ON_A_STICK;
+
+        claimToolItemstack = new ItemStack(claimToolItem);
         ItemMeta m = claimToolItemstack.getItemMeta();
         if (m != null) {
 
@@ -144,6 +145,7 @@ public class ClaimTool implements Listener {
         if (world == null) return;
 
         int count = 0;
+        int chunksLeft = ClaimManager.getChunksLeft(claimManager, team);
 
         for (int z = sz; z <= ez; z++) {
             for (int x = sx; x <= ex; x++) {
@@ -154,17 +156,22 @@ public class ClaimTool implements Listener {
                     Sounds.playSound(player, Sounds.MISTAKE);
                     return;
                 } else if (!ClaimManager.hasOwner(chunk)) {
+                    if (chunksLeft < 0) continue;
+
                     count++;
-                    if (count > ClaimManager.getChunksLeft(team)) { // If your team has no chunks left to claim, fail
+                    if (count > chunksLeft) { // If your team has no chunks left to claim, fail
                         audiences.player(player).sendMessage(Message.msg(player, "messages.claims.tool.no-chunks-left"));
                         Sounds.playSound(player, Sounds.MISTAKE);
                         return;
                     }
+
                 }
             }
         }
 
         ClaimManager.forceClaimArea(team, world, sx, sz, ex, ez);
+
+        if (chunksLeft > 0) claimManager.claims.get(team).chunksLeft -= count;
 
         player.removeMetadata("claim_tool_pos1", plugin);
 
@@ -177,7 +184,11 @@ public class ClaimTool implements Listener {
 
     // Replaces the %chunks_left% placeholder with the number of chunks left
     private static Component buildSuccessMessage(@NotNull Player player, @NotNull Team team) {
-        int i = ClaimManager.getChunksLeft(team);
+        int i = ClaimManager.getChunksLeft(claimManager, team);
+        if (i < 0) {
+            return Component.translatable("messages.claims.tool.successfully-claimed-area-no-count");
+        }
+
         var r = TextReplacementConfig.builder().matchLiteral("%chunks_left%").replacement(Integer.toString(i));
 
         return Message.msg(player, "messages.claims.tool.successfully-claimed-area").replaceText(r.build());

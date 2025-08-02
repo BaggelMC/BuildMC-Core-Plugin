@@ -83,6 +83,7 @@ public final class Main extends JavaPlugin {
         }
 
         if (config.getBoolean("claims.enabled")) {
+
             if (config.getBoolean("claims.protections.containers")) {
                 getServer().getPluginManager().registerEvents(new ClaimContainerListener(), this);
             }
@@ -99,11 +100,15 @@ public final class Main extends JavaPlugin {
                 getServer().getPluginManager().registerEvents(new ClaimPlaceListener(), this);
             }
 
-            claimManager = new ClaimManager(this, "claim-whitelists.yml");
+            claimManager = new ClaimManager(this, "claim-data.yml");
+
+            if (config.getBoolean("claims.save-on-world-save")) {
+                getServer().getPluginManager().registerEvents(new ClaimDataSaveListener(claimManager), this);
+            }
         }
 
         if (config.getBoolean("status.enabled")) {
-            statusConfig = new StatusConfig();
+            statusConfig = new StatusConfig(this);
             getServer().getPluginManager().registerEvents(new PlayerStatus(), this);
         }
 

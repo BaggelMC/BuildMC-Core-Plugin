@@ -1,7 +1,8 @@
 package net.mathias2246.buildmc.status;
 
-import net.mathias2246.buildmc.Main;
+
 import net.mathias2246.buildmc.util.ConfigurationManager;
+import org.bukkit.plugin.Plugin;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,8 +11,8 @@ public class StatusConfig extends ConfigurationManager {
 
     public static final Map<String, StatusInstance> loadedStatuses = new HashMap<>();
 
-    public StatusConfig() {
-        super(Main.plugin, "status.yml");
+    public StatusConfig(Plugin plugin) {
+        super(plugin, "status.yml");
     }
 
     @Override
@@ -24,5 +25,10 @@ public class StatusConfig extends ConfigurationManager {
             var v = s.getValues(false);
             loadedStatuses.put(key, StatusInstance.deserialize(v));
         }
+    }
+
+    @Override
+    protected void preSave() {
+
     }
 }

@@ -1,9 +1,0 @@
-# BuildMC-Core-Plugin Claim whitelists
-# Join our discord server https://discord.gg/p8wBMZXAfb
-
-# NOTE: You should not edit this file manually, because this file stores the data from the '/claim whitelist ...' command
-
-# Claim whitelists are stored like this:
-# team-id:
-#  - player-uuid
-#  - ...

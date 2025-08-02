@@ -2,8 +2,7 @@ package net.mathias2246.buildmc;
 
 import dev.jorel.commandapi.CommandAPI;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import net.mathias2246.buildmc.claims.ClaimCommand;
-import net.mathias2246.buildmc.claims.ClaimTool;
+import net.mathias2246.buildmc.claims.*;
 import net.mathias2246.buildmc.commands.BuildMcCommand;
 import net.mathias2246.buildmc.commands.CommandRegister;
 import net.mathias2246.buildmc.spawnElytra.ElytraZoneCommand;
@@ -51,6 +50,8 @@ public final class Main extends JavaPlugin {
 
     public static BukkitAudiences audiences;
 
+    public static ClaimManager claimManager;
+
     @Override
     public void onEnable() {
         // Plugin startup logic
@@ -93,11 +94,33 @@ public final class Main extends JavaPlugin {
 
         if (config.getBoolean("claims.enabled")) {
             CommandRegister.register(new ClaimCommand());
-            // TODO: Add event listener to suppress interactions, etc.
+
+            claimManager = new ClaimManager(this, "claim-data.yml");
+
+            if (config.getBoolean("claims.protections.containers")) {
+                getServer().getPluginManager().registerEvents(new ClaimContainerListener(), this);
+            }
+
+            if (config.getBoolean("claims.protections.explosion-block-damage") || config.getBoolean("claims.protections.explosion-entity-damage")) {
+                getServer().getPluginManager().registerEvents(new ClaimExplosionsListener(), this);
+            }
+
+            if (config.getBoolean("claims.protections.player-break")) {
+                getServer().getPluginManager().registerEvents(new ClaimBreakListener(), this);
+            }
+
+            if (config.getBoolean("claims.protections.player-place")) {
+                getServer().getPluginManager().registerEvents(new ClaimPlaceListener(), this);
+            }
+
+
+            if (config.getBoolean("claims.save-on-world-save")) {
+                getServer().getPluginManager().registerEvents(new ClaimDataSaveListener(claimManager), this);
+            }
         }
 
         if (config.getBoolean("status.enabled")) {
-            statusConfig = new StatusConfig();
+            statusConfig = new StatusConfig(this);
             CommandRegister.register(new SetStatusCommand(statusConfig));
             getServer().getPluginManager().registerEvents(new PlayerStatus(), this);
         }

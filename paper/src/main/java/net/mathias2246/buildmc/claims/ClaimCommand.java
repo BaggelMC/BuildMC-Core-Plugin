@@ -6,15 +6,13 @@ import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
 import net.kyori.adventure.text.Component;
-import net.mathias2246.buildmc.Main;
+import net.kyori.adventure.text.TextReplacementConfig;
 import net.mathias2246.buildmc.commands.CustomCommand;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.Objects;
 
 import static net.mathias2246.buildmc.Main.claimManager;
 
@@ -31,7 +29,7 @@ public class ClaimCommand implements CustomCommand {
                                 return 0;
                             }
 
-                            // Überprüfen, ob Platz im Inventar ist
+                            // Check if there is space left in the inventory
                             if (player.getInventory().firstEmpty() == -1) {
                                 player.sendMessage(Component.translatable("messages.claims.tool.full-inventory"));
                                 return 0;
@@ -57,8 +55,13 @@ public class ClaimCommand implements CustomCommand {
                                         return 1;
                                     }
 
-                                    Component message = Message.msg(player, "messages.claims.who.message", Map.of("owner", owner));
-                                    command.getSource().getSender().sendMessage(message);
+                                    Component message = Message.msg(player, "messages.claims.who.message");
+
+                                    TextReplacementConfig.Builder b = TextReplacementConfig.builder();
+                                    b.matchLiteral("%owner%");
+                                    b.replacement(owner);
+
+                                    command.getSource().getSender().sendMessage(message.replaceText(b.build()));
                                     return 1;
                                 }
                         )
@@ -139,7 +142,6 @@ public class ClaimCommand implements CustomCommand {
                                         )
                         )
         );
-
 
         return cmd.build();
     }

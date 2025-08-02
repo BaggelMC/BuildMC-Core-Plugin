@@ -31,7 +31,7 @@ If you're running your own server and want to use BuildMC-Core, here's how to in
 
 ### ✅ Requirements
 
-- A **Minecraft 1.21.**\* server (Paper or Spigot recommended)
+- A **Minecraft 1.21.**\* server (Paper is recommended or Spigot)
 - Java **17+** (Java 23 recommended)
 - BuildMC-Core plugin `.jar` file
 

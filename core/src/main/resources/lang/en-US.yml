@@ -57,6 +57,11 @@ messages:
         <blue>You have </blue>%chunks_left%<blue> chunks left to claim</blue>
         <gold>---------------------------------------</gold>
 
+      successfully-claimed-area-no-count: |-
+        <gold>---------------------------------------</gold>
+        <green>Successfully claimed area!</green>
+        <gold>---------------------------------------</gold>
+
       other-claim-in-selection: "\n<red>There is someone else's claim in your selection!</red>\n"
 
       no-chunks-left: "<red>You don't have any chunks left to claim!</red>"

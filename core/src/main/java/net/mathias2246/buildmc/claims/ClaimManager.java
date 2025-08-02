@@ -15,10 +15,11 @@ import java.util.*;
 @SuppressWarnings({"unused", "BooleanMethodIsAlwaysInverted"})
 public class ClaimManager extends ConfigurationManager{
 
-
+    /**The namespaced key used to store the owner inside the chunks PersistentDataContainer*/
     public static final @NotNull NamespacedKey CLAIM_PCD_KEY = Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_owner"));
 
-    public @NotNull Map<Team, List<UUID>> claimWhitelists = new HashMap<>();
+    /**A Map containing all the claim data*/
+    public @NotNull Map<Team, ClaimDataInstance> claims = new HashMap<>();
 
     public ClaimManager(@NotNull Plugin plugin, @NotNull String resourceName) {
         super(plugin, resourceName);
@@ -26,15 +27,24 @@ public class ClaimManager extends ConfigurationManager{
 
     @Override
     public void setupConfiguration() {
-        claimWhitelists = new HashMap<>();
+        claims = new HashMap<>();
         for (var key : configuration.getKeys(false)) {
+            var sect = configuration.getConfigurationSection(key);
+            if (sect == null) return;
 
             Team team = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeam(key);
-            List<UUID> uuids = new ArrayList<>();
-            for (String id : configuration.getStringList(key)) {
-                uuids.add(UUID.fromString(id));
-            }
-            claimWhitelists.put(team, uuids);
+
+            claims.put(team, ClaimDataInstance.deserialize(sect.getValues(false)));
+        }
+    }
+
+    @Override
+    protected void preSave() {
+        for (var entry : claims.entrySet()) {
+            configuration.set(
+                    entry.getKey().getName(),
+                    entry.getValue().serialize()
+            );
         }
     }
 
@@ -44,10 +54,10 @@ public class ClaimManager extends ConfigurationManager{
      * */
     public static boolean isPlayerWhitelisted(@NotNull ClaimManager manager, Team team, @NotNull Player player) {
         if (team == null) return false;
-        var l = manager.claimWhitelists.get(team);
+        var l = manager.claims.get(team);
         if (l == null) return false;
 
-        return l.contains(player.getUniqueId());
+        return l.whitelistedPlayers.contains(player.getUniqueId());
     }
 
     /**Checks if the given player is whitelisted in the claims of the given team.
@@ -56,24 +66,30 @@ public class ClaimManager extends ConfigurationManager{
      * */
     public static boolean isPlayerWhitelisted(@NotNull ClaimManager manager, Team team, @NotNull HumanEntity player) {
         if (team == null) return false;
-        var l = manager.claimWhitelists.get(team);
+        var l = manager.claims.get(team);
         if (l == null) return false;
 
-        return l.contains(player.getUniqueId());
+        return l.whitelistedPlayers.contains(player.getUniqueId());
     }
 
     /**Adds a Player to the team whitelist*/
     public static void setPlayerWhitelisted(@NotNull ClaimManager manager, @NotNull Team team, @NotNull Player player) {
-        if (!manager.claimWhitelists.containsKey(team)) manager.claimWhitelists.put(team, new ArrayList<>());
-        var t = manager.claimWhitelists.get(team);
-        t.add(player.getUniqueId());
+        if (!manager.claims.containsKey(team)) manager.claims.put(team, new ClaimDataInstance());
+        var t = manager.claims.get(team).whitelistedPlayers;
+
+        UUID uuid = player.getUniqueId();
+
+        t.add(uuid);
+
+        String tn = team.getName();
     }
 
     /**Removes a player from the team whitelist*/
     public static void removePlayerWhitelisted(@NotNull ClaimManager manager, @NotNull Team team, @NotNull Player player) {
-        if (!manager.claimWhitelists.containsKey(team)) manager.claimWhitelists.put(team, new ArrayList<>());
-        var t = manager.claimWhitelists.get(team);
-        t.remove(player.getUniqueId());
+        if (!manager.claims.containsKey(team)) manager.claims.put(team, new ClaimDataInstance());
+        var t = manager.claims.get(team);
+
+        t.whitelistedPlayers.remove(player.getUniqueId());
     }
 
     /**Forcefully sets the owner of the chunk at the given location.
@@ -100,7 +116,7 @@ public class ClaimManager extends ConfigurationManager{
         );
     }
 
-    // Gets the owner string directly form PDC or null if no owner was set
+    /**Gets the owner string directly form the Persistent-Data-Container or null if no owner was set*/
     public static @Nullable String getOwnerString(@NotNull Location location) {
 
         var chunk = location.getChunk();
@@ -185,15 +201,22 @@ public class ClaimManager extends ConfigurationManager{
         return Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeam(owner);
     }
 
+    /**Checks if a player is allowed to do things at a certain location.
+     * @return True if, the chunk at the location is not owned or is his own claim, or if he is whitelisted.*/
     public static boolean isPlayerAllowed(@NotNull ClaimManager manager, @NotNull Player player, @NotNull Location location) {
-        return isNotClaimedOrOwn(player, player.getLocation().getChunk()) || isPlayerWhitelisted(manager, getClaimTeam(location), player);
+        return isNotClaimedOrOwn(player, location.getChunk()) || isPlayerWhitelisted(manager, getClaimTeam(location), player);
     }
 
+    /**Checks if a player is allowed to do things at a certain location.
+     * @return True if, the chunk at the location is not owned or is his own claim, or if he is whitelisted.*/
     public static boolean isPlayerAllowed(@NotNull ClaimManager manager, @NotNull HumanEntity player, @NotNull Location location) {
-        return isNotClaimedOrOwn(player, player.getLocation().getChunk()) || isPlayerWhitelisted(manager, getClaimTeam(location), player);
+        return isNotClaimedOrOwn(player, location.getChunk()) || isPlayerWhitelisted(manager, getClaimTeam(location), player);
     }
 
-
+    /**Forcefully claims an entire area for a team.
+     * The area is set to the given team or all claims are removed if the parameter team is set to null.
+     * @param from must be in the same world as the other location
+     * @param to must be in the same world as the other location*/
     public static void forceClaimArea(Team team, @NotNull Location from, @NotNull Location to) {
         if (!Objects.equals(from.getWorld(), to.getWorld())) {
             return;
@@ -206,6 +229,8 @@ public class ClaimManager extends ConfigurationManager{
         }
     }
 
+    /**Forcefully claims an entire area for a team.
+     * The area is set to the given team or all claims are removed if the parameter team is set to null.*/
     public static void forceClaimArea(Team team, @NotNull World world, int startX, int startZ, int endX, int endZ) {
         for (int z = startZ; z <= endZ; z++) {
             for (int x = startZ; x <= endZ; x++) {
@@ -215,9 +240,12 @@ public class ClaimManager extends ConfigurationManager{
         }
     }
 
-    /**Gets the number of chunks the given team has left to claim*/
-    public static int getChunksLeft(@NotNull Team team) {
-        return Integer.MAX_VALUE;
+    /**Gets the number of chunks the given team has left to claim
+     * If the amount of chunks left is smaller than zero, the claim limit will be disabled.*/
+    public static int getChunksLeft(@NotNull ClaimManager manager, @NotNull Team team) {
+        var t = manager.claims.get(team);
+        if (t == null) return 0;
+        return t.chunksLeft;
     }
 
 }

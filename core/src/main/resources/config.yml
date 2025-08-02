@@ -4,8 +4,6 @@
 spawn-elytra:
   # Enable or Disable the spawn elytra feature
   enabled: true # Default: true
-  # Small Action-Bar message to show how to boost
-  message: "Press %key% to boost!"
   # The strength of the spawn elytra boost
   strength: 5 # Default: 5
   # Should the use of firework rockets with the spawn elytra be blocked?
@@ -62,8 +60,15 @@ claims:
   # Admins can also set certain regions as server-claims that no one can do anything in
   enabled: true # Default: true
 
+  # If true, all claim data will be writen to disk when the server saves the overworld.
+  # Only change this to false if you really need to
+  save-on-world-save: true # Default: true
+
   # Settings related to the claim-tool. The claim-tool (if enabled) can be obtained using '/buildmc claimtool'
   tool:
+    # The item used for the claim-tool
+    tool-item: "carrot_on_a_stick" # Default: "carrot_on_a_stick"
+
     # If true, players even without permissions can get the claim-tool using '/buildmc claimtool'
     enable-give-command: true # Default: true
 

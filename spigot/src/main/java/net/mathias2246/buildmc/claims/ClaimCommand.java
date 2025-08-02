@@ -1,11 +1,21 @@
 package net.mathias2246.buildmc.claims;
 
 import dev.jorel.commandapi.CommandAPICommand;
+import dev.jorel.commandapi.arguments.Argument;
+import dev.jorel.commandapi.arguments.PlayerArgument;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
 import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.commands.CustomCommand;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Team;
+
+import java.io.IOException;
+
+import static net.mathias2246.buildmc.Main.audiences;
+import static net.mathias2246.buildmc.Main.claimManager;
 
 public class ClaimCommand implements CustomCommand {
     @Override
@@ -20,9 +30,9 @@ public class ClaimCommand implements CustomCommand {
                                     return;
                                 }
 
-                                // Überprüfen, ob Platz im Inventar ist
+                                // Check if there is space left in the inventory
                                 if (player.getInventory().firstEmpty() == -1) {
-                                    Main.audiences.sender(player).sendMessage(Message.msg(player, "messages.claims.tool.full-inventory"));
+                                    audiences.sender(player).sendMessage(Message.msg(player, "messages.claims.tool.full-inventory"));
 
                                     return;
                                 }
@@ -30,16 +40,112 @@ public class ClaimCommand implements CustomCommand {
                                 ClaimTool.giveToolToPlayer(player);
                             })
                 )
+                .withSubcommand(
+                        new CommandAPICommand("who")
+                                .executes(
+                                        (command) -> {
+                                            if (!(command.sender() instanceof Player player)) {
+                                                audiences.sender(command.sender()).sendMessage(Component.translatable("messages.error.not-a-player"));
+                                                return;
+                                            }
+
+
+
+                                            String owner = ClaimManager.getOwnerString(player.getLocation());
+
+                                            if (owner == null) {
+                                                audiences.sender(command.sender()).sendMessage(Component.translatable("messages.claims.who.unclaimed"));
+                                                return;
+                                            }
+
+                                            Component message = Message.msg(player, "messages.claims.who.message");
+
+                                            TextReplacementConfig.Builder b = TextReplacementConfig.builder();
+                                            b.matchLiteral("%owner%");
+                                            b.replacement(owner);
+
+                                            audiences.sender(command.sender()).sendMessage(message.replaceText(b.build()));
+                                        }
+                                )
+                )
 
                 .withSubcommand(
                         new CommandAPICommand("help")
                                 .executes((command) -> {
                                     CommandSender sender = command.sender();
-                                    Main.audiences.sender(sender).sendMessage(Message.msg(sender, "messages.claims.help-message"));
+                                    audiences.sender(sender).sendMessage(Component.translatable("messages.claims.help-message"));
                                 })
                 )
 
-                .withHelp("Manage your team claims", "Use this command to manage your claims.")
+                .withSubcommand(
+                        new CommandAPICommand("whitelist")
+                                .withSubcommand(new CommandAPICommand("add")
+                                .withArguments(
+                                        new PlayerArgument("player")
+                                                .executes(
+                                                        (command) -> {
+                                                            if (!(command.sender() instanceof Player player)) {
+                                                                audiences.sender(command.sender()).sendMessage(Component.translatable("messages.error.not-a-player"));
+                                                                return;
+                                                            }
+
+                                                            Team team = ClaimManager.getPlayerTeam(player);
+                                                            if (team == null) {
+                                                                audiences.sender(command.sender()).sendMessage(Component.translatable("messages.error.not-in-a-team"));
+                                                                return;
+                                                            }
+
+                                                            Player p = command.args().getByClass("player", Player.class);
+                                                            if (p == null) {
+                                                                return;
+                                                            }
+
+                                                            ClaimManager.setPlayerWhitelisted(claimManager, team, p);
+                                                            audiences.sender(command.sender()).sendMessage(Component.translatable("messages.claims.successfully-whitelisted"));
+
+                                                            try {
+                                                                claimManager.save();
+                                                            } catch (IOException e) {
+                                                                throw new RuntimeException(e);
+                                                            }
+                                                        }
+                                                )
+                                        )
+                                ))
+                                .withSubcommand(new CommandAPICommand("remove")
+                                        .withArguments(
+                                                new PlayerArgument("player")
+                                                        .executes(
+                                                                (command) -> {
+                                                                    if (!(command.sender() instanceof Player player)) {
+                                                                        audiences.sender(command.sender()).sendMessage(Component.translatable("messages.error.not-a-player"));
+                                                                        return;
+                                                                    }
+
+                                                                    Team team = ClaimManager.getPlayerTeam(player);
+                                                                    if (team == null) {
+                                                                        audiences.sender(command.sender()).sendMessage(Component.translatable("messages.error.not-in-a-team"));
+                                                                        return;
+                                                                    }
+
+                                                                    Player p = command.args().getByClass("player", Player.class);
+                                                                    if (p == null) {
+                                                                        return;
+                                                                    }
+
+                                                                    ClaimManager.removePlayerWhitelisted(claimManager, team, p);
+                                                                    audiences.sender(command.sender()).sendMessage(Component.translatable("messages.claims.successfully-whitelisted"));
+
+                                                                    try {
+                                                                        claimManager.save();
+                                                                    } catch (IOException e) {
+                                                                        throw new RuntimeException(e);
+                                                                    }
+                                                                }
+                                                        )
+                                        )
+
+                )
 
                 .executes(
                         (command) -> {
