@@ -51,6 +51,11 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
         return player.getGameMode() == GameMode.SURVIVAL || player.getGameMode() == GameMode.ADVENTURE;
     }
 
+    /**Checks if the gamemode is survival or adventure mode.*/
+    public static boolean isSurvival(@NotNull GameMode gameMode) {
+        return gameMode == GameMode.SURVIVAL || gameMode == GameMode.ADVENTURE;
+    }
+
     /**Stops the player from flying.
      * Removes all spawn-elytra related metadata and resets all flight related attributes.*/
     public static void stopFlying(@NotNull Player player) {
@@ -86,7 +91,7 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
     @Override
     public void run() {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (!isSurvival(player)) return;
+            if (!isSurvival(player)) continue;
 
             if (isUsingSpawnElytra(player) && !player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType().isAir()) {
                 stopFlying(player);
@@ -100,8 +105,18 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
     // Fixes elytra not closing when changing gamemode
     @EventHandler
     public void onGamemodeChange(PlayerGameModeChangeEvent event) {
-        if (event.getNewGameMode() != GameMode.SURVIVAL && event.getNewGameMode() != GameMode.ADVENTURE) stopFlying(event.getPlayer());
+        Player player = event.getPlayer();
+        GameMode oldMode = player.getGameMode();
+        GameMode newMode = event.getNewGameMode();
+
+        // Only stop flying if leaving survival/adventure -> something else,
+        // and the player was using the spawn elytra
+        if (isSurvival(oldMode) && !isSurvival(newMode) && isUsingSpawnElytra(player)) {
+            stopFlying(player);
+        }
     }
+
+
 
     // Fixes player state not resetting when reconnecting
     @EventHandler
