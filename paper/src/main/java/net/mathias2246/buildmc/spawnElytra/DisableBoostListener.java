@@ -6,7 +6,6 @@ import net.mathias2246.buildmc.util.Message;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerRiptideEvent;
 
 public class DisableBoostListener implements Listener {
     // Disables the use of rockets to boost you when using the spawn-elytra to limit the distance you can reach

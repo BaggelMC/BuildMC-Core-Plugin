@@ -1,11 +1,9 @@
 package net.mathias2246.buildmc.claims;
 
 import dev.jorel.commandapi.CommandAPICommand;
-import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.PlayerArgument;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
-import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.commands.CustomCommand;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.command.CommandSender;

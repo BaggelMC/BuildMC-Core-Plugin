@@ -1,7 +1,6 @@
 package net.mathias2246.buildmc.claims;
 
 
-import com.destroystokyo.paper.profile.PlayerProfile;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.mathias2246.buildmc.util.LocationUtil;

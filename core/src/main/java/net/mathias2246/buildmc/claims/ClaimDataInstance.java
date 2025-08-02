@@ -1,9 +1,6 @@
 package net.mathias2246.buildmc.claims;
 
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.metadata.MetadataValue;
-import org.bukkit.metadata.Metadatable;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -11,9 +8,11 @@ import java.util.*;
 
 public class ClaimDataInstance implements ConfigurationSerializable {
 
-    public @NotNull List<UUID> whitelistedPlayers = new ArrayList<>();
-    public int chunksLeft = -1;
+    public final @NotNull List<UUID> whitelistedPlayers = new ArrayList<>();
+    public int chunksLeft = defaultChunksLeftAmount;
 
+
+    public static int defaultChunksLeftAmount = -1;
 
     public ClaimDataInstance() {
     }
@@ -44,7 +43,7 @@ public class ClaimDataInstance implements ConfigurationSerializable {
     @SuppressWarnings("unchecked")
     public static ClaimDataInstance deserialize(Map<String, Object> map) {
         List<String> whitelist = (List<String>) map.getOrDefault("whitelist", new ArrayList<>());
-        int chunks = (int) map.getOrDefault("chunks-left", -1);
+        int chunks = (int) map.getOrDefault("chunks-left", defaultChunksLeftAmount);
 
         return new ClaimDataInstance(whitelist, chunks);
     }

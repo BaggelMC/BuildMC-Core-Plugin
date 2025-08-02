@@ -28,8 +28,10 @@ import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 public final class Main extends JavaPlugin {
@@ -95,7 +97,13 @@ public final class Main extends JavaPlugin {
         if (config.getBoolean("claims.enabled")) {
             CommandRegister.register(new ClaimCommand());
 
+            ClaimDataInstance.defaultChunksLeftAmount = config.getInt("claims.max-chunk-claim-amount", 1600);
             claimManager = new ClaimManager(this, "claim-data.yml");
+
+            for (var t : Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeams()) {
+                if (claimManager.claims.containsKey(t)) continue;
+                claimManager.claims.put(t, new ClaimDataInstance());
+            }
 
             if (config.getBoolean("claims.protections.containers")) {
                 getServer().getPluginManager().registerEvents(new ClaimContainerListener(), this);
@@ -112,6 +120,7 @@ public final class Main extends JavaPlugin {
             if (config.getBoolean("claims.protections.player-place")) {
                 getServer().getPluginManager().registerEvents(new ClaimPlaceListener(), this);
             }
+
 
 
             if (config.getBoolean("claims.save-on-world-save")) {
@@ -142,6 +151,12 @@ public final class Main extends JavaPlugin {
         // Plugin shutdown logic
         audiences.close();
         CommandAPI.onDisable();
+
+        try {
+            claimManager.save();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void disableCommand(String namespace, String commandName) {

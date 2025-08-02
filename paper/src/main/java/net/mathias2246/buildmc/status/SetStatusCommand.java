@@ -5,7 +5,6 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.commands.CustomCommand;
-import net.mathias2246.buildmc.util.Message;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
