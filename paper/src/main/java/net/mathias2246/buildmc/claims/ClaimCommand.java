@@ -49,7 +49,7 @@ public class ClaimCommand implements CustomCommand {
                                         return 0;
                                     }
 
-                                    String owner = ClaimManager.getOwnerString(command.getSource().getLocation());
+                                    String owner = ClaimManager.getOwnerString(player.getLocation());
 
                                     if (owner == null) {
                                         command.getSource().getSender().sendMessage(Component.translatable("messages.claims.who.unclaimed"));

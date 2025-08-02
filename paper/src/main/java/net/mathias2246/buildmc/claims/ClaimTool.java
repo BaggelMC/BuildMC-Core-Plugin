@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
 
 import static net.mathias2246.buildmc.Main.*;
 
@@ -32,6 +33,8 @@ public class ClaimTool implements Listener {
     public static final @NotNull NamespacedKey CLAIM_TOOL_ITEM_PDC_KEY = Objects.requireNonNull(NamespacedKey.fromString("buildmc:is_claim_tool_item"));
 
     public static ItemStack claimToolItemstack;
+
+    public static ItemStack removeToolItemstack;
 
     public static void setup() {
         var claimToolItem = Material.getMaterial(config.getString("claims.tool.tool-item", "carrot_on_a_stick").toUpperCase());
@@ -154,7 +157,7 @@ public class ClaimTool implements Listener {
                     Sounds.playSound(player, Sounds.MISTAKE);
                     return;
                 } else if (!ClaimManager.hasOwner(chunk)) {
-                    if (chunksLeft < 0) continue;
+                    if (chunksLeft < 0) break;
 
                     count++;
                     if (count > chunksLeft) { // If your team has no chunks left to claim, fail

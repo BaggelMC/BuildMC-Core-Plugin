@@ -96,21 +96,24 @@ public class ClaimManager extends ConfigurationManager{
      * @param team The team that should own the chunk or null if the current owner should be removed.*/
     public static void forceClaimChunk(@Nullable Team team, @NotNull Location location) {
         if (team == null) {
-            location.getChunk().getPersistentDataContainer().remove(CLAIM_PCD_KEY); // TODO: Test if contains check is needed
+            location.getChunk().getPersistentDataContainer().remove(CLAIM_PCD_KEY);
+
             return;
         }
         location.getChunk().getPersistentDataContainer().set(
                 CLAIM_PCD_KEY, PersistentDataType.STRING, team.getName()
         );
+
     }
 
     /**Forcefully sets the owner of the chunk at the given location.
      * @param team The team that should own the chunk or null if the current owner should be removed.*/
     public static void forceClaimChunk(@Nullable Team team, @NotNull Chunk chunk) {
         if (team == null) {
-            chunk.getPersistentDataContainer().remove(CLAIM_PCD_KEY); // TODO: Test if contains check is needed
+            chunk.getPersistentDataContainer().remove(CLAIM_PCD_KEY);
             return;
         }
+
         chunk.getPersistentDataContainer().set(
                 CLAIM_PCD_KEY, PersistentDataType.STRING, team.getName()
         );
@@ -118,18 +121,12 @@ public class ClaimManager extends ConfigurationManager{
 
     /**Gets the owner string directly form the Persistent-Data-Container or null if no owner was set*/
     public static @Nullable String getOwnerString(@NotNull Location location) {
-
-        var chunk = location.getChunk();
-
-        if (!chunk.getPersistentDataContainer().has(CLAIM_PCD_KEY)) return null;
-        return chunk.getPersistentDataContainer().get(
-                CLAIM_PCD_KEY, PersistentDataType.STRING
-        );
+        return getOwnerString(location.getChunk());
     }
 
     // Gets the owner string directly form PDC or null if no owner was set
-    private static @Nullable String getOwnerString(@NotNull Chunk chunk) {
-        if (!chunk.getPersistentDataContainer().has(CLAIM_PCD_KEY)) return null;
+    public static @Nullable String getOwnerString(@NotNull Chunk chunk) {
+        if (!chunk.getPersistentDataContainer().has(CLAIM_PCD_KEY, PersistentDataType.STRING)) return null;
         return chunk.getPersistentDataContainer().get(
                 CLAIM_PCD_KEY, PersistentDataType.STRING
         );
@@ -236,6 +233,7 @@ public class ClaimManager extends ConfigurationManager{
             for (int x = startZ; x <= endZ; x++) {
                 Chunk chunk = world.getChunkAt(x, z);
                 forceClaimChunk(team, chunk);
+
             }
         }
     }
