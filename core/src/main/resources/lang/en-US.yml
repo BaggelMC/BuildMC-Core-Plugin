@@ -93,7 +93,8 @@ messages:
   status:
     only-players: "<red>Only players can have a status!</red>"
     successfully-removed: "<green>Successfully removed your status!</green>"
-    not-found: "<red>Seems like this team doesn't exist</red>"
+    join-doesn't-exist: "<red>Your status has been removed.</red>"
+    not-found: "<red>Seems like this status doesn't exist.</red>"
     successfully-set: "<green>Successfully set Set status!</green>"
     not-in-team: "<red>You are not in the required team for this status!</red>"
     no-permission: "<red>You don't have the required permissions for this status!</red>"

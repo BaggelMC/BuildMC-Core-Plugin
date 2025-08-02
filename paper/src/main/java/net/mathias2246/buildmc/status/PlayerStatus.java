@@ -24,9 +24,14 @@ public class PlayerStatus implements Listener {
         return StatusConfig.loadedStatuses.containsKey(status);
     }
 
-    public static void setPlayerStatus(@NotNull Player player, String status) {
+    public static void setPlayerStatus(@NotNull Player player, String status, boolean join) {
         if (!doesStatusExist(status)) {
-            player.sendMessage(Component.translatable("messages.status.not-found"));
+            if (join) {
+                player.sendMessage(Component.translatable("messages.status.join-doesn't-exist"));
+                player.getPersistentDataContainer().remove(PLAYER_STATUS_PDC);
+            } else {
+                player.sendMessage(Component.translatable("messages.status.not-found"));
+            }
             return;
         }
 
@@ -71,7 +76,8 @@ public class PlayerStatus implements Listener {
             Player player = event.getPlayer();
             setPlayerStatus(
                     player,
-                    player.getPersistentDataContainer().get(PLAYER_STATUS_PDC, PersistentDataType.STRING)
+                    player.getPersistentDataContainer().get(PLAYER_STATUS_PDC, PersistentDataType.STRING),
+                    true
             );
         }
     }

@@ -58,7 +58,7 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
                                 command.getSource().getSender().sendMessage(Component.translatable("messages.status.only-players"));
                                 return 0;
                             }
-                            PlayerStatus.setPlayerStatus(player, command.getArgument("status_id", String.class));
+                            PlayerStatus.setPlayerStatus(player, command.getArgument("status_id", String.class), false);
                             return 1;
                         }
                 );
