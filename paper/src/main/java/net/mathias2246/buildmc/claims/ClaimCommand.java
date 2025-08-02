@@ -36,6 +36,7 @@ public class ClaimCommand implements CustomCommand {
                             }
 
                             ClaimTool.giveToolToPlayer(player);
+                            player.sendMessage(Component.translatable("messages.claims.tool.give-success"));
                             return 1;
                         })
             );
