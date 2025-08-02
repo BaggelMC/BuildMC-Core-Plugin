@@ -36,6 +36,7 @@ public class ClaimCommand implements CustomCommand {
                                 }
 
                                 ClaimTool.giveToolToPlayer(player);
+                                audiences.sender(player).sendMessage(Message.msg(player, "messages.claims.tool.give-success"));
                             })
                 )
                 .withSubcommand(
