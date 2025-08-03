@@ -9,7 +9,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
 public class ClaimExplosionsListener implements Listener {
-    private final boolean blockDamageEnabled = Main.config.getBoolean("claims.protections.explosion-block-damage");
+    private final boolean blockDamageEnabled = Main.config.getBoolean("claims.protections.damage.explosion-block-damage");
     private final boolean entityDamageEnabled = Main.config.getBoolean("claims.protections.explosion-entity-damage");
 
     @EventHandler(priority = EventPriority.HIGHEST)
