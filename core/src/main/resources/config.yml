@@ -102,15 +102,13 @@ claims:
 
 disable-commands: true
 disabled-commands:
-  # Reload commands
+  # Reload commands. WE DO NOT RECOMMEND USING THIS COMMAND. PLEASE RESTART THE SERVER.
   - "bukkit:reload"
   - "bukkit:rl"
   - "bukkit:bukkitreload"
 
-  # Seed command
+  # Seed command. This is done to prevent the seed from being accessible, even to admins.
   - "minecraft:seed"
 
-# Disables the vanilla /reload command. WE DO NOT RECOMMEND USING THIS COMMAND. PLEASE RESTART THE SERVER.
-disable-reload-command: true
-# Disables the vanilla /seed command. This is done to prevent the seed from being accessible, even to admins.
-disable-seed-command: true
+  # Dangerous server control
+  - "minecraft:save-off"
