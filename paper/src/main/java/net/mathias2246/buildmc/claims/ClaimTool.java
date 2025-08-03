@@ -170,6 +170,9 @@ public class ClaimTool implements Listener {
             }
         }
 
+        logger.log(Level.SEVERE, "Claim from: (" + Integer.toString(sx) + "," + Integer.toString(sz) + ")");
+        logger.log(Level.SEVERE, "Claim to: (" + Integer.toString(ex) + "," + Integer.toString(ez) + ")");
+
         ClaimManager.forceClaimArea(team, world, sx, sz, ex, ez);
 
         if (chunksLeft > 0) claimManager.claims.get(team).chunksLeft -= count;

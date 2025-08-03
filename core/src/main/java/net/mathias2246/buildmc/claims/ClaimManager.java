@@ -230,7 +230,7 @@ public class ClaimManager extends ConfigurationManager{
      * The area is set to the given team or all claims are removed if the parameter team is set to null.*/
     public static void forceClaimArea(Team team, @NotNull World world, int startX, int startZ, int endX, int endZ) {
         for (int z = startZ; z <= endZ; z++) {
-            for (int x = startZ; x <= endZ; x++) {
+            for (int x = startX; x <= endX; x++) {
                 Chunk chunk = world.getChunkAt(x, z);
                 forceClaimChunk(team, chunk);
 
