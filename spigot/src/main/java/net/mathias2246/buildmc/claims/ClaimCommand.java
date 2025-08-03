@@ -78,72 +78,62 @@ public class ClaimCommand implements CustomCommand {
 
                 .withSubcommand(
                         new CommandAPICommand("whitelist")
-                                .withSubcommand(new CommandAPICommand("add")
-                                .withArguments(
-                                        new PlayerArgument("player")
-                                                .executes(
-                                                        (command) -> {
-                                                            if (!(command.sender() instanceof Player player)) {
-                                                                audiences.sender(command.sender()).sendMessage(Component.translatable("messages.error.not-a-player"));
-                                                                return;
-                                                            }
+                                .withSubcommand(
+                                        new CommandAPICommand("add")
+                                                .withArguments(new PlayerArgument("player"))
+                                                .executes((command) -> {
+                                                    if (!(command.sender() instanceof Player player)) {
+                                                        audiences.sender(command.sender()).sendMessage(Component.translatable("messages.error.not-a-player"));
+                                                        return;
+                                                    }
 
-                                                            Team team = ClaimManager.getPlayerTeam(player);
-                                                            if (team == null) {
-                                                                audiences.sender(command.sender()).sendMessage(Component.translatable("messages.error.not-in-a-team"));
-                                                                return;
-                                                            }
+                                                    Team team = ClaimManager.getPlayerTeam(player);
+                                                    if (team == null) {
+                                                        audiences.sender(command.sender()).sendMessage(Component.translatable("messages.error.not-in-a-team"));
+                                                        return;
+                                                    }
 
-                                                            Player p = command.args().getByClass("player", Player.class);
-                                                            if (p == null) {
-                                                                return;
-                                                            }
+                                                    Player p = command.args().getByClass("player", Player.class);
+                                                    if (p == null) return;
 
-                                                            ClaimManager.setPlayerWhitelisted(claimManager, team, p);
-                                                            audiences.sender(command.sender()).sendMessage(Component.translatable("messages.claims.successfully-whitelisted"));
+                                                    ClaimManager.setPlayerWhitelisted(claimManager, team, p);
+                                                    audiences.sender(command.sender()).sendMessage(Component.translatable("messages.claims.successfully-whitelisted"));
 
-                                                            try {
-                                                                claimManager.save();
-                                                            } catch (IOException e) {
-                                                                throw new RuntimeException(e);
-                                                            }
-                                                        }
-                                                )
-                                        )
-                                ))
-                                .withSubcommand(new CommandAPICommand("remove")
-                                        .withArguments(
-                                                new PlayerArgument("player")
-                                                        .executes(
-                                                                (command) -> {
-                                                                    if (!(command.sender() instanceof Player player)) {
-                                                                        audiences.sender(command.sender()).sendMessage(Component.translatable("messages.error.not-a-player"));
-                                                                        return;
-                                                                    }
+                                                    try {
+                                                        claimManager.save();
+                                                    } catch (IOException e) {
+                                                        throw new RuntimeException(e);
+                                                    }
+                                                })
+                                )
+                                .withSubcommand(
+                                        new CommandAPICommand("remove")
+                                                .withArguments(new PlayerArgument("player"))
+                                                .executes((command) -> {
+                                                    if (!(command.sender() instanceof Player player)) {
+                                                        audiences.sender(command.sender()).sendMessage(Component.translatable("messages.error.not-a-player"));
+                                                        return;
+                                                    }
 
-                                                                    Team team = ClaimManager.getPlayerTeam(player);
-                                                                    if (team == null) {
-                                                                        audiences.sender(command.sender()).sendMessage(Component.translatable("messages.error.not-in-a-team"));
-                                                                        return;
-                                                                    }
+                                                    Team team = ClaimManager.getPlayerTeam(player);
+                                                    if (team == null) {
+                                                        audiences.sender(command.sender()).sendMessage(Component.translatable("messages.error.not-in-a-team"));
+                                                        return;
+                                                    }
 
-                                                                    Player p = command.args().getByClass("player", Player.class);
-                                                                    if (p == null) {
-                                                                        return;
-                                                                    }
+                                                    Player p = command.args().getByClass("player", Player.class);
+                                                    if (p == null) return;
 
-                                                                    ClaimManager.removePlayerWhitelisted(claimManager, team, p);
-                                                                    audiences.sender(command.sender()).sendMessage(Component.translatable("messages.claims.successfully-whitelisted"));
+                                                    ClaimManager.removePlayerWhitelisted(claimManager, team, p);
+                                                    audiences.sender(command.sender()).sendMessage(Component.translatable("messages.claims.successfully-whitelisted"));
 
-                                                                    try {
-                                                                        claimManager.save();
-                                                                    } catch (IOException e) {
-                                                                        throw new RuntimeException(e);
-                                                                    }
-                                                                }
-                                                        )
-                                        )
-
+                                                    try {
+                                                        claimManager.save();
+                                                    } catch (IOException e) {
+                                                        throw new RuntimeException(e);
+                                                    }
+                                                })
+                                )
                 )
 
                 .executes(
