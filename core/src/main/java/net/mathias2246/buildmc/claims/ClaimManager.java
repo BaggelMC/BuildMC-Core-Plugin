@@ -32,7 +32,7 @@ public class ClaimManager extends ConfigurationManager{
             var sect = configuration.getConfigurationSection(key);
             if (sect == null) return;
 
-            Team team = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeam(key);
+            Team team = Objects.requireNonNull(this.getPlugin().getServer().getScoreboardManager()).getMainScoreboard().getTeam(key);
 
             claims.put(team, ClaimDataInstance.deserialize(sect.getValues(false)));
         }
