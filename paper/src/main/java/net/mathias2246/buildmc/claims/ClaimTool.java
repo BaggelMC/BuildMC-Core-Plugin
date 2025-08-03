@@ -255,8 +255,8 @@ public class ClaimTool implements Listener {
         if (world == null) return;
 
         if (
-                ex-sx > selectionSizeLimit ||
-                        ez-sz > selectionSizeLimit
+                ex-sx >= selectionSizeLimit ||
+                        ez-sz >= selectionSizeLimit
         ) {
             var m = Message.msg(player, "messages.claims.tool.selection-too-large");
 
@@ -306,8 +306,8 @@ public class ClaimTool implements Listener {
         if (world == null) return;
 
         if (
-                ex-sx > selectionSizeLimit ||
-                        ez-sz > selectionSizeLimit
+                ex-sx >= selectionSizeLimit ||
+                        ez-sz >= selectionSizeLimit
         ) {
             var m = Message.msg(player, "messages.claims.tool.selection-too-large");
 

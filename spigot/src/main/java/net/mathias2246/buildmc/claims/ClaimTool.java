@@ -258,8 +258,8 @@ public class ClaimTool implements Listener {
         if (world == null) return;
 
         if (
-                ex-sx > selectionSizeLimit ||
-                        ez-sz > selectionSizeLimit
+                ex-sx >= selectionSizeLimit ||
+                        ez-sz >= selectionSizeLimit
         ) {
             var m = Message.msg(player, "messages.claims.tool.selection-too-large");
 
@@ -307,6 +307,18 @@ public class ClaimTool implements Listener {
 
         World world = from.getWorld();
         if (world == null) return;
+
+        if (
+                ex-sx >= selectionSizeLimit ||
+                        ez-sz >= selectionSizeLimit
+        ) {
+            var m = Message.msg(player, "messages.claims.tool.selection-too-large");
+
+            var r = TextReplacementConfig.builder().matchLiteral("%selection_limit%").replacement(Integer.toString(selectionSizeLimit));
+            audiences.player(player).sendMessage(m.replaceText(r.build()));
+            Sounds.playSound(player, Sounds.MISTAKE);
+            return;
+        }
 
         int count = 0;
         int chunksLeft = ClaimManager.getChunksLeft(claimManager, team);

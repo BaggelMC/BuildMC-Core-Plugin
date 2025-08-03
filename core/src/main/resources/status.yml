@@ -8,7 +8,7 @@
 
 # # An example admin status that requires the 'buildmc.admin' permission
 # admin: # the status id
-#   display-name: "<bold><red>[</red></bold><gradient:#5e4fa2:#f79459:red>Admin</gradient><bold><red>]</red></bold><reset> " # the prefix for the player using this status
+#   display-name: "<bold><red>[</red></bold><gradient:#ff0020:#dd0010>Admin</gradient><bold><red>]</red></bold><reset> " # the prefix for the player using this status
 #   permissions: # (Optional) The permission that can use this status
 #     - buildmc.admin
 #
