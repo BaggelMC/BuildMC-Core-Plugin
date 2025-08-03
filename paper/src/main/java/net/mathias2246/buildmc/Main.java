@@ -102,6 +102,10 @@ public final class Main extends JavaPlugin {
                 getServer().getPluginManager().registerEvents(new ClaimPlaceListener(), this);
             }
 
+            if (config.getBoolean("claims.protections.damage.entity-damage")) {
+                getServer().getPluginManager().registerEvents(new ClaimDamageProtectionListener(), this);
+            }
+
             ClaimDataInstance.defaultChunksLeftAmount = config.getInt("claims.max-chunk-claim-amount", 1600);
 
             claimManager = new ClaimManager(this, "claim-data.yml");

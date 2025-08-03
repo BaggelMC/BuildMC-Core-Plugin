@@ -93,6 +93,13 @@ claims:
     # Entities cannot get damage from explosions
     explosion-entity-damage: true
 
+    # Damage related protections
+    damage:
+      # Cancels all damage dealt by players to protected entities
+      entity-damage: true
+      # Allows players to be damaged by other players
+      exclude-players: true
+
 
 # Disables the vanilla /reload command. WE DO NOT RECOMMEND USING THIS COMMAND. PLEASE RESTART THE SERVER.
 disable-reload-command: true

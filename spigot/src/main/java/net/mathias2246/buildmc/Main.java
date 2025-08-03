@@ -121,6 +121,9 @@ public final class Main extends JavaPlugin {
                 getServer().getPluginManager().registerEvents(new ClaimPlaceListener(), this);
             }
 
+            if (config.getBoolean("claims.protections.damage.entity-damage")) {
+                getServer().getPluginManager().registerEvents(new ClaimDamageProtectionListener(), this);
+            }
 
 
             if (config.getBoolean("claims.save-on-world-save")) {

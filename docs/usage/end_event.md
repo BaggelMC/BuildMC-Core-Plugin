@@ -37,8 +37,8 @@ Admins can **toggle access to the End** dynamically. **No restart required**:
 Located in:
 📄 `config.yml` → `end-event` section
 
-| Key                        | Description                                                                                                                                                                    |
-|----------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Key                          | Description                                                                             |
+|------------------------------|-----------------------------------------------------------------------------------------|
 | `end-event.blocked-entities` | Prevents certain entities to use the end portal like TNT or creepers. *(Default: true)* |
 
 ---
