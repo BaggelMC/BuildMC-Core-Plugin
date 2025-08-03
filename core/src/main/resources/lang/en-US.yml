@@ -102,7 +102,7 @@ messages:
       <gray>- Sneak + Click to select your second chunk.</gray>
       <gray>- That area will then be claimed.</gray>
       
-      <gray>- Use '/claim removetool' to get the claim remover.
+      <gray>- Use '<gold>/claim removetool</gold>' to get the claim remover.
       <gray>- Select corners to remove area.
       <gold>------------------------------------</gold>
 

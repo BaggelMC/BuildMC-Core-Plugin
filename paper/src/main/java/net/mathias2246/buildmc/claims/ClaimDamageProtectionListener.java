@@ -24,7 +24,7 @@ public class ClaimDamageProtectionListener implements Listener {
         // Skip player-on-player protection if excludePlayers is true
         if (excludePlayers && victim instanceof Player player) return;
 
-        // Check if attacker is allowed to deal damage in the victim's location
+        // Check if the attacker is allowed to deal damage in the victim's location
         if (!ClaimManager.isPlayerAllowed(claimManager, attacker, victim.getLocation())) {
             attacker.sendActionBar(Component.translatable("messages.claims.not-accessible.entity-damage"));
             event.setCancelled(true);

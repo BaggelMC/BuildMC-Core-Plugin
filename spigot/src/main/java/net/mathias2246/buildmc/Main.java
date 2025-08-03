@@ -100,10 +100,6 @@ public final class Main extends JavaPlugin {
             ClaimDataInstance.defaultChunksLeftAmount = config.getInt("claims.max-chunk-claim-amount", 1600);
             claimManager = new ClaimManager(this, "claim-data.yml");
 
-            for (var t : Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeams()) {
-                if (claimManager.claims.containsKey(t)) continue;
-                claimManager.claims.put(t, new ClaimDataInstance());
-            }
 
             if (config.getBoolean("claims.protections.containers")) {
                 getServer().getPluginManager().registerEvents(new ClaimContainerListener(), this);
