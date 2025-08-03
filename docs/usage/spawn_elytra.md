@@ -38,9 +38,11 @@ Here’s what you can configure:
 | `strength`          | Boost power (velocity multiplier). <br>**1** = no boost, **5** = default BuildMC value.                                 |
 | `disable-rockets`   | Blocks players from using **firework rockets** during flight. <br>Set to `true` to **prevent abuse**. *(Default: true)* |
 | `zone`              | Manually define or adjust the `world`, `pos1`, and `pos2` if needed. Useful for fine-tuning after setup.                |
-| `message`           | The message shown to players when they activate the Elytra boost. Supports color codes.                                 |
 
-> ❗ **Riptide Note**: Players may still use Riptide tridents for additional mobility. This behavior cannot currently be disabled due to Minecraft engine limitations.
+You can changen translations and messages for the spawn-elytra under `lang/some-language.yml` → `messages.spawn-elytra`.
+
+
+> ❗ **Riptide Note**: Players may still use Riptide tridents for additional mobility. This behavior cannot currently be disabled due to Riptide being processed ont the client-side.
 
 ---
 
