@@ -17,7 +17,6 @@ public record ClaimDataSaveListener(@NotNull ClaimManager claimManager) implemen
 
         try {
             claimManager.save();
-            claimManager.getPlugin().getLogger().log(Level.INFO, "Successfully saved claim-data.yml!");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

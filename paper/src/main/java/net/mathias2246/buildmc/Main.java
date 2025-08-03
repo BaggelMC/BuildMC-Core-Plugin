@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Objects;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public final class Main extends JavaPlugin {
@@ -106,9 +107,13 @@ public final class Main extends JavaPlugin {
                 getServer().getPluginManager().registerEvents(new ClaimDamageProtectionListener(), this);
             }
 
-            ClaimDataInstance.defaultChunksLeftAmount = config.getInt("claims.max-chunk-claim-amount", 1600);
+            ClaimDataInstance.defaultChunksLeftAmount = config.getInt("claims.max-chunk-claim-amount", 1024);
 
             claimManager = new ClaimManager(this, "claim-data.yml");
+
+            for (var c : claimManager.claims.entrySet()) {
+                logger.log(Level.SEVERE, "teams: " + c.getKey().getName());
+            }
 
             for (var t : Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeams()) {
                 if (claimManager.claims.containsKey(t)) continue;
