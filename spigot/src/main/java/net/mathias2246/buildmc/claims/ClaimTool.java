@@ -151,7 +151,7 @@ public class ClaimTool implements Listener {
             event.setCancelled(true);
             Player player = event.getPlayer();
 
-            Location at = null;
+            Location at;
             if (event.getClickedBlock() != null) at = event.getClickedBlock().getLocation();
             else at = player.getLocation();
 
@@ -200,7 +200,7 @@ public class ClaimTool implements Listener {
             event.setCancelled(true);
             Player player = event.getPlayer();
 
-            Location at = null;
+            Location at;
             if (event.getClickedBlock() != null) at = event.getClickedBlock().getLocation();
             else at = player.getLocation();
 

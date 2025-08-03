@@ -7,7 +7,6 @@ import org.bukkit.event.world.WorldSaveEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.util.logging.Level;
 
 public record ClaimDataSaveListener(@NotNull ClaimManager claimManager) implements Listener {
 

@@ -29,8 +29,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Map;
-import java.util.Objects;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public final class Main extends JavaPlugin {

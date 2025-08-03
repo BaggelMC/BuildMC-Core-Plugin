@@ -23,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.Level;
 
 import static net.mathias2246.buildmc.Main.*;
 

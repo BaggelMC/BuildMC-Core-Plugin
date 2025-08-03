@@ -143,8 +143,6 @@ public class ClaimCommand implements CustomCommand {
 
                 .executes(
                         (command) -> {
-                            if (!(command.sender() instanceof Player player)) return;
-
                         }
                 );
     }

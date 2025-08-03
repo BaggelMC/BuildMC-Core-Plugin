@@ -88,7 +88,7 @@ public class ClaimManager extends ConfigurationManager{
 
     /**Removes a player from the team whitelist*/
     public static void removePlayerWhitelisted(@NotNull ClaimManager manager, @NotNull Team team, @NotNull Player player) {
-        var t = manager.getEntryOrNew(team);;
+        var t = manager.getEntryOrNew(team);
 
         t.whitelistedPlayers.remove(player.getUniqueId());
     }

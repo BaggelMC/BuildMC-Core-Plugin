@@ -39,7 +39,7 @@ Here’s what you can configure:
 | `disable-rockets`   | Blocks players from using **firework rockets** during flight. <br>Set to `true` to **prevent abuse**. *(Default: true)* |
 | `zone`              | Manually define or adjust the `world`, `pos1`, and `pos2` if needed. Useful for fine-tuning after setup.                |
 
-You can changen translations and messages for the spawn-elytra under `lang/some-language.yml` → `messages.spawn-elytra`.
+You can change translations and messages for the spawn-elytra under `lang/some-language.yml` → `messages.spawn-elytra`.
 
 
 > ❗ **Riptide Note**: Players may still use Riptide tridents for additional mobility. This behavior cannot currently be disabled due to Riptide being processed on the client-side.
