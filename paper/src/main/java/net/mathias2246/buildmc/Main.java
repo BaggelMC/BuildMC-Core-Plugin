@@ -23,6 +23,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,6 +35,7 @@ import java.util.logging.Logger;
 
 public final class Main extends JavaPlugin {
 
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(Main.class);
     public static Logger logger;
 
     public static Plugin plugin;
@@ -110,15 +112,6 @@ public final class Main extends JavaPlugin {
             ClaimDataInstance.defaultChunksLeftAmount = config.getInt("claims.max-chunk-claim-amount", 1024);
 
             claimManager = new ClaimManager(this, "claim-data.yml");
-
-            for (var c : claimManager.claims.entrySet()) {
-                logger.log(Level.SEVERE, "teams: " + c.getKey().getName());
-            }
-
-            for (var t : Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeams()) {
-                if (claimManager.claims.containsKey(t)) continue;
-                claimManager.claims.put(t, new ClaimDataInstance());
-            }
 
             if (config.getBoolean("claims.save-on-world-save")) {
                 getServer().getPluginManager().registerEvents(new ClaimDataSaveListener(claimManager), this);

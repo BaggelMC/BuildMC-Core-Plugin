@@ -21,6 +21,11 @@ public class ClaimManager extends ConfigurationManager{
     /**A Map containing all the claim data*/
     public @NotNull Map<Team, ClaimDataInstance> claims = new HashMap<>();
 
+    public @NotNull ClaimDataInstance getEntryOrNew(@NotNull Team team) {
+        if (!claims.containsKey(team)) claims.put(team, new ClaimDataInstance());
+        return claims.get(team);
+    }
+
     public ClaimManager(@NotNull Plugin plugin, @NotNull String resourceName) {
         super(plugin, resourceName);
     }
@@ -54,8 +59,7 @@ public class ClaimManager extends ConfigurationManager{
      * */
     public static boolean isPlayerWhitelisted(@NotNull ClaimManager manager, Team team, @NotNull Player player) {
         if (team == null) return false;
-        var l = manager.claims.get(team);
-        if (l == null) return false;
+        var l = manager.getEntryOrNew(team);
 
         return l.whitelistedPlayers.contains(player.getUniqueId());
     }
@@ -66,16 +70,14 @@ public class ClaimManager extends ConfigurationManager{
      * */
     public static boolean isPlayerWhitelisted(@NotNull ClaimManager manager, Team team, @NotNull HumanEntity player) {
         if (team == null) return false;
-        var l = manager.claims.get(team);
-        if (l == null) return false;
+        var l = manager.getEntryOrNew(team);
 
         return l.whitelistedPlayers.contains(player.getUniqueId());
     }
 
     /**Adds a Player to the team whitelist*/
     public static void setPlayerWhitelisted(@NotNull ClaimManager manager, @NotNull Team team, @NotNull Player player) {
-        if (!manager.claims.containsKey(team)) manager.claims.put(team, new ClaimDataInstance());
-        var t = manager.claims.get(team).whitelistedPlayers;
+        var t = manager.getEntryOrNew(team).whitelistedPlayers;
 
         UUID uuid = player.getUniqueId();
 
@@ -86,8 +88,7 @@ public class ClaimManager extends ConfigurationManager{
 
     /**Removes a player from the team whitelist*/
     public static void removePlayerWhitelisted(@NotNull ClaimManager manager, @NotNull Team team, @NotNull Player player) {
-        if (!manager.claims.containsKey(team)) manager.claims.put(team, new ClaimDataInstance());
-        var t = manager.claims.get(team);
+        var t = manager.getEntryOrNew(team);;
 
         t.whitelistedPlayers.remove(player.getUniqueId());
     }
@@ -241,8 +242,7 @@ public class ClaimManager extends ConfigurationManager{
     /**Gets the number of chunks the given team has left to claim
      * If the amount of chunks left is smaller than zero, the claim limit will be disabled.*/
     public static int getChunksLeft(@NotNull ClaimManager manager, @NotNull Team team) {
-        var t = manager.claims.get(team);
-        if (t == null) return 0;
+        var t = manager.getEntryOrNew(team);
         return t.chunksLeft;
     }
 

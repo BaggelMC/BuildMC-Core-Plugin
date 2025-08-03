@@ -285,7 +285,8 @@ public class ClaimTool implements Listener {
 
         ClaimManager.forceClaimArea(null, world, sx, sz, ex, ez);
 
-        if (claimManager.claims.get(team).chunksLeft >= 0) claimManager.claims.get(team).chunksLeft += count;
+        ClaimDataInstance cm = claimManager.getEntryOrNew(team);
+        if (cm.chunksLeft >= 0) cm.chunksLeft += count;
 
         player.removeMetadata("claim_tool_pos1", plugin);
 
@@ -343,7 +344,7 @@ public class ClaimTool implements Listener {
 
         ClaimManager.forceClaimArea(team, world, sx, sz, ex, ez);
 
-        if (chunksLeft > 0) claimManager.claims.get(team).chunksLeft -= count;
+        if (chunksLeft > 0) claimManager.getEntryOrNew(team).chunksLeft -= count;
 
         player.removeMetadata("claim_tool_pos1", plugin);
 
