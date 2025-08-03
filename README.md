@@ -53,6 +53,7 @@ If you're running your own server and want to use BuildMC-Core, here's how to in
 - Check out our guides for:
   - [Spawn Elytra](docs/usage/spawn_elytra.md)
   - [End Event](docs/usage/end_event.md)
+  - [Claims](docs/usage/claim_system.md)
 - Compatible with most standard Paper/Spigot setups.
 - May require a permission setup for players/admins using permission managers like [LuckPerms](https://luckperms.net/).
 
