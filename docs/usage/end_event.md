@@ -39,7 +39,7 @@ Located in:
 
 | Key                        | Description                                                                                                                                                                    |
 |----------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `disallow-tnt-through-end` | Prevents **TNT**, **TNT minecarts**, and **Creepers** from traveling through End portals. Helps prevent **spawn griefing** via cross-dimensional explosions. *(Default: true)* |
+| `end-event.blocked-entities` | Prevents certain entities to use the end portal like TNT or creepers. *(Default: true)* |
 
 ---
 
@@ -47,7 +47,7 @@ Located in:
 
 * When the **End is closed**, **all End portals are disabled** for both players and entities.
 * Players attempting to enter are simply **blocked**, creating a clean and predictable behavior.
-* **TNT protection** ensures players can't use complex redstone to break into spawn areas or grief the End or spawn.
+* **Entity-Blacklist** ensures players can't use monsters or explosives to grief the end spawn.
 
 ---
 
