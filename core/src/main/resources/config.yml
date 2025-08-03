@@ -100,6 +100,15 @@ claims:
       # Allows players to be damaged by other players
       exclude-players: true
 
+disable-commands: true
+disabled-commands:
+  # Reload commands
+  - "bukkit:reload"
+  - "bukkit:rl"
+  - "bukkit:bukkitreload"
+
+  # Seed command
+  - "minecraft:seed"
 
 # Disables the vanilla /reload command. WE DO NOT RECOMMEND USING THIS COMMAND. PLEASE RESTART THE SERVER.
 disable-reload-command: true

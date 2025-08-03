@@ -139,15 +139,18 @@ public final class Main extends JavaPlugin {
         });
 
 
-        if (config.getBoolean("disable-reload-command")) {
-            disableCommand("bukkit", "reload");
-            disableCommand("bukkit", "rl");
-            disableCommand("bukkit", "bukkitreload");
+        if (config.getBoolean("disable-commands")) {
+            if (config.isList("disabled-commands")) {
+                for (String fullCommand : config.getStringList("disabled-commands")) {
+                    String[] parts = fullCommand.split(":", 2);
+                    if (parts.length == 2) {
+                        disableCommand(parts[0], parts[1]);
+                    } else {
+                        logger.warning("Invalid command format in 'disabled-commands': " + fullCommand);
+                    }
+                }
+            }
         }
-        if (config.getBoolean("disable-seed-command")) {
-            disableCommand("minecraft", "seed");
-        }
-
     }
 
     @Override
