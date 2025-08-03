@@ -105,7 +105,7 @@ public final class Main extends JavaPlugin {
                 getServer().getPluginManager().registerEvents(new ClaimContainerListener(), this);
             }
 
-            if (config.getBoolean("claims.protections.explosion-block-damage") || config.getBoolean("claims.protections.explosion-entity-damage")) {
+            if (config.getBoolean("claims.protections.damage.explosion-block-damage") || config.getBoolean("claims.protections.explosion-entity-damage")) {
                 getServer().getPluginManager().registerEvents(new ClaimExplosionsListener(), this);
             }
 
