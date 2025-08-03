@@ -96,6 +96,11 @@ public class ClaimCommand implements CustomCommand {
                                                     Player p = command.args().getByClass("player", Player.class);
                                                     if (p == null) return;
 
+                                                    if (ClaimManager.isPlayerWhitelisted(claimManager, team, p)) {
+                                                        audiences.sender(command.sender()).sendMessage(Component.translatable("messages.claims.already-whitelisted"));
+                                                        return;
+                                                    }
+
                                                     ClaimManager.setPlayerWhitelisted(claimManager, team, p);
                                                     audiences.sender(command.sender()).sendMessage(Component.translatable("messages.claims.successfully-whitelisted"));
 

@@ -116,9 +116,20 @@ public class ClaimCommand implements CustomCommand {
 
                                                                     var ps = command.getArgument("player", PlayerSelectorArgumentResolver.class);
                                                                     for (var p : ps.resolve(command.getSource())) {
+                                                                        if (ClaimManager.isPlayerWhitelisted(claimManager, team, p)) {
+                                                                            command.getSource().getSender().sendMessage(
+                                                                                    Component.translatable("messages.claims.already-whitelisted")
+                                                                                            .replaceText(TextReplacementConfig.builder()
+                                                                                                    .matchLiteral("%player%")
+                                                                                                    .replacement(p.getName())
+                                                                                                    .build()));
+                                                                            continue;
+                                                                        }
+
                                                                         ClaimManager.setPlayerWhitelisted(claimManager, team, p);
                                                                         command.getSource().getSender().sendMessage(Component.translatable("messages.claims.successfully-whitelisted"));
                                                                     }
+
                                                                     try {
                                                                         claimManager.save();
                                                                     } catch (IOException e) {

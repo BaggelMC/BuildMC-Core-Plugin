@@ -94,6 +94,7 @@ messages:
 
     successfully-whitelisted: "<green>You have successfully whitelisted player!</green>"
     successfully-removed-whitelisted: "<green>You have successfully removed a player from your whitelist!</green>"
+    already-whitelisted: "<red>%player% is already whitelisted.</red>"
 
     help-message: |-
       <gold>------------- <green>Claims Help</green> -------------</gold>
