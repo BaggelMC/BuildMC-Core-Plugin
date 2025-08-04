@@ -106,7 +106,7 @@ claims:
     vehicle-enter: true
 
     # Players can't use buckets
-    bucket-usage: false
+    bucket-usage: true
 
     # Players can't use frost walker enchantment
     frostwalker: true

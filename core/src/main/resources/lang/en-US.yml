@@ -127,6 +127,8 @@ messages:
       item-drop: "<red>You cannot drop items in an area protected by a land claim.</red>"
 
       frostwalker: "<red>You can't use <lang:enchantment.minecraft.frost_walker> in an area protected by a land claim.</red>"
+      entity-bucket: "<red>This cute %entity% protected by a land claim.</red>"
+
 
   status:
     only-players: "<red>Only players can have a status!</red>"
