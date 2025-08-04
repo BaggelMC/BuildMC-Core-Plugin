@@ -87,6 +87,47 @@ claims:
 
     # Players cannot open containers (e.g. Chests, Barrels...)
     containers: true
+    # Players can open ender chests even if other containers are protected
+    allow-ender-chests: true
+
+    # Players cannot pick up items
+    item-pickup: false
+
+    # Players cannot drop items
+    item-drop: false
+
+    # Players cannot edit signs
+    sign-editing: true
+
+    # Players can't use splash potions
+    splash-potions: true
+
+    # Players can't enter vehicles
+    vehicle-enter: true
+
+    # Players can't use buckets
+    bucket-usage: false
+
+    # Players can't use frost walker enchantment
+    frostwalker: true
+
+    # Prevents pistons from moving into claims and pulling out of claims
+    piston-movement-across-claim-borders: true
+
+    # Players cannot interact with the things listed in "interactions"
+    prevent-interactions: true
+    # Interaction related protections
+    interactions:
+      levers: true
+      buttons: true
+      repeaters: true
+      comparators: true
+
+      pressure-plates: true
+      trapdoors: true
+      doors: true
+      fence-gates: true
+      farmland: true
 
     # Damage related protections
     damage:
@@ -99,6 +140,13 @@ claims:
       explosion-block-damage: true
       # Entities cannot get damage from explosions
       explosion-entity-damage: true
+
+    # Entities in entity-modifications cannot modify blocks
+    prevent-entity-modifications: true
+    entity-modifications:
+      wither: true
+      enderman: false
+      ravager: false
 
 disable-commands: true
 disabled-commands:

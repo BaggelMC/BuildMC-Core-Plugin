@@ -112,6 +112,18 @@ messages:
 
       entity-damage: "<red>Dieses Entity ist durch einen Claim geschützt.</red>"
 
+      sign: "<red>Dieses Schild ist durch einen Claim geschützt.</red>"
+      interact: "<red>Dieses Block ist durch einen Claim geschützt.</red>"
+
+      potion-splash: "<red>Dieses Gebiet ist durch einen Claim geschützt.</red>"
+
+      vehicle: "<red>Dieses Gefährt ist durch einen Claim geschützt.</red>"
+
+      item-pickup: "<red>Dieses Item ist durch einen Claim geschützt.</red>"
+      item-drop: "<red>Du kannst keine Items droppen in einem Gebiet, dass durch einen Claim geschützt ist.</red>"
+
+      frostwalker: "<red>Du kannst kein <lang:enchantment.minecraft.frost_walker> benutzen in einem Gebiet, dass durch einen Claim geschützt ist.</red>"
+
   status:
     only-players: "<red>Nur Spieler können einen Status haben!</red>"
     successfully-removed: "<green>Status erfolgreich entfernt!</green>"

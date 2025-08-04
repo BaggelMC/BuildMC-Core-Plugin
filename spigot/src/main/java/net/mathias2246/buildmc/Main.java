@@ -120,6 +120,46 @@ public final class Main extends JavaPlugin {
                 getServer().getPluginManager().registerEvents(new ClaimDamageProtectionListener(), this);
             }
 
+            if (config.getBoolean("claims.protections.sign-editing")) {
+                getServer().getPluginManager().registerEvents(new ClaimSignEditListener(), this);
+            }
+
+            if (config.getBoolean("claims.protections.prevent-interactions")) {
+                getServer().getPluginManager().registerEvents(new ClaimInteractionListener(), this);
+            }
+
+            if (config.getBoolean("claims.protections.splash-potions")) {
+                getServer().getPluginManager().registerEvents(new ClaimPotionSplashEvent(), this);
+            }
+
+            if (config.getBoolean("claims.protections.vehicle-enter")) {
+                getServer().getPluginManager().registerEvents(new ClaimVehicleEnterListener(), this);
+            }
+
+            if (config.getBoolean("claims.protections.bucket-usage")) {
+                getServer().getPluginManager().registerEvents(new ClaimBucketUseEvent(), this);
+            }
+
+            if (config.getBoolean("claims.protections.prevent-entity-modifications")) {
+                getServer().getPluginManager().registerEvents(new ClaimEntityChangeBlockListener(), this);
+            }
+
+            if (config.getBoolean("claims.protections.item-pickup")) {
+                getServer().getPluginManager().registerEvents(new ClaimItemPickupListener(), this);
+            }
+
+            if (config.getBoolean("claims.protections.item-drop")) {
+                getServer().getPluginManager().registerEvents(new ClaimItemDropListener(), this);
+            }
+
+            if (config.getBoolean("claims.protections.frostwalker")) {
+                getServer().getPluginManager().registerEvents(new ClaimFrostWalkerListener(), this);
+            }
+
+            if (config.getBoolean("claims.protections.piston-movement-across-claim-borders")) {
+                getServer().getPluginManager().registerEvents(new ClaimPistonMovementListener(), this);
+            }
+
 
             if (config.getBoolean("claims.save-on-world-save")) {
                 getServer().getPluginManager().registerEvents(new ClaimDataSaveListener(claimManager), this);
