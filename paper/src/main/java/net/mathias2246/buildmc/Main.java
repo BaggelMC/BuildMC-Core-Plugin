@@ -151,10 +151,6 @@ public final class Main extends JavaPlugin {
                 getServer().getPluginManager().registerEvents(new ClaimPistonMovementListener(), this);
             }
 
-            for (var t : claimManager.claims.entrySet()) {
-                logger.severe("Team "+t.getKey()+" was found with chunks left "+t.getValue().chunksLeft);
-            }
-
             if (config.getBoolean("claims.save-on-world-save")) {
                 getServer().getPluginManager().registerEvents(new ClaimDataSaveListener(claimManager), this);
             }
