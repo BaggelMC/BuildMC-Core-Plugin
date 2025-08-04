@@ -125,6 +125,7 @@ messages:
       item-drop: "<red>Du kannst keine Items droppen in einem Gebiet, dass durch einen Claim geschützt ist.</red>"
 
       frostwalker: "<red>Du kannst kein <lang:enchantment.minecraft.frost_walker> benutzen in einem Gebiet, dass durch einen Claim geschützt ist.</red>"
+      entity-bucket: "<red>Dieses süße %entity% is durch einen Claim geschützt.</red>"
 
   status:
     only-players: "<red>Nur Spieler können einen Status haben!</red>"
