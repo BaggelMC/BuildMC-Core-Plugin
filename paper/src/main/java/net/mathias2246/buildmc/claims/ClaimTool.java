@@ -1,6 +1,7 @@
 package net.mathias2246.buildmc.claims;
 
 
+import com.destroystokyo.paper.ParticleBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.mathias2246.buildmc.util.LocationUtil;
@@ -17,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.*;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +34,6 @@ public class ClaimTool implements Listener {
     public static final @NotNull NamespacedKey CLAIM_TOOL_ITEM_PDC_KEY = Objects.requireNonNull(NamespacedKey.fromString("buildmc:is_claim_tool_item"));
 
     public static final @NotNull NamespacedKey REMOVE_TOOL_ITEM_PDC_KEY = Objects.requireNonNull(NamespacedKey.fromString("buildmc:is_remove_tool_item"));
-
 
     public static int selectionSizeLimit = 8;
 
@@ -139,6 +140,121 @@ public class ClaimTool implements Listener {
         return pdc.has(REMOVE_TOOL_ITEM_PDC_KEY);
     }
 
+    public static class ParticleSpawner extends BukkitRunnable {
+
+        public final @NotNull Player source;
+
+        private int repeat = 32;
+
+        public ParticleSpawner(@NotNull Player source, boolean isRemoveSelection) {
+            this.source = source;
+
+            var l = LocationUtil.deserialize(source.getMetadata("claim_tool_pos1").getFirst().asString());
+
+            Chunk c = l.getChunk();
+
+            l.setX((c.getX() << 4) + 8);
+            l.setZ((c.getZ() << 4) + 8);
+            l.setY(l.getY()+1.5);
+
+
+
+            if (isRemoveSelection) {
+                chunkPlane = new ParticleBuilder
+                (Particle.DUST)
+                        .color(210, 10, 10)
+                        .count(100)
+                        .receivers(source)
+                        .location(
+                                l
+                        )
+                        .offset(2.6, 0, 2.6);
+            }
+            else chunkPlane = new ParticleBuilder
+                    (Particle.DUST)
+                    .color(10, 230, 10)
+                    .count(100)
+                    .receivers(source)
+                    .location(
+                            l
+                    )
+                    .offset(2.6, 0, 2.6);
+
+            var cornerBase = new ParticleBuilder(Particle.DUST)
+                    .color(10, 10, 230)
+                    .count(30)
+                    .receivers(source)
+                    .offset(0,1.5d, 0);
+
+            var l1 = new Location(
+                    source.getWorld(),
+                    (source.getChunk().getX()  << 4) + 0.5d,
+                    l.getY(),
+                    (source.getChunk().getZ()  << 4) + 0.5d
+            );
+
+            corner1 = cornerBase.clone().location(
+                            l1
+                    );
+
+            var l2 = new Location(
+                    source.getWorld(),
+                    (source.getChunk().getX()  << 4) + 15.5d,
+                    l.getY(),
+                    (source.getChunk().getZ()  << 4) + 0.0d
+            );
+
+            corner2 = cornerBase.clone().location(
+                    l2
+            );
+
+            var l3 = new Location(
+                    source.getWorld(),
+                    (source.getChunk().getX()  << 4) + 0.0d,
+                    l.getY(),
+                    (source.getChunk().getZ()  << 4) + 15.5d
+            );
+
+            corner3 = cornerBase.clone().location(
+                    l3
+            );
+
+            var l4 = new Location(
+                    source.getWorld(),
+                    (source.getChunk().getX()  << 4) + 15.5d,
+                    l.getY(),
+                    (source.getChunk().getZ()  << 4) + 15.5d
+            );
+
+
+            corner4 = cornerBase.clone().location(
+                    l4
+            );
+        }
+
+        public final ParticleBuilder chunkPlane;
+        public final ParticleBuilder corner1;
+        public final ParticleBuilder corner2;
+        public final ParticleBuilder corner3;
+        public final ParticleBuilder corner4;
+
+        @Override
+        public void run() {
+
+            if (repeat < 0 || !source.hasMetadata("selection_particles")) {
+                source.removeMetadata("selection_particles", plugin);
+                this.cancel();
+            }
+
+            repeat--;
+
+            chunkPlane.spawn();
+            corner1.spawn();
+            corner2.spawn();
+            corner3.spawn();
+            corner4.spawn();
+        }
+    }
 
     @EventHandler
     public void onPlayerUseHoe(PlayerInteractEvent event) {
@@ -147,10 +263,14 @@ public class ClaimTool implements Listener {
             event.setCancelled(true);
             Player player = event.getPlayer();
 
-            Location at = null;
+            Location at;
             if (event.getClickedBlock() != null) at = event.getClickedBlock().getLocation();
             else at = player.getLocation();
 
+            if (player.hasCooldown(event.getItem())) {
+                player.sendMessage(Component.translatable("messages.claims.tool.tool-cooldown"));
+                return;
+            }
 
             if (!player.isSneaking()) {
                 if (!ClaimManager.isNotClaimedOrOwn(ClaimManager.getPlayerTeam(player), at)) {
@@ -167,6 +287,12 @@ public class ClaimTool implements Listener {
                         )
                 );
                 player.sendMessage(Message.msg(player, "messages.claims.tool.successfully-set-pos"));
+
+                if (!player.hasMetadata("selection_particles")) {
+                    player.setMetadata("selection_particles", new FixedMetadataValue(plugin, null));
+                    new ParticleSpawner(player, false).runTaskTimer(plugin, 0, 5);
+                }
+                player.setCooldown(event.getItem(), 60);
             } else {
                 // Fail if the player has no first position set
                 if (!player.hasMetadata("claim_tool_pos1")) {
@@ -196,9 +322,14 @@ public class ClaimTool implements Listener {
             event.setCancelled(true);
             Player player = event.getPlayer();
 
-            Location at = null;
+            Location at;
             if (event.getClickedBlock() != null) at = event.getClickedBlock().getLocation();
             else at = player.getLocation();
+
+            if (player.hasCooldown(event.getItem())) {
+                player.sendMessage(Component.translatable("messages.claims.tool.tool-cooldown"));
+                return;
+            }
 
             if (!player.isSneaking()) {
                 if (!ClaimManager.isNotClaimedOrOwn(ClaimManager.getPlayerTeam(player), at)) {
@@ -215,6 +346,11 @@ public class ClaimTool implements Listener {
                         )
                 );
                 player.sendMessage(Message.msg(player, "messages.claims.tool.successfully-set-pos"));
+                if (!player.hasMetadata("selection_particles")) {
+                    player.setMetadata("selection_particles", new FixedMetadataValue(plugin, null));
+                    new ParticleSpawner(player, true).runTaskTimer(plugin, 0, 5);
+                }
+                player.setCooldown(event.getItem(), 60);
             } else {
                 // Fail if the player has no first position set
                 if (!player.hasMetadata("claim_tool_pos1")) {
@@ -328,7 +464,9 @@ public class ClaimTool implements Listener {
                     Sounds.playSound(player, Sounds.MISTAKE);
                     return;
                 } else if (!ClaimManager.hasOwner(chunk)) {
-                    if (chunksLeft < 0) break;
+                    if (chunksLeft < 0) {
+                        continue;
+                    }
 
                     count++;
                     if (count > chunksLeft) { // If your team has no chunks left to claim, fail
@@ -343,7 +481,10 @@ public class ClaimTool implements Listener {
 
         ClaimManager.forceClaimArea(team, world, sx, sz, ex, ez);
 
-        if (chunksLeft > 0) claimManager.getEntryOrNew(team).chunksLeft -= count;
+        if (chunksLeft > 0) {
+            int had = claimManager.getEntryOrNew(team).chunksLeft;
+            claimManager.getEntryOrNew(team).chunksLeft -= count;
+        }
 
         player.removeMetadata("claim_tool_pos1", plugin);
 

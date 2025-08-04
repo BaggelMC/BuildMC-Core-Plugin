@@ -48,6 +48,8 @@ messages:
       remove-tool-tooltip-line3: ""
       remove-tool-tooltip-line4: ""
 
+      tool-cooldown: "<red>Warte Kurz!</red>"
+
       give-success: "<green>Erfolg! Gib '/claim help' ein, um Hilfe zu erhalten.</green>"
       full-inventory: "<red>Dein Inventar ist voll! Bitte schaffe Platz für das Claim-Tool.</red>"
 
