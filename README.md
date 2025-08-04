@@ -136,6 +136,7 @@ If you'd like to expand or adapt it, feel free to **fork the repository**.
 
 * **Mathias2246**
 * **Darkyl**
+* **ShxdowCrafter**
 
 ---
 
