@@ -1,7 +1,6 @@
 package net.mathias2246.buildmc.endEvent;
 
 import net.kyori.adventure.text.Component;
-import net.mathias2246.buildmc.util.Message;
 import org.bukkit.PortalType;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -51,8 +50,7 @@ public class EndListener implements Listener {
         if (event.getTo().getWorld().getEnvironment() == World.Environment.THE_END) {
             event.setCancelled(true);
 
-            Component message = Message.msg(event.getPlayer(), "messages.end-event.closed-message");
-            event.getPlayer().sendActionBar(message);
+            event.getPlayer().sendActionBar(Component.translatable("messages.end-event.closed-message"));
         }
     }
 }

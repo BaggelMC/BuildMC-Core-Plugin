@@ -1,0 +1,122 @@
+messages:
+
+  spawn-elytra:
+    boost-hint: "Drücke <key:key.swapOffhand>, um einen Schub zu bekommen!"
+    firework-disabled-hint: "<red>Raketen sind für Spawn-Elytren deaktiviert.</red>"
+
+    pos1-set: "<green>Position 1 gesetzt.</green>"
+    pos2-set: "<green>Position 2 gesetzt.</green>"
+
+    success: "<green>Elytra-Zone erstellt.</green>"
+
+    error:
+      different-worlds: "<red>Fehler: Positionen müssen in der gleichen Welt sein.</red>"
+
+  end-event:
+    opened: "<green>Das Ende ist jetzt 'geöffnet'.</green>"
+    closed: "<green>Das Ende ist jetzt 'geschlossen'.</green>"
+
+    broadcast-closed: "<gold>--------------------------------</gold>\n\n<yellow>Das Ende wurde <red>GESCHLOSSEN</red>!</yellow>\n\n<gold>--------------------------------</gold>"
+    broadcast-opened: "<gold>--------------------------------</gold>\n\n<yellow>Das Ende wurde <green>GEÖFFNET</green>!</yellow>\n\n<gold>--------------------------------</gold>"
+    closed-message: "<red>Das Ende ist derzeit geschlossen.</red>"
+
+  error:
+    general: "<red>Ein Fehler ist aufgetreten: <red>%error_message%</red>"
+    general-str: "Ein Fehler ist aufgetreten: %error_message%"
+    no-permission: "<red>Du hast keine Berechtigung, dies zu tun.</red>"
+    no-permission-str: "Du hast keine Berechtigung, dies zu tun."
+    not-a-player: "<red>Dieser Befehl kann nur von Spielern verwendet werden.</red>"
+    not-a-player-str: "Dieser Befehl kann nur von Spielern verwendet werden."
+
+    not-in-a-team: "<red>Du musst in einem Team sein, um dies zu tun.</red>"
+
+    command-disabled: "<red>Dieser Befehl wurde deaktiviert.</red>"
+
+  claims:
+    tool:
+      tool-name: "Claim-Ecken auswählen"
+
+      remove-tool-name: "Claim-Ecken zum Entfernen auswählen"
+
+      tool-tooltip-line1: "Benutze dieses Tool, um die Ecken deines Team-Claims festzulegen."
+      tool-tooltip-line2: "Nachdem du die erste Ecke durch Klicken mit dem Tool gesetzt hast, wähle die zweite durch Sneak-Klick aus."
+      tool-tooltip-line3: ""
+      tool-tooltip-line4: ""
+
+      remove-tool-tooltip-line1: "Benutze dieses Tool, um deinen Claim zu entfernen."
+      remove-tool-tooltip-line2: "Nachdem du die erste Ecke durch Klicken mit dem Tool gesetzt hast, wähle die zweite durch Sneak-Klick aus."
+      remove-tool-tooltip-line3: ""
+      remove-tool-tooltip-line4: ""
+
+      give-success: "<green>Erfolg! Gib '/claim help' ein, um Hilfe zu erhalten.</green>"
+      full-inventory: "<red>Dein Inventar ist voll! Bitte schaffe Platz für das Claim-Tool.</red>"
+
+      selection-too-large: "<red>Deine Auswahl darf nicht breiter oder länger als %selection_limit% sein!</red>"
+
+      missing-first-pos: "<red>Du musst zuerst die andere Ecke auswählen!</red>"
+      successfully-set-pos: "<green>Position erfolgreich gesetzt!</green>"
+
+      no-team-to-select: "<red>Du musst in einem Team sein, um einen Claim zu setzen!</red>"
+
+      successfully-claimed-area: |-
+        <gold>---------------------------------------</gold>
+        <green>Gebiet erfolgreich geclaimt!</green>
+        <blue>Du hast noch </blue>%chunks_left%<blue> Chunks zum Claim verfügbar</blue>
+        <gold>---------------------------------------</gold>
+
+      successfully-claimed-area-no-count: |-
+        <gold>---------------------------------------</gold>
+        <green>Gebiet erfolgreich geclaimt!</green>
+        <gold>---------------------------------------</gold>
+
+      successfully-removed-area: |-
+        <gold>---------------------------------------</gold>
+        <green>Gebiet erfolgreich entfernt!</green>
+        <blue>Du hast jetzt noch </blue>%chunks_left%<blue> Chunks zum Claim verfügbar</blue>
+        <gold>---------------------------------------</gold>
+
+      successfully-removed-area-no-count: |-
+        <gold>---------------------------------------</gold>
+        <green>Gebiet erfolgreich entfernt!</green>
+        <gold>---------------------------------------</gold>
+
+      other-claim-in-selection: "\n<red>In deiner Auswahl befindet sich ein fremder Claim!</red>\n"
+
+      no-chunks-left: "<red>Du hast keine Chunks mehr zum Claim verfügbar!</red>"
+
+    who:
+      message: "<gold>Dieser Chunk gehört <white>%owner%</white>.</gold>"
+      unclaimed: "<gold>Dieser Chunk gehört niemandem.</gold>"
+
+    successfully-whitelisted: "<green>Spieler erfolgreich zur Whitelist hinzugefügt!</green>"
+    successfully-removed-whitelisted: "<green>Spieler erfolgreich von der Whitelist entfernt!</green>"
+    already-whitelisted: "<red>%player% ist bereits auf der Whitelist.</red>"
+
+    help-message: |-
+      <gold>------------- <green>Claims Hilfe</green> -------------</gold>
+      <aqua>Klicke <green><click:open_url:'https://github.com/BaggelMC/BuildMC-Core-Plugin/blob/master/docs/usage/claim_system.md'>hier</click></green> um die vollständigen docs zu öffnen.</aqua>
+      <gray>- Verwende '<gold>/claim claimtool</gold>', um das Claim-Tool zu erhalten.</gray>
+      <gray>- Klicke, um deinen ersten Chunk auszuwählen.</gray>
+      <gray>- Sneak + Klicke, um den zweiten Chunk auszuwählen.</gray>
+      <gray>- Dieses Gebiet wird dann geclaimt.</gray>
+      
+      <gray>- Verwende '<gold>/claim removetool</gold>', um das Claim-Entfernungs-Tool zu erhalten.</gray>
+      <gray>- Wähle Ecken, um das Gebiet zu entfernen.</gray>
+      <gold>------------------------------------</gold>
+
+    not-accessible:
+      container: "<red>Dieser Behälter ist durch einen Claim geschützt.</red>"
+      entity-container: "<red>Dieses Entity ist durch einen Claim geschützt.</red>"
+      block-break: "<red>Dieser Block ist durch einen Claim geschützt.</red>"
+      block-place: "<red>Dieses Gebiet ist durch einen Claim geschützt.</red>"
+
+      entity-damage: "<red>Dieses Entity ist durch einen Claim geschützt.</red>"
+
+  status:
+    only-players: "<red>Nur Spieler können einen Status haben!</red>"
+    successfully-removed: "<green>Status erfolgreich entfernt!</green>"
+    join-doesn't-exist: "<red>Dein Status wurde entfernt.</red>"
+    not-found: "<red>Dieser Status scheint nicht zu existieren.</red>"
+    successfully-set: "<green>Status erfolgreich gesetzt!</green>"
+    not-in-team: "<red>Du bist nicht im benötigten Team für diesen Status!</red>"
+    no-permission: "<red>Du hast nicht die benötigten Berechtigungen für diesen Status!</red>"

@@ -19,7 +19,7 @@ import java.util.logging.Level;
 public class LanguageManager {
 
     private static final Locale DEFAULT_LOCALE = Locale.forLanguageTag("en-US");
-    private static final List<String> DEFAULT_FILES = List.of("en-US.yml");
+    private static final List<String> DEFAULT_FILES = List.of("en-US.yml", "de-DE.yml");
     private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
     private static final File LANG_FOLDER;
     private static final Key TRANSLATOR_KEY = Key.key("buildmc:lang");
@@ -44,6 +44,8 @@ public class LanguageManager {
         File[] files = LANG_FOLDER.listFiles((dir, name) -> name.endsWith(".yml"));
         if (files == null) return;
 
+        MiniMessageTranslationStore store = MiniMessageTranslationStore.create(TRANSLATOR_KEY);
+
         for (File file : files) {
             try (FileReader reader = new FileReader(file)) {
                 Yaml yaml = new Yaml();
@@ -51,7 +53,6 @@ public class LanguageManager {
                 if (yamlData == null) continue;
 
                 Locale locale = toLocale(file.getName());
-                MiniMessageTranslationStore store = MiniMessageTranslationStore.create(TRANSLATOR_KEY);
 
                 flatten("", yamlData).forEach((key, value) -> {
                     if (value instanceof String str) {
@@ -113,7 +114,7 @@ public class LanguageManager {
 
         String serialized = MINI_MESSAGE.serialize(translated);
         for (Map.Entry<String, String> entry : replacements.entrySet()) {
-            serialized = serialized.replace("{" + entry.getKey() + "}", entry.getValue());
+            serialized = serialized.replace("%" + entry.getKey() + "%", entry.getValue());
         }
 
         return MINI_MESSAGE.deserialize(serialized);
@@ -129,7 +130,7 @@ public class LanguageManager {
 
         String serialized = MINI_MESSAGE.serialize(translated);
         for (Map.Entry<String, String> entry : replacements.entrySet()) {
-            serialized = serialized.replace("{" + entry.getKey() + "}", entry.getValue());
+            serialized = serialized.replace("%" + entry.getKey() + "%", entry.getValue());
         }
 
         return serialized;
