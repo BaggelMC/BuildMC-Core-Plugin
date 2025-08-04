@@ -1,5 +1,5 @@
 name: BuildMC-Core
-version: '1.0.0'
+version: '1.0.1'
 main: net.mathias2246.buildmc.Main
 api-version: '1.21'
 prefix: BuildMC
