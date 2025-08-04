@@ -18,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.*;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -144,6 +145,127 @@ public class ClaimTool implements Listener {
         return pdc.has(REMOVE_TOOL_ITEM_PDC_KEY);
     }
 
+    public static class ParticleSpawner extends BukkitRunnable {
+
+        public final @NotNull Player source;
+
+        private int repeat = 32;
+
+        private final Location plane;
+        private final Location l1;
+        private final Location l2;
+        private final Location l3;
+        private final  Location l4;
+
+        public ParticleSpawner(@NotNull Player source, boolean isRemoveSelection) {
+            this.source = source;
+
+            plane = LocationUtil.deserialize(source.getMetadata("claim_tool_pos1").getFirst().asString());
+
+            Chunk c = plane.getChunk();
+
+            plane.setX((c.getX() << 4) + 8);
+            plane.setZ((c.getZ() << 4) + 8);
+            plane.setY(plane.getY()+1.5);
+
+            l1 = new Location(
+                    source.getWorld(),
+                    (source.getLocation().getChunk().getX()  << 4) + 0.5d,
+                    plane.getY(),
+                    (source.getLocation().getChunk().getZ()  << 4) + 0.5d
+            );
+
+            l2 = new Location(
+                    source.getWorld(),
+                    (source.getLocation().getChunk().getX()  << 4) + 15.5d,
+                    plane.getY(),
+                    (source.getLocation().getChunk().getZ()  << 4) + 0.0d
+            );
+
+            l3 = new Location(
+                    source.getWorld(),
+                    (source.getLocation().getChunk().getX()  << 4) + 0.0d,
+                    plane.getY(),
+                    (source.getLocation().getChunk().getZ()  << 4) + 15.5d
+            );
+
+            l4 = new Location(
+                    source.getWorld(),
+                    (source.getLocation().getChunk().getX()  << 4) + 15.5d,
+                    plane.getY(),
+                    (source.getLocation().getChunk().getZ()  << 4) + 15.5d
+            );
+
+            if (isRemoveSelection) {
+                chunkPlane = new Particle.DustOptions(
+                        Color.fromRGB(210, 10, 10),
+                        1.0f
+                );
+            }
+            else chunkPlane = new Particle.DustOptions(
+                    Color.fromRGB(10, 230, 10),
+                    1.0f
+            );
+            corner = new Particle.DustOptions(
+                    Color.fromRGB(10, 10, 230),
+                    1.0f
+            );
+        }
+
+        public final Particle.DustOptions chunkPlane;
+        public final Particle.DustOptions corner;
+
+        @Override
+        public void run() {
+
+            if (repeat < 0 || !source.hasMetadata("selection_particles")) {
+                source.removeMetadata("selection_particles", plugin);
+                this.cancel();
+            }
+
+            repeat--;
+
+            Class<?> p = Particle.DUST.getDataType();
+
+
+            source.spawnParticle(
+                    Particle.DUST,
+                    plane,
+                    100,
+                    2.6d, 0.0d, 2.6d,
+                    chunkPlane
+            );
+            source.spawnParticle(
+                    Particle.DUST,
+                    l1,
+                    100,
+                    0d, 1.0d, 0d,
+                    corner
+            );
+            source.spawnParticle(
+                    Particle.DUST,
+                    l2,
+                    100,
+                    0d, 1.0d, 0d,
+                    corner
+            );
+            source.spawnParticle(
+                    Particle.DUST,
+                    l3,
+                    100,
+                    0d, 1.0d, 0d,
+                    corner
+            );
+            source.spawnParticle(
+                    Particle.DUST,
+                    l4,
+                    100,
+                    0d, 1.0d, 0d,
+                    corner
+            );
+        }
+    }
+
     @EventHandler
     public void onPlayerUseHoe(PlayerInteractEvent event) {
         if (isClaimTool(event.getItem())) {
@@ -155,10 +277,14 @@ public class ClaimTool implements Listener {
             if (event.getClickedBlock() != null) at = event.getClickedBlock().getLocation();
             else at = player.getLocation();
 
+            if (player.hasCooldown(event.getItem())) {
+                audiences.player(player).sendMessage(Component.translatable("messages.claims.tool.tool-cooldown"));
+                return;
+            }
 
             if (!player.isSneaking()) {
                 if (!ClaimManager.isNotClaimedOrOwn(ClaimManager.getPlayerTeam(player), at)) {
-                    audiences.player(player).sendMessage(Message.msg(player, "messages.claims.tool.other-claim-in-selection"));
+                    audiences.player(player).sendMessage(Component.translatable( "messages.claims.tool.other-claim-in-selection"));
                     Sounds.playSound(player, Sounds.MISTAKE);
                     return;
                 }
@@ -170,11 +296,16 @@ public class ClaimTool implements Listener {
                                 LocationUtil.serialize(at)
                         )
                 );
-                audiences.player(player).sendMessage(Message.msg(player, "messages.claims.tool.successfully-set-pos"));
+                audiences.player(player).sendMessage(Component.translatable("messages.claims.tool.successfully-set-pos"));
+                if (!player.hasMetadata("selection_particles")) {
+                    player.setMetadata("selection_particles", new FixedMetadataValue(plugin, null));
+                    new ParticleSpawner(player, false).runTaskTimer(plugin, 0, 5);
+                }
+                player.setCooldown(event.getItem(), 60);
             } else {
                 // Fail if the player has no first position set
                 if (!player.hasMetadata("claim_tool_pos1")) {
-                    audiences.player(player).sendActionBar(Message.msg(player, "messages.claims.tool.missing-first-pos"));
+                    audiences.player(player).sendActionBar(Component.translatable("messages.claims.tool.missing-first-pos"));
                     Sounds.playSound(player, Sounds.MISTAKE);
                     return;
                 }
@@ -183,7 +314,7 @@ public class ClaimTool implements Listener {
                 // Fail if the player is in no team
                 if (team == null) {
                     audiences.player(player).sendMessage(
-                            Message.msg(player, "messages.claims.tool.no-team-to-select")
+                            Component.translatable("messages.claims.tool.no-team-to-select")
                     );
                     Sounds.playSound(player, Sounds.MISTAKE);
                     return;
@@ -204,9 +335,14 @@ public class ClaimTool implements Listener {
             if (event.getClickedBlock() != null) at = event.getClickedBlock().getLocation();
             else at = player.getLocation();
 
+            if (player.hasCooldown(event.getItem())) {
+                audiences.player(player).sendMessage(Component.translatable("messages.claims.tool.tool-cooldown"));
+                return;
+            }
+
             if (!player.isSneaking()) {
                 if (!ClaimManager.isNotClaimedOrOwn(ClaimManager.getPlayerTeam(player), at)) {
-                    audiences.player(player).sendMessage(Message.msg(player, "messages.claims.tool.other-claim-in-selection"));
+                    audiences.player(player).sendMessage(Component.translatable("messages.claims.tool.other-claim-in-selection"));
                     Sounds.playSound(player, Sounds.MISTAKE);
                     return;
                 }
@@ -218,11 +354,16 @@ public class ClaimTool implements Listener {
                                 LocationUtil.serialize(at)
                         )
                 );
-                audiences.player(player).sendMessage(Message.msg(player, "messages.claims.tool.successfully-set-pos"));
+                audiences.player(player).sendMessage(Component.translatable("messages.claims.tool.successfully-set-pos"));
+                if (!player.hasMetadata("selection_particles")) {
+                    player.setMetadata("selection_particles", new FixedMetadataValue(plugin, null));
+                    new ParticleSpawner(player, true).runTaskTimer(plugin, 0, 5);
+                }
+                player.setCooldown(event.getItem(), 60);
             } else {
                 // Fail if the player has no first position set
                 if (!player.hasMetadata("claim_tool_pos1")) {
-                    audiences.player(player).sendActionBar(Message.msg(player, "messages.claims.tool.missing-first-pos"));
+                    audiences.player(player).sendActionBar(Component.translatable("messages.claims.tool.missing-first-pos"));
                     Sounds.playSound(player, Sounds.MISTAKE);
                     return;
                 }
@@ -231,7 +372,7 @@ public class ClaimTool implements Listener {
                 // Fail if the player is in no team
                 if (team == null) {
                     audiences.player(player).sendMessage(
-                            Message.msg(player, "messages.claims.tool.no-team-to-select")
+                            Component.translatable("messages.claims.tool.no-team-to-select")
                     );
                     Sounds.playSound(player, Sounds.MISTAKE);
                     return;

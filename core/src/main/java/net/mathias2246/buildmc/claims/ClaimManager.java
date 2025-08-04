@@ -19,11 +19,12 @@ public class ClaimManager extends ConfigurationManager{
     public static final @NotNull NamespacedKey CLAIM_PCD_KEY = Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_owner"));
 
     /**A Map containing all the claim data*/
-    public @NotNull Map<Team, ClaimDataInstance> claims = new HashMap<>();
+    public Map<String, ClaimDataInstance> claims;
 
     public @NotNull ClaimDataInstance getEntryOrNew(@NotNull Team team) {
-        if (!claims.containsKey(team)) claims.put(team, new ClaimDataInstance());
-        return claims.get(team);
+
+        claims.putIfAbsent(team.getName(), new ClaimDataInstance(null));
+        return claims.get(team.getName());
     }
 
     public ClaimManager(@NotNull Plugin plugin, @NotNull String resourceName) {
@@ -38,8 +39,11 @@ public class ClaimManager extends ConfigurationManager{
             if (sect == null) return;
 
             Team team = Objects.requireNonNull(this.getPlugin().getServer().getScoreboardManager()).getMainScoreboard().getTeam(key);
+            if (team == null) continue;
 
-            claims.put(team, ClaimDataInstance.deserialize(sect.getValues(false)));
+            var v = ClaimDataInstance.deserialize(sect.getValues(false));
+
+            claims.putIfAbsent(team.getName(), v);
         }
     }
 
@@ -47,7 +51,7 @@ public class ClaimManager extends ConfigurationManager{
     protected void preSave() {
         for (var entry : claims.entrySet()) {
             configuration.set(
-                    entry.getKey().getName(),
+                    entry.getKey(),
                     entry.getValue().serialize()
             );
         }

@@ -40,6 +40,26 @@ public class ClaimCommand implements CustomCommand {
                             })
                 )
                 .withSubcommand(
+                        new CommandAPICommand("removetool")
+                                .executes(
+                                        (command) -> {
+                                            if (!(command.sender() instanceof Player player)) {
+                                                command.sender().sendMessage(Message.noPlayerErrorMsgStr(command.sender()));
+                                                return;
+                                            }
+
+                                            // Check if there is space left in the inventory
+                                            if (player.getInventory().firstEmpty() == -1) {
+                                                audiences.sender(player).sendMessage(Message.msg(player, "messages.claims.tool.full-inventory"));
+
+                                                return;
+                                            }
+
+                                            ClaimTool.giveRemoveToolToPlayer(player);
+                                            audiences.sender(player).sendMessage(Message.msg(player, "messages.claims.tool.give-success"));
+                                        })
+                )
+                .withSubcommand(
                         new CommandAPICommand("who")
                                 .executes(
                                         (command) -> {
