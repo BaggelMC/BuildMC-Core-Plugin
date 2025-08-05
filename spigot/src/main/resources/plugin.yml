@@ -18,3 +18,6 @@ permissions:
   buildmc.admin:
     default: false
     description: The BuildMC admin permission
+  buildmc.bypass-claims:
+    default: false
+    description: With this permission you can bypass claim protection.

@@ -206,13 +206,20 @@ public class ClaimManager extends ConfigurationManager{
     /**Checks if a player is allowed to do things at a certain location.
      * @return True if, the chunk at the location is not owned or is his own claim, or if he is whitelisted.*/
     public static boolean isPlayerAllowed(@NotNull ClaimManager manager, @NotNull Player player, @NotNull Location location) {
-        return isNotClaimedOrOwn(player, location.getChunk()) || isPlayerWhitelisted(manager, getClaimTeam(location), player);
+        return
+                isNotClaimedOrOwn(player, location.getChunk()) ||
+                isPlayerWhitelisted(manager, getClaimTeam(location), player) ||
+                player.hasPermission("buildmc.bypass-claims");
+
     }
 
     /**Checks if a player is allowed to do things at a certain location.
      * @return True if, the chunk at the location is not owned or is his own claim, or if he is whitelisted.*/
     public static boolean isPlayerAllowed(@NotNull ClaimManager manager, @NotNull HumanEntity player, @NotNull Location location) {
-        return isNotClaimedOrOwn(player, location.getChunk()) || isPlayerWhitelisted(manager, getClaimTeam(location), player);
+        return
+                isNotClaimedOrOwn(player, location.getChunk()) ||
+                isPlayerWhitelisted(manager, getClaimTeam(location), player) ||
+                player.hasPermission("buildmc.bypass-claims");
     }
 
     /**Forcefully claims an entire area for a team.
