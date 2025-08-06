@@ -14,7 +14,6 @@ import net.mathias2246.buildmc.status.SetStatusCommand;
 import net.mathias2246.buildmc.status.StatusConfig;
 import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.Sounds;
-import net.mathias2246.buildmc.util.language.LanguageManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
@@ -48,8 +47,6 @@ public final class Main extends JavaPlugin implements MainClass {
 
     public static StatusConfig statusConfig;
 
-    public static ClaimManager claimManager;
-
     @Override
     public void onEnable() {
         // Plugin startup logic
@@ -63,8 +60,6 @@ public final class Main extends JavaPlugin implements MainClass {
         }
 
         CoreMain.initialize(this);
-
-        LanguageManager.init();
 
         configFile = new File(plugin.getDataFolder(), "config.yml");
 

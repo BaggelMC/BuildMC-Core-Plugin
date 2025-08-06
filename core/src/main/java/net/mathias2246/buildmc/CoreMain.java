@@ -5,6 +5,7 @@ import net.mathias2246.buildmc.database.DatabaseConfig;
 import net.mathias2246.buildmc.database.DatabaseManager;
 import net.mathias2246.buildmc.util.config.ConfigHandler;
 import net.mathias2246.buildmc.util.config.ConfigurationValidationException;
+import net.mathias2246.buildmc.util.language.LanguageManager;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +18,7 @@ public final class CoreMain {
 
     public static MainClass mainClass;
 
-    public static DatabaseConfig databaseConfig = new DatabaseConfig();
+    public static DatabaseConfig databaseConfig;
 
     public static DatabaseManager databaseManager;
     public static ClaimTable claimTable;
@@ -28,6 +29,9 @@ public final class CoreMain {
         CoreMain.mainClass = (MainClass) plugin;
 
         initializeConfigs();
+
+        LanguageManager.init();
+
         initializeDatabase();
     }
 
@@ -36,6 +40,7 @@ public final class CoreMain {
     }
 
     private static void initializeConfigs() {
+        databaseConfig = new DatabaseConfig();
         initConfig(databaseConfig);
     }
 
