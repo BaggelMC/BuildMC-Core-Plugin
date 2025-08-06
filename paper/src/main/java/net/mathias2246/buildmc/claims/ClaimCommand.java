@@ -120,8 +120,13 @@ public class ClaimCommand implements CustomCommand {
                                                                 return 0;
                                                             }
 
-                                                            Location pos1 = LocationUtil.deserialize(player.getMetadata("claim_tool_pos1").getFirst().asString());
-                                                            Location pos2 = LocationUtil.deserialize(player.getMetadata("claim_tool_pos2").getFirst().asString());
+                                                            Location pos1 = LocationUtil.tryDeserialize(player.getMetadata("claim_tool_pos1").getFirst().asString());
+                                                            Location pos2 = LocationUtil.tryDeserialize(player.getMetadata("claim_tool_pos2").getFirst().asString());
+
+                                                            if (pos1 == null || pos2 == null) {
+                                                                player.sendMessage(Component.translatable("messages.claims.create.missing-positions"));
+                                                                return 0;
+                                                            }
 
                                                             if (!pos1.getWorld().equals(pos2.getWorld())) {
                                                                 player.sendMessage(Component.translatable("messages.claims.create.different-worlds"));
