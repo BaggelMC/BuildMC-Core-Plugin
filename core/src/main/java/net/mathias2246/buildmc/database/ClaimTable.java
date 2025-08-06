@@ -1,23 +1,22 @@
 package net.mathias2246.buildmc.database;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import net.mathias2246.buildmc.claims.Claim;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.claims.ClaimType;
 import net.mathias2246.buildmc.claims.ProtectionFlag;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.sql.*;
-import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class ClaimTable implements DatabaseTable {
 
-    private final Cache<Long, Claim> claimCache = Caffeine.newBuilder()
-            .maximumWeight(16 * 1024 * 1024) // 16 MB
-            .weigher((Long key, Claim claim) -> estimateClaimSizeBytes(claim))
-            .expireAfterAccess(Duration.ofMinutes(10))
+    private final Cache<Long, Claim> claimCache = CacheBuilder.newBuilder()
+            .maximumSize(1000)
+            .expireAfterAccess(10, TimeUnit.MINUTES)
             .build();
 
     @Override
@@ -412,7 +411,8 @@ public class ClaimTable implements DatabaseTable {
         ClaimManager.serverOwner = serverList;
     }
 
-    @Nullable public String getClaimNameById(Connection conn, long claimId) throws SQLException {
+    @Nullable
+    public String getClaimNameById(Connection conn, long claimId) throws SQLException {
         // Check the cache first
         Claim cached = claimCache.getIfPresent(claimId);
         if (cached != null) {
