@@ -2,10 +2,15 @@ package net.mathias2246.buildmc;
 
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.SelectorComponent;
 import net.mathias2246.buildmc.claims.*;
 import net.mathias2246.buildmc.claims.listeners.*;
+import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.commands.BuildMcCommand;
 import net.mathias2246.buildmc.endEvent.EndListener;
+import net.mathias2246.buildmc.item.CustomItemListener;
+import net.mathias2246.buildmc.item.CustomItemRegistry;
+import net.mathias2246.buildmc.platform.SoundManagerPaperImpl;
 import net.mathias2246.buildmc.spawnElytra.DisableBoostListener;
 import net.mathias2246.buildmc.spawnElytra.ElytraZoneManager;
 import net.mathias2246.buildmc.spawnElytra.SpawnBoostListener;
@@ -13,8 +18,8 @@ import net.mathias2246.buildmc.status.PlayerStatus;
 import net.mathias2246.buildmc.status.SetStatusCommand;
 import net.mathias2246.buildmc.status.StatusConfig;
 import net.mathias2246.buildmc.util.Message;
-import net.mathias2246.buildmc.util.Sounds;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
@@ -29,6 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 public final class Main extends JavaPlugin implements MainClass {
@@ -47,6 +53,8 @@ public final class Main extends JavaPlugin implements MainClass {
 
     public static StatusConfig statusConfig;
 
+    public static CustomItemRegistry customItems;
+
     @Override
     public void onEnable() {
         // Plugin startup logic
@@ -59,22 +67,21 @@ public final class Main extends JavaPlugin implements MainClass {
             pluginFolder.mkdir();
         }
 
-        CoreMain.initialize(this);
 
         configFile = new File(plugin.getDataFolder(), "config.yml");
 
         if (!configFile.exists()) this.saveResource("config.yml", false);
         config = this.getConfig();
 
+        CoreMain.initialize(this);
+
         EndListener.loadFromConfig();
 
-        Sounds.setup();
-        ClaimTool.setup();
+        CoreMain.soundManager = new SoundManagerPaperImpl();
+        customItems = new CustomItemRegistry();
+        getServer().getPluginManager().registerEvents(new CustomItemListener(customItems), this);
 
         getServer().getPluginManager().registerEvents(new EndListener(), this);
-
-        getServer().getPluginManager().registerEvents(new ClaimTool(), this);
-
         if (config.getBoolean("spawn-elytra.enabled")) {
             getServer().getPluginManager().registerEvents(new SpawnBoostListener(zoneManager), this);
             if (config.getBoolean("spawn-elytra.disable-rockets")) getServer().getPluginManager().registerEvents(new DisableBoostListener(), this);
@@ -83,6 +90,12 @@ public final class Main extends JavaPlugin implements MainClass {
         }
 
         if (config.getBoolean("claims.enabled")) {
+
+            customItems.register(
+                    new ClaimSelectionTool(this,
+                            Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool"))
+                    )
+            );
 
             if (config.getBoolean("claims.protections.containers")) {
                 getServer().getPluginManager().registerEvents(new ClaimContainerListener(), this);
@@ -143,7 +156,6 @@ public final class Main extends JavaPlugin implements MainClass {
             if (config.getBoolean("claims.protections.piston-movement-across-claim-borders")) {
                 getServer().getPluginManager().registerEvents(new ClaimPistonMovementListener(), this);
             }
-
         }
 
         if (config.getBoolean("status.enabled")) {

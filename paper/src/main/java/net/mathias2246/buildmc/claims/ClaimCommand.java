@@ -6,23 +6,34 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.Main;
+import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.commands.CustomCommand;
-import net.mathias2246.buildmc.util.LocationUtil;
+import net.mathias2246.buildmc.platform.ClaimToolItemMetaModifier;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 public class ClaimCommand implements CustomCommand {
+
+    private static final @NotNull ClaimToolItemMetaModifier claimToolNameAndTooltip = new ClaimToolItemMetaModifier();
+    private static ClaimSelectionTool claimTool;
+
     @Override
     public LiteralCommandNode<CommandSourceStack> getCommand() {
+        claimTool = (ClaimSelectionTool) Main.customItems.get(Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool")).key());
+
         var cmd = Commands.literal("claim");
         cmd.then(
                 Commands.literal("claimtool")
@@ -39,7 +50,7 @@ public class ClaimCommand implements CustomCommand {
                                 return 0;
                             }
 
-                            ClaimTool.giveToolToPlayer(player);
+                            claimTool.giveToPlayer(player, claimToolNameAndTooltip);
                             player.sendMessage(Component.translatable("messages.claims.tool.give-success"));
                             return 1;
                         })
@@ -58,7 +69,7 @@ public class ClaimCommand implements CustomCommand {
                                     try {
                                         claim = ClaimManager.getClaim(player.getLocation());
                                     } catch (SQLException e) {
-                                        CoreMain.plugin.getLogger().severe("An error occured while getting a claim from the database: " + e.getMessage());
+                                        CoreMain.plugin.getLogger().severe("An error occurred while getting a claim from the database: " + e.getMessage());
                                         player.sendMessage(Component.translatable("messages.error.sql"));
                                         return 0;
                                     }
@@ -115,13 +126,14 @@ public class ClaimCommand implements CustomCommand {
                                                             String name = command.getArgument("name", String.class);
 
                                                             // Validate positions
-                                                            if (!player.hasMetadata("claim_tool_pos1") || !player.hasMetadata("claim_tool_pos2")) {
+
+                                                            if (!player.hasMetadata(claimTool.firstSelectionKey) || !player.hasMetadata(claimTool.secondSelectionKey)) {
                                                                 player.sendMessage(Component.translatable("messages.claims.create.missing-positions"));
                                                                 return 0;
                                                             }
 
-                                                            Location pos1 = LocationUtil.tryDeserialize(player.getMetadata("claim_tool_pos1").getFirst().asString());
-                                                            Location pos2 = LocationUtil.tryDeserialize(player.getMetadata("claim_tool_pos2").getFirst().asString());
+                                                            Location pos1 = claimTool.getFirstSelection(player);
+                                                            Location pos2 = claimTool.getSecondSelection(player);
 
                                                             if (pos1 == null || pos2 == null) {
                                                                 player.sendMessage(Component.translatable("messages.claims.create.missing-positions"));
@@ -159,6 +171,8 @@ public class ClaimCommand implements CustomCommand {
                                                                     boolean success = ClaimManager.tryClaimPlayerArea(player, name, pos1, pos2);
                                                                     if (success) {
                                                                         player.sendMessage(Component.translatable("messages.claims.create.success"));
+                                                                        player.removeMetadata(claimTool.firstSelectionKey, claimTool.getPlugin());
+                                                                        player.removeMetadata(claimTool.secondSelectionKey, claimTool.getPlugin());
                                                                         return 1;
                                                                     } else {
                                                                         player.sendMessage(Component.translatable("messages.claims.create.failed"));
@@ -175,6 +189,8 @@ public class ClaimCommand implements CustomCommand {
                                                                     boolean success = ClaimManager.tryClaimTeamArea(team, name, pos1, pos2);
                                                                     if (success) {
                                                                         player.sendMessage(Component.translatable("messages.claims.create.success"));
+                                                                        player.removeMetadata(claimTool.firstSelectionKey, claimTool.getPlugin());
+                                                                        player.removeMetadata(claimTool.secondSelectionKey, claimTool.getPlugin());
                                                                         return 1;
                                                                     } else {
                                                                         player.sendMessage(Component.translatable("messages.claims.create.failed"));

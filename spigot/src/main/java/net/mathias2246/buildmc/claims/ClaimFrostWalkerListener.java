@@ -13,6 +13,8 @@ import org.bukkit.inventory.ItemStack;
 
 import static net.mathias2246.buildmc.CoreMain.audiences;
 import static net.mathias2246.buildmc.CoreMain.claimManager;
+import static net.mathias2246.buildmc.Main.audiences;
+import static net.mathias2246.buildmc.Main.claimManager;
 
 public class ClaimFrostWalkerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

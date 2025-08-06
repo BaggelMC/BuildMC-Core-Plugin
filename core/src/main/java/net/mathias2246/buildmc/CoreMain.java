@@ -3,6 +3,7 @@ package net.mathias2246.buildmc;
 import net.mathias2246.buildmc.database.ClaimTable;
 import net.mathias2246.buildmc.database.DatabaseConfig;
 import net.mathias2246.buildmc.database.DatabaseManager;
+import net.mathias2246.buildmc.util.SoundManager;
 import net.mathias2246.buildmc.util.config.ConfigHandler;
 import net.mathias2246.buildmc.util.config.ConfigurationValidationException;
 import net.mathias2246.buildmc.util.language.LanguageManager;
@@ -17,6 +18,8 @@ public final class CoreMain {
     public static Plugin plugin;
 
     public static MainClass mainClass;
+
+    public static SoundManager soundManager;
 
     public static DatabaseConfig databaseConfig;
 

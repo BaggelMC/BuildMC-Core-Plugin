@@ -177,8 +177,13 @@ public class ClaimManager {
         claim.setID(claimId);
 
         // Set persistent chunk data
-        for (int x = chunkX1; x <= chunkX2; x++) {
-            for (int z = chunkZ1; z <= chunkZ2; z++) {
+        var startX = Math.min(chunkX1, chunkX2);
+        var endX = Math.max(chunkX1, chunkX2);
+        var startZ = Math.min(chunkZ1, chunkZ2);
+        var endZ = Math.max(chunkZ1, chunkZ2);
+
+        for (int x = startX; x <= endX; x++) {
+            for (int z = startZ; z <= endZ; z++) {
                 var chunk = pos1.getWorld().getChunkAt(x, z);
                 var pdc = chunk.getPersistentDataContainer();
                 pdc.set(CLAIM_PCD_KEY, PersistentDataType.LONG, claimId);
