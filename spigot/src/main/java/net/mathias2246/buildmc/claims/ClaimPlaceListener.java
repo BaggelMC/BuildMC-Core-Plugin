@@ -9,8 +9,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 
-import static net.mathias2246.buildmc.Main.audiences;
-import static net.mathias2246.buildmc.Main.claimManager;
+import static net.mathias2246.buildmc.CoreMain.audiences;
+import static net.mathias2246.buildmc.CoreMain.claimManager;
 
 public class ClaimPlaceListener implements Listener {
 

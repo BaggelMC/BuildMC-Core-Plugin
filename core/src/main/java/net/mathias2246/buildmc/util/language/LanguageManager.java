@@ -6,15 +6,16 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.translation.MiniMessageTranslationStore;
 import net.kyori.adventure.translation.GlobalTranslator;
 import net.kyori.adventure.translation.Translator;
-import net.mathias2246.buildmc.Main;
+import net.mathias2246.buildmc.CoreMain;
 import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.Yaml;
-import static net.mathias2246.buildmc.Main.*;
 
 import java.io.File;
 import java.io.FileReader;
 import java.util.*;
 import java.util.logging.Level;
+
+import static net.mathias2246.buildmc.CoreMain.plugin;
 
 public class LanguageManager {
 
@@ -28,7 +29,7 @@ public class LanguageManager {
     static {
         LANG_FOLDER = new File(plugin.getDataFolder(), "lang");
         if (!LANG_FOLDER.exists() && !LANG_FOLDER.mkdirs()) {
-            logger.severe("Could not create language folder: " + LANG_FOLDER.getPath());
+            plugin.getLogger().severe("Could not create language folder: " + LANG_FOLDER.getPath());
         }
     }
 
@@ -61,10 +62,10 @@ public class LanguageManager {
                 });
 
                 GlobalTranslator.translator().addSource(store);
-                logger.info("Loaded language file: " + file.getName());
+                plugin.getLogger().info("Loaded language file: " + file.getName());
 
             } catch (Exception e) {
-                logger.log(Level.SEVERE, "Failed to load language file: " + file.getName(), e);
+                plugin.getLogger().log(Level.SEVERE, "Failed to load language file: " + file.getName(), e);
             }
         }
     }
@@ -73,14 +74,14 @@ public class LanguageManager {
         for (String fileName : DEFAULT_FILES) {
             File targetFile = new File(LANG_FOLDER, fileName);
             if (!targetFile.exists()) {
-                try (var in = Main.class.getResourceAsStream("/lang/" + fileName)) {
+                try (var in = CoreMain.class.getResourceAsStream("/lang/" + fileName)) {
                     if (in != null) {
                         java.nio.file.Files.copy(in, targetFile.toPath());
                     } else {
-                        logger.warning("Default language file not found in JAR: " + fileName);
+                        plugin.getLogger().warning("Default language file not found in JAR: " + fileName);
                     }
                 } catch (Exception e) {
-                    logger.log(Level.SEVERE, "Failed to copy default language file: " + fileName, e);
+                    plugin.getLogger().log(Level.SEVERE, "Failed to copy default language file: " + fileName, e);
                 }
             }
         }

@@ -1,6 +1,9 @@
-package net.mathias2246.buildmc.claims;
+package net.mathias2246.buildmc.claims.listeners;
 
 import net.kyori.adventure.text.Component;
+import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.claims.ClaimManager;
+import net.mathias2246.buildmc.claims.ProtectionFlag;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -9,7 +12,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 
-import static net.mathias2246.buildmc.Main.claimManager;
+import java.util.EnumSet;
 
 public class ClaimItemPickupListener implements Listener {
 
@@ -20,9 +23,10 @@ public class ClaimItemPickupListener implements Listener {
 
         if (!(entity instanceof Player player)) return;
 
-        if (!ClaimManager.isPlayerAllowed(claimManager, player, item.getLocation())) {
+
+        if (!ClaimManager.isPlayerAllowed(player, EnumSet.of(ProtectionFlag.ITEM_PICKUP), item.getLocation())) {
             event.setCancelled(true);
-            player.sendActionBar(Component.translatable("messages.claims.not-accessible.item-pickup"));
+            CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.item-pickup"));
         }
 
     }

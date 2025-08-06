@@ -6,7 +6,7 @@ import net.kyori.adventure.sound.Sound;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import static net.mathias2246.buildmc.Main.*;
+import static net.mathias2246.buildmc.Main.config;
 
 @SuppressWarnings({"UnsubstitutedExpression", "PatternValidation"})
 public class Sounds {

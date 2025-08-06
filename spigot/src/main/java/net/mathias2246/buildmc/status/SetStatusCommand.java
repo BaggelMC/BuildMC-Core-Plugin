@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.help.HelpTopic;
 import org.jetbrains.annotations.NotNull;
 
-import static net.mathias2246.buildmc.Main.audiences;
+import static net.mathias2246.buildmc.CoreMain.audiences;
 
 public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCommand {
 

@@ -1,6 +1,6 @@
 package net.mathias2246.buildmc.claims;
 
-import net.mathias2246.buildmc.Main;
+import net.mathias2246.buildmc.CoreMain;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -9,8 +9,8 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
 public class ClaimExplosionsListener implements Listener {
-    private final boolean blockDamageEnabled = Main.config.getBoolean("claims.protections.damage.explosion-block-damage");
-    private final boolean entityDamageEnabled = Main.config.getBoolean("claims.protections.explosion-entity-damage");
+    private final boolean blockDamageEnabled = CoreMain.config.getBoolean("claims.protections.damage.explosion-block-damage");
+    private final boolean entityDamageEnabled = CoreMain.config.getBoolean("claims.protections.explosion-entity-damage");
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onExplosion(EntityExplodeEvent event) {

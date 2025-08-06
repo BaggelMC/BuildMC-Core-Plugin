@@ -1,7 +1,7 @@
 package net.mathias2246.buildmc.claims;
 
 import net.kyori.adventure.text.Component;
-import net.mathias2246.buildmc.Main;
+import net.mathias2246.buildmc.CoreMain;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
@@ -11,11 +11,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 
-import static net.mathias2246.buildmc.Main.audiences;
-import static net.mathias2246.buildmc.Main.claimManager;
+import static net.mathias2246.buildmc.CoreMain.audiences;
+import static net.mathias2246.buildmc.CoreMain.claimManager;
 
 public class ClaimDamageProtectionListener implements Listener {
-    public final boolean excludePlayers = Main.config.getBoolean("claims.protections.damage.exclude-players");
+    public final boolean excludePlayers = CoreMain.config.getBoolean("claims.protections.damage.exclude-players");
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {

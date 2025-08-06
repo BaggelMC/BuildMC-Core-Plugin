@@ -1,13 +1,13 @@
 package net.mathias2246.buildmc.status;
 
 
-import net.mathias2246.buildmc.util.ConfigurationManager;
+import net.mathias2246.buildmc.util.config.YamlConfigurationManager;
 import org.bukkit.plugin.Plugin;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class StatusConfig extends ConfigurationManager {
+public class StatusConfig extends YamlConfigurationManager {
 
     public static final Map<String, StatusInstance> loadedStatuses = new HashMap<>();
 

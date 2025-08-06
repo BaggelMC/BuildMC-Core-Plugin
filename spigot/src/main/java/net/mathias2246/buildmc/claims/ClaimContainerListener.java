@@ -1,7 +1,7 @@
 package net.mathias2246.buildmc.claims;
 
 import net.kyori.adventure.text.Component;
-import net.mathias2246.buildmc.Main;
+import net.mathias2246.buildmc.CoreMain;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -9,12 +9,12 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 
-import static net.mathias2246.buildmc.Main.audiences;
-import static net.mathias2246.buildmc.Main.claimManager;
+import static net.mathias2246.buildmc.CoreMain.audiences;
+import static net.mathias2246.buildmc.CoreMain.claimManager;
 
 public class ClaimContainerListener implements Listener {
 
-    private final boolean allowEnderChests = Main.config.getBoolean("claims.protections.allow-ender-chests");
+    private final boolean allowEnderChests = CoreMain.config.getBoolean("claims.protections.allow-ender-chests");
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onOpenContainer(InventoryOpenEvent event) {

@@ -1,7 +1,7 @@
 package net.mathias2246.buildmc.claims;
 
 import net.kyori.adventure.text.Component;
-import net.mathias2246.buildmc.Main;
+import net.mathias2246.buildmc.CoreMain;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -11,21 +11,21 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import static net.mathias2246.buildmc.Main.audiences;
-import static net.mathias2246.buildmc.Main.claimManager;
+import static net.mathias2246.buildmc.CoreMain.audiences;
+import static net.mathias2246.buildmc.CoreMain.claimManager;
 
 public class ClaimInteractionListener implements Listener {
 
-    private final boolean protectionLevers = Main.config.getBoolean("claims.protections.interactions.levers");
-    private final boolean protectionButtons = Main.config.getBoolean("claims.protections.interactions.buttons");
-    private final boolean protectionRepeaters = Main.config.getBoolean("claims.protections.interactions.repeaters");
-    private final boolean protectionComparators = Main.config.getBoolean("claims.protections.interactions.comparators");
+    private final boolean protectionLevers = CoreMain.config.getBoolean("claims.protections.interactions.levers");
+    private final boolean protectionButtons = CoreMain.config.getBoolean("claims.protections.interactions.buttons");
+    private final boolean protectionRepeaters = CoreMain.config.getBoolean("claims.protections.interactions.repeaters");
+    private final boolean protectionComparators = CoreMain.config.getBoolean("claims.protections.interactions.comparators");
 
-    private final boolean protectionPressurePlates = Main.config.getBoolean("claims.protections.interactions.pressure-plates");
-    private final boolean protectionTrapdoors = Main.config.getBoolean("claims.protections.interactions.trapdoors");
-    private final boolean protectionDoors = Main.config.getBoolean("claims.protections.interactions.doors");
-    private final boolean protectionFenceGates = Main.config.getBoolean("claims.protections.interactions.fence-gates");
-    private final boolean protectionFarmland = Main.config.getBoolean("claims.protections.interactions.farmland");
+    private final boolean protectionPressurePlates = CoreMain.config.getBoolean("claims.protections.interactions.pressure-plates");
+    private final boolean protectionTrapdoors = CoreMain.config.getBoolean("claims.protections.interactions.trapdoors");
+    private final boolean protectionDoors = CoreMain.config.getBoolean("claims.protections.interactions.doors");
+    private final boolean protectionFenceGates = CoreMain.config.getBoolean("claims.protections.interactions.fence-gates");
+    private final boolean protectionFarmland = CoreMain.config.getBoolean("claims.protections.interactions.farmland");
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {

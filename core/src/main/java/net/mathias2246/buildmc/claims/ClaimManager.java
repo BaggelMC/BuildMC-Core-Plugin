@@ -1,253 +1,262 @@
 package net.mathias2246.buildmc.claims;
 
-import net.mathias2246.buildmc.util.ConfigurationManager;
-import org.bukkit.*;
-import org.bukkit.entity.HumanEntity;
+import net.mathias2246.buildmc.CoreMain;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nullable;
+import java.sql.SQLException;
 import java.util.*;
 
 @SuppressWarnings({"unused", "BooleanMethodIsAlwaysInverted"})
-public class ClaimManager extends ConfigurationManager{
+public class ClaimManager {
 
-    /**The namespaced key used to store the owner inside the chunks PersistentDataContainer*/
-    public static final @NotNull NamespacedKey CLAIM_PCD_KEY = Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_owner"));
+    /** The namespaced key used to store the claim ID inside the chunks PersistentDataContainer */
+    public static final @NotNull NamespacedKey CLAIM_PCD_KEY = Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_id"));
 
-    /**A Map containing all the claim data*/
-    public Map<String, ClaimDataInstance> claims;
+    // Map of team names and the claim IDs they own
+    public static Map<String, List<Long>> teamOwner;
 
-    public @NotNull ClaimDataInstance getEntryOrNew(@NotNull Team team) {
+    // Map of player UUIDs and the claim IDs they own
+    public static Map<UUID, List<Long>> playerOwner;
 
-        claims.putIfAbsent(team.getName(), new ClaimDataInstance(null));
-        return claims.get(team.getName());
-    }
+    // List of claim IDs the server owns
+    public static List<Long> serverOwner;
 
-    public ClaimManager(@NotNull Plugin plugin, @NotNull String resourceName) {
-        super(plugin, resourceName);
-    }
-
-    @Override
-    public void setupConfiguration() {
-        claims = new HashMap<>();
-        for (var key : configuration.getKeys(false)) {
-            var sect = configuration.getConfigurationSection(key);
-            if (sect == null) return;
-
-            Team team = Objects.requireNonNull(this.getPlugin().getServer().getScoreboardManager()).getMainScoreboard().getTeam(key);
-            if (team == null) continue;
-
-            var v = ClaimDataInstance.deserialize(sect.getValues(false));
-
-            claims.putIfAbsent(team.getName(), v);
-        }
-    }
-
-    @Override
-    protected void preSave() {
-        for (var entry : claims.entrySet()) {
-            configuration.set(
-                    entry.getKey(),
-                    entry.getValue().serialize()
-            );
-        }
-    }
-
-    /**Checks if the given player is whitelisted in the claims of the given team.
-     *
-     * @return True, if the player is whitelisted, false if not whitelisted or the team doesn't exist
-     * */
-    public static boolean isPlayerWhitelisted(@NotNull ClaimManager manager, Team team, @NotNull Player player) {
-        if (team == null) return false;
-        var l = manager.getEntryOrNew(team);
-
-        return l.whitelistedPlayers.contains(player.getUniqueId());
-    }
-
-    /**Checks if the given player is whitelisted in the claims of the given team.
-     *
-     * @return True, if the player is whitelisted, false if not whitelisted or the team doesn't exist
-     * */
-    public static boolean isPlayerWhitelisted(@NotNull ClaimManager manager, Team team, @NotNull HumanEntity player) {
-        if (team == null) return false;
-        var l = manager.getEntryOrNew(team);
-
-        return l.whitelistedPlayers.contains(player.getUniqueId());
-    }
-
-    /**Adds a Player to the team whitelist*/
-    public static void setPlayerWhitelisted(@NotNull ClaimManager manager, @NotNull Team team, @NotNull Player player) {
-        var t = manager.getEntryOrNew(team).whitelistedPlayers;
-
-        UUID uuid = player.getUniqueId();
-
-        t.add(uuid);
-
-        String tn = team.getName();
-    }
-
-    /**Removes a player from the team whitelist*/
-    public static void removePlayerWhitelisted(@NotNull ClaimManager manager, @NotNull Team team, @NotNull Player player) {
-        var t = manager.getEntryOrNew(team);
-
-        t.whitelistedPlayers.remove(player.getUniqueId());
-    }
-
-    /**Forcefully sets the owner of the chunk at the given location.
-     * @param team The team that should own the chunk or null if the current owner should be removed.*/
-    public static void forceClaimChunk(@Nullable Team team, @NotNull Location location) {
-        if (team == null) {
-            location.getChunk().getPersistentDataContainer().remove(CLAIM_PCD_KEY);
-
-            return;
-        }
-        location.getChunk().getPersistentDataContainer().set(
-                CLAIM_PCD_KEY, PersistentDataType.STRING, team.getName()
-        );
-
-    }
-
-    /**Forcefully sets the owner of the chunk at the given location.
-     * @param team The team that should own the chunk or null if the current owner should be removed.*/
-    public static void forceClaimChunk(@Nullable Team team, @NotNull Chunk chunk) {
-        if (team == null) {
-            chunk.getPersistentDataContainer().remove(CLAIM_PCD_KEY);
-            return;
-        }
-
-        chunk.getPersistentDataContainer().set(
-                CLAIM_PCD_KEY, PersistentDataType.STRING, team.getName()
-        );
-    }
-
-    /**Gets the owner string directly form the Persistent-Data-Container or null if no owner was set*/
-    public static @Nullable String getOwnerString(@NotNull Location location) {
-        return getOwnerString(location.getChunk());
-    }
-
-    // Gets the owner string directly form PDC or null if no owner was set
-    public static @Nullable String getOwnerString(@NotNull Chunk chunk) {
-        if (!chunk.getPersistentDataContainer().has(CLAIM_PCD_KEY, PersistentDataType.STRING)) return null;
-        return chunk.getPersistentDataContainer().get(
-                CLAIM_PCD_KEY, PersistentDataType.STRING
-        );
-    }
-
-    /**Checks if the given chunk has an owner or not*/
-    public static boolean hasOwner(@NotNull Chunk chunk) {
-        return chunk.getPersistentDataContainer().has(CLAIM_PCD_KEY);
-    }
-
-    /**Checks if the chunk has an owner or if it is already owned by the given team.*/
-    public static boolean isNotClaimedOrOwn(Team team, @NotNull Location location) {
-        Team c = getClaimTeam(location);
-        return Objects.equals(
-                team,
-                c
-        ) || c == null;
-    }
-
-    /**Checks if the chunk has an owner or if it is already owned by the given team.*/
-    public static boolean isNotClaimedOrOwn(Team team, @NotNull Chunk chunk) {
-        Team c = getClaimTeam(chunk);
-        return Objects.equals(
-                team,
-                c
-        ) || c == null;
-    }
-
-    /**Checks if the chunk has an owner or if it is already owned by the given team.*/
-    public static boolean isNotClaimedOrOwn(@NotNull Player player, @NotNull Chunk chunk) {
-        Team c = getClaimTeam(chunk);
-        return Objects.equals(
-                getPlayerTeam(player),
-                c
-        ) || c == null;
-    }
-
-    /**Checks if the chunk has an owner or if it is already owned by the given team.*/
-    public static boolean isNotClaimedOrOwn(@NotNull HumanEntity player, @NotNull Chunk chunk) {
-        Team c = getClaimTeam(chunk);
-        return Objects.equals(
-                getPlayerTeam((Player) player),
-                c
-        ) || c == null;
-    }
-
-    /** Gets the players team
-     * @return the team the player is currently on, or null if he has no team*/
+    /** Gets the player's team
+     * @return the team the player is currently on, or null if they have no team */
     public static @Nullable Team getPlayerTeam(@NotNull Player player) {
         return player.getScoreboard().getEntryTeam(player.getName());
     }
 
-
-    /**Gets the team that claims the chunk at the given location.
-     * @return The team that owns the given chunk or null if no one owns this chunk*/
-    public static @Nullable Team getClaimTeam(@NotNull Location location) {
-        var owner = getOwnerString(location);
-        if (owner == null) return null;
-
-        return Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeam(owner);
-    }
-
-    /**Gets the team that claims the chunk at the given location.
-     * @return The team that owns the given chunk or null if no one owns this chunk*/
-    public static @Nullable Team getClaimTeam(@NotNull Chunk chunk) {
-        var owner = getOwnerString(chunk);
-        if (owner == null) return null;
-
-        return Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeam(owner);
-    }
-
-    /**Checks if a player is allowed to do things at a certain location.
-     * @return True if, the chunk at the location is not owned or is his own claim, or if he is whitelisted.*/
-    public static boolean isPlayerAllowed(@NotNull ClaimManager manager, @NotNull Player player, @NotNull Location location) {
-        return isNotClaimedOrOwn(player, location.getChunk()) || isPlayerWhitelisted(manager, getClaimTeam(location), player);
-    }
-
-    /**Checks if a player is allowed to do things at a certain location.
-     * @return True if, the chunk at the location is not owned or is his own claim, or if he is whitelisted.*/
-    public static boolean isPlayerAllowed(@NotNull ClaimManager manager, @NotNull HumanEntity player, @NotNull Location location) {
-        return isNotClaimedOrOwn(player, location.getChunk()) || isPlayerWhitelisted(manager, getClaimTeam(location), player);
-    }
-
-    /**Forcefully claims an entire area for a team.
-     * The area is set to the given team or all claims are removed if the parameter team is set to null.
-     * @param from must be in the same world as the other location
-     * @param to must be in the same world as the other location*/
-    public static void forceClaimArea(Team team, @NotNull Location from, @NotNull Location to) {
-        if (!Objects.equals(from.getWorld(), to.getWorld())) {
-            return;
+    public static boolean isPlayerAllowed(@NotNull Player player, @NotNull EnumSet<ProtectionFlag> protectionFlags, Location location) {
+        Claim claim;
+        try {
+            claim = ClaimManager.getClaim(player.getLocation());
+        } catch (SQLException e) {
+            CoreMain.plugin.getLogger().severe("SQL Error while getting claim: " + e.getMessage());
+            return true; // Allow by default on error. Not sure what to do here.
         }
-        for (int z = from.getChunk().getZ(); z <= to.getChunk().getZ(); z++) {
-            for (int x = from.getChunk().getX(); x <= to.getChunk().getX(); x++) {
-                Chunk chunk = Objects.requireNonNull(from.getWorld()).getChunkAt(x, z);
-                forceClaimChunk(team, chunk);
+
+        // Allow if no claim found
+        if (claim == null) return true;
+
+        // Allow if player is explicitly whitelisted
+        if (claim.getWhitelistedPlayers().contains(player.getUniqueId())) return true;
+
+        // Allow if claim is a placeholder
+        if (claim.getType() == ClaimType.PLACEHOLDER) return true;
+
+        String playerId = player.getUniqueId().toString();
+
+        switch (claim.getType()) {
+            case SERVER:
+                return !hasAnyFlag(claim, protectionFlags);
+
+            case PLAYER:
+                if (Objects.equals(claim.getOwnerId(), playerId)) return true;
+                return !hasAnyFlag(claim, protectionFlags);
+
+            case TEAM:
+                Team playerTeam = getPlayerTeam(player);
+                if (playerTeam != null && Objects.equals(playerTeam.getName(), claim.getOwnerId())) return true;
+                return !hasAnyFlag(claim, protectionFlags);
+
+            default:
+                return true;
+        }
+    }
+
+    private static boolean hasAnyFlag(Claim claim, EnumSet<ProtectionFlag> flags) {
+        for (ProtectionFlag flag : flags) {
+            if (claim.hasFlag(flag)) return true;
+        }
+        return false;
+    }
+
+    public static boolean isClaimInArea(UUID worldID, int chunkX1, int chunkZ1, int chunkX2, int chunkZ2) throws SQLException {
+        return CoreMain.claimTable.doesClaimExistInArea(CoreMain.databaseManager.getConnection(), worldID, chunkX1, chunkZ1, chunkX2, chunkZ2);
+    }
+
+    public static List<Claim> getClaimsInArea(Location pos1, Location pos2) throws SQLException {
+        if (pos1 == null || pos2 == null) {
+            throw new IllegalArgumentException("Positions cannot be null.");
+        }
+
+        if (pos1.getWorld() == null || pos2.getWorld() == null) {
+            throw new IllegalArgumentException("Both locations must have a world.");
+        }
+
+        UUID worldId1 = pos1.getWorld().getUID();
+        UUID worldId2 = pos2.getWorld().getUID();
+
+        if (!worldId1.equals(worldId2)) {
+            throw new IllegalArgumentException("Locations must be in the same world.");
+        }
+
+        int chunkX1 = pos1.getBlockX() >> 4;
+        int chunkZ1 = pos1.getBlockZ() >> 4;
+        int chunkX2 = pos2.getBlockX() >> 4;
+        int chunkZ2 = pos2.getBlockZ() >> 4;
+
+        return CoreMain.claimTable.getOverlappingClaimsInArea(
+                CoreMain.databaseManager.getConnection(),
+                worldId1,
+                chunkX1, chunkZ1,
+                chunkX2, chunkZ2
+        );
+    }
+
+    public static boolean isClaimed(Chunk chunk) {
+    return chunk.getPersistentDataContainer().has(CLAIM_PCD_KEY);
+    }
+
+    @Nullable public static Long getClaimId(Chunk chunk) {
+        return chunk.getPersistentDataContainer().get(CLAIM_PCD_KEY, PersistentDataType.LONG);
+    }
+
+    @Nullable public static Claim getClaim(Chunk chunk) throws SQLException {
+        var claimId = getClaimId(chunk);
+        if (claimId == null) return null;
+
+        return CoreMain.claimTable.getClaimById(CoreMain.databaseManager.getConnection(), claimId);
+    }
+
+    @Nullable public static Claim getClaim(Location location) throws SQLException {
+        Chunk chunk = location.getChunk();
+        return getClaim(chunk);
+    }
+
+    public static boolean tryClaimPlayerArea(@NotNull Player player, String claimName, Location pos1, Location pos2) {
+        return tryClaimArea(ClaimType.PLAYER, player.getUniqueId().toString(), claimName, pos1, pos2);
+    }
+
+    public static boolean tryClaimTeamArea(@NotNull Team team, String claimName, Location pos1, Location pos2) {
+        return tryClaimArea(ClaimType.TEAM, team.getName(), claimName, pos1, pos2);
+    }
+
+    private static boolean tryClaimArea(@NotNull ClaimType type, @NotNull String ownerId, @NotNull String claimName, @NotNull Location pos1, @NotNull Location pos2) {
+        if (pos1.getWorld() == null || pos2.getWorld() == null) return false;
+
+        UUID worldId = pos1.getWorld().getUID();
+
+        int chunkX1 = pos1.getBlockX() >> 4;
+        int chunkZ1 = pos1.getBlockZ() >> 4;
+        int chunkX2 = pos2.getBlockX() >> 4;
+        int chunkZ2 = pos2.getBlockZ() >> 4;
+
+        Claim claim = new Claim(
+                null,
+                type,
+                ownerId,
+                worldId,
+                chunkX1,
+                chunkZ1,
+                chunkX2,
+                chunkZ2,
+                claimName,
+                List.of(),
+                EnumSet.noneOf(ProtectionFlag.class)
+        );
+
+        long claimId;
+        try {
+            claimId = CoreMain.claimTable.insertClaim(CoreMain.databaseManager.getConnection(), claim);
+        } catch (SQLException e) {
+            CoreMain.plugin.getLogger().severe("Failed to insert claim into database: " + e.getMessage());
+            return false;
+        }
+
+        if (claimId == -1) return false;
+
+        claim.setID(claimId);
+
+        // Set persistent chunk data
+        for (int x = chunkX1; x <= chunkX2; x++) {
+            for (int z = chunkZ1; z <= chunkZ2; z++) {
+                var chunk = pos1.getWorld().getChunkAt(x, z);
+                var pdc = chunk.getPersistentDataContainer();
+                pdc.set(CLAIM_PCD_KEY, PersistentDataType.LONG, claimId);
             }
         }
+
+        // Update ownership mapping
+        switch (type) {
+            case PLAYER -> {
+                UUID uuid = UUID.fromString(ownerId);
+                playerOwner.computeIfAbsent(uuid, k -> new ArrayList<>()).add(claimId);
+            }
+            case TEAM -> {
+                teamOwner.computeIfAbsent(ownerId, k -> new ArrayList<>()).add(claimId);
+            }
+        }
+
+        return true;
     }
 
-    /**Forcefully claims an entire area for a team.
-     * The area is set to the given team or all claims are removed if the parameter team is set to null.*/
-    public static void forceClaimArea(Team team, @NotNull World world, int startX, int startZ, int endX, int endZ) {
-        for (int z = startZ; z <= endZ; z++) {
-            for (int x = startX; x <= endX; x++) {
-                Chunk chunk = world.getChunkAt(x, z);
-                forceClaimChunk(team, chunk);
+    private static void addPlayerToWhitelist(long claimID, UUID playerID) {
+        Claim claim = null;
 
-            }
+        try {
+            claim = CoreMain.claimTable.getClaimById(CoreMain.databaseManager.getConnection(), claimID);
+        } catch (SQLException e) {
+            CoreMain.plugin.getLogger().severe("SQL error while getting claim: " + e.getMessage());
+        }
+
+        if (claim == null) return;
+
+        claim.addWhitelistedPlayer(playerID);
+
+        try {
+            CoreMain.claimTable.addWhitelistedPlayer(CoreMain.databaseManager.getConnection(), claimID, playerID);
+        } catch (SQLException e) {
+            CoreMain.plugin.getLogger().severe("SQL error while adding player to claim whitelist: " + e.getMessage());
         }
     }
 
-    /**Gets the number of chunks the given team has left to claim
-     * If the amount of chunks left is smaller than zero, the claim limit will be disabled.*/
-    public static int getChunksLeft(@NotNull ClaimManager manager, @NotNull Team team) {
-        var t = manager.getEntryOrNew(team);
-        return t.chunksLeft;
+    private static void removePlayerFromWhitelist(long claimID, UUID playerID) {
+        Claim claim = null;
+
+        try {
+            claim = CoreMain.claimTable.getClaimById(CoreMain.databaseManager.getConnection(), claimID);
+        } catch (SQLException e) {
+            CoreMain.plugin.getLogger().severe("SQL error while getting claim: " + e.getMessage());
+        }
+
+        if (claim == null) return;
+
+        claim.removeWhitelistedPlayer(playerID);
+
+        try {
+            CoreMain.claimTable.removeWhitelistedPlayer(CoreMain.databaseManager.getConnection(), claimID, playerID);
+        } catch (SQLException e) {
+            CoreMain.plugin.getLogger().severe("SQL error while adding player to claim whitelist: " + e.getMessage());
+        }
     }
 
+    @Nullable public static String getClaimNameById(long claimId) {
+        String name = null;
+
+        try {
+            name = CoreMain.claimTable.getClaimNameById(CoreMain.databaseManager.getConnection(), claimId);
+        } catch (SQLException e) {
+            CoreMain.plugin.getLogger().severe("SQL Error while trying to get name by ID " + e.getMessage());
+        }
+        return name;
+    }
+
+    public static boolean removeClaimById(long claimId) {
+        try {
+            CoreMain.claimTable.deleteClaimById(CoreMain.databaseManager.getConnection(), claimId);
+        } catch (SQLException e) {
+            CoreMain.plugin.getLogger().severe("Failed to remove claim from database: " + e.getMessage());
+            return false;
+        }
+        return true;
+    }
 }

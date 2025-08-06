@@ -1,20 +1,24 @@
 package net.mathias2246.buildmc.claims;
 
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
-import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
-import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextReplacementConfig;
+import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.commands.CustomCommand;
+import net.mathias2246.buildmc.util.LocationUtil;
 import net.mathias2246.buildmc.util.Message;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
 
-import java.io.IOException;
-
-import static net.mathias2246.buildmc.Main.claimManager;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class ClaimCommand implements CustomCommand {
     @Override
@@ -41,26 +45,6 @@ public class ClaimCommand implements CustomCommand {
                         })
             );
         cmd.then(
-                Commands.literal("removetool")
-                        .executes(
-                                (command) -> {
-                                    if (!(command.getSource().getExecutor() instanceof Player player)) {
-                                        command.getSource().getSender().sendMessage(Component.translatable("messages.error.not-a-player"));
-                                        return 0;
-                                    }
-
-                                    // Check if there is space left in the inventory
-                                    if (player.getInventory().firstEmpty() == -1) {
-                                        player.sendMessage(Component.translatable("messages.claims.tool.full-inventory"));
-                                        return 0;
-                                    }
-
-                                    ClaimTool.giveRemoveToolToPlayer(player);
-                                    player.sendMessage(Component.translatable("messages.claims.tool.give-success"));
-                                    return 1;
-                                })
-        );
-        cmd.then(
                 Commands.literal("who")
                         .executes(
                                 (command) -> {
@@ -69,20 +53,39 @@ public class ClaimCommand implements CustomCommand {
                                         return 0;
                                     }
 
-                                    String owner = ClaimManager.getOwnerString(player.getLocation());
+                                    Claim claim;
 
-                                    if (owner == null) {
+                                    try {
+                                        claim = ClaimManager.getClaim(player.getLocation());
+                                    } catch (SQLException e) {
+                                        CoreMain.plugin.getLogger().severe("An error occured while getting a claim from the database: " + e.getMessage());
+                                        player.sendMessage(Component.translatable("messages.error.sql"));
+                                        return 0;
+                                    }
+
+                                    if (claim == null) {
                                         command.getSource().getSender().sendMessage(Component.translatable("messages.claims.who.unclaimed"));
                                         return 1;
                                     }
 
-                                    Component message = Message.msg(player, "messages.claims.who.message");
+                                    ClaimType claimType = claim.getType();
 
-                                    TextReplacementConfig.Builder b = TextReplacementConfig.builder();
-                                    b.matchLiteral("%owner%");
-                                    b.replacement(owner);
+                                    if (claimType == ClaimType.TEAM) {
+                                        player.sendMessage(Message.msg(player, "messages.claims.who.team-message", Map.of("owner", claim.getOwnerId())));
+                                    } else if (claimType == ClaimType.PLAYER) {
+                                        UUID ownerId = UUID.fromString(claim.getOwnerId());
+                                        OfflinePlayer owner = Bukkit.getOfflinePlayer(ownerId);
+                                        String ownerName = owner.getName();
 
-                                    command.getSource().getSender().sendMessage(message.replaceText(b.build()));
+                                        if (ownerName == null) {
+                                            ownerName = "Unknown";
+                                        }
+
+                                        player.sendMessage(Message.msg(player, "messages.claims.who.player-message", Map.of("owner", ownerName)));
+                                    } else if (claimType == ClaimType.SERVER || claimType == ClaimType.PLACEHOLDER) {
+                                        player.sendMessage(Message.msg(player, "messages.claims.who.server-message"));
+                                    }
+
                                     return 1;
                                 }
                         )
@@ -95,85 +98,188 @@ public class ClaimCommand implements CustomCommand {
                             return 1;
                         })
         );
+
         cmd.then(
-                Commands.literal("whitelist")
+                Commands.literal("create")
                         .then(
-                                Commands.literal("add")
+                                Commands.argument("type", StringArgumentType.word()) // "player" or "team"
                                         .then(
-                                                Commands.argument("player", ArgumentTypes.player())
-                                                        .executes(
-                                                                (command) -> {
-                                                                    if (!(command.getSource().getSender() instanceof Player player)) {
-                                                                        command.getSource().getSender().sendMessage(Component.translatable("messages.error.not-a-player"));
+                                                Commands.argument("name", StringArgumentType.word()) // name of claim
+                                                        .executes(command -> {
+                                                            if (!(command.getSource().getSender() instanceof Player player)) {
+                                                                command.getSource().getSender().sendMessage(Component.translatable("messages.error.not-a-player"));
+                                                                return 0;
+                                                            }
+
+                                                            String type = command.getArgument("type", String.class);
+                                                            String name = command.getArgument("name", String.class);
+
+                                                            // Validate positions
+                                                            if (!player.hasMetadata("claim_tool_pos1") || !player.hasMetadata("claim_tool_pos2")) {
+                                                                player.sendMessage(Component.translatable("messages.claims.create.missing-positions"));
+                                                                return 0;
+                                                            }
+
+                                                            Location pos1 = LocationUtil.deserialize(player.getMetadata("claim_tool_pos1").getFirst().asString());
+                                                            Location pos2 = LocationUtil.deserialize(player.getMetadata("claim_tool_pos2").getFirst().asString());
+
+                                                            if (!pos1.getWorld().equals(pos2.getWorld())) {
+                                                                player.sendMessage(Component.translatable("messages.claims.create.different-worlds"));
+                                                                return 0;
+                                                            }
+
+                                                            List<Claim> overlappingClaims;
+                                                            try {
+                                                                overlappingClaims = ClaimManager.getClaimsInArea(pos1, pos2);
+                                                            } catch (SQLException e) {
+                                                                CoreMain.plugin.getLogger().severe("There was an error while getting the claims in an area: " + e.getMessage());
+                                                                player.sendMessage(Component.translatable("messages.claims.create.error-database"));
+                                                                return 0;
+                                                            }
+
+                                                            if (!overlappingClaims.isEmpty()) {
+                                                                boolean serverProtected = overlappingClaims.stream()
+                                                                        .anyMatch(claim -> claim.getType() == ClaimType.SERVER);
+
+                                                                if (serverProtected) {
+                                                                    player.sendMessage(Component.translatable("messages.claims.create.protected-server"));
+                                                                } else {
+                                                                    player.sendMessage(Component.translatable("messages.claims.create.overlap"));
+                                                                }
+                                                                return 0;
+                                                            }
+
+                                                            switch (type.toLowerCase()) {
+                                                                case "player" -> {
+                                                                    boolean success = ClaimManager.tryClaimPlayerArea(player, name, pos1, pos2);
+                                                                    if (success) {
+                                                                        player.sendMessage(Component.translatable("messages.claims.create.success"));
+                                                                        return 1;
+                                                                    } else {
+                                                                        player.sendMessage(Component.translatable("messages.claims.create.failed"));
                                                                         return 0;
                                                                     }
+                                                                }
 
+                                                                case "team" -> {
                                                                     Team team = ClaimManager.getPlayerTeam(player);
                                                                     if (team == null) {
-                                                                        command.getSource().getSender().sendMessage(Component.translatable("messages.error.not-in-a-team"));
+                                                                        player.sendMessage(Component.translatable("messages.error.not-in-a-team"));
                                                                         return 0;
                                                                     }
-
-                                                                    var ps = command.getArgument("player", PlayerSelectorArgumentResolver.class);
-                                                                    for (var p : ps.resolve(command.getSource())) {
-                                                                        if (ClaimManager.isPlayerWhitelisted(claimManager, team, p)) {
-                                                                            command.getSource().getSender().sendMessage(
-                                                                                    Component.translatable("messages.claims.already-whitelisted")
-                                                                                            .replaceText(TextReplacementConfig.builder()
-                                                                                                    .matchLiteral("%player%")
-                                                                                                    .replacement(p.getName())
-                                                                                                    .build()));
-                                                                            continue;
-                                                                        }
-
-                                                                        ClaimManager.setPlayerWhitelisted(claimManager, team, p);
-                                                                        command.getSource().getSender().sendMessage(Component.translatable("messages.claims.successfully-whitelisted"));
+                                                                    boolean success = ClaimManager.tryClaimTeamArea(team, name, pos1, pos2);
+                                                                    if (success) {
+                                                                        player.sendMessage(Component.translatable("messages.claims.create.success"));
+                                                                        return 1;
+                                                                    } else {
+                                                                        player.sendMessage(Component.translatable("messages.claims.create.failed"));
+                                                                        return 0;
                                                                     }
-
-                                                                    try {
-                                                                        claimManager.save();
-                                                                    } catch (IOException e) {
-                                                                        throw new RuntimeException(e);
-                                                                    }
-                                                                    return 1;
                                                                 }
-                                                        )
-                                        )
-                        )
-                        .then(
-                                Commands.literal("remove")
-                                        .then(
-                                                Commands.argument("player", ArgumentTypes.player())
-                                                        .executes(
-                                                                (command) -> {
-                                                                    if (!(command.getSource().getSender() instanceof Player player)) {
-                                                                        command.getSource().getSender().sendMessage(Component.translatable("messages.error.not-a-player"));
-                                                                        return 0;
-                                                                    }
 
-                                                                    Team team = ClaimManager.getPlayerTeam(player);
-                                                                    if (team == null) {
-                                                                        command.getSource().getSender().sendMessage(Component.translatable("messages.error.not-in-a-team"));
-                                                                        return 0;
-                                                                    }
-
-                                                                    var ps = command.getArgument("player", PlayerSelectorArgumentResolver.class);
-                                                                    for (var p : ps.resolve(command.getSource())) {
-                                                                        ClaimManager.removePlayerWhitelisted(claimManager, team, p);
-                                                                        command.getSource().getSender().sendMessage(Component.translatable("messages.claims.successfully-removed-whitelisted"));
-                                                                    }
-
-                                                                    try {
-                                                                        claimManager.save();
-                                                                    } catch (IOException e) {
-                                                                        throw new RuntimeException(e);
-                                                                    }
-                                                                    return 1;
+                                                                default -> {
+                                                                    player.sendMessage(Component.translatable("messages.claims.create.invalid-type"));
+                                                                    return 0;
                                                                 }
-                                                        )
+                                                            }
+                                                        })
                                         )
                         )
         );
+
+        cmd.then(
+                Commands.literal("remove")
+                        .then(Commands.argument("type", StringArgumentType.word())
+                                .then(Commands.argument("owner", StringArgumentType.word())
+                                        .then(Commands.argument("name", StringArgumentType.word())
+                                                .executes(command -> {
+                                                    if (!(command.getSource().getSender() instanceof Player player)) {
+                                                        command.getSource().getSender().sendMessage(Component.translatable("messages.error.not-a-player"));
+                                                        return 0;
+                                                    }
+
+                                                    String type = command.getArgument("type", String.class).toLowerCase();
+                                                    String ownerInput = command.getArgument("owner", String.class);
+                                                    String name = command.getArgument("name", String.class);
+
+                                                    long claimIdToRemove = -1;
+
+                                                    try {
+                                                        switch (type) {
+                                                            case "player" -> {
+                                                                OfflinePlayer owner = Bukkit.getOfflinePlayer(ownerInput);
+                                                                if (!ClaimManager.playerOwner.containsKey(owner.getUniqueId())) {
+                                                                    player.sendMessage(Component.translatable("messages.claims.remove.not-found"));
+                                                                    return 0;
+                                                                }
+                                                                for (long id : ClaimManager.playerOwner.get(owner.getUniqueId())) {
+                                                                    String claimName = ClaimManager.getClaimNameById(id);
+                                                                    if (claimName != null && claimName.equalsIgnoreCase(name)) {
+                                                                        claimIdToRemove = id;
+                                                                        break;
+                                                                    }
+                                                                }
+                                                            }
+
+                                                            case "team" -> {
+                                                                if (!ClaimManager.teamOwner.containsKey(ownerInput)) {
+                                                                    player.sendMessage(Component.translatable("messages.claims.remove.not-found"));
+                                                                    return 0;
+                                                                }
+                                                                for (long id : ClaimManager.teamOwner.get(ownerInput)) {
+                                                                    String claimName = ClaimManager.getClaimNameById(id);
+                                                                    if (claimName != null && claimName.equalsIgnoreCase(name)) {
+                                                                        claimIdToRemove = id;
+                                                                        break;
+                                                                    }
+                                                                }
+                                                            }
+
+                                                            case "server" -> {
+                                                                if (!player.hasPermission("buildmc.operator") && !player.hasPermission("buildmc.admin")) {
+                                                                    player.sendMessage(Component.translatable("messages.error.no-permission"));
+                                                                    return 0;
+                                                                }
+                                                                for (long id : ClaimManager.serverOwner) {
+                                                                    String claimName = ClaimManager.getClaimNameById(id);
+                                                                    if (claimName != null && claimName.equalsIgnoreCase(name)) {
+                                                                        claimIdToRemove = id;
+                                                                        break;
+                                                                    }
+                                                                }
+                                                            }
+
+                                                            default -> {
+                                                                player.sendMessage(Component.translatable("messages.claims.remove.invalid-type"));
+                                                                return 0;
+                                                            }
+                                                        }
+
+                                                        if (claimIdToRemove == -1) {
+                                                            player.sendMessage(Component.translatable("messages.claims.remove.not-found"));
+                                                            return 0;
+                                                        }
+
+                                                        boolean success = ClaimManager.removeClaimById(claimIdToRemove);
+                                                        if (success) {
+                                                            player.sendMessage(Component.translatable("messages.claims.remove.success"));
+                                                            return 1;
+                                                        } else {
+                                                            player.sendMessage(Component.translatable("messages.claims.remove.failed"));
+                                                            return 0;
+                                                        }
+
+                                                    } catch (Exception e) {
+                                                        CoreMain.plugin.getLogger().severe("Failed to remove claim: " + e.getMessage());
+                                                        player.sendMessage(Component.translatable("messages.claims.remove.error"));
+                                                        return 0;
+                                                    }
+                                                })
+                                        )
+                                )
+                        )
+        );
+
 
         return cmd.build();
     }

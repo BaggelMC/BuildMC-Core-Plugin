@@ -1,4 +1,4 @@
-package net.mathias2246.buildmc.util;
+package net.mathias2246.buildmc.util.config;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -10,7 +10,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**An abstract utility-class for managing a configuration*/
-public abstract class ConfigurationManager {
+public abstract class YamlConfigurationManager {
 
     private final Plugin plugin;
 
@@ -28,7 +28,7 @@ public abstract class ConfigurationManager {
 
     /**@param plugin The plugin that owns this configuration
      * @param resourceName The name of the default configuration resource*/
-    public ConfigurationManager(@NotNull Plugin plugin, @NotNull String resourceName) {
+    public YamlConfigurationManager(@NotNull Plugin plugin, @NotNull String resourceName) {
         this.plugin = plugin;
         this.resourceName = resourceName;
         this.configFile = new File(plugin.getDataFolder(), resourceName);

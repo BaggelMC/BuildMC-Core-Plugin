@@ -17,9 +17,9 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
-import static net.mathias2246.buildmc.Main.plugin;
+import static net.mathias2246.buildmc.CoreMain.plugin;
 
-import static net.mathias2246.buildmc.Main.audiences;
+import static net.mathias2246.buildmc.CoreMain.audiences;
 
 public class SpawnBoostListener extends BukkitRunnable implements Listener {
 

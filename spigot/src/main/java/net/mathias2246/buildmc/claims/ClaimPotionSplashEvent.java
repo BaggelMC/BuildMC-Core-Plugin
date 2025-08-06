@@ -8,8 +8,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PotionSplashEvent;
 
-import static net.mathias2246.buildmc.Main.audiences;
-import static net.mathias2246.buildmc.Main.claimManager;
+import static net.mathias2246.buildmc.CoreMain.audiences;
+import static net.mathias2246.buildmc.CoreMain.claimManager;
 
 public class ClaimPotionSplashEvent implements Listener {
 

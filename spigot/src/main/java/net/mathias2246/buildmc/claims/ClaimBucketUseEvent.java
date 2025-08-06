@@ -15,8 +15,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Map;
 
-import static net.mathias2246.buildmc.Main.audiences;
-import static net.mathias2246.buildmc.Main.claimManager;
+import static net.mathias2246.buildmc.CoreMain.audiences;
+import static net.mathias2246.buildmc.CoreMain.claimManager;
 
 public class ClaimBucketUseEvent implements Listener {
 

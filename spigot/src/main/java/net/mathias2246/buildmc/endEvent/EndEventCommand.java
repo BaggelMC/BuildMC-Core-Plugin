@@ -9,8 +9,8 @@ import org.bukkit.entity.Player;
 
 import java.io.IOException;
 
-import static net.mathias2246.buildmc.Main.config;
-import static net.mathias2246.buildmc.Main.configFile;
+import static net.mathias2246.buildmc.CoreMain.config;
+import static net.mathias2246.buildmc.CoreMain.configFile;
 
 public class EndEventCommand implements CustomCommand {
 

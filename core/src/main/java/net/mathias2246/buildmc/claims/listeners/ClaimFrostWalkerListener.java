@@ -1,6 +1,9 @@
-package net.mathias2246.buildmc.claims;
+package net.mathias2246.buildmc.claims.listeners;
 
 import net.kyori.adventure.text.Component;
+import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.claims.ClaimManager;
+import net.mathias2246.buildmc.claims.ProtectionFlag;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
@@ -11,7 +14,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.inventory.ItemStack;
 
-import static net.mathias2246.buildmc.Main.claimManager;
+import java.util.EnumSet;
 
 public class ClaimFrostWalkerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -24,12 +27,9 @@ public class ClaimFrostWalkerListener implements Listener {
         ItemStack boots = player.getInventory().getBoots();
         if (boots == null || !boots.containsEnchantment(Enchantment.FROST_WALKER)) return;
 
-        // Check if player has permission to modify this location
-        if (!ClaimManager.isPlayerAllowed(claimManager, player, event.getBlock().getLocation())) {
+        if (!ClaimManager.isPlayerAllowed(player, EnumSet.of(ProtectionFlag.FROST_WALKER), event.getBlock().getLocation())) {
             event.setCancelled(true);
-            player.sendActionBar(
-                    Component.translatable("messages.claims.not-accessible.frostwalker")
-            );
+            CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.frostwalker"));
         }
     }
 }

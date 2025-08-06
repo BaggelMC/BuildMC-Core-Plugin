@@ -32,6 +32,8 @@ messages:
 
     command-disabled: "<red>This command has been disabled.</red>"
 
+    sql: "<red>An SQL error occurred.</red>"
+
   claims:
     tool:
       # NOTE: tool-name and tool-tooltip will only display formating on the paper version of this plugin.
@@ -39,17 +41,10 @@ messages:
 
       tool-name: "Select Claim Corners"
 
-      remove-tool-name: "Select Claim Corners to Remove"
-
       tool-tooltip-line1: "Use this tool to set the corners of your teams claim."
       tool-tooltip-line2: "After setting the first corner by clicking with the tool select the second corner by sneak clicking."
       tool-tooltip-line3: ""
       tool-tooltip-line4: ""
-
-      remove-tool-tooltip-line1: "Use this tool to remove your claim."
-      remove-tool-tooltip-line2: "After setting the first corner by clicking with the tool select the second corner by sneak clicking."
-      remove-tool-tooltip-line3: ""
-      remove-tool-tooltip-line4: ""
 
       tool-cooldown: "<red>You need to wait!</red>"
 
@@ -58,10 +53,12 @@ messages:
 
       selection-too-large: "<red>Your selection cannot be wider or longer than %selection_limit%!</red>"
 
-      missing-first-pos: "<red>You need to select the other corner first!</red>"
-      successfully-set-pos: "<green>Successfully set position!</green>"
+      set-pos1: "<green>Successfully set position 1!</green>"
+      set-pos2: "<green>Successfully set position 2!</green>"
 
-      no-team-to-select: "<red>You need to be in a team to set a claim!</red>"
+      both-positions-set: "<green>Both positions set! Area can now be claimed.</green>"
+
+      no-team-to-select: "<red>You need to be in a team to set a team claim!</red>"
 
       successfully-claimed-area: |-
         <gold>---------------------------------------</gold>
@@ -90,8 +87,22 @@ messages:
 
       no-chunks-left: "<red>You don't have any chunks left to claim!</red>"
 
+    create:
+      missing-positions: "<red>You have not set both positions yet.</red>"
+      success: "<green>You have not set both positions yet.</green>"
+      failed: "<red>Error: Failed to claim region.</red>"
+      invalid-type: "<red>Error: Argument 'type' must be either 'player' or 'team'.</red>"
+      different-worlds: "<red>Error: Both positions must be in the same world.</red>"
+
+      error-database: "<red>There was a database error.</red>"
+
+      protected-server: "<red>The area you're trying to claim is protected by the server.</red>"
+      overlap: "<red>The area you're trying to claim already contains claims by someone else.</red>"
+
     who:
-      message: "<gold>This chunk is owned by <white>%owner%</white>.</gold>"
+      team-message: "<gold>This chunk is owned by team <white>%owner%</white>.</gold>"
+      player-message: "<gold>This chunk is owned by player <white>%owner%</white>.</gold>"
+      server-message: "<gold>This chunk is owned by the server.</gold>"
       unclaimed: "<gold>This chunk belongs to nobody.</gold>"
 
     successfully-whitelisted: "<green>You have successfully whitelisted player!</green>"

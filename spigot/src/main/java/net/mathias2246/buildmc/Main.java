@@ -2,6 +2,7 @@ package net.mathias2246.buildmc;
 
 import dev.jorel.commandapi.CommandAPI;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.claims.*;
 import net.mathias2246.buildmc.commands.BuildMcCommand;
 import net.mathias2246.buildmc.commands.CommandRegister;
@@ -22,6 +23,7 @@ import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.intellij.lang.annotations.Subst;
@@ -33,7 +35,7 @@ import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.logging.Logger;
 
-public final class Main extends JavaPlugin {
+public final class Main extends JavaPlugin implements MainClass {
 
     public static Logger logger;
 
@@ -65,6 +67,8 @@ public final class Main extends JavaPlugin {
             pluginFolder.mkdir();
         }
 
+        CoreMain.initialize(this);
+
         LanguageManager.init();
 
         configFile = new File(plugin.getDataFolder(), "config.yml");
@@ -95,10 +99,6 @@ public final class Main extends JavaPlugin {
 
         if (config.getBoolean("claims.enabled")) {
             CommandRegister.register(new ClaimCommand());
-
-            ClaimDataInstance.defaultChunksLeftAmount = config.getInt("claims.max-chunk-claim-amount", 1600);
-            claimManager = new ClaimManager(this, "claim-data.yml");
-
 
             if (config.getBoolean("claims.protections.containers")) {
                 getServer().getPluginManager().registerEvents(new ClaimContainerListener(), this);
@@ -160,10 +160,6 @@ public final class Main extends JavaPlugin {
                 getServer().getPluginManager().registerEvents(new ClaimPistonMovementListener(), this);
             }
 
-
-            if (config.getBoolean("claims.save-on-world-save")) {
-                getServer().getPluginManager().registerEvents(new ClaimDataSaveListener(claimManager), this);
-            }
         }
 
         if (config.getBoolean("status.enabled")) {
@@ -192,11 +188,7 @@ public final class Main extends JavaPlugin {
         audiences.close();
         CommandAPI.onDisable();
 
-        try {
-            claimManager.save();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        CoreMain.stop();
     }
 
     private void disableCommand(String namespace, String commandName) {
@@ -248,5 +240,15 @@ public final class Main extends JavaPlugin {
             logger.warning("Failed to retrieve the command map.");
             return null;
         }
+    }
+
+    @Override
+    public void sendPlayerMessage(Player player, Component message) {
+        audiences.player(player).sendMessage(message);
+    }
+
+    @Override
+    public void sendPlayerActionBar(Player player, Component message) {
+        audiences.player(player).sendActionBar(message);
     }
 }

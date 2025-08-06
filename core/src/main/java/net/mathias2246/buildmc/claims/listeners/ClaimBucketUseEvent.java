@@ -1,7 +1,9 @@
-package net.mathias2246.buildmc.claims;
+package net.mathias2246.buildmc.claims.listeners;
 
 import net.kyori.adventure.text.Component;
-import net.mathias2246.buildmc.util.Message;
+import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.claims.ClaimManager;
+import net.mathias2246.buildmc.claims.ProtectionFlag;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -13,15 +15,12 @@ import org.bukkit.event.player.PlayerBucketEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Map;
-
-import static net.mathias2246.buildmc.Main.claimManager;
+import java.util.EnumSet;
 
 public class ClaimBucketUseEvent implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBucketUse(PlayerInteractEvent event) {
-
         Player player = event.getPlayer();
         ItemStack item = event.getItem();
 
@@ -32,21 +31,18 @@ public class ClaimBucketUseEvent implements Listener {
 
         if (block == null) return;
 
-        boolean isBucketUse = type == Material.WATER_BUCKET ||
-                type == Material.LAVA_BUCKET ||
-                type == Material.POWDER_SNOW_BUCKET ||
-                type == Material.BUCKET ||
-                type == Material.AXOLOTL_BUCKET ||
-                type == Material.TADPOLE_BUCKET ||
-                type == Material.PUFFERFISH_BUCKET ||
-                type == Material.TROPICAL_FISH_BUCKET ||
-                type == Material.SALMON_BUCKET ||
-                type == Material.COD_BUCKET;
+        boolean isBucketUse = switch (type) {
+            case WATER_BUCKET, LAVA_BUCKET, POWDER_SNOW_BUCKET, BUCKET,
+                 AXOLOTL_BUCKET, TADPOLE_BUCKET, PUFFERFISH_BUCKET,
+                 TROPICAL_FISH_BUCKET, SALMON_BUCKET, COD_BUCKET -> true;
+            default -> false;
+        };
 
         if (!isBucketUse) return;
 
-        if (!ClaimManager.isPlayerAllowed(claimManager, player, block.getLocation())) {
-            player.sendActionBar(Component.translatable("messages.claims.not-accessible.block-place"));
+        if (!ClaimManager.isPlayerAllowed(player, EnumSet.of(ProtectionFlag.BUCKET_USAGE), block.getLocation())) {
+            CoreMain.mainClass.sendPlayerActionBar(player,
+                    Component.translatable("messages.claims.not-accessible.block-place"));
             event.setCancelled(true);
         }
     }
@@ -56,8 +52,9 @@ public class ClaimBucketUseEvent implements Listener {
         Player player = event.getPlayer();
         Entity entity = event.getEntity();
 
-        if (!ClaimManager.isPlayerAllowed(claimManager, player, entity.getLocation())) {
-            player.sendActionBar(Message.msg(player, "messages.claims.not-accessible.entity-bucket", Map.of("entity", entity.getName())));
+        if (!ClaimManager.isPlayerAllowed(player, EnumSet.of(ProtectionFlag.BUCKET_USAGE), entity.getLocation())) {
+            CoreMain.mainClass.sendPlayerActionBar(player,
+                    Component.translatable("messages.claims.not-accessible.entity-bucket"));
             event.setCancelled(true);
         }
     }

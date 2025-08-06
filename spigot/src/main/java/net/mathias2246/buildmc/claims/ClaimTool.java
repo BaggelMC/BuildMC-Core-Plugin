@@ -26,8 +26,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Objects;
 
-import static net.mathias2246.buildmc.Main.*;
-
 @SuppressWarnings("UnstableApiUsage")
 public class ClaimTool implements Listener {
 

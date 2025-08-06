@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-import static net.mathias2246.buildmc.Main.audiences;
+import static net.mathias2246.buildmc.CoreMain.audiences;
 
 public class PlayerStatus implements Listener {
 

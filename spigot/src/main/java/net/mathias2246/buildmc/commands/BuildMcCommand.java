@@ -1,7 +1,7 @@
 package net.mathias2246.buildmc.commands;
 
 import dev.jorel.commandapi.CommandAPICommand;
-import net.mathias2246.buildmc.Main;
+import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.claims.ClaimTool;
 import net.mathias2246.buildmc.endEvent.EndEventCommand;
 import net.mathias2246.buildmc.util.Message;
@@ -32,14 +32,14 @@ public class BuildMcCommand implements CustomCommand {
                         (c) -> c.hasPermission(new Permission("buildmc.operator"))
                 );
 
-        var endSub = new EndEventCommand(Main.audiences).getCommand();
+        var endSub = new EndEventCommand(CoreMain.audiences).getCommand();
         cmd.withSubcommand(endSub);
 
         var giveClaimTool = new CommandAPICommand("claimtool");
         giveClaimTool.executes(
                 (command) -> {
                     if (!(command.sender() instanceof Player player)) {
-                        Main.audiences.sender(command.sender()).sendMessage(Message.noPlayerErrorMsg(command.sender()));
+                        CoreMain.audiences.sender(command.sender()).sendMessage(Message.noPlayerErrorMsg(command.sender()));
                         return;
                     }
                     ClaimTool.giveToolToPlayer(player);

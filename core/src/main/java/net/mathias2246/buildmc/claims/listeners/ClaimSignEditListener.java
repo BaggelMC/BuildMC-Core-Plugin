@@ -1,6 +1,9 @@
-package net.mathias2246.buildmc.claims;
+package net.mathias2246.buildmc.claims.listeners;
 
 import net.kyori.adventure.text.Component;
+import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.claims.ClaimManager;
+import net.mathias2246.buildmc.claims.ProtectionFlag;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -8,7 +11,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 
-import static net.mathias2246.buildmc.Main.claimManager;
+import java.util.EnumSet;
 
 public class ClaimSignEditListener implements Listener {
 
@@ -17,7 +20,7 @@ public class ClaimSignEditListener implements Listener {
 
         Player player = event.getPlayer();
 
-        if (!ClaimManager.isPlayerAllowed(claimManager, player, event.getBlock().getLocation())) {
+        if (!ClaimManager.isPlayerAllowed(player, EnumSet.of(ProtectionFlag.SIGN_EDITING), event.getBlock().getLocation())) {
             // Cancel the sign change
             event.setCancelled(true);
 
@@ -26,7 +29,7 @@ public class ClaimSignEditListener implements Listener {
             }
 
             // Send feedback to the player
-            player.sendActionBar(Component.translatable("messages.claims.not-accessible.sign"));
+            CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.sign"));
         }
     }
 }

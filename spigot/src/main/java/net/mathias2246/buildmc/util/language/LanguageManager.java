@@ -6,10 +6,9 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.translation.MiniMessageTranslationStore;
 import net.kyori.adventure.translation.GlobalTranslator;
 import net.kyori.adventure.translation.Translator;
-import net.mathias2246.buildmc.Main;
+import net.mathias2246.buildmc.CoreMain;
 import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.Yaml;
-import static net.mathias2246.buildmc.Main.*;
 
 import java.io.File;
 import java.io.FileReader;
@@ -73,7 +72,7 @@ public class LanguageManager {
         for (String fileName : DEFAULT_FILES) {
             File targetFile = new File(LANG_FOLDER, fileName);
             if (!targetFile.exists()) {
-                try (var in = Main.class.getResourceAsStream("/lang/" + fileName)) {
+                try (var in = CoreMain.class.getResourceAsStream("/lang/" + fileName)) {
                     if (in != null) {
                         java.nio.file.Files.copy(in, targetFile.toPath());
                     } else {
