@@ -2,6 +2,7 @@ package net.mathias2246.buildmc.claims;
 
 import net.mathias2246.buildmc.CoreMain;
 import org.bukkit.Chunk;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -52,6 +53,7 @@ public class Claim {
         }
     }
 
+    /**Gets the id of this claim*/
     public Long getId() { return id; }
     public ClaimType getType() { return type; }
     public String getOwnerId() { return ownerId; }
@@ -62,26 +64,38 @@ public class Claim {
     public int getChunkZ2() { return chunkZ2; }
     public String getName() { return name; }
 
+    /**This method sets the id of a claim instance.
+     * <p>This method is only used internally. You should not use this method!</p>*/
+    @ApiStatus.Internal
     public void setID(long id) { this.id = id; }
 
+    /**@return A list containing all the UUIDS of players that are whitelisted inside this claim.*/
     public List<UUID> getWhitelistedPlayers() { return whitelistedPlayers; }
 
+    /**Checks if a player is whitelisted on this claim, granting him permission to do anything on the claim.
+     * @return True if, the given UUID is whitelisted.*/
     public boolean isPlayerWhitelisted(UUID playerID) { return whitelistedPlayers.contains(playerID); }
 
+    /**Adds a player to this claims whitelist, granting him permission to do anything on the claim.*/
     public void addWhitelistedPlayer(UUID playerId) {
         if (!whitelistedPlayers.contains(playerId)) {
             whitelistedPlayers.add(playerId);
         }
     }
 
+    /**Removes a player from this claims whitelist, taking away his permissions on this claim.*/
     public void removeWhitelistedPlayer(UUID playerId) {
         whitelistedPlayers.remove(playerId);
     }
 
+    /**@return An EnumSet containing the protections that are enabled on this claim.*/
     public EnumSet<ProtectionFlag> getProtectionFlags() { return protectionFlags; }
 
+    /**@return True if, this claim has a certain ProtectionFlag set; otherwise false*/
     public boolean hasFlag(ProtectionFlag flag) { return protectionFlags.contains(flag); }
 
+    /**Checks if the given chunk is inside this claim.
+     * @return True if, this claim is inside the same world and area.*/
     public boolean contains(int chunkX, int chunkZ, UUID worldUUID) {
         if (!this.worldId.equals(worldUUID)) return false;
         int minX = Math.min(chunkX1, chunkX2);
@@ -91,6 +105,8 @@ public class Claim {
         return chunkX >= minX && chunkX <= maxX && chunkZ >= minZ && chunkZ <= maxZ;
     }
 
+    /**Checks if the given chunk is inside this claim.
+     * @return True if, this claim is inside the same world and area.*/
     public boolean contains(Chunk chunk) {
         return contains(chunk.getX(), chunk.getZ(), chunk.getWorld().getUID());
     }

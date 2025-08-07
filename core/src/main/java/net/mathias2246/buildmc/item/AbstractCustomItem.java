@@ -107,17 +107,15 @@ public abstract class AbstractCustomItem implements Keyed {
 
     /**Called when a PlayerInteractEvent from the CustomItemListener was done with this custom item type*/
     public void onInteractEvent(@NotNull ItemStack item, @NotNull PlayerInteractEvent event) {
-        if (canUse(item, event)) {
-            onInteract(item, event);
-            var a = event.getAction();
+        onInteract(item, event);
+        var a = event.getAction();
 
-            Location at;
-            if (event.getClickedBlock() == null) at = event.getPlayer().getLocation();
-            else at = event.getClickedBlock().getLocation();
+        Location at;
+        if (event.getClickedBlock() == null) at = event.getPlayer().getLocation();
+        else at = event.getClickedBlock().getLocation();
 
-            if (a.equals(Action.LEFT_CLICK_AIR) || a.equals(Action.LEFT_CLICK_BLOCK)) onLeftClick(item, at, event);
-            else if (a.equals(Action.RIGHT_CLICK_AIR) || a.equals(Action.RIGHT_CLICK_BLOCK)) onRightClick(item, at, event);
-        }
+        if (a.equals(Action.LEFT_CLICK_AIR) || a.equals(Action.LEFT_CLICK_BLOCK)) onLeftClick(item, at, event);
+        else if (a.equals(Action.RIGHT_CLICK_AIR) || a.equals(Action.RIGHT_CLICK_BLOCK)) onRightClick(item, at, event);
     }
 
     /**Executed when a player left- or right-clicks with this custom-item type in his hand.*/

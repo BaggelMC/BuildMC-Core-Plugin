@@ -4,7 +4,6 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.CoreMain;
-import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.item.abstractTypes.AbstractSelectionTool;
 import net.mathias2246.buildmc.util.ParticleSpawner;
 import org.bukkit.Chunk;
@@ -20,8 +19,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
 
 @SuppressWarnings("PatternValidation")
 public class ClaimSelectionTool extends AbstractSelectionTool {

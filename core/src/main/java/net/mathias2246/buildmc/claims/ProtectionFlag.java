@@ -1,5 +1,6 @@
 package net.mathias2246.buildmc.claims;
 
+/**A flag that define what kinds of claim protections should be active on certain claims.*/
 public enum ProtectionFlag {
     PLAYER_BREAK,
     PLAYER_PLACE,

@@ -2,7 +2,6 @@ package net.mathias2246.buildmc.claims;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.StringArgument;
-import dev.jorel.commandapi.arguments.WorldArgument;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.mathias2246.buildmc.CoreMain;
@@ -27,6 +26,7 @@ public class ClaimCommand implements CustomCommand {
     public CommandAPICommand getCommand() {
         ClaimToolItemMetaModifier modifier = new ClaimToolItemMetaModifier();
         ClaimSelectionTool claimTool = (ClaimSelectionTool) Objects.requireNonNull(customItems.get(NamespacedKey.fromString("buildmc:claim_tool")));
+
         return new CommandAPICommand("claim")
                 .withSubcommand(
                     new CommandAPICommand("claimtool")
@@ -263,10 +263,6 @@ public class ClaimCommand implements CustomCommand {
 //                                                })
 //                                )
 //                )
-
-                .executes(
-                        (command) -> {
-                        }
-                );
+        ;
     }
 }

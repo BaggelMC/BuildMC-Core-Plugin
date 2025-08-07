@@ -118,6 +118,6 @@ public class DatabaseConfig implements ConfigHandler {
     }
 
     public String getServerUrl() {
-        return get(SERVER_URL, "jdbc:h2:tcp://localhost/~/easyone");
+        return get(SERVER_URL, "jdbc:h2:tcp://localhost/~/buildmc");
     }
 }

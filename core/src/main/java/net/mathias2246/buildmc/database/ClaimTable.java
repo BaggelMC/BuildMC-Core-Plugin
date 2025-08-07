@@ -391,16 +391,12 @@ public class ClaimTable implements DatabaseTable {
                     String ownerId = rs.getString("owner_id");
 
                     switch (type) {
-                        case TEAM -> {
-                            teamMap.computeIfAbsent(ownerId, k -> new ArrayList<>()).add(id);
-                        }
+                        case TEAM -> teamMap.computeIfAbsent(ownerId, k -> new ArrayList<>()).add(id);
                         case PLAYER -> {
                             UUID playerUuid = UUID.fromString(ownerId);
                             playerMap.computeIfAbsent(playerUuid, k -> new ArrayList<>()).add(id);
                         }
-                        case SERVER, PLACEHOLDER -> {
-                            serverList.add(id);
-                        }
+                        case SERVER, PLACEHOLDER -> serverList.add(id);
                     }
                 }
             }

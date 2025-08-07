@@ -3,6 +3,7 @@ package net.mathias2246.buildmc.database.migrations;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+/**The first version of our internal database formats.*/
 public class MigrationV1 implements Migration {
 
     @Override
@@ -12,8 +13,6 @@ public class MigrationV1 implements Migration {
 
     @Override
     public void migrate(Connection connection) throws SQLException {
-//        try (Statement stmt = connection.createStatement()) {
-//            stmt.execute("CREATE TABLE example_table (id INT PRIMARY KEY, name VARCHAR(255))");
-//        }
+
     }
 }

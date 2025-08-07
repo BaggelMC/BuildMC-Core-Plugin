@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**The instance of a status that shows up inside the '/status set ...' command when registered.*/
 @SerializableAs("StatusInstance")
 public class StatusInstance implements ConfigurationSerializable {
 
@@ -24,18 +25,24 @@ public class StatusInstance implements ConfigurationSerializable {
     private final @NotNull Component display;
     private final boolean hasRequirements; // Only for caching
 
+    /**@return The Text-Component that is displayed as a prefix before the players name.*/
     public @NotNull Component getDisplay() {
         return display;
     }
 
+    /**@return The id of this status. <p>This is also displayed as the tab completion inside the '/status set ...' command.</p>*/
     public @NotNull String getStatusId() {
         return statusId;
     }
 
+    /**Gets an optional set of Permissions, of which at least one is required to set this status.
+     * @return The list of permissions, or null if not required.*/
     public @Nullable Set<Permission> getPermissions() {
         return permissions;
     }
 
+    /**Gets an optional set of Teams, of which at least one is required to set this status.
+     *  @return The list of teams, or null if not required.*/
     public @Nullable Set<Team> getTeams() {
         return teams;
     }
@@ -127,7 +134,6 @@ public class StatusInstance implements ConfigurationSerializable {
 
         return new StatusInstance(statusId, perms, teams, display);
     }
-
 
     public enum AllowStatus {
         ALLOW,

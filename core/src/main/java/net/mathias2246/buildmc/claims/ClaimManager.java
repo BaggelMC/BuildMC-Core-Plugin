@@ -19,13 +19,13 @@ public class ClaimManager {
     /** The namespaced key used to store the claim ID inside the chunks PersistentDataContainer */
     public static final @NotNull NamespacedKey CLAIM_PCD_KEY = Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_id"));
 
-    // Map of team names and the claim IDs they own
+    /** Map of team names and the claim IDs they own */
     public static Map<String, List<Long>> teamOwner;
 
-    // Map of player UUIDs and the claim IDs they own
+    /** Map of player UUIDs and the claim IDs they own */
     public static Map<UUID, List<Long>> playerOwner;
 
-    // List of claim IDs the server owns
+    /** List of claim IDs the server owns */
     public static List<Long> serverOwner;
 
     /** Gets the player's team
@@ -34,6 +34,9 @@ public class ClaimManager {
         return player.getScoreboard().getEntryTeam(player.getName());
     }
 
+    /**Checks if the given player is allowed on this claim.
+     * <p>This means that the player is allowed to do anything on the claim at that location.</p>
+     * @return True if, the player is the owner or whitelisted and the ProtectionFlags are set at the given location.*/
     public static boolean isPlayerAllowed(@NotNull Player player, @NotNull EnumSet<ProtectionFlag> protectionFlags, Location location) {
         Claim claim;
         try {
@@ -72,6 +75,9 @@ public class ClaimManager {
         }
     }
 
+    /**Checks if the given player is allowed on this claim.
+     * <p>This means that the player is allowed to do anything on the given claim.</p>
+     * @return True if, the player is the owner or whitelisted and the ProtectionFlags are set on the given claim.*/
     public static boolean isPlayerAllowed(@NotNull Player player, @NotNull EnumSet<ProtectionFlag> protectionFlags, @Nullable Claim claim) {
 
         // Allow if no claim found
@@ -110,11 +116,15 @@ public class ClaimManager {
         return false;
     }
 
+    /** @return True if a claim is in the given area.*/
     public static boolean isClaimInArea(UUID worldID, int chunkX1, int chunkZ1, int chunkX2, int chunkZ2) throws SQLException {
         return CoreMain.claimTable.doesClaimExistInArea(CoreMain.databaseManager.getConnection(), worldID, chunkX1, chunkZ1, chunkX2, chunkZ2);
     }
 
-    public static List<Claim> getClaimsInArea(Location pos1, Location pos2) throws SQLException {
+    /**@return A list of claims in the given area. Is empty if not found.
+     * @throws SQLException If an internal database error occurred.
+     * @throws IllegalArgumentException If any of the locations is null, or their not in the same world.*/
+    public static List<Claim> getClaimsInArea(Location pos1, Location pos2) throws SQLException, IllegalArgumentException {
         if (pos1 == null || pos2 == null) {
             throw new IllegalArgumentException("Positions cannot be null.");
         }
@@ -143,14 +153,18 @@ public class ClaimManager {
         );
     }
 
+    /**@return True if, the given chunk is claimed*/
     public static boolean isClaimed(Chunk chunk) {
-    return chunk.getPersistentDataContainer().has(CLAIM_PCD_KEY);
+        return chunk.getPersistentDataContainer().has(CLAIM_PCD_KEY);
     }
 
+    /**@return The id of the claim, or null if not claimed.*/
     @Nullable public static Long getClaimId(Chunk chunk) {
         return chunk.getPersistentDataContainer().get(CLAIM_PCD_KEY, PersistentDataType.LONG);
     }
 
+    /**@return The claim on this chunk, or null if not claimed.
+     * @throws SQLException If an internal database error occurred.*/
     @Nullable public static Claim getClaim(Chunk chunk) throws SQLException {
         var claimId = getClaimId(chunk);
         if (claimId == null) return null;
@@ -158,15 +172,21 @@ public class ClaimManager {
         return CoreMain.claimTable.getClaimById(CoreMain.databaseManager.getConnection(), claimId);
     }
 
+    /**
+     * @throws SQLException If an internal database error occurred.*/
     @Nullable public static Claim getClaim(Location location) throws SQLException {
         Chunk chunk = location.getChunk();
         return getClaim(chunk);
     }
 
+    /**Tries to claim the given area for the given player.
+     * @return True, if successfully claimed the area.*/
     public static boolean tryClaimPlayerArea(@NotNull Player player, String claimName, Location pos1, Location pos2) {
         return tryClaimArea(ClaimType.PLAYER, player.getUniqueId().toString(), claimName, pos1, pos2);
     }
 
+    /**Tries to claim the given area for the given team.
+     * @return True, if successfully claimed the area.*/
     public static boolean tryClaimTeamArea(@NotNull Team team, String claimName, Location pos1, Location pos2) {
         return tryClaimArea(ClaimType.TEAM, team.getName(), claimName, pos1, pos2);
     }
@@ -227,14 +247,13 @@ public class ClaimManager {
                 UUID uuid = UUID.fromString(ownerId);
                 playerOwner.computeIfAbsent(uuid, k -> new ArrayList<>()).add(claimId);
             }
-            case TEAM -> {
-                teamOwner.computeIfAbsent(ownerId, k -> new ArrayList<>()).add(claimId);
-            }
+            case TEAM -> teamOwner.computeIfAbsent(ownerId, k -> new ArrayList<>()).add(claimId);
         }
 
         return true;
     }
 
+    /**Adds a player to a Claim whitelist by claimID.*/
     public static void addPlayerToWhitelist(long claimID, UUID playerID) {
         Claim claim = null;
 
@@ -255,6 +274,7 @@ public class ClaimManager {
         }
     }
 
+    /**Removes a player from a claims whitelist by claimID.*/
     public static void removePlayerFromWhitelist(long claimID, UUID playerID) {
         Claim claim = null;
 
@@ -275,6 +295,8 @@ public class ClaimManager {
         }
     }
 
+    /**Tries to get the name of the claim by claimID.
+     * @return The name of the claim, or null if not found.*/
     @Nullable public static String getClaimNameById(long claimId) {
         String name = null;
 
@@ -286,6 +308,8 @@ public class ClaimManager {
         return name;
     }
 
+    /**Removes a claim by its claimID.
+     * @return True, if successfully removed claim.*/
     public static boolean removeClaimById(long claimId) {
         try {
             CoreMain.claimTable.deleteClaimById(CoreMain.databaseManager.getConnection(), claimId);

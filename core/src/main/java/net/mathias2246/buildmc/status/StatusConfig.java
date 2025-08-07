@@ -7,10 +7,14 @@ import org.bukkit.plugin.Plugin;
 import java.util.HashMap;
 import java.util.Map;
 
+/**The configuration that stores and manages all statuses available.*/
 public class StatusConfig extends YamlConfigurationManager {
-
+    /**A map containing all Statuses that are loaded.*/
     public static final Map<String, StatusInstance> loadedStatuses = new HashMap<>();
 
+    /**
+     * Creates a new StatusConfig instance from the existing './status.yml' or loads it from the plugins resources.
+     * @param plugin The plugin owning this config*/
     public StatusConfig(Plugin plugin) {
         super(plugin, "status.yml");
     }

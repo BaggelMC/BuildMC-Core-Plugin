@@ -1,5 +1,6 @@
 package net.mathias2246.buildmc.claims;
 
+/**The type of owner of a claim*/
 public enum ClaimType {
     PLAYER, // Player owned claims
     TEAM, // Team owned claims

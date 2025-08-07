@@ -13,7 +13,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 /**An Event Listener that when register makes it so players drop their head on death.*/
 public class PlayerHeadDropDeathListener implements Listener {
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.LOWEST)
     private void onPlayerDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
         if (event.getKeepInventory()) return;

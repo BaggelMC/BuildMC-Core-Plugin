@@ -38,7 +38,7 @@ public class DatabaseManager {
             }
         }
 
-        config.reloadConfig(); // Ensure latest config is loaded
+        config.reloadConfig(); // Ensure the latest config is loaded
     }
 
     public void connect() {
