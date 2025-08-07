@@ -9,7 +9,6 @@ import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.commands.CustomCommand;
-import net.mathias2246.buildmc.platform.ClaimToolItemMetaModifier;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

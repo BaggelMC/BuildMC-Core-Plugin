@@ -17,6 +17,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemRarity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,8 +28,9 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
 
     public final @NotNull Sound successSound;
     public final @NotNull Sound mistakeSound;
+    public final @NotNull ParticleSpawner.Builder<?> particles;
 
-    public ClaimSelectionTool(@NotNull Plugin plugin, @NotNull NamespacedKey key) {
+    public ClaimSelectionTool(@NotNull Plugin plugin, @NotNull NamespacedKey key, @NotNull ParticleSpawner.Builder<?> particles) {
         super(plugin, key);
         successSound = net.kyori.adventure.sound.Sound.sound(
                 Key.key(CoreMain.plugin.getConfig().getString("sounds.success", "minecraft:block.note_block.bell")),
@@ -43,6 +45,7 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
                 1f,
                 1f
         );
+        this.particles = particles;
     }
 
     @Override
@@ -104,6 +107,11 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
         CoreMain.mainClass.sendPlayerMessage(player, Component.translatable("messages.claims.tool.set-pos1"));
 
         CoreMain.soundManager.playSound(player, successSound);
+        if (!player.hasMetadata("claim_selection_particles")) {
+            player.setMetadata("claim_selection_particles", new FixedMetadataValue(getPlugin(), null));
+            var p = particles.build(player);
+            p.runTaskTimer(getPlugin(), 0, p.delay);
+        }
     }
 
     @Override

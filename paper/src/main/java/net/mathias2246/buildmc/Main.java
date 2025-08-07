@@ -93,7 +93,8 @@ public final class Main extends JavaPlugin implements MainClass {
 
             customItems.register(
                     new ClaimSelectionTool(this,
-                            Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool"))
+                            Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool")),
+                            new ClaimToolParticles.Builder()
                     )
             );
 

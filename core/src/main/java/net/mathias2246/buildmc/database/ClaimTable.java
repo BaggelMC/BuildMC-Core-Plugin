@@ -202,6 +202,7 @@ public class ClaimTable implements DatabaseTable {
         base += 16; // UUID
         base += 4 * 4; // 4 ints
         base += claim.getName() != null ? claim.getName().length() * 2 : 0;
+
         return base;
     }
 

@@ -1,4 +1,4 @@
-package net.mathias2246.buildmc.platform;
+package net.mathias2246.buildmc.claims;
 
 import net.mathias2246.buildmc.item.ItemMetaModifier;
 import net.mathias2246.buildmc.util.Message;

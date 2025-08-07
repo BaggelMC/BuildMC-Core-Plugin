@@ -35,11 +35,11 @@ public final class CoreMain {
 
         LanguageManager.init();
 
-        initializeDatabase();
+        if (plugin.getConfig().getBoolean("claims.enabled")) initializeDatabase();
     }
 
     public static void stop() {
-        databaseManager.close();
+        if (plugin.getConfig().getBoolean("claims.enabled")) databaseManager.close();
     }
 
     private static void initializeConfigs() {
