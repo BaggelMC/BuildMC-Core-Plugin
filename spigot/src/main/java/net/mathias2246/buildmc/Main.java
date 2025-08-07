@@ -11,6 +11,7 @@ import net.mathias2246.buildmc.commands.CommandRegister;
 import net.mathias2246.buildmc.item.CustomItemListener;
 import net.mathias2246.buildmc.item.CustomItemRegistry;
 import net.mathias2246.buildmc.platform.SoundManagerSpigotImpl;
+import net.mathias2246.buildmc.playerHeads.PlayerHeadDropDeathListener;
 import net.mathias2246.buildmc.spawnElytra.ElytraZoneCommand;
 import net.mathias2246.buildmc.endEvent.EndListener;
 import net.mathias2246.buildmc.spawnElytra.DisableRocketListener;
@@ -190,6 +191,10 @@ public final class Main extends JavaPlugin implements MainClass {
                     }
                 }
             }
+        }
+
+        if (config.getBoolean("player-head.on-death")) {
+            getServer().getPluginManager().registerEvents(new PlayerHeadDropDeathListener(), this);
         }
     }
 

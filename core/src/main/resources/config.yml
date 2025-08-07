@@ -160,3 +160,7 @@ disabled-commands:
 
   # Dangerous server control
   - "minecraft:save-off"
+
+player-head:
+  # When true, players will drop their head on death.
+  on-death: true # Default: true
