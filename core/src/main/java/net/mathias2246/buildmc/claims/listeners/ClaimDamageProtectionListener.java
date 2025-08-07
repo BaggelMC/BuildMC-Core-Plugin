@@ -39,7 +39,7 @@ public class ClaimDamageProtectionListener implements Listener {
 
         if (claim.hasFlag(ProtectionFlag.EXCLUDE_PLAYERS) && victim instanceof Player player) return;
 
-        if (claim.hasFlag(ProtectionFlag.ENTITY_DAMAGE)) {
+        if (claim.hasFlag(ProtectionFlag.ENTITY_DAMAGE) && !ClaimManager.isPlayerAllowed(attacker, EnumSet.of(ProtectionFlag.ENTITY_DAMAGE), claim)) {
             CoreMain.mainClass.sendPlayerActionBar(attacker, Component.translatable("messages.claims.not-accessible.entity-damage"));
             event.setCancelled(true);
         }

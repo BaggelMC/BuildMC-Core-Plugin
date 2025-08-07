@@ -37,11 +37,42 @@ public class ClaimManager {
     public static boolean isPlayerAllowed(@NotNull Player player, @NotNull EnumSet<ProtectionFlag> protectionFlags, Location location) {
         Claim claim;
         try {
-            claim = ClaimManager.getClaim(player.getLocation());
+            claim = ClaimManager.getClaim(location);
         } catch (SQLException e) {
             CoreMain.plugin.getLogger().severe("SQL Error while getting claim: " + e.getMessage());
             return true; // Allow by default on error. Not sure what to do here.
         }
+
+        // Allow if no claim found
+        if (claim == null) return true;
+
+        // Allow if player is explicitly whitelisted
+        if (claim.getWhitelistedPlayers().contains(player.getUniqueId())) return true;
+
+        // Allow if claim is a placeholder
+        if (claim.getType() == ClaimType.PLACEHOLDER) return true;
+
+        String playerId = player.getUniqueId().toString();
+
+        switch (claim.getType()) {
+            case SERVER:
+                return !hasAnyFlag(claim, protectionFlags);
+
+            case PLAYER:
+                if (Objects.equals(claim.getOwnerId(), playerId)) return true;
+                return !hasAnyFlag(claim, protectionFlags);
+
+            case TEAM:
+                Team playerTeam = getPlayerTeam(player);
+                if (playerTeam != null && Objects.equals(playerTeam.getName(), claim.getOwnerId())) return true;
+                return !hasAnyFlag(claim, protectionFlags);
+
+            default:
+                return true;
+        }
+    }
+
+    public static boolean isPlayerAllowed(@NotNull Player player, @NotNull EnumSet<ProtectionFlag> protectionFlags, @Nullable Claim claim) {
 
         // Allow if no claim found
         if (claim == null) return true;
