@@ -2,7 +2,6 @@ package net.mathias2246.buildmc;
 
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.SelectorComponent;
 import net.mathias2246.buildmc.claims.*;
 import net.mathias2246.buildmc.claims.listeners.*;
 import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;

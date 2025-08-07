@@ -4,8 +4,13 @@ import dev.jorel.commandapi.CommandAPI;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.claims.*;
+import net.mathias2246.buildmc.claims.listeners.*;
+import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.commands.BuildMcCommand;
 import net.mathias2246.buildmc.commands.CommandRegister;
+import net.mathias2246.buildmc.item.CustomItemListener;
+import net.mathias2246.buildmc.item.CustomItemRegistry;
+import net.mathias2246.buildmc.platform.SoundManagerSpigotImpl;
 import net.mathias2246.buildmc.spawnElytra.ElytraZoneCommand;
 import net.mathias2246.buildmc.endEvent.EndListener;
 import net.mathias2246.buildmc.spawnElytra.DisableRocketListener;
@@ -15,9 +20,9 @@ import net.mathias2246.buildmc.status.PlayerStatus;
 import net.mathias2246.buildmc.status.SetStatusCommand;
 import net.mathias2246.buildmc.status.StatusConfig;
 import net.mathias2246.buildmc.util.Message;
-import net.mathias2246.buildmc.util.Sounds;
 import net.mathias2246.buildmc.util.language.LanguageManager;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
@@ -30,9 +35,9 @@ import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 public final class Main extends JavaPlugin implements MainClass {
@@ -53,7 +58,7 @@ public final class Main extends JavaPlugin implements MainClass {
 
     public static BukkitAudiences audiences;
 
-    public static ClaimManager claimManager;
+    public static CustomItemRegistry customItems;
 
     @Override
     public void onEnable() {
@@ -77,18 +82,17 @@ public final class Main extends JavaPlugin implements MainClass {
         config = this.getConfig();
 
         audiences = BukkitAudiences.create(plugin);
+        CoreMain.soundManager = new SoundManagerSpigotImpl();
+        customItems = new CustomItemRegistry();
+        getServer().getPluginManager().registerEvents(new CustomItemListener(customItems), this);
 
+        CoreMain.initialize(this);
         EndListener.loadFromConfig();
-
-        Sounds.setup();
-        ClaimTool.setup();
 
         CommandRegister.setupCommandAPI();
         CommandRegister.register(new BuildMcCommand());
 
         getServer().getPluginManager().registerEvents(new EndListener(), this);
-
-        getServer().getPluginManager().registerEvents(new ClaimTool(), this);
 
         if (config.getBoolean("spawn-elytra.enabled")) {
             getServer().getPluginManager().registerEvents(new SpawnBoostListener(zoneManager), this);
@@ -98,6 +102,13 @@ public final class Main extends JavaPlugin implements MainClass {
         }
 
         if (config.getBoolean("claims.enabled")) {
+            customItems.register(
+                    new ClaimSelectionTool(this,
+                            Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool")),
+                            new ClaimToolParticles.Builder()
+                    )
+            );
+
             CommandRegister.register(new ClaimCommand());
 
             if (config.getBoolean("claims.protections.containers")) {
@@ -129,7 +140,7 @@ public final class Main extends JavaPlugin implements MainClass {
             }
 
             if (config.getBoolean("claims.protections.splash-potions")) {
-                getServer().getPluginManager().registerEvents(new ClaimPotionSplashEvent(), this);
+                getServer().getPluginManager().registerEvents(new ClaimPotionSplashListener(), this);
             }
 
             if (config.getBoolean("claims.protections.vehicle-enter")) {

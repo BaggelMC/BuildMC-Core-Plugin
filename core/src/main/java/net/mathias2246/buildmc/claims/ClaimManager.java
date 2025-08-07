@@ -235,7 +235,7 @@ public class ClaimManager {
         return true;
     }
 
-    private static void addPlayerToWhitelist(long claimID, UUID playerID) {
+    public static void addPlayerToWhitelist(long claimID, UUID playerID) {
         Claim claim = null;
 
         try {
@@ -255,7 +255,7 @@ public class ClaimManager {
         }
     }
 
-    private static void removePlayerFromWhitelist(long claimID, UUID playerID) {
+    public static void removePlayerFromWhitelist(long claimID, UUID playerID) {
         Claim claim = null;
 
         try {

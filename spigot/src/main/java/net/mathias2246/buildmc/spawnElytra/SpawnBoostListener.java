@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static net.mathias2246.buildmc.CoreMain.plugin;
 
-import static net.mathias2246.buildmc.CoreMain.audiences;
+import static net.mathias2246.buildmc.Main.audiences;
 
 public class SpawnBoostListener extends BukkitRunnable implements Listener {
 

@@ -2,6 +2,7 @@ package net.mathias2246.buildmc.endEvent;
 
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -14,7 +15,7 @@ import org.bukkit.event.player.PlayerPortalEvent;
 
 import java.util.List;
 
-import static net.mathias2246.buildmc.CoreMain.config;
+import static net.mathias2246.buildmc.Main.config;
 
 public class EndListener implements Listener {
 
@@ -61,7 +62,7 @@ public class EndListener implements Listener {
             event.setCancelled(true);
 
             Component message = Message.msg(event.getPlayer(), "messages.end-event.closed-message");
-            CoreMain.audiences.player(event.getPlayer()).sendActionBar(message);
+            Main.audiences.player(event.getPlayer()).sendActionBar(message);
         }
     }
 }

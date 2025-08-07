@@ -59,7 +59,7 @@ public class ClaimPistonMovementListener implements Listener {
         Long pulledBlockOwner = ClaimManager.getClaimId(blockToPull.getChunk());
         Long destinationOwner = ClaimManager.getClaimId(pullDestination.getChunk());
 
-        // Prevent pulling if piston doesn't own the block it's pulling
+        // Prevent pulling if a piston doesn't own the block it's pulling
         if (!equalsOrNull(pistonOwner, pulledBlockOwner)) {
             event.setCancelled(true);
             return;
@@ -77,6 +77,7 @@ public class ClaimPistonMovementListener implements Listener {
         }
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean equalsOrNull(Long a, Long b) {
         if (a == null && b == null) return true;
         if (a == null || b == null) return false;

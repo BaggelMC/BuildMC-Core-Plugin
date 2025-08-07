@@ -15,6 +15,9 @@ import java.io.FileReader;
 import java.util.*;
 import java.util.logging.Level;
 
+import static net.mathias2246.buildmc.Main.logger;
+import static net.mathias2246.buildmc.Main.plugin;
+
 public class LanguageManager {
 
     private static final Locale DEFAULT_LOCALE = Locale.forLanguageTag("en-US");
