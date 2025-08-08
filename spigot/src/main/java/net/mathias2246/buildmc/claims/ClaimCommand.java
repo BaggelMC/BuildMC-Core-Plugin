@@ -97,107 +97,99 @@ public class ClaimCommand implements CustomCommand {
 
                 .withSubcommand(
                         new CommandAPICommand("create")
-                                .withArguments(
-                                        new StringArgument("type")
-                                                .then(
-                                                        new StringArgument("name")
-                                                                .executes(
-                                                                        (command) -> {
-                                                                            if (!(command.sender() instanceof Player player)) {
-                                                                                audiences.sender(command.sender()).sendMessage(Component.translatable("messages.error.not-a-player"));
-                                                                                return 0;
-                                                                            }
+                                .withArguments(new StringArgument("type"))
+                                .withArguments(new StringArgument("name"))
+                                .executes((command) -> {
+                                    if (!(command.sender() instanceof Player player)) {
+                                        audiences.sender(command.sender()).sendMessage(Component.translatable("messages.error.not-a-player"));
+                                        return 0;
+                                    }
 
-                                                                            String type = command.args().getByClass("type", String.class);
-                                                                            String name = command.args().getByClass("name", String.class);
+                                    String type = command.args().getByClass("type", String.class);
+                                    String name = command.args().getByClass("name", String.class);
 
-                                                                            if (type == null || name == null) {
-                                                                                // TODO: Message for invalid params
-                                                                                return 0;
-                                                                            }
+                                    if (type == null || name == null) {
+                                        audiences.player(player).sendMessage(Component.translatable("messages.error.invalid-args"));
+                                        return 0;
+                                    }
 
-                                                                            // Validate positions
+                                    if (!player.hasMetadata(claimTool.firstSelectionKey) || !player.hasMetadata(claimTool.secondSelectionKey)) {
+                                        audiences.player(player).sendMessage(Component.translatable("messages.claims.create.missing-positions"));
+                                        return 0;
+                                    }
 
-                                                                            if (!player.hasMetadata(claimTool.firstSelectionKey) || !player.hasMetadata(claimTool.secondSelectionKey)) {
-                                                                                audiences.player(player).sendMessage(Component.translatable("messages.claims.create.missing-positions"));
-                                                                                return 0;
-                                                                            }
+                                    Location pos1 = claimTool.getFirstSelection(player);
+                                    Location pos2 = claimTool.getSecondSelection(player);
 
-                                                                            Location pos1 = claimTool.getFirstSelection(player);
-                                                                            Location pos2 = claimTool.getSecondSelection(player);
+                                    if (pos1 == null || pos2 == null) {
+                                        audiences.player(player).sendMessage(Component.translatable("messages.claims.create.missing-positions"));
+                                        return 0;
+                                    }
 
-                                                                            if (pos1 == null || pos2 == null) {
-                                                                                audiences.player(player).sendMessage(Component.translatable("messages.claims.create.missing-positions"));
-                                                                                return 0;
-                                                                            }
+                                    if (!Objects.equals(pos1.getWorld(), pos2.getWorld())) {
+                                        audiences.player(player).sendMessage(Component.translatable("messages.claims.create.different-worlds"));
+                                        return 0;
+                                    }
 
-                                                                            if (!Objects.equals(pos1.getWorld(), pos2.getWorld())) {
-                                                                                audiences.player(player).sendMessage(Component.translatable("messages.claims.create.different-worlds"));
-                                                                                return 0;
-                                                                            }
+                                    List<Claim> overlappingClaims;
+                                    try {
+                                        overlappingClaims = ClaimManager.getClaimsInArea(pos1, pos2);
+                                    } catch (SQLException e) {
+                                        CoreMain.plugin.getLogger().severe("Error while checking claim overlaps: " + e.getMessage());
+                                        audiences.player(player).sendMessage(Component.translatable("messages.claims.create.error-database"));
+                                        return 0;
+                                    }
 
-                                                                            List<Claim> overlappingClaims;
-                                                                            try {
-                                                                                overlappingClaims = ClaimManager.getClaimsInArea(pos1, pos2);
-                                                                            } catch (SQLException e) {
-                                                                                CoreMain.plugin.getLogger().severe("There was an error while getting the claims in an area: " + e.getMessage());
-                                                                                audiences.player(player).sendMessage(Component.translatable("messages.claims.create.error-database"));
-                                                                                return 0;
-                                                                            }
+                                    if (!overlappingClaims.isEmpty()) {
+                                        boolean serverProtected = overlappingClaims.stream()
+                                                .anyMatch(claim -> claim.getType() == ClaimType.SERVER);
 
-                                                                            if (!overlappingClaims.isEmpty()) {
-                                                                                boolean serverProtected = overlappingClaims.stream()
-                                                                                        .anyMatch(claim -> claim.getType() == ClaimType.SERVER);
+                                        if (serverProtected) {
+                                            audiences.player(player).sendMessage(Component.translatable("messages.claims.create.protected-server"));
+                                        } else {
+                                            audiences.player(player).sendMessage(Component.translatable("messages.claims.create.overlap"));
+                                        }
+                                        return 0;
+                                    }
 
-                                                                                if (serverProtected) {
-                                                                                    audiences.player(player).sendMessage(Component.translatable("messages.claims.create.protected-server"));
-                                                                                } else {
-                                                                                    audiences.player(player).sendMessage(Component.translatable("messages.claims.create.overlap"));
-                                                                                }
-                                                                                return 0;
-                                                                            }
+                                    switch (type.toLowerCase()) {
+                                        case "player" -> {
+                                            boolean success = ClaimManager.tryClaimPlayerArea(player, name, pos1, pos2);
+                                            if (success) {
+                                                audiences.player(player).sendMessage(Component.translatable("messages.claims.create.success"));
+                                                player.removeMetadata(claimTool.firstSelectionKey, claimTool.getPlugin());
+                                                player.removeMetadata(claimTool.secondSelectionKey, claimTool.getPlugin());
+                                                return 1;
+                                            } else {
+                                                audiences.player(player).sendMessage(Component.translatable("messages.claims.create.failed"));
+                                                return 0;
+                                            }
+                                        }
 
-                                                                            switch (type.toLowerCase()) {
-                                                                                case "player" -> {
-                                                                                    boolean success = ClaimManager.tryClaimPlayerArea(player, name, pos1, pos2);
-                                                                                    if (success) {
-                                                                                        audiences.player(player).sendMessage(Component.translatable("messages.claims.create.success"));
-                                                                                        player.removeMetadata(claimTool.firstSelectionKey, claimTool.getPlugin());
-                                                                                        player.removeMetadata(claimTool.secondSelectionKey, claimTool.getPlugin());
-                                                                                        return 1;
-                                                                                    } else {
-                                                                                        audiences.player(player).sendMessage(Component.translatable("messages.claims.create.failed"));
-                                                                                        return 0;
-                                                                                    }
-                                                                                }
+                                        case "team" -> {
+                                            Team team = ClaimManager.getPlayerTeam(player);
+                                            if (team == null) {
+                                                audiences.player(player).sendMessage(Component.translatable("messages.error.not-in-a-team"));
+                                                return 0;
+                                            }
+                                            boolean success = ClaimManager.tryClaimTeamArea(team, name, pos1, pos2);
+                                            if (success) {
+                                                audiences.player(player).sendMessage(Component.translatable("messages.claims.create.success"));
+                                                player.removeMetadata(claimTool.firstSelectionKey, claimTool.getPlugin());
+                                                player.removeMetadata(claimTool.secondSelectionKey, claimTool.getPlugin());
+                                                return 1;
+                                            } else {
+                                                audiences.player(player).sendMessage(Component.translatable("messages.claims.create.failed"));
+                                                return 0;
+                                            }
+                                        }
 
-                                                                                case "team" -> {
-                                                                                    Team team = ClaimManager.getPlayerTeam(player);
-                                                                                    if (team == null) {
-                                                                                        audiences.player(player).sendMessage(Component.translatable("messages.error.not-in-a-team"));
-                                                                                        return 0;
-                                                                                    }
-                                                                                    boolean success = ClaimManager.tryClaimTeamArea(team, name, pos1, pos2);
-                                                                                    if (success) {
-                                                                                        audiences.player(player).sendMessage(Component.translatable("messages.claims.create.success"));
-                                                                                        player.removeMetadata(claimTool.firstSelectionKey, claimTool.getPlugin());
-                                                                                        player.removeMetadata(claimTool.secondSelectionKey, claimTool.getPlugin());
-                                                                                        return 1;
-                                                                                    } else {
-                                                                                        audiences.player(player).sendMessage(Component.translatable("messages.claims.create.failed"));
-                                                                                        return 0;
-                                                                                    }
-                                                                                }
-
-                                                                                default -> {
-                                                                                    audiences.player(player).sendMessage(Component.translatable("messages.claims.create.invalid-type"));
-                                                                                    return 0;
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                )
-                                                )
-                                )
+                                        default -> {
+                                            audiences.player(player).sendMessage(Component.translatable("messages.claims.create.invalid-type"));
+                                            return 0;
+                                        }
+                                    }
+                                })
                 )
 
                 .withSubcommand(
