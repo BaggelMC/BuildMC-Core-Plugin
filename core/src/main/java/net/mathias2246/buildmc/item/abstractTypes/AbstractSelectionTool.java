@@ -54,13 +54,17 @@ public abstract class AbstractSelectionTool extends AbstractTool {
     /**Tries reading the first selection position from the player's metadata.
      * @return The Location of the first selection or null if not found or invalid*/
     public @Nullable Location getFirstSelection(@NotNull Player player) {
-        return LocationUtil.tryDeserialize(player.getMetadata(firstSelectionKey).getFirst().asString());
+        var l = player.getMetadata(firstSelectionKey);
+        if (l.isEmpty()) return null;
+        return LocationUtil.tryDeserialize(l.getFirst().asString());
     }
 
     /**Tries reading the second selection position from the player's metadata.
      * @return The Location of the second selection or null if not found or invalid*/
     public @Nullable Location getSecondSelection(@NotNull Player player) {
-        return LocationUtil.tryDeserialize(player.getMetadata(secondSelectionKey).getFirst().asString());
+        var l = player.getMetadata(secondSelectionKey);
+        if (l.isEmpty()) return null;
+        return LocationUtil.tryDeserialize(l.getFirst().asString());
     }
 
     @Override

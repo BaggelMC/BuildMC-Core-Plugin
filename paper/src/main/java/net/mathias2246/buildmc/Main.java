@@ -10,6 +10,7 @@ import net.mathias2246.buildmc.endEvent.EndListener;
 import net.mathias2246.buildmc.item.CustomItemListener;
 import net.mathias2246.buildmc.item.CustomItemRegistry;
 import net.mathias2246.buildmc.platform.SoundManagerPaperImpl;
+import net.mathias2246.buildmc.player.PlayerHeadDropModifier;
 import net.mathias2246.buildmc.playerHeads.PlayerHeadDropDeathListener;
 import net.mathias2246.buildmc.spawnElytra.DisableBoostListener;
 import net.mathias2246.buildmc.spawnElytra.ElytraZoneManager;
@@ -38,6 +39,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Logger;
 
+@SuppressWarnings("UnstableApiUsage")
 public final class Main extends JavaPlugin implements MainClass {
 
     public static Logger logger;
@@ -82,6 +84,7 @@ public final class Main extends JavaPlugin implements MainClass {
             throw new RuntimeException(e);
         }
 
+        SoundManagerPaperImpl.setup();
         CoreMain.soundManager = new SoundManagerPaperImpl();
         customItems = new CustomItemRegistry();
         getServer().getPluginManager().registerEvents(new CustomItemListener(customItems), this);
@@ -192,7 +195,8 @@ public final class Main extends JavaPlugin implements MainClass {
         }
 
         if (config.getBoolean("player-head.on-death")) {
-            getServer().getPluginManager().registerEvents(new PlayerHeadDropDeathListener(), this);
+
+            getServer().getPluginManager().registerEvents(new PlayerHeadDropDeathListener(new PlayerHeadDropModifier()), this);
         }
     }
 
