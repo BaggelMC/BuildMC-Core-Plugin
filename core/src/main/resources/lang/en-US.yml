@@ -155,6 +155,6 @@ messages:
     successfully-removed: "<green>Successfully removed your status!</green>"
     join-doesn't-exist: "<red>Your status has been removed.</red>"
     not-found: "<red>Seems like this status doesn't exist.</red>"
-    successfully-set: "<green>Successfully set Set status!</green>"
+    successfully-set: "<green>Successfully set status to</green>"
     not-in-team: "<red>You are not in the required team for this status!</red>"
     no-permission: "<red>You don't have the required permissions for this status!</red>"

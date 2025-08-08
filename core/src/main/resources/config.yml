@@ -49,6 +49,7 @@ end-event:
 sounds:
   mistake: "minecraft:block.note_block.snare" # Default: "minecraft:block.note_block.snare"
   success: "minecraft:block.note_block.bell" # Default: "minecraft:block.note_block.bell"
+  notification: "minecraft:entity.item.pickup" # Default: "minecraft:entity.item.pickup"
 
 
 # Here are all settings related to team claims.
@@ -76,6 +77,7 @@ claims:
     enable-give-command: true # Default: true
 
     # Limits the maximum size in chunks of the selection
+    # If smaller than 0, the limit will be disabled
     limit-selection: 8 # Default: 8
 
   # What aspects are protected when claimed

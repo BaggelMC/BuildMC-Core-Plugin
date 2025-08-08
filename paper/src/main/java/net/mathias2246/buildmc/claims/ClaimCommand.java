@@ -493,9 +493,8 @@ public class ClaimCommand implements CustomCommand {
                                                                 return 1;
 
                                                             } catch (Exception e) {
-                                                                CoreMain.plugin.getLogger().severe("Error handling /claim whitelist: " + e.getMessage());
-                                                                player.sendMessage(Component.translatable("messages.claims.whitelist.error"));
-                                                                return 0;
+                                                                throw e;
+
                                                             }
                                                         })
                                                 )

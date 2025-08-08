@@ -1,6 +1,7 @@
 package net.mathias2246.buildmc.status;
 
 import net.kyori.adventure.text.Component;
+import net.mathias2246.buildmc.platform.SoundManagerPaperImpl;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -10,6 +11,8 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
+
+import static net.mathias2246.buildmc.CoreMain.soundManager;
 
 public class PlayerStatus implements Listener {
 
@@ -29,8 +32,10 @@ public class PlayerStatus implements Listener {
             if (join) {
                 player.sendMessage(Component.translatable("messages.status.join-doesn't-exist"));
                 player.getPersistentDataContainer().remove(PLAYER_STATUS_PDC);
+                soundManager.playSound(player, SoundManagerPaperImpl.mistake);
             } else {
                 player.sendMessage(Component.translatable("messages.status.not-found"));
+                soundManager.playSound(player, SoundManagerPaperImpl.mistake);
             }
             return;
         }
@@ -42,6 +47,7 @@ public class PlayerStatus implements Listener {
                 case NOT_IN_TEAM -> player.sendMessage(Component.translatable("messages.status.not-in-team"));
                 case MISSING_PERMISSION -> player.sendMessage(Component.translatable("messages.status.no-permission"));
             }
+            soundManager.playSound(player, SoundManagerPaperImpl.mistake);
             return;
         }
 
@@ -58,7 +64,8 @@ public class PlayerStatus implements Listener {
                 status
         );
 
-        player.sendMessage(Component.translatable("messages.status.successfully-set"));
+        player.sendMessage(Component.translatable("messages.status.successfully-set").appendSpace().append(s.getDisplay()));
+        soundManager.playSound(player, SoundManagerPaperImpl.success);
     }
 
     public static void removePlayerStatus(@NotNull Player player) {

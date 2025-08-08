@@ -22,4 +22,9 @@ public class ClaimToolItemMetaModifier implements ItemMetaModifier {
                 )
         );
     }
+
+    @Override
+    public void modifyMeta(@NotNull ItemMeta meta, @Nullable Player player, @Nullable Object object) {
+
+    }
 }

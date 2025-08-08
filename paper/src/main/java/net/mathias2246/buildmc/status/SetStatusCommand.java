@@ -3,13 +3,18 @@ package net.mathias2246.buildmc.status;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.commands.CustomCommand;
+import net.mathias2246.buildmc.platform.SoundManagerPaperImpl;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.string;
+import static net.mathias2246.buildmc.CoreMain.soundManager;
 
+@SuppressWarnings("UnstableApiUsage")
 public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCommand {
 
     // The '/status' command
@@ -36,6 +41,7 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
                     }
                     PlayerStatus.removePlayerStatus(player);
                     player.sendMessage(Component.translatable( "messages.status.successfully-removed"));
+                    soundManager.playSound(player, SoundManagerPaperImpl.success);
                     return 1;
                 }
         );
@@ -59,6 +65,7 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
                                 return 0;
                             }
                             PlayerStatus.setPlayerStatus(player, command.getArgument("status_id", String.class), false);
+
                             return 1;
                         }
                 );

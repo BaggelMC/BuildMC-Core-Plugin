@@ -6,12 +6,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**An interface that defines ItemMeta modifications that are platform specific*/
-@FunctionalInterface
 public interface ItemMetaModifier {
 
     /**Modifies the given ItemMeta.
      * @param meta The ItemMeta to modify
      * @param player The player that was given in the context or null*/
     void modifyMeta(@NotNull ItemMeta meta, @Nullable Player player);
+
+    /**Modifies the given ItemMeta.
+     * @param meta The ItemMeta to modify
+     * @param player The player that was given in the context or null*/
+    void modifyMeta(@NotNull ItemMeta meta, @Nullable Player player, @Nullable Object arg);
 
 }
