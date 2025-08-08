@@ -106,12 +106,15 @@ messages:
       unclaimed: "<gold>This chunk belongs to nobody.</gold>"
 
     whitelist:
-      added: "Player has been added to the claim whitelist."
-      removed: "Player has been removed from the claim whitelist."
-      already: "That player is already whitelisted."
-      not-found: "That player is not on the whitelist."
-      error: "An error occurred while modifying the whitelist."
-      invalid-action: "Invalid action. Use 'add' or 'remove'."
+      added: "<green>Player has been added to the claim whitelist."
+      removed: "<green>Player has been removed from the claim whitelist."
+      already: "<yellow>That player is already whitelisted."
+      error: "<red>An error occurred while modifying the whitelist."
+      invalid-action: "<red>Invalid action. Use 'add' or 'remove'."
+      not-on-list: "<yellow>That player is not on the whitelist."
+      already-added: "<yellow>That player is already on the whitelist."
+      player-not-found: "<red>The specified player was not found."
+      claim-not-found: "<red>That claim could not be found or is not owned by you."
 
     help-message: |-
       <gold>------------- <green>Claims Help</green> -------------</gold>

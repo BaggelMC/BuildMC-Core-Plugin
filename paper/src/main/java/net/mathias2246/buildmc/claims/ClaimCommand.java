@@ -478,7 +478,7 @@ public class ClaimCommand implements CustomCommand {
                                                                     }
                                                                     case "remove" -> {
                                                                         if (!whitelist.contains(targetUUID)) {
-                                                                            player.sendMessage(Component.translatable("messages.claims.whitelist.not-found"));
+                                                                            player.sendMessage(Component.translatable("messages.claims.whitelist.player-not-found"));
                                                                         } else {
                                                                             ClaimManager.removePlayerFromWhitelist(claimId, targetUUID);
                                                                             player.sendMessage(Component.translatable("messages.claims.whitelist.removed"));
