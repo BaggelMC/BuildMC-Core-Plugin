@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -106,6 +107,7 @@ public abstract class AbstractCustomItem implements Keyed {
     public abstract boolean canUse(@NotNull ItemStack item, @NotNull PlayerInteractEvent event);
 
     /**Called when a PlayerInteractEvent from the CustomItemListener was done with this custom item type*/
+    @ApiStatus.Internal
     public void onInteractEvent(@NotNull ItemStack item, @NotNull PlayerInteractEvent event) {
         onInteract(item, event);
         var a = event.getAction();
