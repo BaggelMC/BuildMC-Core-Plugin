@@ -310,6 +310,56 @@ public class ClaimCommand implements CustomCommand {
         );
 
         cmd.then(
+                Commands.literal("remove")
+                        .then(Commands.argument("type", StringArgumentType.word())
+                                .suggests((ctx, builder) -> {
+                                    List<String> types = List.of("player", "team");
+                                    for (String type : types) {
+                                        if (type.startsWith(builder.getRemaining())) {
+                                            builder.suggest(type);
+                                        }
+                                    }
+                                    return builder.buildFuture();
+                                })
+                                .then(Commands.argument("claim", StringArgumentType.word())
+                                        .suggests((ctx, builder) -> {
+                                            var sender = ctx.getSource().getSender();
+                                            if (!(sender instanceof Player player)) return builder.buildFuture();
+                                            String type = StringArgumentType.getString(ctx, "type");
+
+                                            if (type.equalsIgnoreCase("player")) {
+                                                List<Long> claimIds = ClaimManager.playerOwner.getOrDefault(player.getUniqueId(), List.of());
+                                                for (long id : claimIds) {
+                                                    String name = ClaimManager.getClaimNameById(id);
+                                                    if (name != null && name.startsWith(builder.getRemaining())) {
+                                                        builder.suggest(name);
+                                                    }
+                                                }
+                                            } else if (type.equalsIgnoreCase("team")) {
+                                                Team team = ClaimManager.getPlayerTeam(player);
+                                                if (team != null) {
+                                                    List<Long> claimIds = ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
+                                                    for (long id : claimIds) {
+                                                        String name = ClaimManager.getClaimNameById(id);
+                                                        if (name != null && name.startsWith(builder.getRemaining())) {
+                                                            builder.suggest(name);
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            return builder.buildFuture();
+                                        })
+                                        .executes(
+                                                (command) -> {
+                                                    return 0;
+                                                }
+                                        )
+                                )
+                        )
+        );
+
+        cmd.then(
                 Commands.literal("whitelist")
                         .then(Commands.argument("action", StringArgumentType.word())
                                 .suggests((ctx, builder) -> {
