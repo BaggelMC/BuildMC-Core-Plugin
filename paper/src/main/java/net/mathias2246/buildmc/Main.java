@@ -18,6 +18,7 @@ import net.mathias2246.buildmc.status.PlayerStatus;
 import net.mathias2246.buildmc.status.SetStatusCommand;
 import net.mathias2246.buildmc.status.StatusConfig;
 import net.mathias2246.buildmc.util.Message;
+import net.mathias2246.buildmc.util.config.ConfigurationValidationException;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
@@ -75,7 +76,11 @@ public final class Main extends JavaPlugin implements MainClass {
 
         CoreMain.initialize(this);
 
-        EndListener.loadFromConfig();
+        try {
+            EndListener.loadFromConfig();
+        } catch (ConfigurationValidationException e) {
+            throw new RuntimeException(e);
+        }
 
         CoreMain.soundManager = new SoundManagerPaperImpl();
         customItems = new CustomItemRegistry();
