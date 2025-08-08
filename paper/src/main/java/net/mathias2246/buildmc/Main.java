@@ -28,6 +28,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.intellij.lang.annotations.Subst;
@@ -106,65 +107,28 @@ public final class Main extends JavaPlugin implements MainClass {
                     )
             );
 
-            if (config.getBoolean("claims.protections.containers")) {
-                getServer().getPluginManager().registerEvents(new ClaimContainerListener(), this);
-            }
-
-            if (config.getBoolean("claims.protections.damage.explosion-block-damage") || config.getBoolean("claims.protections.explosion-entity-damage")) {
-                getServer().getPluginManager().registerEvents(new ClaimExplosionsListener(), this);
-            }
-
-            if (config.getBoolean("claims.protections.player-break")) {
-                getServer().getPluginManager().registerEvents(new ClaimBreakListener(), this);
-            }
-
-            if (config.getBoolean("claims.protections.player-place")) {
-                getServer().getPluginManager().registerEvents(new ClaimPlaceListener(), this);
-            }
-
-            if (config.getBoolean("claims.protections.damage.entity-damage")) {
-                getServer().getPluginManager().registerEvents(new ClaimDamageProtectionListener(), this);
-            }
-
-            if (config.getBoolean("claims.protections.sign-editing")) {
-                getServer().getPluginManager().registerEvents(new ClaimSignEditListener(), this);
-            }
-
-            if (config.getBoolean("claims.protections.prevent-interactions")) {
-                getServer().getPluginManager().registerEvents(new ClaimInteractionListener(), this);
-            }
-
-            if (config.getBoolean("claims.protections.splash-potions")) {
-                getServer().getPluginManager().registerEvents(new ClaimPotionSplashListener(), this);
-            }
-
-            if (config.getBoolean("claims.protections.vehicle-enter")) {
-                getServer().getPluginManager().registerEvents(new ClaimVehicleEnterListener(), this);
-            }
-
-            if (config.getBoolean("claims.protections.bucket-usage")) {
-                getServer().getPluginManager().registerEvents(new ClaimBucketUseEvent(), this);
-            }
-
-            if (config.getBoolean("claims.protections.prevent-entity-modifications")) {
-                getServer().getPluginManager().registerEvents(new ClaimEntityChangeBlockListener(), this);
-            }
-
-            if (config.getBoolean("claims.protections.item-pickup")) {
-                getServer().getPluginManager().registerEvents(new ClaimItemPickupListener(), this);
-            }
-
-            if (config.getBoolean("claims.protections.item-drop")) {
-                getServer().getPluginManager().registerEvents(new ClaimItemDropListener(), this);
-            }
-
-            if (config.getBoolean("claims.protections.frostwalker")) {
-                getServer().getPluginManager().registerEvents(new ClaimFrostWalkerListener(), this);
-            }
-
-            if (config.getBoolean("claims.protections.piston-movement-across-claim-borders")) {
-                getServer().getPluginManager().registerEvents(new ClaimPistonMovementListener(), this);
-            }
+            registerEvent(new ClaimContainerListener());
+            registerEvent(new ClaimExplosionsListener());
+            registerEvent(new ClaimBreakListener());
+            registerEvent(new ClaimPlaceListener());
+            registerEvent(new ClaimDamageProtectionListener());
+            registerEvent(new ClaimSignEditListener());
+            registerEvent(new ClaimInteractionListener());
+            registerEvent(new ClaimPotionSplashListener());
+            registerEvent(new ClaimVehicleEnterListener());
+            registerEvent(new ClaimBucketUseEvent());
+            registerEvent(new ClaimEntityChangeBlockListener());
+            registerEvent(new ClaimItemPickupListener());
+            registerEvent(new ClaimItemDropListener());
+            registerEvent(new ClaimFrostWalkerListener());
+            registerEvent(new ClaimPistonMovementListener());
+            registerEvent(new ClaimBeehiveInteractListener());
+            registerEvent(new ClaimBonemealInteractListener());
+            registerEvent(new ClaimCandleExtinguishListener());
+            registerEvent(new ClaimEntityLeashListener());
+            registerEvent(new ClaimItemFrameRotateListener());
+            registerEvent(new ClaimNameTagUseListener());
+            registerEvent(new ClaimPaintingInteractListener());
         }
 
         if (config.getBoolean("status.enabled")) {
@@ -205,6 +169,10 @@ public final class Main extends JavaPlugin implements MainClass {
         // Plugin shutdown logic
 
         CoreMain.stop();
+    }
+
+    private void registerEvent(@NotNull Listener listener) {
+        getServer().getPluginManager().registerEvents(listener, this);
     }
 
     private void disableCommand(String namespace, String commandName) {

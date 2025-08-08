@@ -59,16 +59,16 @@ public class ClaimManager {
 
         switch (claim.getType()) {
             case SERVER:
-                return !hasAnyFlag(claim, protectionFlags);
+                return !hasAllFlags(claim, protectionFlags);
 
             case PLAYER:
                 if (Objects.equals(claim.getOwnerId(), playerId)) return true;
-                return !hasAnyFlag(claim, protectionFlags);
+                return !hasAllFlags(claim, protectionFlags);
 
             case TEAM:
                 Team playerTeam = getPlayerTeam(player);
                 if (playerTeam != null && Objects.equals(playerTeam.getName(), claim.getOwnerId())) return true;
-                return !hasAnyFlag(claim, protectionFlags);
+                return !hasAllFlags(claim, protectionFlags);
 
             default:
                 return true;
@@ -114,6 +114,10 @@ public class ClaimManager {
             if (claim.hasFlag(flag)) return true;
         }
         return false;
+    }
+
+    private static boolean hasAllFlags(Claim claim, EnumSet<ProtectionFlag> flags) {
+        return claim.getProtectionFlags().containsAll(flags);
     }
 
     /** @return True if a claim is in the given area.*/
@@ -279,7 +283,7 @@ public class ClaimManager {
         try {
             CoreMain.claimTable.addWhitelistedPlayer(CoreMain.databaseManager.getConnection(), claimID, playerID);
         } catch (SQLException e) {
-            CoreMain.plugin.getLogger().severe("SQL error while adding player to claim whitelist: " + e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
@@ -300,7 +304,39 @@ public class ClaimManager {
         try {
             CoreMain.claimTable.removeWhitelistedPlayer(CoreMain.databaseManager.getConnection(), claimID, playerID);
         } catch (SQLException e) {
-            CoreMain.plugin.getLogger().severe("SQL error while adding player to claim whitelist: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void addProtectionFlag(long claimId, ProtectionFlag flag) {
+        try {
+            CoreMain.claimTable.addProtectionFlag(CoreMain.databaseManager.getConnection(), claimId, flag);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void addProtectionFlag(Claim claim, ProtectionFlag flag) {
+        try {
+            CoreMain.claimTable.addProtectionFlag(CoreMain.databaseManager.getConnection(), claim.getId(), flag);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void removeProtectionFlag(long claimId, ProtectionFlag flag) {
+        try {
+            CoreMain.claimTable.removeProtectionFlag(CoreMain.databaseManager.getConnection(), claimId, flag);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void removeProtectionFlag(Claim claim, ProtectionFlag flag) {
+        try {
+            CoreMain.claimTable.removeProtectionFlag(CoreMain.databaseManager.getConnection(), claim.getId(), flag);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 

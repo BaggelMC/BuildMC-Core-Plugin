@@ -193,19 +193,6 @@ public class ClaimTable implements DatabaseTable {
         }
     }
 
-
-    private static int estimateClaimSizeBytes(Claim claim) {
-        // Very rough approximation
-        int base = 64; // overhead
-        base += 16; // type enum
-        base += claim.getOwnerId() != null ? claim.getOwnerId().length() * 2 : 0;
-        base += 16; // UUID
-        base += 4 * 4; // 4 ints
-        base += claim.getName() != null ? claim.getName().length() * 2 : 0;
-
-        return base;
-    }
-
     public void invalidateClaim(long id) {
         claimCache.invalidate(id);
     }

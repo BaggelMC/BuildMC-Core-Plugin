@@ -138,6 +138,7 @@ messages:
 
       sign: "<red>This sign is protected by a land claim.</red>"
       interact: "<red>This block is protected by a land claim.</red>"
+      entity-rename: "<red>You cannot rename entities protected by a land claim.</red>"
 
       potion-splash: "<red>This area is protected by a land claim.</red>"
 
@@ -148,6 +149,8 @@ messages:
 
       frostwalker: "<red>You can't use <lang:enchantment.minecraft.frost_walker> in an area protected by a land claim.</red>"
       entity-bucket: "<red>This cute %entity% protected by a land claim.</red>"
+
+      attach-leash: "<red>This entity is protected by a land claim.</red>"
 
 
   status:

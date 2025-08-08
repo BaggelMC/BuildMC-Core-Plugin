@@ -135,6 +135,13 @@ public class Claim {
             case INTERACTION_DOORS -> "claims.protections.interactions.doors";
             case INTERACTION_FENCE_GATES -> "claims.protections.interactions.fence-gates";
             case INTERACTION_FARMLAND -> "claims.protections.interactions.farmland";
+            case INTERACTION_ATTACH_LEASH -> "claims.protections.interactions.attach-leash";
+            case INTERACTION_BONEMEAL -> "claims.protections.interactions.bonemeal";
+            case INTERACTION_BEEHIVES -> "claims.protections.interactions.beehives";
+            case INTERACTION_NAME_TAGS -> "claims.protections.interactions.nametags";
+            case INTERACTION_ITEM_FRAMES -> "claims.protections.interactions.item-frames";
+            case INTERACTION_CANDLES -> "claims.protections.interactions.candle-extinguish";
+            case INTERACTION_PAINTINGS -> "claims.protections.interactions.paintings";
             case ENTITY_DAMAGE -> "claims.protections.damage.entity-damage";
             case EXCLUDE_PLAYERS -> "claims.protections.damage.exclude-players";
             case EXPLOSION_BLOCK_DAMAGE -> "claims.protections.damage.explosion-block-damage";
