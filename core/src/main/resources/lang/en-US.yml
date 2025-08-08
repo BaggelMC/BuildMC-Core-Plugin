@@ -51,7 +51,7 @@ messages:
       give-success: "<green>Success! Type '/claim help' to get help.</green>"
       full-inventory: "<red>Your inventory is full! Please make space for the claim tool.</red>"
 
-      selection-too-large: "<red>Your selection cannot be wider or longer than %selection_limit%!</red>"
+      selection-too-large: "<red>Your selection cannot be wider or longer than %selection_limit% chunks!</red>"
 
       set-pos1: "<green>Successfully set position 1!</green>"
       set-pos2: "<green>Successfully set position 2!</green>"
