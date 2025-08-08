@@ -307,10 +307,10 @@ public class ClaimTable implements DatabaseTable {
 
     public void addWhitelistedPlayer(Connection conn, long claimId, UUID playerUuid) throws SQLException {
         try (PreparedStatement ps = conn.prepareStatement("""
-        INSERT INTO claim_whitelisted_players (claim_id, player_uuid)
-        VALUES (?, ?)
-        ON CONFLICT DO NOTHING
-    """)) {
+                MERGE INTO claim_whitelisted_players (claim_id, player_uuid)
+                KEY (claim_id, player_uuid)
+                VALUES (?, ?)
+            """)) {
             ps.setLong(1, claimId);
             ps.setObject(2, playerUuid);
             ps.executeUpdate();
@@ -342,10 +342,10 @@ public class ClaimTable implements DatabaseTable {
 
     public void addProtectionFlag(Connection conn, long claimId, ProtectionFlag flag) throws SQLException {
         try (PreparedStatement ps = conn.prepareStatement("""
-        INSERT INTO claim_protection_flags (claim_id, flag)
-        VALUES (?, ?)
-        ON CONFLICT DO NOTHING
-    """)) {
+            MERGE INTO claim_protection_flags (claim_id, flag)
+            KEY (claim_id, flag)
+            VALUES (?, ?)
+        """)) {
             ps.setLong(1, claimId);
             ps.setString(2, flag.name());
             ps.executeUpdate();
