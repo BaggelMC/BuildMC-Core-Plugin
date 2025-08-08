@@ -113,6 +113,15 @@ public class ClaimCommand implements CustomCommand {
                 Commands.literal("create")
                         .then(
                                 Commands.argument("type", StringArgumentType.word()) // "player" or "team"
+                                        .suggests((context, builder) -> {
+                                            List<String> suggestions = List.of("player", "team");
+                                            for (String suggestion : suggestions) {
+                                                if (suggestion.startsWith(builder.getRemaining())) {
+                                                    builder.suggest(suggestion);
+                                                }
+                                            }
+                                            return builder.buildFuture();
+                                        })
                                         .then(
                                                 Commands.argument("name", StringArgumentType.word()) // name of claim
                                                         .executes(command -> {
@@ -300,6 +309,200 @@ public class ClaimCommand implements CustomCommand {
                         )
         );
 
+        cmd.then(
+                Commands.literal("whitelist")
+                        .then(Commands.argument("action", StringArgumentType.word())
+                                .suggests((ctx, builder) -> {
+                                    List<String> actions = List.of("add", "remove");
+                                    for (String action : actions) {
+                                        if (action.startsWith(builder.getRemaining())) {
+                                            builder.suggest(action);
+                                        }
+                                    }
+                                    return builder.buildFuture();
+                                })
+                                .then(Commands.argument("type", StringArgumentType.word())
+                                        .suggests((ctx, builder) -> {
+                                            List<String> types = List.of("player", "team");
+                                            for (String type : types) {
+                                                if (type.startsWith(builder.getRemaining())) {
+                                                    builder.suggest(type);
+                                                }
+                                            }
+                                            return builder.buildFuture();
+                                        })
+                                        .then(Commands.argument("claim", StringArgumentType.word())
+                                                .suggests((ctx, builder) -> {
+                                                    var sender = ctx.getSource().getSender();
+                                                    if (!(sender instanceof Player player)) return builder.buildFuture();
+                                                    String type = StringArgumentType.getString(ctx, "type");
+
+                                                    if (type.equalsIgnoreCase("player")) {
+                                                        List<Long> claimIds = ClaimManager.playerOwner.getOrDefault(player.getUniqueId(), List.of());
+                                                        for (long id : claimIds) {
+                                                            String name = ClaimManager.getClaimNameById(id);
+                                                            if (name != null && name.startsWith(builder.getRemaining())) {
+                                                                builder.suggest(name);
+                                                            }
+                                                        }
+                                                    } else if (type.equalsIgnoreCase("team")) {
+                                                        Team team = ClaimManager.getPlayerTeam(player);
+                                                        if (team != null) {
+                                                            List<Long> claimIds = ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
+                                                            for (long id : claimIds) {
+                                                                String name = ClaimManager.getClaimNameById(id);
+                                                                if (name != null && name.startsWith(builder.getRemaining())) {
+                                                                    builder.suggest(name);
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+
+                                                    return builder.buildFuture();
+                                                })
+                                                .then(Commands.argument("player", StringArgumentType.word())
+                                                        .suggests((ctx, builder) -> {
+                                                            var sender = ctx.getSource().getSender();
+                                                            if (!(sender instanceof Player player)) return builder.buildFuture();
+                                                            String type = StringArgumentType.getString(ctx, "type");
+                                                            String claimName = StringArgumentType.getString(ctx, "claim");
+
+                                                            Claim claim = null;
+                                                            if (type.equalsIgnoreCase("player")) {
+                                                                List<Long> ids = ClaimManager.playerOwner.getOrDefault(player.getUniqueId(), List.of());
+                                                                for (long id : ids) {
+                                                                    if (claimName.equalsIgnoreCase(ClaimManager.getClaimNameById(id))) {
+                                                                        claim = ClaimManager.getClaimByID(id);
+                                                                        break;
+                                                                    }
+                                                                }
+                                                            } else if (type.equalsIgnoreCase("team")) {
+                                                                Team team = ClaimManager.getPlayerTeam(player);
+                                                                if (team != null) {
+                                                                    List<Long> ids = ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
+                                                                    for (long id : ids) {
+                                                                        if (claimName.equalsIgnoreCase(ClaimManager.getClaimNameById(id))) {
+                                                                            claim = ClaimManager.getClaimByID(id);
+                                                                            break;
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+
+                                                            if (claim == null) return builder.buildFuture();
+
+                                                            List<UUID> whitelist = claim.getWhitelistedPlayers();
+                                                            for (OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()) {
+                                                                if (offlinePlayer.getName() == null) continue;
+                                                                if (offlinePlayer.getUniqueId().equals(player.getUniqueId())) continue;
+                                                                if (whitelist.contains(offlinePlayer.getUniqueId())) continue;
+                                                                if (type.equalsIgnoreCase("team")) {
+                                                                    Team team = ClaimManager.getPlayerTeam(player);
+                                                                    if (team != null && team.hasEntry(offlinePlayer.getName())) continue;
+                                                                }
+                                                                if (offlinePlayer.getName().startsWith(builder.getRemaining())) {
+                                                                    builder.suggest(offlinePlayer.getName());
+                                                                }
+                                                            }
+
+                                                            return builder.buildFuture();
+                                                        })
+                                                        .executes(ctx -> {
+                                                            var sender = ctx.getSource().getSender();
+                                                            if (!(sender instanceof Player player)) {
+                                                                sender.sendMessage(Component.translatable("messages.error.not-a-player"));
+                                                                return 0;
+                                                            }
+
+                                                            String action = StringArgumentType.getString(ctx, "action").toLowerCase();
+                                                            String type = StringArgumentType.getString(ctx, "type").toLowerCase();
+                                                            String claimName = StringArgumentType.getString(ctx, "claim");
+                                                            String targetPlayerName = StringArgumentType.getString(ctx, "player");
+
+                                                            long claimId = -1;
+                                                            Claim claim = null;
+
+                                                            try {
+                                                                switch (type) {
+                                                                    case "player" -> {
+                                                                        List<Long> ids = ClaimManager.playerOwner.getOrDefault(player.getUniqueId(), List.of());
+                                                                        for (long id : ids) {
+                                                                            if (claimName.equalsIgnoreCase(ClaimManager.getClaimNameById(id))) {
+                                                                                claim = ClaimManager.getClaimByID(id);
+                                                                                claimId = id;
+                                                                                break;
+                                                                            }
+                                                                        }
+                                                                    }
+
+                                                                    case "team" -> {
+                                                                        Team team = ClaimManager.getPlayerTeam(player);
+                                                                        if (team == null) {
+                                                                            player.sendMessage(Component.translatable("messages.error.not-in-a-team"));
+                                                                            return 0;
+                                                                        }
+                                                                        List<Long> ids = ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
+                                                                        for (long id : ids) {
+                                                                            if (claimName.equalsIgnoreCase(ClaimManager.getClaimNameById(id))) {
+                                                                                claim = ClaimManager.getClaimByID(id);
+                                                                                claimId = id;
+                                                                                break;
+                                                                            }
+                                                                        }
+                                                                    }
+
+                                                                    default -> {
+                                                                        player.sendMessage(Component.translatable("messages.claims.create.invalid-type"));
+                                                                        return 0;
+                                                                    }
+                                                                }
+
+                                                                if (claim == null || claimId == -1) {
+                                                                    player.sendMessage(Component.translatable("messages.claims.remove.not-found"));
+                                                                    return 0;
+                                                                }
+
+                                                                OfflinePlayer target = Bukkit.getOfflinePlayer(targetPlayerName);
+                                                                UUID targetUUID = target.getUniqueId();
+
+                                                                List<UUID> whitelist = claim.getWhitelistedPlayers();
+
+                                                                switch (action) {
+                                                                    case "add" -> {
+                                                                        if (whitelist.contains(targetUUID)) {
+                                                                            player.sendMessage(Component.translatable("messages.claims.whitelist.already"));
+                                                                        } else {
+                                                                            ClaimManager.addPlayerToWhitelist(claimId, targetUUID);
+                                                                            player.sendMessage(Component.translatable("messages.claims.whitelist.added"));
+                                                                        }
+                                                                    }
+                                                                    case "remove" -> {
+                                                                        if (!whitelist.contains(targetUUID)) {
+                                                                            player.sendMessage(Component.translatable("messages.claims.whitelist.not-found"));
+                                                                        } else {
+                                                                            ClaimManager.removePlayerFromWhitelist(claimId, targetUUID);
+                                                                            player.sendMessage(Component.translatable("messages.claims.whitelist.removed"));
+                                                                        }
+                                                                    }
+                                                                    default -> {
+                                                                        player.sendMessage(Component.translatable("messages.claims.whitelist.invalid-action"));
+                                                                        return 0;
+                                                                    }
+                                                                }
+
+                                                                return 1;
+
+                                                            } catch (Exception e) {
+                                                                CoreMain.plugin.getLogger().severe("Error handling /claim whitelist: " + e.getMessage());
+                                                                player.sendMessage(Component.translatable("messages.claims.whitelist.error"));
+                                                                return 0;
+                                                            }
+                                                        })
+                                                )
+                                        )
+                                )
+                        )
+        );
 
         return cmd.build();
     }

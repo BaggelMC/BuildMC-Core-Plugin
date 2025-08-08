@@ -172,6 +172,15 @@ public class ClaimManager {
         return CoreMain.claimTable.getClaimById(CoreMain.databaseManager.getConnection(), claimId);
     }
 
+    @Nullable public static Claim getClaimByID(long claimID) {
+        try {
+            return CoreMain.claimTable.getClaimById(CoreMain.databaseManager.getConnection(), claimID);
+        } catch (SQLException e) {
+            CoreMain.plugin.getLogger().severe("SQL Error while trying to get a claim by ID: " + e.getMessage());
+        }
+        return null;
+    }
+
     /**
      * @throws SQLException If an internal database error occurred.*/
     @Nullable public static Claim getClaim(Location location) throws SQLException {

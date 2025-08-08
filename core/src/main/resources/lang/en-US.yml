@@ -105,9 +105,13 @@ messages:
       server-message: "<gold>This chunk is owned by the server.</gold>"
       unclaimed: "<gold>This chunk belongs to nobody.</gold>"
 
-    successfully-whitelisted: "<green>You have successfully whitelisted player!</green>"
-    successfully-removed-whitelisted: "<green>You have successfully removed a player from your whitelist!</green>"
-    already-whitelisted: "<red>%player% is already whitelisted.</red>"
+    whitelist:
+      added: "Player has been added to the claim whitelist."
+      removed: "Player has been removed from the claim whitelist."
+      already: "That player is already whitelisted."
+      not-found: "That player is not on the whitelist."
+      error: "An error occurred while modifying the whitelist."
+      invalid-action: "Invalid action. Use 'add' or 'remove'."
 
     help-message: |-
       <gold>------------- <green>Claims Help</green> -------------</gold>
