@@ -53,7 +53,7 @@ messages:
       give-success: "<green>Erfolg! Gib '/claim help' ein, um Hilfe zu erhalten.</green>"
       full-inventory: "<red>Dein Inventar ist voll! Bitte schaffe Platz für das Claim-Tool.</red>"
 
-      selection-too-large: "<red>Deine Auswahl darf nicht breiter oder länger als %selection_limit% sein!</red>"
+      selection-too-large: "<red>Deine Auswahl darf nicht breiter oder länger als %selection_limit% Chunks sein!</red>"
 
       missing-first-pos: "<red>Du musst zuerst die andere Ecke auswählen!</red>"
       successfully-set-pos: "<green>Position erfolgreich gesetzt!</green>"
@@ -107,25 +107,30 @@ messages:
       <gold>------------------------------------</gold>
 
     not-accessible:
-      container: "<red>Dieser Behälter ist durch einen Claim geschützt.</red>"
-      entity-container: "<red>Dieses Entity ist durch einen Claim geschützt.</red>"
-      block-break: "<red>Dieser Block ist durch einen Claim geschützt.</red>"
-      block-place: "<red>Dieses Gebiet ist durch einen Claim geschützt.</red>"
+      container: "<red>Dieser Behälter wird durch einen Claim geschützt.</red>"
+      entity-container: "<red>Dieser Entity wird durch einen Claim geschützt.</red>"
+      block-break: "<red>Dieser Block wird durch einen Claim geschützt.</red>"
+      block-place: "<red>Dieser Block wird durch einen Claim geschützt.</red>"
 
-      entity-damage: "<red>Dieses Entity ist durch einen Claim geschützt.</red>"
+      entity-damage: "<red>Dieser Entity wird durch einen Claim geschützt.</red>"
+      entity-rename: "<red>Dieser Entity wird durch einen Claim geschützt.</red>"
 
-      sign: "<red>Dieses Schild ist durch einen Claim geschützt.</red>"
-      interact: "<red>Dieses Block ist durch einen Claim geschützt.</red>"
+      sign: "<red>Dieses Schild wird durch einen Claim geschützt.</red>"
+      interact: "<red>Dieser Block wird durch einen Claim geschützt.</red>"
 
-      potion-splash: "<red>Dieses Gebiet ist durch einen Claim geschützt.</red>"
+      potion-splash: "<red>Dieser Bereich wird durch einen Claim geschützt.</red>"
 
-      vehicle: "<red>Dieses Gefährt ist durch einen Claim geschützt.</red>"
+      vehicle: "<red>Dieses Fahrzeug wird durch einen Claim geschützt.</red>"
 
-      item-pickup: "<red>Dieses Item ist durch einen Claim geschützt.</red>"
-      item-drop: "<red>Du kannst keine Items droppen in einem Gebiet, dass durch einen Claim geschützt ist.</red>"
+      item-pickup: "<red>Dieses Item wird durch einen Claim geschützt.</red>"
+      item-drop: "<red>Du kannst hier keine Items fallen lassen.</red>"
 
-      frostwalker: "<red>Du kannst kein <lang:enchantment.minecraft.frost_walker> benutzen in einem Gebiet, dass durch einen Claim geschützt ist.</red>"
-      entity-bucket: "<red>Dieses süße %entity% is durch einen Claim geschützt.</red>"
+      frostwalker: "<red>Du kannst hier nicht <lang:enchantment.minecraft.frost_walker> verwenden.</red>"
+      entity-bucket: "<red>Dieses %entity% wird durch einen Claim geschützt.</red>"
+      attach-leash: "<red>Dieser Entity wird durch einen claim geschützt.</red>"
+      item-frame: "<red>Dieser Rahmen wird durch einen Claim geschützt.</red>"
+
+      armor-stand-manipulate: "<red>Dieser Rüstungsständer wird durch ein Claim geschützt.</red>"
 
   status:
     only-players: "<red>Nur Spieler können einen Status haben!</red>"

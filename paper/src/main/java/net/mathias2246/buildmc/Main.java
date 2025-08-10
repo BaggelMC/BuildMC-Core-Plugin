@@ -1,9 +1,12 @@
 package net.mathias2246.buildmc;
 
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
+import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.claims.*;
 import net.mathias2246.buildmc.commands.BuildMcCommand;
 import net.mathias2246.buildmc.endEvent.EndListener;
+import net.mathias2246.buildmc.player.PlayerHeadDropDeathListener;
+import net.mathias2246.buildmc.player.PlayerHeadDropModifier;
 import net.mathias2246.buildmc.spawnElytra.DisableBoostListener;
 import net.mathias2246.buildmc.spawnElytra.ElytraZoneManager;
 import net.mathias2246.buildmc.spawnElytra.SpawnBoostListener;
@@ -12,13 +15,13 @@ import net.mathias2246.buildmc.status.SetStatusCommand;
 import net.mathias2246.buildmc.status.StatusConfig;
 import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.Sounds;
-import net.mathias2246.buildmc.util.language.LanguageManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.intellij.lang.annotations.Subst;
@@ -31,7 +34,7 @@ import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.logging.Logger;
 
-public final class Main extends JavaPlugin {
+public final class Main extends JavaPlugin implements MainClass {
 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(Main.class);
     public static Logger logger;
@@ -62,12 +65,14 @@ public final class Main extends JavaPlugin {
             pluginFolder.mkdir();
         }
 
-        LanguageManager.init();
+
 
         configFile = new File(plugin.getDataFolder(), "config.yml");
 
         if (!configFile.exists()) this.saveResource("config.yml", false);
         config = this.getConfig();
+
+        CoreMain.initialize(this);
 
         EndListener.loadFromConfig();
 
@@ -91,69 +96,11 @@ public final class Main extends JavaPlugin {
 
             claimManager = new ClaimManager(this, "claim-data.yml");
 
-            if (config.getBoolean("claims.protections.containers")) {
-                getServer().getPluginManager().registerEvents(new ClaimContainerListener(), this);
-            }
-
-            if (config.getBoolean("claims.protections.damage.explosion-block-damage") || config.getBoolean("claims.protections.explosion-entity-damage")) {
-                getServer().getPluginManager().registerEvents(new ClaimExplosionsListener(), this);
-            }
-
-            if (config.getBoolean("claims.protections.player-break")) {
-                getServer().getPluginManager().registerEvents(new ClaimBreakListener(), this);
-            }
-
-            if (config.getBoolean("claims.protections.player-place")) {
-                getServer().getPluginManager().registerEvents(new ClaimPlaceListener(), this);
-            }
-
-            if (config.getBoolean("claims.protections.damage.entity-damage")) {
-                getServer().getPluginManager().registerEvents(new ClaimDamageProtectionListener(), this);
-            }
-
-            if (config.getBoolean("claims.protections.sign-editing")) {
-                getServer().getPluginManager().registerEvents(new ClaimSignEditListener(), this);
-            }
-
-            if (config.getBoolean("claims.protections.prevent-interactions")) {
-                getServer().getPluginManager().registerEvents(new ClaimInteractionListener(), this);
-            }
-
-            if (config.getBoolean("claims.protections.splash-potions")) {
-                getServer().getPluginManager().registerEvents(new ClaimPotionSplashEvent(), this);
-            }
-
-            if (config.getBoolean("claims.protections.vehicle-enter")) {
-                getServer().getPluginManager().registerEvents(new ClaimVehicleEnterListener(), this);
-            }
-
-            if (config.getBoolean("claims.protections.bucket-usage")) {
-                getServer().getPluginManager().registerEvents(new ClaimBucketUseEvent(), this);
-            }
-
-            if (config.getBoolean("claims.protections.prevent-entity-modifications")) {
-                getServer().getPluginManager().registerEvents(new ClaimEntityChangeBlockListener(), this);
-            }
-
-            if (config.getBoolean("claims.protections.item-pickup")) {
-                getServer().getPluginManager().registerEvents(new ClaimItemPickupListener(), this);
-            }
-
-            if (config.getBoolean("claims.protections.item-drop")) {
-                getServer().getPluginManager().registerEvents(new ClaimItemDropListener(), this);
-            }
-
-            if (config.getBoolean("claims.protections.frostwalker")) {
-                getServer().getPluginManager().registerEvents(new ClaimFrostWalkerListener(), this);
-            }
-
-            if (config.getBoolean("claims.protections.piston-movement-across-claim-borders")) {
-                getServer().getPluginManager().registerEvents(new ClaimPistonMovementListener(), this);
-            }
-
             if (config.getBoolean("claims.save-on-world-save")) {
                 getServer().getPluginManager().registerEvents(new ClaimDataSaveListener(claimManager), this);
             }
+
+
         }
 
         if (config.getBoolean("status.enabled")) {
@@ -182,6 +129,10 @@ public final class Main extends JavaPlugin {
                 }
             }
         }
+
+        if (config.getBoolean("player-head.on-death")) {
+            getServer().getPluginManager().registerEvents(new PlayerHeadDropDeathListener(new PlayerHeadDropModifier()), this);
+        }
     }
 
     @Override
@@ -192,6 +143,7 @@ public final class Main extends JavaPlugin {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        CoreMain.stop();
     }
 
     private void disableCommand(String namespace, String commandName) {
@@ -243,5 +195,15 @@ public final class Main extends JavaPlugin {
             logger.warning("Failed to retrieve the command map.");
             return null;
         }
+    }
+
+    @Override
+    public void sendPlayerMessage(Player player, Component message) {
+        player.sendMessage(message);
+    }
+
+    @Override
+    public void sendPlayerActionBar(Player player, Component message) {
+        player.sendActionBar(message);
     }
 }

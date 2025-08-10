@@ -161,7 +161,7 @@ public class ClaimTool implements Listener {
 
             if (isRemoveSelection) {
                 chunkPlane = new ParticleBuilder
-                (Particle.DUST)
+                        (Particle.DUST)
                         .color(210, 10, 10)
                         .count(100)
                         .receivers(source)
@@ -194,8 +194,8 @@ public class ClaimTool implements Listener {
             );
 
             corner1 = cornerBase.clone().location(
-                            l1
-                    );
+                    l1
+            );
 
             var l2 = new Location(
                     source.getWorld(),
@@ -490,7 +490,7 @@ public class ClaimTool implements Listener {
 
         Sounds.playSound(player, Sounds.SUCCESS);
         player.sendMessage(
-            buildSuccessMessage(player, team)
+                buildSuccessMessage(player, team)
         );
     }
 

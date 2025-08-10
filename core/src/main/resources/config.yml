@@ -86,9 +86,9 @@ claims:
     player-place: true
 
     # Players cannot open containers (e.g. Chests, Barrels...)
+    # Players are still able to open their ender chests or read books in lecterns.
+    # Players can't take books from lecterns in others claims.
     containers: true
-    # Players can open ender chests even if other containers are protected
-    allow-ender-chests: true
 
     # Players cannot pick up items
     item-pickup: false
@@ -118,23 +118,78 @@ claims:
     prevent-interactions: true
     # Interaction related protections
     interactions:
-      levers: true
-      buttons: true
-      repeaters: true
-      comparators: true
+      # A list of blocks players can't interact with
+      # NOTE: You do not have to write all block ids in only upper-case letters
+      blocks:
+        - COMPARATOR
+        - REPEATER
+        - LEVER
+        - BAMBOO_BUTTON
+        - BIRCH_BUTTON
+        - ACACIA_BUTTON
+        - CHERRY_BUTTON
+        - JUNGLE_BUTTON
+        - CRIMSON_BUTTON
+        - DARK_OAK_BUTTON
+        - MANGROVE_BUTTON
+        - OAK_BUTTON
+        - PALE_OAK_BUTTON
+        - POLISHED_BLACKSTONE_BUTTON
+        - SPRUCE_BUTTON
+        - STONE_BUTTON
+        - WARPED_BUTTON
+        - CAULDRON
+        - LAVA_CAULDRON
+        - POWDER_SNOW_CAULDRON
+        - BEACON
+        - BEEHIVE
+        - BEE_NEST
+        - RESPAWN_ANCHOR
+        - JUKEBOX
+        - CAMPFIRE
+        - SOUL_CAMPFIRE
+        - DECORATED_POT
+        - DAYLIGHT_DETECTOR
+        - NOTE_BLOCK
+        - CHISELED_BOOKSHELF
+        - FLOWER_POT
+        - SPAWNER
+        - TNT
+        - CANDLE
+        - BLACK_CANDLE
+        - WHITE_CANDLE
+        - CYAN_CANDLE
+        - BLUE_CANDLE
+        - BROWN_CANDLE
+        - GRAY_CANDLE
+        - GREEN_CANDLE
+        - LIGHT_BLUE_CANDLE
+        - LIGHT_GRAY_CANDLE
+        - LIME_CANDLE
+        - MAGENTA_CANDLE
+        - ORANGE_CANDLE
+        - PINK_CANDLE
+        - PURPLE_CANDLE
+        - RED_CANDLE
+        - YELLOW_CANDLE
 
-      pressure-plates: true
-      trapdoors: true
+      # Includes Doors, Trapdoors and Fence-Gates
       doors: true
-      fence-gates: true
+
+      # This only disables the ability to destroy farmland by jumping on it
       farmland: true
+
+      attach-leash: true
+      bone-meal: true
+      nametags: true
+      item-frames: true
+      paintings: true
+      armor-stands: true
 
     # Damage related protections
     damage:
       # Cancels all damage dealt by players to protected entities
       entity-damage: true
-      # Allows players to be damaged by other players
-      exclude-players: true
 
       # Blocks cannot be destroyed from explosions
       explosion-block-damage: true
@@ -148,6 +203,7 @@ claims:
       enderman: false
       ravager: false
 
+
 disable-commands: true
 disabled-commands:
   # Reload commands. WE DO NOT RECOMMEND USING THIS COMMAND. PLEASE RESTART THE SERVER.
@@ -160,3 +216,7 @@ disabled-commands:
 
   # Dangerous server control
   - "minecraft:save-off"
+
+player-head:
+  # When true, players will drop their head on death.
+  on-death: true # Default: true
