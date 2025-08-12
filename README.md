@@ -20,6 +20,10 @@ BuildMC-Core provides a solid foundation for any Minecraft project. Designed for
 - 🧱 **Survival-Friendly Chunk Claiming**  
   A secure, intuitive chunk claim system tied into the teams system. Built for balance and survival fairness.
 
+- **Player Head Drops**<br/>
+  Every player dorps his head after dying.
+  Even has the death message inside the lore.
+
 - ⚙️ **Easy Setup**  
   Configure the plugin using `/buildmc` or edit the config files directly.
 
@@ -51,9 +55,9 @@ If you're running your own server and want to use BuildMC-Core, here's how to in
 
 ### 💡 Notes
 - Check out our guides for:
-  - [Spawn Elytra](docs/usage/spawn_elytra.md)
-  - [End Event](docs/usage/end_event.md)
-  - [Claims](docs/usage/claim_system.md)
+  - [Spawn Elytra](https://github.com/BaggelMC/BuildMC-Core-Plugin/blob/master/docs/usage/spawn_elytra.md)
+  - [End Event](https://github.com/BaggelMC/BuildMC-Core-Plugin/blob/master/docs/usage/end_event.md)
+  - [Claims](https://github.com/BaggelMC/BuildMC-Core-Plugin/blob/master/docs/usage/claim_system.md)
 - Compatible with most standard Paper/Spigot setups.
 - May require a permission setup for players/admins using permission managers like [LuckPerms](https://luckperms.net/).
 
