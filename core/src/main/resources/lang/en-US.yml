@@ -118,6 +118,7 @@ messages:
 
       entity-damage: "<red>This entity is protected by a land claim.</red>"
       entity-rename: "<red>This entity is protected by a land claim.</red>"
+      entity-tame: "<red>This entity is protected by a land claim.</red>"
 
       sign: "<red>This sign is protected by a land claim.</red>"
       interact: "<red>This block is protected by a land claim.</red>"

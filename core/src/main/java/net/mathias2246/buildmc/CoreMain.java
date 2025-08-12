@@ -58,31 +58,38 @@ public final class CoreMain {
         if (!config.getBoolean("claims.enabled", true)) return;
         claimManager = new ClaimManager(plugin, "claim-data.yml");
 
-        if (config.getBoolean("claims.protections.containers")) {
+        if (config.getBoolean("claims.protections.containers", true)) {
             plugin.getServer().getPluginManager().registerEvents(new ClaimContainerListener(), plugin);
         }
 
-        if (config.getBoolean("claims.protections.damage.explosion-block-damage") || config.getBoolean("claims.protections.explosion-entity-damage")) {
+        if (config.getBoolean("claims.protections.damage.explosion-block-damage", true) || config.getBoolean("claims.protections.explosion-entity-damage", true)) {
             plugin.getServer().getPluginManager().registerEvents(new ClaimExplosionsListener(), plugin);
         }
         if (config.getBoolean("claims.protections.damage.explosion-entity-damage", true)) {
             plugin.getServer().getPluginManager().registerEvents(new ClaimExplosionDamageListener(), plugin);
         }
 
-        if (config.getBoolean("claims.protections.player-break")) {
+        if (config.getBoolean("claims.protections.player-break", true)) {
             plugin.getServer().getPluginManager().registerEvents(new ClaimBreakListener(), plugin);
         }
 
-        if (config.getBoolean("claims.protections.player-place")) {
+        if (config.getBoolean("claims.protections.player-place", true)) {
             plugin.getServer().getPluginManager().registerEvents(new ClaimPlaceListener(), plugin);
         }
 
-        if (config.getBoolean("claims.protections.damage.entity-damage")) {
+        if (config.getBoolean("claims.protections.damage.entity-damage", true)) {
             plugin.getServer().getPluginManager().registerEvents(new ClaimDamageProtectionListener(), plugin);
         }
 
-        if (config.getBoolean("claims.protections.sign-editing")) {
+        if (config.getBoolean("claims.protections.sign-editing", true)) {
             plugin.getServer().getPluginManager().registerEvents(new ClaimSignEditListener(), plugin);
+        }
+
+        if (config.getBoolean("claims.protections.end-crystal-place", true)) {
+            plugin.getServer().getPluginManager().registerEvents(new ClaimEndCrystalPlaceEvent(), plugin);
+        }
+        if (config.getBoolean("claims.protections.entity-tame", true)) {
+            plugin.getServer().getPluginManager().registerEvents(new ClaimEntityTameListener(), plugin);
         }
 
         if (config.getBoolean("claims.protections.prevent-interactions", true)) {
@@ -116,40 +123,40 @@ public final class CoreMain {
                 plugin.getServer().getPluginManager().registerEvents(new ChangeArmorStandListener(), plugin);
         }
 
-        if (config.getBoolean("claims.protections.splash-potions")) {
+        if (config.getBoolean("claims.protections.splash-potions", true)) {
             plugin.getServer().getPluginManager().registerEvents(new ClaimPotionSplashListener(), plugin);
         }
 
-        if (config.getBoolean("claims.protections.vehicle-enter")) {
+        if (config.getBoolean("claims.protections.vehicle-enter", true)) {
             plugin.getServer().getPluginManager().registerEvents(new ClaimVehicleEnterListener(), plugin);
         }
 
-        if (config.getBoolean("claims.protections.bucket-usage")) {
+        if (config.getBoolean("claims.protections.bucket-usage", true)) {
             plugin.getServer().getPluginManager().registerEvents(new ClaimBucketUseListener(), plugin);
         }
 
-        if (config.getBoolean("claims.protections.prevent-entity-modifications")) {
+        if (config.getBoolean("claims.protections.prevent-entity-modifications", true)) {
             plugin.getServer().getPluginManager().registerEvents(new ClaimEntityChangeBlockListener(
                     config.getBoolean("claims.protections.entity-modifications.wither", true),
-                    config.getBoolean("claims.protections.entity-modifications.enderman", true),
+                    config.getBoolean("claims.protections.entity-modifications.enderman", false),
                     config.getBoolean("claims.protections.entity-modifications.ravager", false)
 
             ), plugin);
         }
 
-        if (config.getBoolean("claims.protections.item-pickup")) {
+        if (config.getBoolean("claims.protections.item-pickup", false)) {
             plugin.getServer().getPluginManager().registerEvents(new ClaimItemPickupListener(), plugin);
         }
 
-        if (config.getBoolean("claims.protections.item-drop")) {
+        if (config.getBoolean("claims.protections.item-drop", false)) {
             plugin.getServer().getPluginManager().registerEvents(new ClaimItemDropListener(), plugin);
         }
 
-        if (config.getBoolean("claims.protections.frostwalker")) {
+        if (config.getBoolean("claims.protections.frostwalker", true)) {
             plugin.getServer().getPluginManager().registerEvents(new ClaimFrostWalkerListener(), plugin);
         }
 
-        if (config.getBoolean("claims.protections.piston-movement-across-claim-borders")) {
+        if (config.getBoolean("claims.protections.piston-movement-across-claim-borders", true)) {
             plugin.getServer().getPluginManager().registerEvents(new ClaimPistonMovementListener(), plugin);
         }
     }

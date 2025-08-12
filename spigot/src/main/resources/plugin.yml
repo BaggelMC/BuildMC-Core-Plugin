@@ -1,5 +1,5 @@
 name: BuildMC-Core
-version: '1.0.2'
+version: '1.0.3'
 main: net.mathias2246.buildmc.Main
 api-version: '1.21'
 prefix: BuildMC
@@ -21,3 +21,6 @@ permissions:
   buildmc.bypass-claims:
     default: false
     description: With this permission you can bypass claim protection.
+  buildmc.force-claim:
+    default: false
+    description: With this permission you can remove or overwrite any claim. Even ones that you don't own. This will not give claims back to their owner but rather just delete them forever.

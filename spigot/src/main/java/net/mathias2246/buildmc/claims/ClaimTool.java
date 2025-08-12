@@ -11,6 +11,7 @@ import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemRarity;
@@ -42,7 +43,12 @@ public class ClaimTool implements Listener {
 
     public static ItemStack removeToolItemstack;
 
+    private static boolean useRightClick = false;
+
     public static void setup() {
+
+        useRightClick = config.getBoolean("claims.tool.use-right-instead-of-sneak-click", false);
+
         var claimToolItem = Material.getMaterial(config.getString("claims.tool.tool-item", "carrot_on_a_stick").toUpperCase());
         if (claimToolItem == null) claimToolItem = Material.CARROT_ON_A_STICK;
 
@@ -271,7 +277,17 @@ public class ClaimTool implements Listener {
         if (isClaimTool(event.getItem())) {
 
             event.setCancelled(true);
+
             Player player = event.getPlayer();
+
+            boolean leftClick = event.getAction().equals(Action.LEFT_CLICK_BLOCK) || event.getAction().equals(Action.LEFT_CLICK_AIR);
+
+            boolean firstSelection;
+            if (useRightClick) {
+                firstSelection = leftClick;
+            } else firstSelection = !player.isSneaking();
+
+            boolean removeBypass = player.hasPermission("buildmc.force-claim");
 
             Location at;
             if (event.getClickedBlock() != null) at = event.getClickedBlock().getLocation();
@@ -282,8 +298,8 @@ public class ClaimTool implements Listener {
                 return;
             }
 
-            if (!player.isSneaking()) {
-                if (!ClaimManager.isNotClaimedOrOwn(ClaimManager.getPlayerTeam(player), at)) {
+            if (firstSelection) {
+                if (!removeBypass && !ClaimManager.isNotClaimedOrOwn(ClaimManager.getPlayerTeam(player), at)) {
                     audiences.player(player).sendMessage(Component.translatable( "messages.claims.tool.other-claim-in-selection"));
                     Sounds.playSound(player, Sounds.MISTAKE);
                     return;
@@ -324,12 +340,22 @@ public class ClaimTool implements Listener {
                         player,
                         team,
                         LocationUtil.deserialize(player.getMetadata("claim_tool_pos1").getFirst().asString()),
-                        at
+                        at,
+                        removeBypass
                 );
             }
         } else if (isClaimRemoveTool(event.getItem())) {
             event.setCancelled(true);
             Player player = event.getPlayer();
+
+            boolean leftClick = event.getAction().equals(Action.LEFT_CLICK_BLOCK) || event.getAction().equals(Action.LEFT_CLICK_AIR);
+
+            boolean firstSelection;
+            if (useRightClick) {
+                firstSelection = leftClick;
+            } else firstSelection = !player.isSneaking();
+
+            boolean removeBypass = player.hasPermission("buildmc.force-claim");
 
             Location at;
             if (event.getClickedBlock() != null) at = event.getClickedBlock().getLocation();
@@ -340,8 +366,8 @@ public class ClaimTool implements Listener {
                 return;
             }
 
-            if (!player.isSneaking()) {
-                if (!ClaimManager.isNotClaimedOrOwn(ClaimManager.getPlayerTeam(player), at)) {
+            if (firstSelection) {
+                if (!removeBypass && !ClaimManager.isNotClaimedOrOwn(ClaimManager.getPlayerTeam(player), at)) {
                     audiences.player(player).sendMessage(Component.translatable("messages.claims.tool.other-claim-in-selection"));
                     Sounds.playSound(player, Sounds.MISTAKE);
                     return;
@@ -382,13 +408,14 @@ public class ClaimTool implements Listener {
                         player,
                         team,
                         LocationUtil.deserialize(player.getMetadata("claim_tool_pos1").getFirst().asString()),
-                        at
+                        at,
+                        removeBypass
                 );
             }
         }
     }
 
-    private static void tryRemoveArea(@NotNull Player player, @NotNull Team team, @NotNull Location from, @NotNull Location to) {
+    private static void tryRemoveArea(@NotNull Player player, @NotNull Team team, @NotNull Location from, @NotNull Location to, boolean force) {
         int sx = Math.min(from.getChunk().getX(), to.getChunk().getX());
         int sz = Math.min(from.getChunk().getZ(), to.getChunk().getZ());
         int ex = Math.max(from.getChunk().getX(), to.getChunk().getX());
@@ -411,18 +438,21 @@ public class ClaimTool implements Listener {
         }
 
         int count = 0;
-        for (int z = sz; z <= ez; z++) {
-            for (int x = sx; x <= ex; x++) {
-                Chunk chunk = world.getChunkAt(x, z);
-                // If someone else's claim is in this selection, fail
-                if (!ClaimManager.isNotClaimedOrOwn(team, chunk)) {
-                    audiences.player(player).sendMessage(Message.msg(player, "messages.claims.tool.other-claim-in-selection"));
-                    Sounds.playSound(player, Sounds.MISTAKE);
-                    return;
-                } else if (ClaimManager.hasOwner(chunk)) {
 
-                    count++;
+        if (!force) {
+            for (int z = sz; z <= ez; z++) {
+                for (int x = sx; x <= ex; x++) {
+                    Chunk chunk = world.getChunkAt(x, z);
+                    // If someone else's claim is in this selection, fail
+                    if (!ClaimManager.isNotClaimedOrOwn(team, chunk)) {
+                        audiences.player(player).sendMessage(Message.msg(player, "messages.claims.tool.other-claim-in-selection"));
+                        Sounds.playSound(player, Sounds.MISTAKE);
+                        return;
+                    } else if (ClaimManager.hasOwner(chunk)) {
 
+                        count++;
+
+                    }
                 }
             }
         }
@@ -440,7 +470,7 @@ public class ClaimTool implements Listener {
         );
     }
 
-    private static void tryClaimArea(@NotNull Player player, @NotNull Team team, @NotNull Location from, @NotNull Location to) {
+    private static void tryClaimArea(@NotNull Player player, @NotNull Team team, @NotNull Location from, @NotNull Location to, boolean force) {
         int sx = Math.min(from.getChunk().getX(), to.getChunk().getX());
         int sz = Math.min(from.getChunk().getZ(), to.getChunk().getZ());
         int ex = Math.max(from.getChunk().getX(), to.getChunk().getX());
@@ -462,26 +492,29 @@ public class ClaimTool implements Listener {
         }
 
         int count = 0;
+
+
         int chunksLeft = ClaimManager.getChunksLeft(claimManager, team);
-
-        for (int z = sz; z <= ez; z++) {
-            for (int x = sx; x <= ex; x++) {
-                Chunk chunk = world.getChunkAt(x, z);
-                // If someone else's claim is in this selection, fail
-                if (!ClaimManager.isNotClaimedOrOwn(team, chunk)) {
-                    audiences.player(player).sendMessage(Message.msg(player, "messages.claims.tool.other-claim-in-selection"));
-                    Sounds.playSound(player, Sounds.MISTAKE);
-                    return;
-                } else if (!ClaimManager.hasOwner(chunk)) {
-                    if (chunksLeft < 0) continue;
-
-                    count++;
-                    if (count > chunksLeft) { // If your team has no chunks left to claim, fail
-                        audiences.player(player).sendMessage(Message.msg(player, "messages.claims.tool.no-chunks-left"));
+        if (!force) {
+            for (int z = sz; z <= ez; z++) {
+                for (int x = sx; x <= ex; x++) {
+                    Chunk chunk = world.getChunkAt(x, z);
+                    // If someone else's claim is in this selection, fail
+                    if (!ClaimManager.isNotClaimedOrOwn(team, chunk)) {
+                        audiences.player(player).sendMessage(Message.msg(player, "messages.claims.tool.other-claim-in-selection"));
                         Sounds.playSound(player, Sounds.MISTAKE);
                         return;
-                    }
+                    } else if (!ClaimManager.hasOwner(chunk)) {
+                        if (chunksLeft < 0) continue;
 
+                        count++;
+                        if (count > chunksLeft) { // If your team has no chunks left to claim, fail
+                            audiences.player(player).sendMessage(Message.msg(player, "messages.claims.tool.no-chunks-left"));
+                            Sounds.playSound(player, Sounds.MISTAKE);
+                            return;
+                        }
+
+                    }
                 }
             }
         }

@@ -72,7 +72,12 @@ claims:
     # The item used for the claim-tool
     tool-item: "carrot_on_a_stick" # Default: "carrot_on_a_stick"
 
-    # If true, players even without permissions can get the claim-tool using '/buildmc claimtool'
+    # If true, the selection and remove tool will require the player to right-click instead of sneak-clicking to set the second position.
+    # NOTE: This will not change the '/claim help' text or the lore of the claim selection and remove tool.
+    #       You have to manually change them inside the language files.
+    use-right-instead-of-sneak-click: false # Default: false
+
+    # If true, players even without permissions can get the claim-tools using '/claim claimtool' or '/claim removetool'
     enable-give-command: true # Default: true
 
     # Limits the maximum size in chunks of the selection
@@ -81,41 +86,48 @@ claims:
   # What aspects are protected when claimed
   protections:
     # Players cannot break blocks
-    player-break: true
+    player-break: true # Default: true
     # Players cannot place blocks
-    player-place: true
+    player-place: true # Default: true
 
     # Players cannot open containers (e.g. Chests, Barrels...)
     # Players are still able to open their ender chests or read books in lecterns.
-    # Players can't take books from lecterns in others claims.
-    containers: true
+    # But players can't take books from lecterns in others claims.
+    containers: true # Default: true
 
     # Players cannot pick up items
-    item-pickup: false
+    item-pickup: false # Default: false
 
     # Players cannot drop items
-    item-drop: false
+    item-drop: false # Default: false
 
     # Players cannot edit signs
-    sign-editing: true
+    sign-editing: true # Default: true
 
     # Players can't use splash potions
-    splash-potions: true
+    splash-potions: true # Default: true
 
     # Players can't enter vehicles
-    vehicle-enter: true
+    vehicle-enter: true # Default: true
 
     # Players can't use buckets
-    bucket-usage: true
+    bucket-usage: true # Default: true
 
     # Players can't use frost walker enchantment
-    frostwalker: true
+    frostwalker: true # Default: true
 
     # Prevents pistons from moving into claims and pulling out of claims
-    piston-movement-across-claim-borders: true
+    piston-movement-across-claim-borders: true # Default: true
+
+    # Prevents end-crystals from being spawned in claims.
+    # This also suppresses end-crystals of the owners of the claim.
+    end-crystal-place: true # Default: true
+
+    # Prevents entities from being tamed on others claims.
+    entity-tame: true # Default: true
 
     # Players cannot interact with the things listed in "interactions"
-    prevent-interactions: true
+    prevent-interactions: true # Default: true
     # Interaction related protections
     interactions:
       # A list of blocks players can't interact with
@@ -174,37 +186,37 @@ claims:
         - YELLOW_CANDLE
 
       # Includes Doors, Trapdoors and Fence-Gates
-      doors: true
+      doors: true # Default: true
 
       # This only disables the ability to destroy farmland by jumping on it
-      farmland: true
+      farmland: true # Default: true
 
-      attach-leash: true
-      bone-meal: true
-      nametags: true
-      item-frames: true
-      paintings: true
-      armor-stands: true
+      attach-leash: true # Default: true
+      bone-meal: true # Default: true
+      nametags: true # Default: true
+      item-frames: true # Default: true
+      paintings: true # Default: true
+      armor-stands: true # Default: true
 
     # Damage related protections
     damage:
       # Cancels all damage dealt by players to protected entities
-      entity-damage: true
+      entity-damage: true # Default: true
 
       # Blocks cannot be destroyed from explosions
-      explosion-block-damage: true
+      explosion-block-damage: true # Default: true
       # Entities cannot get damage from explosions
-      explosion-entity-damage: true
+      explosion-entity-damage: true # Default: true
 
     # Entities in entity-modifications cannot modify blocks
-    prevent-entity-modifications: true
+    prevent-entity-modifications: true # Default: true
     entity-modifications:
-      wither: true
-      enderman: false
-      ravager: false
+      wither: true # Default: true
+      enderman: false # Default: false
+      ravager: false # Default: false
 
 
-disable-commands: true
+disable-commands: true # Default: true
 disabled-commands:
   # Reload commands. WE DO NOT RECOMMEND USING THIS COMMAND. PLEASE RESTART THE SERVER.
   - "bukkit:reload"

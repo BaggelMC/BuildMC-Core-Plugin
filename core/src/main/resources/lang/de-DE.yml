@@ -114,6 +114,7 @@ messages:
 
       entity-damage: "<red>Dieser Entity wird durch einen Claim geschützt.</red>"
       entity-rename: "<red>Dieser Entity wird durch einen Claim geschützt.</red>"
+      entity-tame: "<red>Dieser Entity wird durch einen Claim geschützt.</red>"
 
       sign: "<red>Dieses Schild wird durch einen Claim geschützt.</red>"
       interact: "<red>Dieser Block wird durch einen Claim geschützt.</red>"

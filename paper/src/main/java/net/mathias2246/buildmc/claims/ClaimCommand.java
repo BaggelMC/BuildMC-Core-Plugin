@@ -14,52 +14,54 @@ import org.bukkit.scoreboard.Team;
 
 import java.io.IOException;
 
-import static net.mathias2246.buildmc.Main.claimManager;
+import static net.mathias2246.buildmc.Main.*;
 
 public class ClaimCommand implements CustomCommand {
     @Override
     public LiteralCommandNode<CommandSourceStack> getCommand() {
         var cmd = Commands.literal("claim");
-        cmd.then(
-                Commands.literal("claimtool")
-                .executes(
-                        (command) -> {
-                            if (!(command.getSource().getExecutor() instanceof Player player)) {
-                                command.getSource().getSender().sendMessage(Component.translatable("messages.error.not-a-player"));
-                                return 0;
-                            }
+        if (config.getBoolean("claims.tool.enable-give-command", true)) {
+            cmd.then(
+                    Commands.literal("claimtool")
+                            .executes(
+                                    (command) -> {
+                                        if (!(command.getSource().getExecutor() instanceof Player player)) {
+                                            command.getSource().getSender().sendMessage(Component.translatable("messages.error.not-a-player"));
+                                            return 0;
+                                        }
 
-                            // Check if there is space left in the inventory
-                            if (player.getInventory().firstEmpty() == -1) {
-                                player.sendMessage(Component.translatable("messages.claims.tool.full-inventory"));
-                                return 0;
-                            }
+                                        // Check if there is space left in the inventory
+                                        if (player.getInventory().firstEmpty() == -1) {
+                                            player.sendMessage(Component.translatable("messages.claims.tool.full-inventory"));
+                                            return 0;
+                                        }
 
-                            ClaimTool.giveToolToPlayer(player);
-                            player.sendMessage(Component.translatable("messages.claims.tool.give-success"));
-                            return 1;
-                        })
+                                        ClaimTool.giveToolToPlayer(player);
+                                        player.sendMessage(Component.translatable("messages.claims.tool.give-success"));
+                                        return 1;
+                                    })
             );
-        cmd.then(
-                Commands.literal("removetool")
-                        .executes(
-                                (command) -> {
-                                    if (!(command.getSource().getExecutor() instanceof Player player)) {
-                                        command.getSource().getSender().sendMessage(Component.translatable("messages.error.not-a-player"));
-                                        return 0;
-                                    }
+            cmd.then(
+                    Commands.literal("removetool")
+                            .executes(
+                                    (command) -> {
+                                        if (!(command.getSource().getExecutor() instanceof Player player)) {
+                                            command.getSource().getSender().sendMessage(Component.translatable("messages.error.not-a-player"));
+                                            return 0;
+                                        }
 
-                                    // Check if there is space left in the inventory
-                                    if (player.getInventory().firstEmpty() == -1) {
-                                        player.sendMessage(Component.translatable("messages.claims.tool.full-inventory"));
-                                        return 0;
-                                    }
+                                        // Check if there is space left in the inventory
+                                        if (player.getInventory().firstEmpty() == -1) {
+                                            player.sendMessage(Component.translatable("messages.claims.tool.full-inventory"));
+                                            return 0;
+                                        }
 
-                                    ClaimTool.giveRemoveToolToPlayer(player);
-                                    player.sendMessage(Component.translatable("messages.claims.tool.give-success"));
-                                    return 1;
-                                })
-        );
+                                        ClaimTool.giveRemoveToolToPlayer(player);
+                                        player.sendMessage(Component.translatable("messages.claims.tool.give-success"));
+                                        return 1;
+                                    })
+            );
+        }
         cmd.then(
                 Commands.literal("who")
                         .executes(
@@ -118,7 +120,7 @@ public class ClaimCommand implements CustomCommand {
                                                                     for (var p : ps.resolve(command.getSource())) {
                                                                         if (ClaimManager.isPlayerWhitelisted(claimManager, team, p)) {
                                                                             command.getSource().getSender().sendMessage(
-                                                                                    Component.translatable("messages.claims.already-whitelisted")
+                                                                                    Message.msg(player, "messages.claims.already-whitelisted")
                                                                                             .replaceText(TextReplacementConfig.builder()
                                                                                                     .matchLiteral("%player%")
                                                                                                     .replacement(p.getName())
@@ -127,7 +129,7 @@ public class ClaimCommand implements CustomCommand {
                                                                         }
 
                                                                         ClaimManager.setPlayerWhitelisted(claimManager, team, p);
-                                                                        command.getSource().getSender().sendMessage(Component.translatable("messages.claims.successfully-whitelisted"));
+                                                                        command.getSource().getSender().sendMessage(Component.translatable("messages.claims.successfully-removed-whitelisted"));
                                                                     }
 
                                                                     try {

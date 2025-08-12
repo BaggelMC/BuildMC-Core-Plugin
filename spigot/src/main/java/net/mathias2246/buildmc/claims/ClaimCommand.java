@@ -12,53 +12,12 @@ import org.bukkit.scoreboard.Team;
 
 import java.io.IOException;
 
-import static net.mathias2246.buildmc.Main.audiences;
-import static net.mathias2246.buildmc.Main.claimManager;
+import static net.mathias2246.buildmc.Main.*;
 
 public class ClaimCommand implements CustomCommand {
     @Override
     public CommandAPICommand getCommand() {
-        return new CommandAPICommand("claim")
-                .withSubcommand(
-                    new CommandAPICommand("claimtool")
-                    .executes(
-                            (command) -> {
-                                if (!(command.sender() instanceof Player player)) {
-                                    command.sender().sendMessage(Message.noPlayerErrorMsgStr(command.sender()));
-                                    return;
-                                }
-
-                                // Check if there is space left in the inventory
-                                if (player.getInventory().firstEmpty() == -1) {
-                                    audiences.sender(player).sendMessage(Message.msg(player, "messages.claims.tool.full-inventory"));
-
-                                    return;
-                                }
-
-                                ClaimTool.giveToolToPlayer(player);
-                                audiences.sender(player).sendMessage(Message.msg(player, "messages.claims.tool.give-success"));
-                            })
-                )
-                .withSubcommand(
-                        new CommandAPICommand("removetool")
-                                .executes(
-                                        (command) -> {
-                                            if (!(command.sender() instanceof Player player)) {
-                                                command.sender().sendMessage(Message.noPlayerErrorMsgStr(command.sender()));
-                                                return;
-                                            }
-
-                                            // Check if there is space left in the inventory
-                                            if (player.getInventory().firstEmpty() == -1) {
-                                                audiences.sender(player).sendMessage(Message.msg(player, "messages.claims.tool.full-inventory"));
-
-                                                return;
-                                            }
-
-                                            ClaimTool.giveRemoveToolToPlayer(player);
-                                            audiences.sender(player).sendMessage(Message.msg(player, "messages.claims.tool.give-success"));
-                                        })
-                )
+        var cmd = new CommandAPICommand("claim")
                 .withSubcommand(
                         new CommandAPICommand("who")
                                 .executes(
@@ -117,7 +76,11 @@ public class ClaimCommand implements CustomCommand {
                                                     if (p == null) return;
 
                                                     if (ClaimManager.isPlayerWhitelisted(claimManager, team, p)) {
-                                                        audiences.sender(command.sender()).sendMessage(Component.translatable("messages.claims.already-whitelisted"));
+                                                        audiences.sender(command.sender()).sendMessage(Message.msg(player, "messages.claims.already-whitelisted")
+                                                                .replaceText(TextReplacementConfig.builder()
+                                                                        .matchLiteral("%player%")
+                                                                        .replacement(p.getName())
+                                                                        .build()));
                                                         return;
                                                     }
 
@@ -150,7 +113,7 @@ public class ClaimCommand implements CustomCommand {
                                                     if (p == null) return;
 
                                                     ClaimManager.removePlayerWhitelisted(claimManager, team, p);
-                                                    audiences.sender(command.sender()).sendMessage(Component.translatable("messages.claims.successfully-whitelisted"));
+                                                    audiences.sender(command.sender()).sendMessage(Component.translatable("messages.claims.successfully-removed-whitelisted"));
 
                                                     try {
                                                         claimManager.save();
@@ -159,11 +122,53 @@ public class ClaimCommand implements CustomCommand {
                                                     }
                                                 })
                                 )
-                )
-
-                .executes(
+                ).executes(
                         (command) -> {
                         }
                 );
+
+                if (config.getBoolean("claims.tool.enable-give-command", true)) {
+                    var claimTool = new CommandAPICommand("claimtool")
+                            .executes(
+                                    (command) -> {
+                                        if (!(command.sender() instanceof Player player)) {
+                                            command.sender().sendMessage(Message.noPlayerErrorMsgStr(command.sender()));
+                                            return;
+                                        }
+
+                                        // Check if there is space left in the inventory
+                                        if (player.getInventory().firstEmpty() == -1) {
+                                            audiences.sender(player).sendMessage(Message.msg(player, "messages.claims.tool.full-inventory"));
+
+                                            return;
+                                        }
+
+                                        ClaimTool.giveToolToPlayer(player);
+                                        audiences.sender(player).sendMessage(Message.msg(player, "messages.claims.tool.give-success"));
+                                    });
+
+                    var removeTool = new CommandAPICommand("removetool")
+                            .executes(
+                                    (command) -> {
+                                        if (!(command.sender() instanceof Player player)) {
+                                            command.sender().sendMessage(Message.noPlayerErrorMsgStr(command.sender()));
+                                            return;
+                                        }
+
+                                        // Check if there is space left in the inventory
+                                        if (player.getInventory().firstEmpty() == -1) {
+                                            audiences.sender(player).sendMessage(Message.msg(player, "messages.claims.tool.full-inventory"));
+
+                                            return;
+                                        }
+
+                                        ClaimTool.giveRemoveToolToPlayer(player);
+                                        audiences.sender(player).sendMessage(Message.msg(player, "messages.claims.tool.give-success"));
+                                    });
+                    cmd.withSubcommand(claimTool);
+                    cmd.withSubcommand(removeTool);
+                }
+
+                return cmd;
     }
 }
