@@ -27,6 +27,9 @@ Claims are always in **chunks**. You cannot claim areas smaller than a full chun
 
 > ⚠️ Only players in a team can claim land. Solo players cannot make claims.
 
+> ⚙️ As of patch 1.0.3, you can change if the player should shift-click or just right-click.
+>  <br>That's because some might be used to other tools working like that
+
 ---
 
 ## 🤝 Whitelisting Players
@@ -73,39 +76,60 @@ Below are relevant settings found in the plugin's config file:
 ### General Claim Settings
 
 ```yaml
-claims:
-  enabled: true                  # Enables the claim system
-  save-on-world-save: true       # Saves claim data on world save
-  max-chunk-claim-amount: 1024   # Max chunks a team can claim
+  # If true, players can manage their team claims using '/claim ...'.
+  # Admins can also set certain regions as server-claims that no one can do anything in
+  enabled: true # Default: true
+
+  # If true, all claim data will be writen to disk when the server saves the overworld.
+  # Only change this to false if you really need to
+  save-on-world-save: true # Default: true
+
+  # The amount of chunks each team can claim
+  max-chunk-claim-amount: 1024 # Default: 1024
 ```
 
 ### Claim Tool Settings
 
 ```yaml
-  tool:
-    tool-item: "carrot_on_a_stick"     # The item used as the claim tool
-    enable-give-command: true          # Allows any player to use /buildmc claimtool
-    limit-selection: 8                 # Max selection size (in chunks)
+      # Settings related to the claim-tool. The claim-tool (if enabled) can be obtained using '/buildmc claimtool'
+      tool:
+         # The item used for the claim-tool
+         tool-item: "carrot_on_a_stick" # Default: "carrot_on_a_stick"
+
+         # If true, the selection and remove tool will require the player to right-click instead of sneak-clicking to set the second position.
+         # NOTE: This will not change the '/claim help' text or the lore of the claim selection and remove tool.
+         #       You have to manually change them inside the language files.
+         use-right-instead-of-sneak-click: false # Default: false
+
+         # If true, players even without permissions can get the claim-tools using '/claim claimtool' or '/claim removetool'
+         enable-give-command: true # Default: true
+
+         # Limits the maximum size in chunks of the selection.
+         # The limit is disabled if lower than zero.
+         limit-selection: 8 # Default: 8
 ```
 
 ### Protections Within Claims
 
 ```yaml
-  protections:
-    player-break: true                # Blocks cannot be broken
-    player-place: true                # Blocks cannot be placed
-    containers: true                  # Containers (e.g., chests) cannot be opened
+    # What aspects are protected when claimed
+    protections:
+       # Players cannot break blocks
+       player-break: true # Default: true
+       # Players cannot place blocks
+       player-place: true # Default: true
 
-    explosion-block-damage: true      # Blocks protected from explosions
-    explosion-entity-damage: true     # Entities protected from explosions
-
-    damage:
-      entity-damage: true             # Players can't damage protected entities
-      exclude-players: true           # Players can still hurt each other
+       # Players cannot open containers (e.g. Chests, Barrels...)
+       # Players are still able to open their ender chests or read books in lecterns.
+       # But players can't take books from lecterns in others claims.
+       containers: true # Default: true
+      
+      # There are much more setting than this. But it would be way too much...
 ```
+
 
 ---
 
-## 🛡️ Notes
+## 🛡️ Note
 
-* **All claims are team-based.** Only team members can claim and remove claims.
+_This system will be completely overwritten in the future..._

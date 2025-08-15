@@ -32,12 +32,12 @@ Further customization is available in the plugin’s configuration file:
 
 Here’s what you can configure:
 
-| Key                 | Description                                                                                                             |
-|---------------------|-------------------------------------------------------------------------------------------------------------------------|
-| `enabled`           | Enables/disables the entire Spawn Elytra feature. *(Default: true)*                                                     |
-| `strength`          | Boost power (velocity multiplier). <br>**1** = no boost, **5** = default BuildMC value.                                 |
-| `disable-rockets`   | Blocks players from using **firework rockets** during flight. <br>Set to `true` to **prevent abuse**. *(Default: true)* |
-| `zone`              | Manually define or adjust the `world`, `pos1`, and `pos2` if needed. Useful for fine-tuning after setup.                |
+| Key                 | Description                                                                                                                                                       |
+|---------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `enabled`           | Enables/disables the entire Spawn Elytra feature. *(Default: true)*                                                                                               |
+| `strength`          | Boost power (velocity multiplier). <br>**1** = no boost, **5** = default BuildMC value.                                                                           |
+| `disable-rockets`   | Blocks players from using **firework rockets** during flight. <br>Set to `true` to **prevent abuse**. *(Default: true)*                                           |
+| `zone`              | Manually define or adjust the `world`, `pos1`, and `pos2` if needed. It is recommended to use the `/buildmc elytrazone` command instead of editing this directly. |
 
 You can change translations and messages for the spawn-elytra under `lang/some-language.yml` → `messages.spawn-elytra`.
 

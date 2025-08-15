@@ -3,7 +3,7 @@
     <parent>
         <groupId>net.mathias2246</groupId>
         <artifactId>BuildMC-Parent</artifactId>
-        <version>1.0.3</version>
+        <version>1.0.4</version>
     </parent>
 
     <artifactId>BuildMC-Core-Paper</artifactId>
@@ -33,7 +33,7 @@
         <dependency>
             <groupId>net.mathias2246</groupId>
             <artifactId>core</artifactId>
-            <version>1.0.3</version>
+            <version>1.0.4</version>
             <scope>compile</scope>
         </dependency>
         <!--suppress VulnerableLibrariesLocal -->

@@ -17,7 +17,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemRarity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.metadata.*;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Team;
@@ -69,6 +69,10 @@ public class ClaimTool implements Listener {
             meta.setRarity(ItemRarity.UNCOMMON);
             meta.setEnchantmentGlintOverride(true);
             meta.setEnchantable(null);
+            var k = config.getString("claims.tool.remove-item-model-id");
+            if (k != null && !k.equals("null")) {
+                meta.setItemModel(NamespacedKey.fromString(k));
+            }
             meta.getPersistentDataContainer().set(REMOVE_TOOL_ITEM_PDC_KEY, PersistentDataType.BOOLEAN, true);
             removeToolItemstack.setItemMeta(meta);
         }
@@ -86,6 +90,10 @@ public class ClaimTool implements Listener {
             m.setRarity(ItemRarity.UNCOMMON);
             m.setEnchantmentGlintOverride(true);
             m.setEnchantable(null);
+            var k = config.getString("claims.tool.item-model-id");
+            if (k != null && !k.equals("null")) {
+                m.setItemModel(NamespacedKey.fromString(k));
+            }
             m.getPersistentDataContainer().set(CLAIM_TOOL_ITEM_PDC_KEY, PersistentDataType.BOOLEAN, true);
             claimToolItemstack.setItemMeta(m);
         }

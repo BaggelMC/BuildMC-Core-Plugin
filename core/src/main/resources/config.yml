@@ -72,6 +72,12 @@ claims:
     # The item used for the claim-tool
     tool-item: "carrot_on_a_stick" # Default: "carrot_on_a_stick"
 
+    # The item model id used for the 'minecraft:item_model' component of the tools.
+    # Use 'null' for the default minecraft item model.
+    # NOTE: Every player needs a custom resourcepack for your custom models to work.
+    item-model-id: "null" # Default: "null"
+    remove-item-model-id: "null" # Default: "null"
+
     # If true, the selection and remove tool will require the player to right-click instead of sneak-clicking to set the second position.
     # NOTE: This will not change the '/claim help' text or the lore of the claim selection and remove tool.
     #       You have to manually change them inside the language files.
@@ -80,7 +86,8 @@ claims:
     # If true, players even without permissions can get the claim-tools using '/claim claimtool' or '/claim removetool'
     enable-give-command: true # Default: true
 
-    # Limits the maximum size in chunks of the selection
+    # Limits the maximum size in chunks of the selection.
+    # The limit is disabled if lower than zero.
     limit-selection: 8 # Default: 8
 
   # What aspects are protected when claimed

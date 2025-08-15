@@ -44,8 +44,8 @@ public class EndListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerPortal(PlayerPortalEvent event) {
-
         if (allowEnd) return;
+        if (event.getPlayer().hasPermission("buildmc.bypass-end-event")) return;
 
         if (event.getTo().getWorld().getEnvironment() == World.Environment.THE_END) {
             event.setCancelled(true);

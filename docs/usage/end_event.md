@@ -14,7 +14,7 @@ The **End Event System** in BuildMC-Core is designed to delay endgame progressio
 
 ## 🛠️ Commands
 
-Admins can **toggle access to the End** dynamically. **No restart required**:
+Admins (requires `buildmc.admin` permission) can **toggle access to the End** dynamically. **No restart required**:
 
 ```plaintext
 /buildmc endevent close
@@ -39,7 +39,15 @@ Located in:
 
 | Key                          | Description                                                                             |
 |------------------------------|-----------------------------------------------------------------------------------------|
+| `end-event.allow-end`        | If the end portal can be used or not. This should be changed using `/buildmc endevent`  |
 | `end-event.blocked-entities` | Prevents certain entities to use the end portal like TNT or creepers. *(Default: true)* |
+
+
+## 📌 Permissions
+
+In Patch 1.0.4, the `buildmc.bypass-end-event` permission was added.<br>
+With this permission you are able to enter the end dimension even when closed.<br>
+See [Custom Permissions](https://github.com/BaggelMC/BuildMC-Core-Plugin/blob/master/docs/usage/custom_permissions.md)
 
 ---
 
@@ -63,7 +71,3 @@ Located in:
 > 🗓️ "The End will open this Saturday at 6PM UTC. Be there for the first Ender Dragon battle and loot!"
 
 Players log in, coordinate, and participate, creating **memorable moments** and renewed interest in the server.
-
----
-
-🌀 *The End Event system is simple but powerful. Use it to shape your server’s pacing and turn the End into an exciting, shared milestone.* 🐉
