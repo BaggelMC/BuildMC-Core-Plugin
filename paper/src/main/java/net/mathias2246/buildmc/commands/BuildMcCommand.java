@@ -3,6 +3,7 @@ package net.mathias2246.buildmc.commands;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
+import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.endEvent.EndEventCommand;
 import net.mathias2246.buildmc.spawnElytra.ElytraZoneCommand;
 import org.bukkit.permissions.Permission;
@@ -30,6 +31,20 @@ public class BuildMcCommand implements CustomCommand {
         debugSub.requires(
                         (c) -> c.getSender().hasPermission(new Permission("buildmc.operator"))
                 );
+
+        var statusSub =
+                Commands.literal("status")
+                        .requires((command) -> command.getSender().isOp())
+                    .then(
+                        Commands.literal("reload")
+                                .executes(
+                                        (command) -> {
+                                            Main.statusConfig.reload();
+                                            return 1;
+                                        }
+                                )
+        );
+        cmd.then(statusSub);
 
         var endSub = new EndEventCommand().getCommandBuilder();
         cmd.then(endSub);

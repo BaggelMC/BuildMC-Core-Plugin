@@ -25,7 +25,6 @@ spawn-elytra:
       z:
 
 
-#
 status:
   # If players should be able to use the '/status' command
   enabled: true # Default: true
@@ -195,7 +194,7 @@ claims:
       # Includes Doors, Trapdoors and Fence-Gates
       doors: true # Default: true
 
-      # This only disables the ability to destroy farmland by jumping on it
+      # This disables the ability to destroy farmland by jumping on it
       farmland: true # Default: true
 
       attach-leash: true # Default: true

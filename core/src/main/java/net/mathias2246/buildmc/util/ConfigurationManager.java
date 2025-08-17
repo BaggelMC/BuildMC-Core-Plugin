@@ -38,6 +38,15 @@ public abstract class ConfigurationManager {
         setupConfiguration();
     }
 
+    public void reload() {
+        try {
+            configuration.load(configFile);
+        } catch (IOException | InvalidConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+        setupConfiguration();
+    }
+
     /**The configuration file*/
     public File getConfigFile() {
         return configFile;

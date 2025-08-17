@@ -17,6 +17,7 @@ public class StatusConfig extends ConfigurationManager {
 
     @Override
     public void setupConfiguration() {
+        loadedStatuses.clear();
         for (var key : configuration.getKeys(false)) {
             //if (!configuration.isConfigurationSection(key)) return;
 
