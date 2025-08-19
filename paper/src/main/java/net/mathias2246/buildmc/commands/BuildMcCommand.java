@@ -6,7 +6,6 @@ import io.papermc.paper.command.brigadier.Commands;
 import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.endEvent.EndEventCommand;
 import net.mathias2246.buildmc.spawnElytra.ElytraZoneCommand;
-import org.bukkit.permissions.Permission;
 
 public class BuildMcCommand implements CustomCommand {
 
@@ -29,7 +28,7 @@ public class BuildMcCommand implements CustomCommand {
                 }
         );
         debugSub.requires(
-                        (c) -> c.getSender().hasPermission(new Permission("buildmc.operator"))
+                        (c) -> c.getSender().isOp()
                 );
 
         var statusSub =
@@ -53,7 +52,6 @@ public class BuildMcCommand implements CustomCommand {
         cmd.then(elytraSub);
 
         cmd.then(debugSub);
-
 
         return cmd.build();
     }

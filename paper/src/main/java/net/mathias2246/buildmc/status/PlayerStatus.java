@@ -1,6 +1,7 @@
 package net.mathias2246.buildmc.status;
 
 import net.kyori.adventure.text.Component;
+import net.mathias2246.buildmc.util.Sounds;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -31,6 +32,7 @@ public class PlayerStatus implements Listener {
                 player.getPersistentDataContainer().remove(PLAYER_STATUS_PDC);
             } else {
                 player.sendMessage(Component.translatable("messages.status.not-found"));
+                Sounds.playSound(player, Sounds.MISTAKE);
             }
             return;
         }
@@ -42,6 +44,11 @@ public class PlayerStatus implements Listener {
                 case NOT_IN_TEAM -> player.sendMessage(Component.translatable("messages.status.not-in-team"));
                 case MISSING_PERMISSION -> player.sendMessage(Component.translatable("messages.status.no-permission"));
             }
+            if (join) {
+                player.getPersistentDataContainer().remove(PLAYER_STATUS_PDC);
+                return;
+            }
+            Sounds.playSound(player, Sounds.MISTAKE);
             return;
         }
 
@@ -58,7 +65,9 @@ public class PlayerStatus implements Listener {
                 status
         );
 
+        if (join) return;
         player.sendMessage(Component.translatable("messages.status.successfully-set"));
+        Sounds.playSound(player, Sounds.SUCCESS);
     }
 
     public static void removePlayerStatus(@NotNull Player player) {

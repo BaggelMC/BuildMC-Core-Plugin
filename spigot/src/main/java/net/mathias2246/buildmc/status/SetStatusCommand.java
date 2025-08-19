@@ -4,6 +4,7 @@ import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.StringArgument;
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.commands.CustomCommand;
+import net.mathias2246.buildmc.util.Sounds;
 import org.bukkit.entity.Player;
 import org.bukkit.help.HelpTopic;
 import org.jetbrains.annotations.NotNull;
@@ -42,6 +43,8 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
                         return;
                     }
                     PlayerStatus.removePlayerStatus(player);
+                    audiences.sender(command.sender()).sendMessage(Component.translatable( "messages.status.successfully-removed"));
+                    Sounds.playSound(player, Sounds.SUCCESS);
                 }
         );
 
@@ -52,17 +55,18 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
                             audiences.sender(command.sender()).sendMessage(Component.translatable("messages.status.only-players"));
                             return;
                         }
-                        PlayerStatus.setPlayerStatus(player, command.args().getByClass("status", String.class));
+                        PlayerStatus.setPlayerStatus(player, command.args().getByClass("status", String.class), false);
                     }
             )
                 .withArguments(
                         new StringArgument("status")
                                 .replaceSuggestions(
-                                        (info, builder) -> {
-                                            for (var k : StatusConfig.loadedStatuses.keySet()) {
+                                        (command, builder) -> {
 
-                                                builder.suggest(k);
+                                            for (var statusId : StatusConfig.loadedStatuses.keySet()) {
+                                                builder.suggest(statusId);
                                             }
+
                                             return builder.buildFuture();
                                         }
                                 )

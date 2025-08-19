@@ -45,8 +45,11 @@ public class ClaimTool implements Listener {
 
     private static boolean useRightClick = false;
 
+    private static int toolCooldownTicks = 60;
+
     public static void setup() {
 
+        toolCooldownTicks = config.getInt("claims.tool.cooldown-ticks", 60);
         useRightClick = config.getBoolean("claims.tool.use-right-instead-of-sneak-click", false);
 
         var claimToolItem = Material.getMaterial(config.getString("claims.tool.tool-item", "carrot_on_a_stick").toUpperCase());
@@ -325,7 +328,7 @@ public class ClaimTool implements Listener {
                     player.setMetadata("selection_particles", new FixedMetadataValue(plugin, null));
                     new ParticleSpawner(player, false).runTaskTimer(plugin, 0, 5);
                 }
-                player.setCooldown(event.getItem(), 60);
+                player.setCooldown(event.getItem(), toolCooldownTicks);
             } else {
                 // Fail if the player has no first position set
                 if (!player.hasMetadata("claim_tool_pos1")) {
@@ -393,7 +396,7 @@ public class ClaimTool implements Listener {
                     player.setMetadata("selection_particles", new FixedMetadataValue(plugin, null));
                     new ParticleSpawner(player, true).runTaskTimer(plugin, 0, 5);
                 }
-                player.setCooldown(event.getItem(), 60);
+                player.setCooldown(event.getItem(), toolCooldownTicks);
             } else {
                 // Fail if the player has no first position set
                 if (!player.hasMetadata("claim_tool_pos1")) {

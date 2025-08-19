@@ -63,7 +63,7 @@ public final class CoreMain {
         }
 
         if (config.getBoolean("claims.protections.damage.explosion-block-damage", true) || config.getBoolean("claims.protections.explosion-entity-damage", true)) {
-            plugin.getServer().getPluginManager().registerEvents(new ClaimExplosionsListener(), plugin);
+            plugin.getServer().getPluginManager().registerEvents(new ClaimExplosionsListener(config.getBoolean("claims.protections.damage.allow-wind-charges", true)), plugin);
         }
         if (config.getBoolean("claims.protections.damage.explosion-entity-damage", true)) {
             plugin.getServer().getPluginManager().registerEvents(new ClaimExplosionDamageListener(), plugin);

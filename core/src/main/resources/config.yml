@@ -73,9 +73,13 @@ claims:
 
     # The item model id used for the 'minecraft:item_model' component of the tools.
     # Use 'null' for the default minecraft item model.
-    # NOTE: Every player needs a custom resourcepack for your custom models to work.
+    # NOTE: Every player needs a custom resourcepack for your custom models to work or else their game will show a black and pink box.
     item-model-id: "null" # Default: "null"
     remove-item-model-id: "null" # Default: "null"
+
+    # The tool cooldown (int ticks) to apply.
+    # Set to 0 or smaller to disable the cooldown.
+    cooldown-ticks: 60 # Default: 60
 
     # If true, the selection and remove tool will require the player to right-click instead of sneak-clicking to set the second position.
     # NOTE: This will not change the '/claim help' text or the lore of the claim selection and remove tool.
@@ -213,6 +217,9 @@ claims:
       explosion-block-damage: true # Default: true
       # Entities cannot get damage from explosions
       explosion-entity-damage: true # Default: true
+
+      # Allow wind charges to be used for knockback in claims.
+      allow-wind-charges: true # Default: true
 
     # Entities in entity-modifications cannot modify blocks
     prevent-entity-modifications: true # Default: true

@@ -3,7 +3,7 @@
     <parent>
         <groupId>net.mathias2246</groupId>
         <artifactId>BuildMC-Parent</artifactId>
-        <version>1.0.4</version>
+        <version>1.0.5</version>
     </parent>
 
     <artifactId>BuildMC-Core-Spigot</artifactId>
@@ -37,7 +37,7 @@
         <dependency>
             <groupId>net.mathias2246</groupId>
             <artifactId>core</artifactId>
-            <version>1.0.4</version>
+            <version>${project.buildVersion}</version>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
@@ -68,6 +68,7 @@
     </dependencies>
 
     <build>
+        <finalName>BuildMC-Core-Spigot-${project.buildVersion}-${minecraft.versionRange}</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
