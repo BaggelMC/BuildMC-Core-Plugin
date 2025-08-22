@@ -9,6 +9,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.claims.Claim;
+import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -22,7 +23,8 @@ public class ClaimEditMenu {
 
     public static void open(Player player, Claim claim) {
         ChestGui gui = new ChestGui(3,
-                ComponentHolder.of(Message.msg(player, "messages.claims.ui.edit-menu.title", Map.of("claim", claim.getName()))));
+                ComponentHolder.of(Message.msg(player, "messages.claims.ui.edit-menu.title",
+                        Map.of("claim", claim.getName()))));
 
         StaticPane pane = new StaticPane(0, 0, 9, 3);
 
@@ -50,13 +52,53 @@ public class ClaimEditMenu {
                             Component.text("Open Whitelist Menu (not implemented yet)", NamedTextColor.GRAY));
                 }), 4, 1);
 
-        // Delete button
+        // Delete button → opens confirmation menu
         pane.addItem(makeButton(Material.BARRIER, Component.translatable("messages.claims.ui.edit-menu.delete"),
                 e -> {
                     e.setCancelled(true);
-                    CoreMain.mainClass.sendPlayerMessage(player,
-                            Component.text("Delete Claim (not implemented yet)", NamedTextColor.GRAY));
+                    openDeleteConfirmationMenu(player, claim);
                 }), 6, 1);
+
+        gui.addPane(pane);
+        gui.show(player);
+    }
+
+    private static void openDeleteConfirmationMenu(Player player, Claim claim) {
+        ChestGui gui = new ChestGui(3,
+                ComponentHolder.of(Message.msg(player, "messages.claims.ui.edit-menu.delete-confirm-menu.title", Map.of("claim", claim.getName()))));
+
+        StaticPane pane = new StaticPane(0, 0, 9, 3);
+
+        // Filler
+        ItemStack filler = createGlassPane(Material.RED_STAINED_GLASS_PANE);
+        GuiItem fillerItem = new GuiItem(filler, e -> e.setCancelled(true));
+        for (int x = 0; x < 9; x++) {
+            for (int y = 0; y < 3; y++) {
+                pane.addItem(fillerItem, x, y);
+            }
+        }
+
+        // Cancel
+        pane.addItem(makeButton(Material.GREEN_CONCRETE, Component.translatable("messages.claims.ui.edit-menu.delete-confirm-menu.cancel"),
+                e -> {
+                    e.setCancelled(true);
+                    open(player, claim); // reopen edit menu
+                }), 3, 1);
+
+        // Confirm
+        pane.addItem(makeButton(Material.RED_CONCRETE, Component.translatable("messages.claims.ui.edit-menu.delete-confirm-menu.confirm"),
+                e -> {
+                    e.setCancelled(true);
+                    boolean removed = ClaimManager.removeClaimById(claim.getId());
+                    if (removed) {
+                        CoreMain.mainClass.sendPlayerMessage(player,
+                                Component.translatable("messages.claims.ui.edit-menu.delete-confirm-menu.success"));
+                    } else {
+                        CoreMain.mainClass.sendPlayerMessage(player,
+                                Component.translatable("messages.claims.ui.edit-menu.delete-confirm-menu.fail"));
+                    }
+                    player.closeInventory();
+                }), 5, 1);
 
         gui.addPane(pane);
         gui.show(player);
@@ -67,14 +109,12 @@ public class ClaimEditMenu {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(LegacyComponentSerializer.legacySection()
-                    .serialize(name));
+            meta.setDisplayName(LegacyComponentSerializer.legacySection().serialize(name));
             item.setItemMeta(meta);
         }
         return new GuiItem(item, action);
     }
 
-    @SuppressWarnings("SameParameterValue")
     private static ItemStack createGlassPane(Material material) {
         ItemStack pane = new ItemStack(material);
         ItemMeta meta = pane.getItemMeta();
