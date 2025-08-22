@@ -167,6 +167,9 @@ messages:
         next: "<yellow>Next</yellow>"
         page-indicator: "<yellow>Page %current%/%total%</yellow>"
 
+        confirm: "<red>Confirm</red>"
+        cancel: "<green>Cancel</green>"
+
       errors:
         no-item-meta: "<red>Error: Failed to generate item-meta."
 
@@ -187,14 +190,11 @@ messages:
         delete-confirm-menu:
           title: "<red>Confirm Deletion of %claim%</red>"
 
-          cancel: "<green>Cancel</green>"
-          confirm: "<red>Confirm</red>"
-
           success: "<green>Claim deleted successfully.</green>"
           fail: "<red>Error: Failed to delete claim.</red>"
 
       protections-menu:
-        title: "<gold>Protections: %claim%</gold>"
+        title: "<gold>Protections: '%claim%'</gold>"
 
         enabled: "<green>Enabled</green> <gray>(Click to disable)</gray>"
         disabled: "<red>Disable</red> <gray>(Click to enable)</gray>"
@@ -314,6 +314,15 @@ messages:
             name: "<green>Ravager Modifications</green>"
             lore: '<gray>Prevents the ravager from changing blocks.</gray>\n<color:#912921>Depends on "Entity Modifications" being enabled.</color>'
 
+      whitelist-menu:
+        title: "<gold>Whitelist for '%claim%'</gold>"
+
+        add: "<green>Add player</green>"
+        remove: "<red>Remove player</red>"
+
+        delete-confirm-menu:
+          title: "Remove %player%?"
+          success: "<green>Player removed from whitelist!</green>"
 
 
   status:

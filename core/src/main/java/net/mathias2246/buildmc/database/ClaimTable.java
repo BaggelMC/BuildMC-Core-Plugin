@@ -302,12 +302,6 @@ public class ClaimTable implements DatabaseTable {
             ps.setObject(2, playerUuid);
             ps.executeUpdate();
         }
-
-        Claim cached = claimCache.getIfPresent(claimId);
-        if (cached != null) {
-            cached.getWhitelistedPlayers().add(playerUuid);
-            claimCache.put(claimId, cached);
-        }
     }
 
     public void removeWhitelistedPlayer(Connection conn, long claimId, UUID playerUuid) throws SQLException {
@@ -318,12 +312,6 @@ public class ClaimTable implements DatabaseTable {
             ps.setLong(1, claimId);
             ps.setObject(2, playerUuid);
             ps.executeUpdate();
-        }
-
-        Claim cached = claimCache.getIfPresent(claimId);
-        if (cached != null) {
-            cached.getWhitelistedPlayers().remove(playerUuid);
-            claimCache.put(claimId, cached);
         }
     }
 

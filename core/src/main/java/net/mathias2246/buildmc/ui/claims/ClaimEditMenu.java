@@ -77,14 +77,14 @@ public class ClaimEditMenu {
         }
 
         // Cancel
-        pane.addItem(makeButton(Material.GREEN_CONCRETE, Component.translatable("messages.claims.ui.edit-menu.delete-confirm-menu.cancel"),
+        pane.addItem(makeButton(Material.GREEN_CONCRETE, Component.translatable("messages.claims.ui.general.cancel"),
                 e -> {
                     e.setCancelled(true);
                     open(player, claim); // reopen edit menu
                 }), 3, 1);
 
         // Confirm
-        pane.addItem(makeButton(Material.RED_CONCRETE, Component.translatable("messages.claims.ui.edit-menu.delete-confirm-menu.confirm"),
+        pane.addItem(makeButton(Material.RED_CONCRETE, Component.translatable("messages.claims.ui.general.confirm"),
                 e -> {
                     e.setCancelled(true);
                     boolean removed = ClaimManager.removeClaimById(claim.getId());
