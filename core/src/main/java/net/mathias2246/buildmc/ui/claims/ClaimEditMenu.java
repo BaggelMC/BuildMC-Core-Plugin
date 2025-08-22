@@ -5,7 +5,6 @@ import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.claims.Claim;
@@ -48,8 +47,7 @@ public class ClaimEditMenu {
         pane.addItem(makeButton(Material.PLAYER_HEAD, Component.translatable("messages.claims.ui.edit-menu.whitelist"),
                 e -> {
                     e.setCancelled(true);
-                    CoreMain.mainClass.sendPlayerMessage(player,
-                            Component.text("Open Whitelist Menu (not implemented yet)", NamedTextColor.GRAY));
+                    WhitelistMenu.open(player,claim);
                 }), 4, 1);
 
         // Delete button → opens confirmation menu
