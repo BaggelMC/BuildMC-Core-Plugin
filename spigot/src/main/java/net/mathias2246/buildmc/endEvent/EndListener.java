@@ -1,11 +1,11 @@
 package net.mathias2246.buildmc.endEvent;
 
 import net.kyori.adventure.text.Component;
-import net.mathias2246.buildmc.Main;
-import net.mathias2246.buildmc.util.Message;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -13,7 +13,9 @@ import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 
 import java.util.List;
+import java.util.Objects;
 
+import static net.mathias2246.buildmc.Main.audiences;
 import static net.mathias2246.buildmc.Main.config;
 
 public class EndListener implements Listener {
@@ -28,41 +30,35 @@ public class EndListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityPortal(EntityPortalEvent event) {
+        if (!(event.getTo() instanceof Location to)) return;
+        if (Objects.requireNonNull(to.getWorld()).getEnvironment().equals(World.Environment.THE_END)) return;
+
         Entity entity = event.getEntity();
         EntityType type = entity.getType();
 
-        World fromWorld = entity.getWorld();
-        World toWorld = event.getTo() != null ? event.getTo().getWorld() : null;
-        if (toWorld == null) return;
-
         if (allowEnd) {
-            if ((fromWorld.getEnvironment() == World.Environment.THE_END ||
-                    (toWorld.getEnvironment() == World.Environment.THE_END)) &&
-                    blockedEntities.contains(type.name())) {
-
+            if (blockedEntities.contains(type.name())) {
                 event.setCancelled(true);
             }
         } else {
-
-            if (toWorld.getEnvironment() == World.Environment.THE_END) {
-                event.setCancelled(true);
+            event.setCancelled(true);
+            if ((event instanceof Player player)) {
+                audiences.player(player).sendActionBar(Component.translatable("messages.end-event.closed-message"));
             }
         }
     }
-
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerPortal(PlayerPortalEvent event) {
         if (allowEnd) return;
         if (event.getPlayer().hasPermission("buildmc.bypass-end-event")) return;
+        if (!(event.getTo() instanceof Location to)) return;
 
-        if (event.getTo() == null || event.getTo().getWorld() == null) return;
 
-        if (event.getTo().getWorld().getEnvironment() == World.Environment.THE_END) {
+        if (Objects.requireNonNull(to.getWorld()).getEnvironment() == World.Environment.THE_END) {
             event.setCancelled(true);
 
-            Component message = Message.msg(event.getPlayer(), "messages.end-event.closed-message");
-            Main.audiences.player(event.getPlayer()).sendActionBar(message);
+            audiences.player(event.getPlayer()).sendActionBar(Component.translatable("messages.end-event.closed-message"));
         }
     }
 }

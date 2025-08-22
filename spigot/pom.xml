@@ -3,7 +3,7 @@
     <parent>
         <groupId>net.mathias2246</groupId>
         <artifactId>BuildMC-Parent</artifactId>
-        <version>1.0.5</version>
+        <version>1.0.6</version>
     </parent>
 
     <artifactId>BuildMC-Core-Spigot</artifactId>
@@ -48,7 +48,7 @@
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-platform-bukkit</artifactId>
-            <version>4.4.0</version>
+            <version>4.4.1</version>
         </dependency>
         <dependency>
             <groupId>net.kyori</groupId>
