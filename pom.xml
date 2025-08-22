@@ -6,7 +6,7 @@
     <groupId>net.mathias2246</groupId>
     <artifactId>BuildMC-Parent</artifactId>
 <!--When incrementing the project version increment this and the project.buildVersion property on line 23-->
-    <version>1.0.5</version>
+    <version>1.0.6</version>
     <packaging>pom</packaging>
     <name>BuildMC Parent</name>
 
@@ -20,7 +20,7 @@
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 <!--Increment this and the parent version in every pom.xml-->
-        <project.buildVersion>1.0.5</project.buildVersion>
+        <project.buildVersion>1.0.6</project.buildVersion>
 
         <minecraft.versionRange>1.21.4+</minecraft.versionRange>
     </properties>
