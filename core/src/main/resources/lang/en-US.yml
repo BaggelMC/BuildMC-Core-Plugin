@@ -124,6 +124,7 @@ messages:
       added: "<green>Protection flag <yellow>%flag%</yellow> was <green>enabled</green> for this claim."
       removed: "<green>Protection flag <yellow>%flag%</yellow> was <red>disabled</red> for this claim."
 
+    # TODO: Update
     help-message: |-
       <gold>------------- <green>Claims Help</green> -------------</gold>
       <aqua>Click <green><click:open_url:'https://github.com/BaggelMC/BuildMC-Core-Plugin/blob/master/docs/usage/claim_system.md'>here</click></green> to open the full documentation.</aqua>
@@ -159,6 +160,151 @@ messages:
       entity-bucket: "<red>This cute %entity% protected by a land claim.</red>"
 
       attach-leash: "<red>This entity is protected by a land claim.</red>"
+
+    ui:
+      general:
+        previous: "<yellow>Previous</yellow>"
+        next: "<yellow>Next</yellow>"
+        page-indicator: "<yellow>Page %current%/%total%</yellow>"
+
+      errors:
+        no-item-meta: "<red>Error: Failed to generate item-meta."
+
+      select-menu:
+        title: "<gold>Select a Claim</gold>"
+
+        player-type: "<gray>Type: Player Claim</gray>"
+        team-type: "<gray>Type: Team Claim</gray>"
+        id: "<dark_gray>ID: %id%</dark_gray>"
+
+      edit-menu:
+        title: "<gold>Edit Claim: '%claim%'</gold>"
+
+        protections: "<green>Protections</green>"
+        whitelist: "<aqua>Whitelist</aqua>"
+        delete: "<red>Delete Claim</red>"
+
+      protections-menu:
+        title: "<gold>Protections: %claim%</gold>"
+
+        enabled: "<green>Enabled</green> <gray>(Click to disable)</gray>"
+        disabled: "<red>Disable</red> <gray>(Click to enable)</gray>"
+
+        toggle-hint: "<dark_gray>Click below to toggle</dark_gray>"
+
+        flag:
+          player_break:
+            name: "<green>Player Block Breaking</green>"
+            lore: "<gray>Prevents players from breaking blocks.</gray>"
+          player_place:
+            name: "<green>Player Block Placing</green>"
+            lore: "<gray>Prevents players from placing blocks.</gray>"
+          container:
+            name: "<green>Containers</green>"
+            lore: "<gray>Prevents players from using containers (e.g. Chests, Hoppers..).</gray>"
+          allow_ender_chests:
+            name: "<green>Allow Ender Chests</green>"
+            lore: "<gray>Allows players to still use ender chests, even if containers are disabled.</gray>"
+          item_pickup:
+            name: "<green>Item Pickup</green>"
+            lore: "<gray>Prevents players from picking up items.</gray>"
+          item_drop:
+            name: "<green>Item Dropping</green>"
+            lore: "<gray>Prevents players from dropping items.</gray>"
+          sign_editing:
+            name: "<green>Sign Editing</green>"
+            lore: "<gray>Prevents players from editing signs.</gray>"
+          splash_potions:
+            name: "<green>Splash Potions</green>"
+            lore: "<gray>Prevents unauthorized players from using splash potions.</gray>"
+          vehicle_enter:
+            name: "<green>Vehicle Enter</green>"
+            lore: "<gray>Prevents players from entering vehicles.</gray>"
+          bucket_usage:
+            name: "<green>Bucket Usage</green>"
+            lore: "<gray>Prevents players from using buckets.</gray>"
+          frost_walker:
+            name: "<green>Frost Walker</green>"
+            lore: "<gray>Prevents players from using frost walker.</gray>"
+          piston_movement_across_claim_borders:
+            name: "<green>Pistons</green>"
+            lore: "<gray>Prevents pistons from moving blocks into and out of claims.</gray>"
+          prevent_interactions:
+            name: "<green>Stop Interactions</green>"
+            lore: "<gray>Toggles all Interaction Protections</gray>"
+          interaction_levers:
+            name: "<green>Lever Interactions</green>"
+            lore: '<gray>Prevents players from using levers.</gray>\n<color:#912921>Depends on "Stop Interactions" being enabled.</color>'
+          interaction_buttons:
+            name: "<green>Button Interactions</green>"
+            lore: '<gray>Prevents players from using buttons.</gray>\n<color:#912921>Depends on "Stop Interactions" being enabled.</color>'
+          interaction_repeaters:
+            name: "<green>Repeater Interactions</green>"
+            lore: '<gray>Prevents players from changing repeaters.</gray>\n<color:#912921>Depends on "Stop Interactions" being enabled.</color>'
+          interaction_comparators:
+            name: "<green>Comparator Interactions</green>"
+            lore: '<gray>Prevents players from changing comparators.</gray>\n<color:#912921>Depends on "Stop Interactions" being enabled.</color>'
+          interaction_pressure_plates:
+            name: "<green>Pressure Plate Interactions</green>"
+            lore: '<gray>Prevents players from using pressure plates.</gray>\n<color:#912921>Depends on "Stop Interactions" being enabled.</color>'
+          interaction_trapdoors:
+            name: "<green>Trapdoor Interactions</green>"
+            lore: '<gray>Prevents players from using trapdoors.</gray>\n<color:#912921>Depends on "Stop Interactions" being enabled.</color>'
+          interaction_doors:
+            name: "<green>Door Interactions</green>"
+            lore: '<gray>Prevents players from using doors.</gray>\n<color:#912921>Depends on "Stop Interactions" being enabled.</color>'
+          interaction_fence_gates:
+            name: "<green>Fence Gate Interactions</green>"
+            lore: '<gray>Prevents players from using fence gates.</gray>\n<color:#912921>Depends on "Stop Interactions" being enabled.</color>'
+          interaction_farmland:
+            name: "<green>Farmland Interactions</green>"
+            lore: '<gray>Prevents players from trampling farmlands.</gray>\n<color:#912921>Depends on "Stop Interactions" being enabled.</color>'
+          interaction_attach_leash:
+            name: "<green>Leashs</green>"
+            lore: '<gray>Prevents players from leashing mobs.</gray>\n<color:#912921>Depends on "Stop Interactions" being enabled.</color>'
+          interaction_bonemeal:
+            name: "<green>Bonemeal</green>"
+            lore: '<gray>Prevents players from using bonemeal.</gray>\n<color:#912921>Depends on "Stop Interactions" being enabled.</color>'
+          interaction_beehives:
+            name: "<green>Beehives</green>"
+            lore: '<gray>Prevents players from using beehives.</gray>\n<color:#912921>Depends on "Stop Interactions" being enabled.</color>'
+          interaction_name_tags:
+            name: "<green>Nametags</green>"
+            lore: '<gray>Prevents players from using nametags.</gray>\n<color:#912921>Depends on "Stop Interactions" being enabled.</color>'
+          interaction_item_frames:
+            name: "<green>Item Frames</green>"
+            lore: '<gray>Prevents players from changing item frames.</gray>\n<color:#912921>Depends on "Stop Interactions" being enabled.</color>'
+          interaction_candles:
+            name: "<green>Candles</green>"
+            lore: '<gray>Prevents players from putting out candles.</gray>\n<color:#912921>Depends on "Stop Interactions" being enabled.</color>'
+          interaction_paintings:
+            name: "<green>Paintings</green>"
+            lore: '<gray>Prevents players from placing and destroying paintings.</gray>\n<color:#912921>Depends on "Stop Interactions" being enabled.</color>'
+          entity_damage:
+            name: "<green>Entity Damage</green>"
+            lore: "<gray>Prevents players from damaging entities.</gray>"
+          exclude_players:
+            name: "<green>Exclude Players</green>"
+            lore: "<gray>Excludes players from being protected from attacks.</gray>"
+          explosion_block_damage:
+            name: "<green>Explosion Destruction</green>"
+            lore: "<gray>Prevents all explosions from destroying blocks.</gray>"
+          explosion_entity_damage:
+            name: "<green>Explosion Damage</green>"
+            lore: "<gray>Prevents all explosions from dealing damage.</gray>"
+          prevent_entity_modifications:
+            name: "<green>Entity Modifications</green>"
+            lore: "<gray>Toggles all entity protections</gray>"
+          entity_modifications_wither:
+            name: "<green>Wither Modifications</green>"
+            lore: '<gray>Prevents the wither from changing blocks.</gray>\n<color:#912921>Depends on "Entity Modifications" being enabled.</color>'
+          entity_modifications_enderman:
+            name: "<green>Enderman Modifications</green>"
+            lore: '<gray>Prevents the endermen from changing blocks.</gray>\n<color:#912921>Depends on "Entity Modifications" being enabled.</color>'
+          entity_modifications_ravager:
+            name: "<green>Ravager Modifications</green>"
+            lore: '<gray>Prevents the ravager from changing blocks.</gray>\n<color:#912921>Depends on "Entity Modifications" being enabled.</color>'
+
 
 
   status:

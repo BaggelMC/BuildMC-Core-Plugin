@@ -9,6 +9,7 @@ import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.commands.CustomCommand;
+import net.mathias2246.buildmc.ui.claims.ClaimSelectMenu;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -34,6 +35,17 @@ public class ClaimCommand implements CustomCommand {
         claimTool = (ClaimSelectionTool) Main.customItems.get(Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool")).key());
 
         var cmd = Commands.literal("claim");
+
+        cmd.executes((command) -> {
+            if (!(command.getSource().getExecutor() instanceof Player player)) {
+                command.getSource().getSender().sendMessage(Component.translatable("messages.error.not-a-player"));
+                return 0;
+            }
+
+            ClaimSelectMenu.open(player);
+            return 1;
+        });
+
         cmd.then(
                 Commands.literal("claimtool")
                 .executes(
@@ -54,6 +66,19 @@ public class ClaimCommand implements CustomCommand {
                             return 1;
                         })
             );
+        cmd.then(
+                Commands.literal("edit")
+                        .executes(
+                                (command) -> {
+                                    if (!(command.getSource().getExecutor() instanceof Player player)) {
+                                        command.getSource().getSender().sendMessage(Component.translatable("messages.error.not-a-player"));
+                                        return 0;
+                                    }
+
+                                    ClaimSelectMenu.open(player);
+                                    return 1;
+                                })
+        );
         cmd.then(
                 Commands.literal("who")
                         .executes(

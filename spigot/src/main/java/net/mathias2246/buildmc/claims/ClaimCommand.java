@@ -1,6 +1,5 @@
 package net.mathias2246.buildmc.claims;
 
-import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.StringArgument;
 import net.kyori.adventure.text.Component;
@@ -8,6 +7,7 @@ import net.kyori.adventure.text.TextReplacementConfig;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.commands.CustomCommand;
+import net.mathias2246.buildmc.ui.claims.ClaimSelectMenu;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -21,7 +21,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 import static net.mathias2246.buildmc.Main.audiences;
 import static net.mathias2246.buildmc.Main.customItems;
@@ -33,6 +32,17 @@ public class ClaimCommand implements CustomCommand {
         ClaimSelectionTool claimTool = (ClaimSelectionTool) Objects.requireNonNull(customItems.get(NamespacedKey.fromString("buildmc:claim_tool")));
 
         return new CommandAPICommand("claim")
+
+                .executes(
+                        (command) -> {
+                            if (!(command.sender() instanceof Player player)) {
+                                command.sender().sendMessage(Message.noPlayerErrorMsgStr(command.sender()));
+                                return;
+                            }
+
+                            ClaimSelectMenu.open(player);
+                        })
+
                 .withSubcommand(
                     new CommandAPICommand("claimtool")
                     .executes(
@@ -52,6 +62,19 @@ public class ClaimCommand implements CustomCommand {
                                 claimTool.giveToPlayer(player, modifier);
                                 audiences.sender(player).sendMessage(Message.msg(player, "messages.claims.tool.give-success"));
                             })
+                )
+
+                .withSubcommand(
+                        new CommandAPICommand("edit")
+                                .executes(
+                                        (command) -> {
+                                            if (!(command.sender() instanceof Player player)) {
+                                                command.sender().sendMessage(Message.noPlayerErrorMsgStr(command.sender()));
+                                                return;
+                                            }
+
+                                            ClaimSelectMenu.open(player);
+                                        })
                 )
                 .withSubcommand(
                         new CommandAPICommand("who")
