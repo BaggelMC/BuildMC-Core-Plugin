@@ -3,8 +3,6 @@ package net.mathias2246.buildmc.status;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
-import net.kyori.adventure.key.Key;
-import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.commands.CustomCommand;
 import net.mathias2246.buildmc.platform.SoundManagerPaperImpl;
@@ -72,9 +70,12 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
 
         setSubArg.suggests(
                 (ctx, builder) -> {
+                    String remaining = builder.getRemaining().toLowerCase();
 
                     for (var statusId : StatusConfig.loadedStatuses.keySet()) {
-                        builder.suggest(statusId);
+                        if (statusId.toLowerCase().startsWith(remaining)) {
+                            builder.suggest(statusId);
+                        }
                     }
 
                     return builder.buildFuture();

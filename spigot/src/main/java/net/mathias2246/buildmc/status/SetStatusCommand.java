@@ -59,15 +59,19 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
                         new StringArgument("status")
                                 .replaceSuggestions(
                                         (info, builder) -> {
-                                            for (var k : StatusConfig.loadedStatuses.keySet()) {
+                                            String remaining = builder.getRemaining().toLowerCase();
 
-                                                builder.suggest(k);
+                                            for (var k : StatusConfig.loadedStatuses.keySet()) {
+                                                if (k.toLowerCase().startsWith(remaining)) {
+                                                    builder.suggest(k);
+                                                }
                                             }
+
                                             return builder.buildFuture();
                                         }
                                 )
                 )
-            .withUsage("set <status>");
+                .withUsage("set <status>");
         cmd.withSubcommand(
                 removeSub
         );
