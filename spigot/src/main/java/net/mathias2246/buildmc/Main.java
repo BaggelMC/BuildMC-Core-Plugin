@@ -136,7 +136,6 @@ public final class Main extends JavaPlugin implements MainClass {
             registerEvent(new ClaimPistonMovementListener());
             registerEvent(new ClaimBeehiveInteractListener());
             registerEvent(new ClaimBonemealInteractListener());
-            registerEvent(new ClaimCandleExtinguishListener());
             registerEvent(new ClaimEntityLeashListener());
             registerEvent(new ClaimItemFrameRotateListener());
             registerEvent(new ClaimNameTagUseListener());

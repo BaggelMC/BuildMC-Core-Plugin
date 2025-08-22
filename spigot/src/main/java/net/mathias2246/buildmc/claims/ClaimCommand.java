@@ -328,6 +328,136 @@ public class ClaimCommand implements CustomCommand {
                                     }
                                 })
                 )
+                .withSubcommand(
+                        new CommandAPICommand("protections")
+                                .withArguments(
+                                        new StringArgument("type")
+                                                .replaceSuggestions((info, builder) -> builder.suggest("player").suggest("team").buildFuture()),
+                                        new StringArgument("claim")
+                                                .replaceSuggestions((info, builder) -> {
+                                                    if (!(info.sender() instanceof Player player)) {
+                                                        return builder.buildFuture();
+                                                    }
+
+                                                    String type = info.previousArgs().getOrDefault("type", "").toString().toLowerCase();
+                                                    List<Long> claimIds = switch (type) {
+                                                        case "player" -> ClaimManager.playerOwner.getOrDefault(player.getUniqueId(), List.of());
+                                                        case "team" -> {
+                                                            Team team = ClaimManager.getPlayerTeam(player);
+                                                            if (team == null) yield List.of();
+                                                            yield ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
+                                                        }
+                                                        default -> List.of();
+                                                    };
+
+                                                    for (Long claimId : claimIds) {
+                                                        String name = ClaimManager.getClaimNameById(claimId);
+                                                        if (name != null) builder.suggest(name);
+                                                    }
+
+                                                    return builder.buildFuture();
+                                                }),
+                                        new StringArgument("flag")
+                                                .replaceSuggestions((info, builder) -> {
+                                                    for (ProtectionFlag flag : ProtectionFlag.values()) {
+                                                        builder.suggest(flag.name());
+                                                    }
+                                                    return builder.buildFuture();
+                                                }),
+                                        new StringArgument("value")
+                                                .replaceSuggestions((info, builder) -> builder.suggest("true").suggest("false").buildFuture())
+                                )
+                                .executes((command) -> {
+                                    if (!(command.sender() instanceof Player player)) {
+                                        audiences.sender(command.sender()).sendMessage(Component.translatable("messages.error.not-a-player"));
+                                        return 0;
+                                    }
+
+                                    String type = command.args().getByClass("type", String.class);
+                                    String claimName = command.args().getByClass("claim", String.class);
+                                    String flagName = command.args().getByClass("flag", String.class);
+                                    String value = command.args().getByClass("value", String.class);
+
+                                    if (type == null || claimName == null || flagName == null || value == null) {
+                                        audiences.player(player).sendMessage(Component.translatable("messages.error.invalid-args"));
+                                        return 0;
+                                    }
+
+                                    // --- Check type ---
+                                    List<Long> claimIds = switch (type.toLowerCase()) {
+                                        case "player" -> ClaimManager.playerOwner.getOrDefault(player.getUniqueId(), List.of());
+                                        case "team" -> {
+                                            Team team = ClaimManager.getPlayerTeam(player);
+                                            if (team == null) {
+                                                audiences.player(player).sendMessage(Component.translatable("messages.error.not-in-a-team"));
+                                                yield List.of();
+                                            }
+                                            yield ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
+                                        }
+                                        default -> {
+                                            audiences.player(player).sendMessage(Component.translatable("messages.claims.protections.invalid-type"));
+                                            yield List.of();
+                                        }
+                                    };
+
+                                    if (claimIds.isEmpty()) {
+                                        return 0;
+                                    }
+
+                                    Long claimId = claimIds.stream()
+                                            .filter(id -> claimName.equalsIgnoreCase(ClaimManager.getClaimNameById(id)))
+                                            .findFirst()
+                                            .orElse(null);
+
+                                    if (claimId == null) {
+                                        audiences.player(player).sendMessage(Component.translatable("messages.claims.protections.not-found"));
+                                        return 0;
+                                    }
+
+                                    // --- Check flag ---
+                                    ProtectionFlag flag;
+                                    try {
+                                        flag = ProtectionFlag.valueOf(flagName.toUpperCase());
+                                    } catch (IllegalArgumentException e) {
+                                        audiences.player(player).sendMessage(Component.translatable("messages.claims.protections.invalid-flag"));
+                                        return 0;
+                                    }
+
+                                    // --- Check value ---
+                                    boolean enable;
+                                    if (value.equalsIgnoreCase("true")) {
+                                        enable = true;
+                                    } else if (value.equalsIgnoreCase("false")) {
+                                        enable = false;
+                                    } else {
+                                        audiences.player(player).sendMessage(Component.translatable("messages.claims.protections.invalid-value"));
+                                        return 0;
+                                    }
+
+                                    Claim claim = ClaimManager.getClaimByID(claimId);
+                                    if (claim == null) {
+                                        audiences.player(player).sendMessage(Component.translatable("messages.claims.protections.not-found"));
+                                        return 0;
+                                    }
+
+                                    if (enable) {
+                                        ClaimManager.addProtectionFlag(claim, flag);
+                                        audiences.player(player).sendMessage(
+                                                Message.msg(player, "messages.claims.protections.added")
+                                                        .replaceText(TextReplacementConfig.builder().matchLiteral("%flag%").replacement(flag.name()).build())
+                                        );
+                                    } else {
+                                        ClaimManager.removeProtectionFlag(claim, flag);
+                                        audiences.player(player).sendMessage(
+                                                Message.msg(player, "messages.claims.protections.removed")
+                                                        .replaceText(TextReplacementConfig.builder().matchLiteral("%flag%").replacement(flag.name()).build())
+                                        );
+                                    }
+
+                                    return 1;
+                                })
+                )
+
 
 
                 ;

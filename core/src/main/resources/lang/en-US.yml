@@ -116,6 +116,14 @@ messages:
       player-not-found: "<red>The specified player was not found."
       claim-not-found: "<red>That claim could not be found or is not owned by you."
 
+    protections:
+      invalid-type: "<red>Invalid claim type! Use <yellow>player</yellow> or <yellow>team</yellow>."
+      invalid-flag: "<red>That protection flag does not exist."
+      invalid-value: "<red>Invalid value! Must be <yellow>true</yellow> or <yellow>false</yellow>."
+      not-found: "<red>No claim found with that name."
+      added: "<green>Protection flag <yellow>%flag%</yellow> was <green>enabled</green> for this claim."
+      removed: "<green>Protection flag <yellow>%flag%</yellow> was <red>disabled</red> for this claim."
+
     help-message: |-
       <gold>------------- <green>Claims Help</green> -------------</gold>
       <aqua>Click <green><click:open_url:'https://github.com/BaggelMC/BuildMC-Core-Plugin/blob/master/docs/usage/claim_system.md'>here</click></green> to open the full documentation.</aqua>

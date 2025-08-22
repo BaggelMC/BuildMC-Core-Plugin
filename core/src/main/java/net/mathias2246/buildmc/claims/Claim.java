@@ -94,6 +94,14 @@ public class Claim {
     /**@return True if, this claim has a certain ProtectionFlag set; otherwise false*/
     public boolean hasFlag(ProtectionFlag flag) { return protectionFlags.contains(flag); }
 
+    /**Adds a protection flag to this claim.
+     * @param flag The ProtectionFlag to add.*/
+    public void addProtectionFlag(ProtectionFlag flag) { protectionFlags.add(flag); }
+
+    /**Removes a protection flag from this claim.
+     * @param flag The ProtectionFlag to remove.*/
+    public void removeProtectionFlag(ProtectionFlag flag) { protectionFlags.remove(flag); }
+
     /**Checks if the given chunk is inside this claim.
      * @return True if, this claim is inside the same world and area.*/
     public boolean contains(int chunkX, int chunkZ, UUID worldUUID) {
