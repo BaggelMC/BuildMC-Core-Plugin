@@ -19,7 +19,6 @@ public class PlayerHeadDropModifier implements ItemMetaModifier {
     @Override
     public void modifyMeta(@NotNull ItemMeta meta, @Nullable Player player, @Nullable Object arg) {
         if (!(arg instanceof PlayerDeathEvent event) || player == null) return;
-
         meta.setLore(
                 List.of(
                         Objects.requireNonNull(event.getDeathMessage())
