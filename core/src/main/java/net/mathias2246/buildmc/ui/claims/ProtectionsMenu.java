@@ -137,6 +137,12 @@ public class ProtectionsMenu {
             }
         }), 6, 0);
 
+        // Back button
+        controls.addItem(new GuiItem(createNamedItem(Material.BARRIER, Component.translatable("messages.claims.ui.general.back")), e -> {
+            e.setCancelled(true);
+            ClaimEditMenu.open(player, claim); // Navigate back to Claim Edit Menu
+        }), 8, 0);
+
         gui.addPane(controls);
         gui.show(player);
     }

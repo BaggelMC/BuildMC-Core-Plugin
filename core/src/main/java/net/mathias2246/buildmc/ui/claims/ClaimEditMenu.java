@@ -57,6 +57,14 @@ public class ClaimEditMenu {
                     openDeleteConfirmationMenu(player, claim);
                 }), 6, 1);
 
+        // Delete button → opens confirmation menu
+        pane.addItem(makeButton(Material.BARRIER, Component.translatable("messages.claims.ui.general.back"),
+                e -> {
+                    e.setCancelled(true);
+                    ClaimSelectMenu.open(player);
+                }), 8, 2);
+
+
         gui.addPane(pane);
         gui.show(player);
     }

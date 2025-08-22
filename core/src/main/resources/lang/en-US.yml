@@ -167,6 +167,8 @@ messages:
         next: "<yellow>Next</yellow>"
         page-indicator: "<yellow>Page %current%/%total%</yellow>"
 
+        back: "<red>Back</red>"
+
         confirm: "<red>Confirm</red>"
         cancel: "<green>Cancel</green>"
 

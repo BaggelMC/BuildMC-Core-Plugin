@@ -97,10 +97,16 @@ public class WhitelistMenu {
         }
 
         // Add button
-        controls.addItem(new GuiItem(createNamedItem(Material.EMERALD, Component.translatable("messages.claims.ui.whitelist-menu.add")), e -> {
+//        controls.addItem(new GuiItem(createNamedItem(Material.EMERALD, Component.translatable("messages.claims.ui.whitelist-menu.add")), e -> {
+//            e.setCancelled(true);
+//            CoreMain.mainClass.sendPlayerMessage(player, Component.text("Add player to whitelist (not implemented yet)", NamedTextColor.GRAY));
+//        }), 0, 0);
+
+        // Back button
+        controls.addItem(new GuiItem(createNamedItem(Material.BARRIER, Component.translatable("messages.claims.ui.general.back")), e -> {
             e.setCancelled(true);
-            CoreMain.mainClass.sendPlayerMessage(player, Component.text("Add player to whitelist (not implemented yet)", NamedTextColor.GRAY));
-        }), 0, 0);
+            ClaimEditMenu.open(player, claim); // Navigate back to Claim Edit Menu
+        }), 8, 0);
 
         // Prev button
         controls.addItem(new GuiItem(createNamedItem(Material.ARROW, Component.translatable("messages.claims.ui.general.previous")), e -> {
