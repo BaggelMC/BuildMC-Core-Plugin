@@ -137,7 +137,10 @@ claims:
       nametags: true
       item-frames: true
       candle-extinguish: true
-      paintings: true
+      hanging-entities: true
+      light-tnt: true
+      armor-stand: true
+      tame-entity: true
 
     # Damage related protections
     damage:

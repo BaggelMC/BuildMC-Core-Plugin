@@ -37,28 +37,28 @@ public class ClaimEditMenu {
         }
 
         // Protections button
-        pane.addItem(makeButton(Material.SHIELD, Component.translatable("messages.claims.ui.edit-menu.protections"),
+        pane.addItem(makeButton(Material.SHIELD, Message.msg(player, "messages.claims.ui.edit-menu.protections"),
                 e -> {
                     e.setCancelled(true);
                     ProtectionsMenu.open(player, claim);
                 }), 2, 1);
 
         // Whitelist button
-        pane.addItem(makeButton(Material.PLAYER_HEAD, Component.translatable("messages.claims.ui.edit-menu.whitelist"),
+        pane.addItem(makeButton(Material.PLAYER_HEAD, Message.msg(player, "messages.claims.ui.edit-menu.whitelist"),
                 e -> {
                     e.setCancelled(true);
                     WhitelistMenu.open(player,claim);
                 }), 4, 1);
 
         // Delete button → opens confirmation menu
-        pane.addItem(makeButton(Material.BARRIER, Component.translatable("messages.claims.ui.edit-menu.delete"),
+        pane.addItem(makeButton(Material.BARRIER, Message.msg(player, "messages.claims.ui.edit-menu.delete"),
                 e -> {
                     e.setCancelled(true);
                     openDeleteConfirmationMenu(player, claim);
                 }), 6, 1);
 
         // Delete button → opens confirmation menu
-        pane.addItem(makeButton(Material.BARRIER, Component.translatable("messages.claims.ui.general.back"),
+        pane.addItem(makeButton(Material.BARRIER, Message.msg(player, "messages.claims.ui.general.back"),
                 e -> {
                     e.setCancelled(true);
                     ClaimSelectMenu.open(player);
@@ -85,14 +85,14 @@ public class ClaimEditMenu {
         }
 
         // Cancel
-        pane.addItem(makeButton(Material.GREEN_CONCRETE, Component.translatable("messages.claims.ui.general.cancel"),
+        pane.addItem(makeButton(Material.GREEN_CONCRETE, Message.msg(player, "messages.claims.ui.general.cancel"),
                 e -> {
                     e.setCancelled(true);
                     open(player, claim); // reopen edit menu
                 }), 3, 1);
 
         // Confirm
-        pane.addItem(makeButton(Material.RED_CONCRETE, Component.translatable("messages.claims.ui.general.confirm"),
+        pane.addItem(makeButton(Material.RED_CONCRETE, Message.msg(player, "messages.claims.ui.general.confirm"),
                 e -> {
                     e.setCancelled(true);
                     boolean removed = ClaimManager.removeClaimById(claim.getId());

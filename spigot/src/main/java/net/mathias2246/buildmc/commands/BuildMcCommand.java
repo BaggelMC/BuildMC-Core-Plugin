@@ -1,8 +1,10 @@
 package net.mathias2246.buildmc.commands;
 
 import dev.jorel.commandapi.CommandAPICommand;
+import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.endEvent.EndEventCommand;
 import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.ServerOperator;
 
 import static net.mathias2246.buildmc.Main.audiences;
 
@@ -29,6 +31,20 @@ public class BuildMcCommand implements CustomCommand {
         debugSub.setRequirements(
                         (c) -> c.hasPermission(new Permission("buildmc.operator"))
                 );
+
+        var statusSub = new CommandAPICommand("status");
+        statusSub.setRequirements(
+                ServerOperator::isOp
+        );
+
+        statusSub.withSubcommand(
+                new CommandAPICommand("reload").executes(
+                        (command) -> {
+                            Main.statusConfig.reload();
+                        }
+                )
+        );
+        cmd.withSubcommand(statusSub);
 
         var endSub = new EndEventCommand(audiences).getCommand();
         cmd.withSubcommand(endSub);

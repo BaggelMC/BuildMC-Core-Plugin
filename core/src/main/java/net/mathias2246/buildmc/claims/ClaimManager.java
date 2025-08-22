@@ -38,6 +38,8 @@ public class ClaimManager {
      * <p>This means that the player is allowed to do anything on the claim at that location.</p>
      * @return True if, the player is the owner or whitelisted and the ProtectionFlags are set at the given location.*/
     public static boolean isPlayerAllowed(@NotNull Player player, @NotNull EnumSet<ProtectionFlag> protectionFlags, Location location) {
+        if (player.hasPermission("buildmc.bypass-claims")) return true;
+
         Claim claim;
         try {
             claim = ClaimManager.getClaim(location);
@@ -79,6 +81,7 @@ public class ClaimManager {
      * <p>This means that the player is allowed to do anything on the given claim.</p>
      * @return True if, the player is the owner or whitelisted and the ProtectionFlags are set on the given claim.*/
     public static boolean isPlayerAllowed(@NotNull Player player, @NotNull EnumSet<ProtectionFlag> protectionFlags, @Nullable Claim claim) {
+        if (player.hasPermission("buildmc.bypass-claims")) return true;
 
         // Allow if no claim found
         if (claim == null) return true;

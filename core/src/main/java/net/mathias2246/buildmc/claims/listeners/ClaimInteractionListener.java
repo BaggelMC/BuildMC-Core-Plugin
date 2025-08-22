@@ -6,6 +6,7 @@ import net.mathias2246.buildmc.claims.Claim;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.claims.ProtectionFlag;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -67,17 +68,17 @@ public class ClaimInteractionListener implements Listener {
     }
 
     private ProtectionFlag getProtectionFlagFor(Material type) {
-        String name = type.name();
 
-        if (name.equals("LEVER")) return ProtectionFlag.INTERACTION_LEVERS;
-        if (name.contains("BUTTON")) return ProtectionFlag.INTERACTION_BUTTONS;
-        if (name.contains("PRESSURE_PLATE")) return ProtectionFlag.INTERACTION_PRESSURE_PLATES;
-        if (name.equals("REPEATER")) return ProtectionFlag.INTERACTION_REPEATERS;
-        if (name.equals("COMPARATOR")) return ProtectionFlag.INTERACTION_COMPARATORS;
-        if (name.contains("TRAPDOOR")) return ProtectionFlag.INTERACTION_TRAPDOORS;
-        if (name.endsWith("_DOOR")) return ProtectionFlag.INTERACTION_DOORS;
-        if (name.contains("FENCE_GATE")) return ProtectionFlag.INTERACTION_FENCE_GATES;
-
+        if (type.equals(Material.LEVER)) return ProtectionFlag.INTERACTION_LEVERS;
+        if (Tag.BUTTONS.isTagged(type)) return ProtectionFlag.INTERACTION_BUTTONS;
+        if (Tag.PRESSURE_PLATES.isTagged(type)) return ProtectionFlag.INTERACTION_PRESSURE_PLATES;
+        if (type.equals(Material.REPEATER)) return ProtectionFlag.INTERACTION_REPEATERS;
+        if (type.equals(Material.COMPARATOR)) return ProtectionFlag.INTERACTION_COMPARATORS;
+        if (Tag.DOORS.isTagged(type)) return ProtectionFlag.INTERACTION_TRAPDOORS;
+        if (Tag.TRAPDOORS.isTagged(type)) return ProtectionFlag.INTERACTION_DOORS;
+        if (Tag.FENCE_GATES.isTagged(type)) return ProtectionFlag.INTERACTION_FENCE_GATES;
+        if (Tag.CANDLES.isTagged(type)) return ProtectionFlag.INTERACTION_CANDLES;
+        if (type.equals(Material.TNT)) return ProtectionFlag.INTERACTION_LIGHT_TNT;
         return null;
     }
 }

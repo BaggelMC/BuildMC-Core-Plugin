@@ -17,7 +17,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class ClaimSelectMenu {
 
@@ -61,10 +64,10 @@ public class ClaimSelectMenu {
             List<String> lore = new ArrayList<>();
             if (playerClaims.contains(claim.getId())) {
                 lore.add(LegacyComponentSerializer.legacySection()
-                        .serialize(Component.translatable("messages.claims.ui.select-menu.player-type")));
+                        .serialize(Message.msg(player, "messages.claims.ui.select-menu.player-type")));
             } else {
                 lore.add(LegacyComponentSerializer.legacySection()
-                        .serialize(Component.translatable("messages.claims.ui.select-menu.team-type")));
+                        .serialize(Message.msg(player, "messages.claims.ui.select-menu.team-type")));
             }
             lore.add(LegacyComponentSerializer.legacySection()
                     .serialize(Message.msg(player, "messages.claims.ui.select-menu.id", Map.of("id", String.valueOf(claim.getId())))));
@@ -143,7 +146,7 @@ public class ClaimSelectMenu {
             return;
         }
         prevMeta.setDisplayName(LegacyComponentSerializer.legacySection()
-                .serialize(Component.translatable("messages.claims.ui.general.previous")));
+                .serialize(Message.msg(player, "messages.claims.ui.general.previous")));
         prevItem.setItemMeta(prevMeta);
 
         controls.addItem(new GuiItem(prevItem, event -> {
@@ -165,7 +168,7 @@ public class ClaimSelectMenu {
             return;
         }
         nextMeta.setDisplayName(LegacyComponentSerializer.legacySection()
-                .serialize(Component.translatable("messages.claims.ui.general.next")));
+                .serialize(Message.msg(player, "messages.claims.ui.general.next")));
         nextItem.setItemMeta(nextMeta);
 
         controls.addItem(new GuiItem(nextItem, event -> {

@@ -8,6 +8,8 @@ import net.mathias2246.buildmc.claims.ClaimType;
 import net.mathias2246.buildmc.claims.ProtectionFlag;
 import org.bukkit.Location;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.EnderChest;
+import org.bukkit.block.Lectern;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,6 +17,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerTakeLecternBookEvent;
 import org.bukkit.scoreboard.Team;
 
 import java.sql.SQLException;
@@ -41,10 +44,13 @@ public class ClaimContainerListener implements Listener {
 
         // Block container access based on claim protection
         // Ender chests should not return a holder
-        if (event.getInventory().getHolder() instanceof BlockState holder) {
+        if (event.getInventory().getHolder() instanceof EnderChest) return;
+        else if (event.getInventory().getHolder() instanceof Lectern) return;
+        else if (event.getInventory().getHolder() instanceof BlockState holder) {
             if (claim.getWhitelistedPlayers().contains(player.getUniqueId())) return;
 
             if (claim.hasFlag(ProtectionFlag.CONTAINER)) {
+
                 if (claim.getType() == ClaimType.PLAYER) {
                     if (Objects.equals(claim.getOwnerId(), player.getUniqueId().toString())) return;
                 }
@@ -73,6 +79,25 @@ public class ClaimContainerListener implements Listener {
                 CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.container"));
                 event.setCancelled(true);
             }
+        }
+    }
+
+    @EventHandler
+    public void onLecternTakeBook(PlayerTakeLecternBookEvent event) {
+        var block = event.getLectern();
+        var player = event.getPlayer();
+
+        Claim claim = null;
+        try {
+            claim = ClaimManager.getClaim(block.getLocation());
+        } catch (SQLException e) {
+            CoreMain.plugin.getLogger().severe("SQL error while getting claim: " + e.getMessage());
+        }
+        if (claim == null) return;
+
+        if (claim.hasFlag(ProtectionFlag.CONTAINER) && !ClaimManager.isPlayerAllowed(player, EnumSet.of(ProtectionFlag.CONTAINER), claim)) {
+            event.setCancelled(true);
+            CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.interact"));
         }
     }
 }

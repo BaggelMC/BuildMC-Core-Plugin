@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,7 +75,7 @@ public class WhitelistMenu {
                 pane.addItem(new GuiItem(head, e -> e.setCancelled(true)), headX, headY);
 
                 // Delete button
-                ItemStack delete = createDeleteButton();
+                ItemStack delete = createDeleteButton(player);
                 pane.addItem(new GuiItem(delete, e -> {
                     e.setCancelled(true);
                     openDeleteConfirmationMenu(player, claim, uuid, offlinePlayer.getName());
@@ -103,13 +104,13 @@ public class WhitelistMenu {
 //        }), 0, 0);
 
         // Back button
-        controls.addItem(new GuiItem(createNamedItem(Material.BARRIER, Component.translatable("messages.claims.ui.general.back")), e -> {
+        controls.addItem(new GuiItem(createNamedItem(Material.BARRIER, Message.msg(player,"messages.claims.ui.general.back")), e -> {
             e.setCancelled(true);
             ClaimEditMenu.open(player, claim); // Navigate back to Claim Edit Menu
         }), 8, 0);
 
         // Prev button
-        controls.addItem(new GuiItem(createNamedItem(Material.ARROW, Component.translatable("messages.claims.ui.general.previous")), e -> {
+        controls.addItem(new GuiItem(createNamedItem(Material.ARROW, Message.msg(player,"messages.claims.ui.general.previous")), e -> {
             e.setCancelled(true);
             if (pages.getPage() > 0) {
                 int newPage = pages.getPage() - 1;
@@ -123,7 +124,7 @@ public class WhitelistMenu {
         updatePageIndicator(player, controls, pages.getPage() + 1, totalPages);
 
         // Next button
-        controls.addItem(new GuiItem(createNamedItem(Material.ARROW, Component.translatable("messages.claims.ui.general.next")), e -> {
+        controls.addItem(new GuiItem(createNamedItem(Material.ARROW, Message.msg(player, "messages.claims.ui.general.next")), e -> {
             e.setCancelled(true);
             if (pages.getPage() < totalPages - 1) {
                 int newPage = pages.getPage() + 1;
@@ -152,13 +153,13 @@ public class WhitelistMenu {
         }
 
         // Cancel button
-        pane.addItem(new GuiItem(createNamedItem(Material.GREEN_CONCRETE, Component.translatable("messages.claims.ui.general.cancel")), e -> {
+        pane.addItem(new GuiItem(createNamedItem(Material.GREEN_CONCRETE, Message.msg(player,"messages.claims.ui.general.cancel")), e -> {
             e.setCancelled(true);
             open(player, claim); // reopen whitelist menu
         }), 3, 1);
 
         // Confirm button
-        pane.addItem(new GuiItem(createNamedItem(Material.RED_CONCRETE, Component.translatable("messages.claims.ui.general.confirm")), e -> {
+        pane.addItem(new GuiItem(createNamedItem(Material.RED_CONCRETE, Message.msg(player,"messages.claims.ui.general.confirm")), e -> {
             e.setCancelled(true);
             ClaimManager.removePlayerFromWhitelist(claim.getId(), uuid);
             CoreMain.mainClass.sendPlayerMessage(player, Component.translatable("messages.claims.ui.whitelist-menu.delete-confirm-menu.success"));
@@ -180,11 +181,11 @@ public class WhitelistMenu {
         return head;
     }
 
-    private static ItemStack createDeleteButton() {
+    private static ItemStack createDeleteButton(@NotNull Player player) {
         ItemStack item = new ItemStack(Material.RED_STAINED_GLASS_PANE);
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(LegacyComponentSerializer.legacySection().serialize(Component.translatable("messages.claims.ui.whitelist-menu.remove")));
+            meta.setDisplayName(LegacyComponentSerializer.legacySection().serialize(Message.msg(player, "messages.claims.ui.whitelist-menu.remove")));
             item.setItemMeta(meta);
         }
         return item;

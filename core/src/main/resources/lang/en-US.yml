@@ -148,6 +148,8 @@ messages:
       sign: "<red>This sign is protected by a land claim.</red>"
       interact: "<red>This block is protected by a land claim.</red>"
       entity-rename: "<red>You cannot rename entities protected by a land claim.</red>"
+      armor-stand: "<red>This armor stand is protected by a land claim.</red>"
+      tame-entity: "<red>This entity is protected by a land claim.</red>"
 
       potion-splash: "<red>This area is protected by a land claim.</red>"
 
@@ -271,7 +273,7 @@ messages:
             name: "<green>Farmland Interactions</green>"
             lore: '<gray>Prevents players from trampling farmlands.</gray>\n<color:#912921>Depends on "Stop Interactions" being enabled.</color>'
           interaction_attach_leash:
-            name: "<green>Leashs</green>"
+            name: "<green>Leashes</green>"
             lore: '<gray>Prevents players from leashing mobs.</gray>\n<color:#912921>Depends on "Stop Interactions" being enabled.</color>'
           interaction_bonemeal:
             name: "<green>Bonemeal</green>"
@@ -282,15 +284,21 @@ messages:
           interaction_name_tags:
             name: "<green>Nametags</green>"
             lore: '<gray>Prevents players from using nametags.</gray>\n<color:#912921>Depends on "Stop Interactions" being enabled.</color>'
-          interaction_item_frames:
-            name: "<green>Item Frames</green>"
-            lore: '<gray>Prevents players from changing item frames.</gray>\n<color:#912921>Depends on "Stop Interactions" being enabled.</color>'
+          interaction_light_tnt:
+            name: "<green>Light TNT</green>"
+            lore: '<gray>Prevents players from lighting tnt using a fire charge or flint and steel.</gray>\n<color:#912921>Depends on "Stop Interactions" being enabled.</color>'
+          interaction_hanging_entities:
+            name: "<green>Hanging Entities</green>"
+            lore: '<gray>Prevents players from placing, destroying or changing item frames and paintings.</gray>\n<color:#912921>Depends on "Stop Interactions" being enabled.</color>'
+          interaction_armor_stand:
+            name: "<green>Armor Stand Manipulation</green>"
+            lore: '<gray>Prevents players from changing armor stands equipment.</gray>\n<color:#912921>Depends on "Stop Interactions" being enabled.</color>'
           interaction_candles:
             name: "<green>Candles</green>"
             lore: '<gray>Prevents players from putting out candles.</gray>\n<color:#912921>Depends on "Stop Interactions" being enabled.</color>'
-          interaction_paintings:
-            name: "<green>Paintings</green>"
-            lore: '<gray>Prevents players from placing and destroying paintings.</gray>\n<color:#912921>Depends on "Stop Interactions" being enabled.</color>'
+          interaction_tame_entity:
+            name: "<green>Tame Mobs</green>"
+            lore: '<gray>Prevents players from taming mobs.</gray>\n<color:#912921>Depends on "Stop Interactions" being enabled.</color>'
           entity_damage:
             name: "<green>Entity Damage</green>"
             lore: "<gray>Prevents players from damaging entities.</gray>"

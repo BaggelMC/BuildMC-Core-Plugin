@@ -1,7 +1,7 @@
 name: BuildMC-Core
-version: '1.0.1'
+version: '${project.buildVersion}'
 main: net.mathias2246.buildmc.Main
-api-version: '1.21'
+api-version: '${minecraft.bukkitApiVersion}'
 prefix: BuildMC
 load: POSTWORLD
 authors: [ Mathias2246, Darkyl ]
@@ -18,3 +18,10 @@ permissions:
   buildmc.admin:
     default: false
     description: The BuildMC admin permission
+
+  buildmc.bypass-claims:
+    default: false
+    description: With this permission you can bypass claim protection.
+  buildmc.bypass-end-event:
+    default: false
+    description: With this permission you can enter the end dimension even when the end is closed.

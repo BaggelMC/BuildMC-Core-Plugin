@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemRarity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,8 +61,7 @@ public class ProtectionsMenu {
                 pane.addItem(new GuiItem(icon, e -> e.setCancelled(true)), x, y);
 
                 // Status glass
-                Material glassColor = enabled ? Material.GREEN_STAINED_GLASS_PANE : Material.RED_STAINED_GLASS_PANE;
-                ItemStack status = createStatusPane(flag, enabled);
+                ItemStack status = createStatusPane(flag, enabled, player);
                 GuiItem statusItem = new GuiItem(status, event -> {
                     event.setCancelled(true);
 
@@ -70,7 +70,7 @@ public class ProtectionsMenu {
 
                     // Update the new status immediately
                     boolean newEnabled = claim.getProtectionFlags().contains(flag);
-                    ItemStack newStatus = createStatusPane(flag, newEnabled);
+                    ItemStack newStatus = createStatusPane(flag, newEnabled, player);
 
                     // Replace this slot with updated status item
                     pane.addItem(new GuiItem(newStatus, e2 -> {
@@ -78,9 +78,10 @@ public class ProtectionsMenu {
                         // recursively handle further toggles
                         toggleFlag(claim, flag, newEnabled);
                         // refresh this one slot again
-                        boolean nextEnabled = claim.getProtectionFlags().contains(flag);
-                        ItemStack nextStatus = createStatusPane(flag, nextEnabled);
-                        pane.addItem(makeStatusItem(gui, pane, claim, flag, x, statusRow), x, statusRow);
+
+                        // ItemStack nextStatus = createStatusPane(flag, nextEnabled, player);
+
+                        pane.addItem(makeStatusItem(gui, pane, claim, flag, x, statusRow, player), x, statusRow);
 
                         gui.update();
                     }), x, statusRow);
@@ -113,7 +114,7 @@ public class ProtectionsMenu {
         }
 
         // Prev button
-        controls.addItem(new GuiItem(createNamedItem(Material.ARROW, Component.translatable("messages.claims.ui.general.previous")), e -> {
+        controls.addItem(new GuiItem(createNamedItem(Material.ARROW, Message.msg(player,"messages.claims.ui.general.previous")), e -> {
             e.setCancelled(true);
             if (pages.getPage() > 0) {
                 int newPage = pages.getPage() - 1;
@@ -127,7 +128,7 @@ public class ProtectionsMenu {
         updatePageIndicator(player, controls, pages.getPage() + 1, totalPages);
 
         // Next button
-        controls.addItem(new GuiItem(createNamedItem(Material.ARROW, Component.translatable("messages.claims.ui.general.next")), e -> {
+        controls.addItem(new GuiItem(createNamedItem(Material.ARROW, Message.msg(player,"messages.claims.ui.general.next")), e -> {
             e.setCancelled(true);
             if (pages.getPage() < totalPages - 1) {
                 int newPage = pages.getPage() + 1;
@@ -138,7 +139,7 @@ public class ProtectionsMenu {
         }), 6, 0);
 
         // Back button
-        controls.addItem(new GuiItem(createNamedItem(Material.BARRIER, Component.translatable("messages.claims.ui.general.back")), e -> {
+        controls.addItem(new GuiItem(createNamedItem(Material.BARRIER, Message.msg(player,"messages.claims.ui.general.back")), e -> {
             e.setCancelled(true);
             ClaimEditMenu.open(player, claim); // Navigate back to Claim Edit Menu
         }), 8, 0);
@@ -149,9 +150,9 @@ public class ProtectionsMenu {
 
     private static GuiItem makeStatusItem(ChestGui gui, StaticPane pane,
                                           Claim claim, ProtectionFlag flag,
-                                          int x, int y) {
+                                          int x, int y, @NotNull Player player) {
         boolean enabled = claim.getProtectionFlags().contains(flag);
-        ItemStack status = createStatusPane(flag, enabled);
+        ItemStack status = createStatusPane(flag, enabled, player);
 
         return new GuiItem(status, e -> {
             e.setCancelled(true);
@@ -164,7 +165,7 @@ public class ProtectionsMenu {
             }
 
             // Replace this slot with a freshly built GuiItem (so it keeps toggling)
-            GuiItem updated = makeStatusItem(gui, pane, claim, flag, x, y);
+            GuiItem updated = makeStatusItem(gui, pane, claim, flag, x, y, player);
             pane.addItem(updated, x, y);
 
             gui.update();
@@ -199,7 +200,7 @@ public class ProtectionsMenu {
             List<String> loreLines = new ArrayList<>(Arrays.asList(loreString.split("\n")));
 
 
-            loreLines.add(LegacyComponentSerializer.legacySection().serialize(Component.translatable("messages.claims.ui.protections-menu.toggle-hint")));
+            loreLines.add(LegacyComponentSerializer.legacySection().serialize(Message.msg(player,"messages.claims.ui.protections-menu.toggle-hint")));
 
             meta.setLore(loreLines);
 
@@ -213,12 +214,12 @@ public class ProtectionsMenu {
     }
 
 
-    private static ItemStack createStatusPane(ProtectionFlag flag, boolean enabled) {
+    private static ItemStack createStatusPane(ProtectionFlag flag, boolean enabled, @NotNull Player player) {
         Material color = enabled ? Material.GREEN_STAINED_GLASS_PANE : Material.RED_STAINED_GLASS_PANE;
         ItemStack item = new ItemStack(color);
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(LegacyComponentSerializer.legacySection().serialize(Component.translatable(enabled ? "messages.claims.ui.protections-menu.enabled" : "messages.claims.ui.protections-menu.disabled")));
+            meta.setDisplayName(LegacyComponentSerializer.legacySection().serialize(Message.msg(player, enabled ? "messages.claims.ui.protections-menu.enabled" : "messages.claims.ui.protections-menu.disabled")));
             item.setItemMeta(meta);
         }
         return item;
@@ -270,7 +271,7 @@ public class ProtectionsMenu {
             case BUCKET_USAGE -> Material.BUCKET;
             case FROST_WALKER -> Material.ICE;
             case PISTON_MOVEMENT_ACROSS_CLAIM_BORDERS -> Material.PISTON;
-            case PREVENT_INTERACTIONS -> Material.BARRIER;
+            case PREVENT_INTERACTIONS, PREVENT_ENTITY_MODIFICATIONS -> Material.BARRIER;
             case INTERACTION_LEVERS -> Material.LEVER;
             case INTERACTION_BUTTONS -> Material.STONE_BUTTON;
             case INTERACTION_REPEATERS -> Material.REPEATER;
@@ -284,14 +285,14 @@ public class ProtectionsMenu {
             case INTERACTION_BONEMEAL -> Material.BONE_MEAL;
             case INTERACTION_BEEHIVES -> Material.BEE_NEST;
             case INTERACTION_NAME_TAGS -> Material.NAME_TAG;
-            case INTERACTION_ITEM_FRAMES -> Material.ITEM_FRAME;
             case INTERACTION_CANDLES -> Material.CANDLE;
-            case INTERACTION_PAINTINGS -> Material.PAINTING;
+            case INTERACTION_HANGING_ENTITIES -> Material.ITEM_FRAME;
+            case INTERACTION_LIGHT_TNT, EXPLOSION_BLOCK_DAMAGE -> Material.TNT;
+            case INTERACTION_ARMOR_STAND -> Material.ARMOR_STAND;
+            case INTERACTION_TAME_ENTITY -> Material.BONE;
             case ENTITY_DAMAGE -> Material.IRON_SWORD;
             case EXCLUDE_PLAYERS -> Material.PLAYER_HEAD;
-            case EXPLOSION_BLOCK_DAMAGE -> Material.TNT;
             case EXPLOSION_ENTITY_DAMAGE -> Material.GUNPOWDER;
-            case PREVENT_ENTITY_MODIFICATIONS -> Material.BARRIER;
             case ENTITY_MODIFICATIONS_WITHER -> Material.WITHER_SKELETON_SKULL;
             case ENTITY_MODIFICATIONS_ENDERMAN -> Material.ENDER_PEARL;
             case ENTITY_MODIFICATIONS_RAVAGER -> Material.SADDLE;

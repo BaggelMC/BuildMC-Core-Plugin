@@ -52,7 +52,7 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
                             audiences.sender(command.sender()).sendMessage(Component.translatable("messages.status.only-players"));
                             return;
                         }
-                        PlayerStatus.setPlayerStatus(player, command.args().getByClass("status", String.class));
+                        PlayerStatus.setPlayerStatus(player, command.args().getByClass("status", String.class), false);
                     }
             )
                 .withArguments(

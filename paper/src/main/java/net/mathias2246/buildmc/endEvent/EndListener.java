@@ -4,7 +4,6 @@ import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.util.config.ConfigurationValidationException;
 import org.bukkit.PortalType;
 import org.bukkit.World;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -59,6 +58,7 @@ public class EndListener implements Listener {
     public void onPlayerPortal(PlayerPortalEvent event) {
 
         if (allowEnd) return;
+        if (event.getPlayer().hasPermission("buildmc.bypass-end-event")) return;
 
         if (event.getTo().getWorld().getEnvironment() == World.Environment.THE_END) {
             event.setCancelled(true);

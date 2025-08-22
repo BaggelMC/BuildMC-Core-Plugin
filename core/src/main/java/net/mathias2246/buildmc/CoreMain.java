@@ -1,5 +1,6 @@
 package net.mathias2246.buildmc;
 
+import net.mathias2246.buildmc.claims.listeners.*;
 import net.mathias2246.buildmc.database.ClaimTable;
 import net.mathias2246.buildmc.database.DatabaseConfig;
 import net.mathias2246.buildmc.database.DatabaseManager;
@@ -7,6 +8,7 @@ import net.mathias2246.buildmc.util.SoundManager;
 import net.mathias2246.buildmc.util.config.ConfigHandler;
 import net.mathias2246.buildmc.util.config.ConfigurationValidationException;
 import net.mathias2246.buildmc.util.language.LanguageManager;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,7 +37,37 @@ public final class CoreMain {
 
         LanguageManager.init();
 
-        if (plugin.getConfig().getBoolean("claims.enabled")) initializeDatabase();
+        if (plugin.getConfig().getBoolean("claims.enabled")) {
+            initializeDatabase();
+
+            registerEvent(new ClaimContainerListener());
+            registerEvent(new ClaimExplosionsListener());
+            registerEvent(new ClaimBreakListener());
+            registerEvent(new ClaimPlaceListener());
+            registerEvent(new ClaimDamageProtectionListener());
+            registerEvent(new ClaimSignEditListener());
+            registerEvent(new ClaimInteractionListener());
+            registerEvent(new ClaimPotionSplashListener());
+            registerEvent(new ClaimVehicleEnterListener());
+            registerEvent(new ClaimBucketUseEvent());
+            registerEvent(new ClaimEntityChangeBlockListener());
+            registerEvent(new ClaimItemPickupListener());
+            registerEvent(new ClaimItemDropListener());
+            registerEvent(new ClaimFrostWalkerListener());
+            registerEvent(new ClaimPistonMovementListener());
+            registerEvent(new ClaimBeehiveInteractListener());
+            registerEvent(new ClaimBonemealInteractListener());
+            registerEvent(new ClaimEntityLeashListener());
+            registerEvent(new ClaimItemFrameRotateListener());
+            registerEvent(new ClaimNameTagUseListener());
+            registerEvent(new ClaimHangingInteractListener());
+            registerEvent(new ClaimArmorStandListener());
+            registerEvent(new ClaimEntityTameListener());
+        }
+    }
+
+    public static void registerEvent(@NotNull Listener event) {
+        plugin.getServer().getPluginManager().registerEvents(event, plugin);
     }
 
     public static void stop() {

@@ -2,6 +2,8 @@ package net.mathias2246.buildmc.status;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.platform.SoundManagerSpigotImpl;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -27,9 +29,15 @@ public class PlayerStatus implements Listener {
         return StatusConfig.loadedStatuses.containsKey(status);
     }
 
-    public static void setPlayerStatus(@NotNull Player player, String status) {
+    public static void setPlayerStatus(@NotNull Player player, String status, boolean join) {
         if (!doesStatusExist(status)) {
-            audiences.player(player).sendMessage(Component.translatable("messages.status.not-found"));
+            if (join) {
+                audiences.player(player).sendMessage(Component.translatable("messages.status.join-doesn't-exist"));
+                player.getPersistentDataContainer().remove(PLAYER_STATUS_PDC);
+            } else {
+                audiences.player(player).sendMessage(Component.translatable("messages.status.not-found"));
+                CoreMain.soundManager.playSound(player, SoundManagerSpigotImpl.mistake);
+            }
             return;
         }
 
@@ -37,9 +45,16 @@ public class PlayerStatus implements Listener {
         var allowed = s.allowPlayer(player);
         if (!allowed.equals(StatusInstance.AllowStatus.ALLOW)) {
             switch (allowed) {
-                case NOT_IN_TEAM -> audiences.player(player).sendMessage(Component.translatable("messages.status.not-in-team"));
-                case MISSING_PERMISSION -> audiences.player(player).sendMessage(Component.translatable("messages.status.no-permission"));
+                case NOT_IN_TEAM ->
+                        audiences.player(player).sendMessage(Component.translatable("messages.status.not-in-team"));
+                case MISSING_PERMISSION ->
+                        audiences.player(player).sendMessage(Component.translatable("messages.status.no-permission"));
             }
+            if (join) {
+                player.getPersistentDataContainer().remove(PLAYER_STATUS_PDC);
+                return;
+            }
+            CoreMain.soundManager.playSound(player, SoundManagerSpigotImpl.mistake);
             return;
         }
 
@@ -58,7 +73,9 @@ public class PlayerStatus implements Listener {
                 status
         );
 
+        if (join) return;
         audiences.player(player).sendMessage(Component.translatable("messages.status.successfully-set"));
+        CoreMain.soundManager.playSound(player, SoundManagerSpigotImpl.success);
     }
 
     public static void removePlayerStatus(@NotNull Player player) {
@@ -76,7 +93,8 @@ public class PlayerStatus implements Listener {
             Player player = event.getPlayer();
             setPlayerStatus(
                     player,
-                    player.getPersistentDataContainer().get(PLAYER_STATUS_PDC, PersistentDataType.STRING)
+                    player.getPersistentDataContainer().get(PLAYER_STATUS_PDC, PersistentDataType.STRING),
+                    true
             );
         }
     }

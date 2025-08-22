@@ -70,6 +70,15 @@ public abstract class YamlConfigurationManager {
         setupConfiguration();
     }
 
+    public void reload() {
+        try {
+            configuration.load(configFile);
+        } catch (IOException | InvalidConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+        setupConfiguration();
+    }
+
     /**Executed before writing to disk*/
     protected abstract void preSave();
 

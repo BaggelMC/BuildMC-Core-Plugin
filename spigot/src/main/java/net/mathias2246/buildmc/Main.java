@@ -3,19 +3,19 @@ package net.mathias2246.buildmc;
 import dev.jorel.commandapi.CommandAPI;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
-import net.mathias2246.buildmc.claims.*;
-import net.mathias2246.buildmc.claims.listeners.*;
+import net.mathias2246.buildmc.claims.ClaimCommand;
+import net.mathias2246.buildmc.claims.ClaimToolParticles;
 import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.commands.BuildMcCommand;
 import net.mathias2246.buildmc.commands.CommandRegister;
+import net.mathias2246.buildmc.endEvent.EndListener;
 import net.mathias2246.buildmc.item.CustomItemListener;
 import net.mathias2246.buildmc.item.CustomItemRegistry;
 import net.mathias2246.buildmc.platform.SoundManagerSpigotImpl;
 import net.mathias2246.buildmc.player.PlayerHeadDropModifier;
 import net.mathias2246.buildmc.playerHeads.PlayerHeadDropDeathListener;
-import net.mathias2246.buildmc.spawnElytra.ElytraZoneCommand;
-import net.mathias2246.buildmc.endEvent.EndListener;
 import net.mathias2246.buildmc.spawnElytra.DisableRocketListener;
+import net.mathias2246.buildmc.spawnElytra.ElytraZoneCommand;
 import net.mathias2246.buildmc.spawnElytra.ElytraZoneManager;
 import net.mathias2246.buildmc.spawnElytra.SpawnBoostListener;
 import net.mathias2246.buildmc.status.PlayerStatus;
@@ -118,29 +118,6 @@ public final class Main extends JavaPlugin implements MainClass {
             );
 
             CommandRegister.register(new ClaimCommand());
-
-            registerEvent(new ClaimContainerListener());
-            registerEvent(new ClaimExplosionsListener());
-            registerEvent(new ClaimBreakListener());
-            registerEvent(new ClaimPlaceListener());
-            registerEvent(new ClaimDamageProtectionListener());
-            registerEvent(new ClaimSignEditListener());
-            registerEvent(new ClaimInteractionListener());
-            registerEvent(new ClaimPotionSplashListener());
-            registerEvent(new ClaimVehicleEnterListener());
-            registerEvent(new ClaimBucketUseEvent());
-            registerEvent(new ClaimEntityChangeBlockListener());
-            registerEvent(new ClaimItemPickupListener());
-            registerEvent(new ClaimItemDropListener());
-            registerEvent(new ClaimFrostWalkerListener());
-            registerEvent(new ClaimPistonMovementListener());
-            registerEvent(new ClaimBeehiveInteractListener());
-            registerEvent(new ClaimBonemealInteractListener());
-            registerEvent(new ClaimEntityLeashListener());
-            registerEvent(new ClaimItemFrameRotateListener());
-            registerEvent(new ClaimNameTagUseListener());
-            registerEvent(new ClaimPaintingInteractListener());
-
         }
 
         if (config.getBoolean("status.enabled")) {

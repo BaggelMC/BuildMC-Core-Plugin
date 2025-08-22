@@ -2,8 +2,8 @@ package net.mathias2246.buildmc;
 
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.kyori.adventure.text.Component;
-import net.mathias2246.buildmc.claims.*;
-import net.mathias2246.buildmc.claims.listeners.*;
+import net.mathias2246.buildmc.claims.ClaimCommand;
+import net.mathias2246.buildmc.claims.ClaimToolParticles;
 import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.commands.BuildMcCommand;
 import net.mathias2246.buildmc.endEvent.EndListener;
@@ -106,28 +106,6 @@ public final class Main extends JavaPlugin implements MainClass {
                             new ClaimToolParticles.Builder()
                     )
             );
-
-            registerEvent(new ClaimContainerListener());
-            registerEvent(new ClaimExplosionsListener());
-            registerEvent(new ClaimBreakListener());
-            registerEvent(new ClaimPlaceListener());
-            registerEvent(new ClaimDamageProtectionListener());
-            registerEvent(new ClaimSignEditListener());
-            registerEvent(new ClaimInteractionListener());
-            registerEvent(new ClaimPotionSplashListener());
-            registerEvent(new ClaimVehicleEnterListener());
-            registerEvent(new ClaimBucketUseEvent());
-            registerEvent(new ClaimEntityChangeBlockListener());
-            registerEvent(new ClaimItemPickupListener());
-            registerEvent(new ClaimItemDropListener());
-            registerEvent(new ClaimFrostWalkerListener());
-            registerEvent(new ClaimPistonMovementListener());
-            registerEvent(new ClaimBeehiveInteractListener());
-            registerEvent(new ClaimBonemealInteractListener());
-            registerEvent(new ClaimEntityLeashListener());
-            registerEvent(new ClaimItemFrameRotateListener());
-            registerEvent(new ClaimNameTagUseListener());
-            registerEvent(new ClaimPaintingInteractListener());
         }
 
         if (config.getBoolean("status.enabled")) {

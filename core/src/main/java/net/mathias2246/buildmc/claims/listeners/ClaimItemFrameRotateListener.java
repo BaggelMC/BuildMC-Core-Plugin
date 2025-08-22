@@ -19,7 +19,7 @@ public class ClaimItemFrameRotateListener implements Listener {
         if (!(event.getRightClicked() instanceof ItemFrame)) return;
 
         Player player = event.getPlayer();
-        if (!ClaimManager.isPlayerAllowed(player, EnumSet.of(ProtectionFlag.INTERACTION_ITEM_FRAMES), event.getRightClicked().getLocation())) {
+        if (!ClaimManager.isPlayerAllowed(player, EnumSet.of(ProtectionFlag.INTERACTION_HANGING_ENTITIES), event.getRightClicked().getLocation())) {
             event.setCancelled(true);
             CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.interact"));
         }

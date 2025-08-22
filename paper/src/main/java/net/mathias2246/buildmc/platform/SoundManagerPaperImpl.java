@@ -11,6 +11,7 @@ import static net.mathias2246.buildmc.Main.config;
 
 public class SoundManagerPaperImpl implements SoundManager {
 
+
     @SuppressWarnings("PatternValidation")
     public static void setup() {
         notification = Sound.sound(
