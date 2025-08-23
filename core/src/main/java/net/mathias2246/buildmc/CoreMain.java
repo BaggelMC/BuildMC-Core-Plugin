@@ -4,6 +4,7 @@ import net.mathias2246.buildmc.claims.listeners.*;
 import net.mathias2246.buildmc.database.ClaimTable;
 import net.mathias2246.buildmc.database.DatabaseConfig;
 import net.mathias2246.buildmc.database.DatabaseManager;
+import net.mathias2246.buildmc.util.BStats;
 import net.mathias2246.buildmc.util.SoundManager;
 import net.mathias2246.buildmc.util.config.ConfigHandler;
 import net.mathias2246.buildmc.util.config.ConfigurationValidationException;
@@ -34,6 +35,8 @@ public final class CoreMain {
         CoreMain.mainClass = (MainClass) plugin;
 
         initializeConfigs();
+
+        BStats.initialize();
 
         LanguageManager.init();
 

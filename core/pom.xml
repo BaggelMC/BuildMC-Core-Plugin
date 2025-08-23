@@ -79,6 +79,12 @@
             <artifactId>IF</artifactId>
             <version>0.11.3</version>
         </dependency>
+        <dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-bukkit</artifactId>
+            <version>3.0.2</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -129,6 +135,10 @@
                         <relocation>
                             <pattern>com.github.stefvanschie.inventoryframework</pattern>
                             <shadedPattern>net.mathias2246.buildmc.inventoryframework</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.bstats</pattern>
+                            <shadedPattern>net.mathias2246.buildmc.bstats</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
