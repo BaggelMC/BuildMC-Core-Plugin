@@ -11,15 +11,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 
-import java.util.EnumSet;
-
 public class ClaimHangingInteractListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPaintingBreak(HangingBreakByEntityEvent event) {
         if (!(event.getRemover() instanceof Player player)) return;
 
-        if (!ClaimManager.isPlayerAllowed(player, EnumSet.of(ProtectionFlag.INTERACTION_HANGING_ENTITIES), event.getEntity().getLocation())) {
+        if (!ClaimManager.isPlayerAllowed(player, ProtectionFlag.INTERACTION_HANGING_ENTITIES, event.getEntity().getLocation())) {
             event.setCancelled(true);
             CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.entity-damage"));
         }
@@ -31,7 +29,7 @@ public class ClaimHangingInteractListener implements Listener {
 
         if (player == null) return;
 
-        if (!ClaimManager.isPlayerAllowed(player, EnumSet.of(ProtectionFlag.INTERACTION_HANGING_ENTITIES), event.getEntity().getLocation())) {
+        if (!ClaimManager.isPlayerAllowed(player, ProtectionFlag.INTERACTION_HANGING_ENTITIES, event.getEntity().getLocation())) {
             event.setCancelled(true);
             CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.block-place"));
         }

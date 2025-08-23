@@ -5,7 +5,6 @@ public enum ProtectionFlag {
     PLAYER_BREAK,
     PLAYER_PLACE,
     CONTAINER,
-    ALLOW_ENDER_CHESTS,
     ITEM_PICKUP,
     ITEM_DROP,
     SIGN_EDITING,

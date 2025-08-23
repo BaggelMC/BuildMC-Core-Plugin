@@ -24,4 +24,5 @@ public class ClaimEntityLeashListener implements Listener {
             event.setCancelled(true);
         }
     }
+
 }

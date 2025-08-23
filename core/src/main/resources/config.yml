@@ -89,8 +89,6 @@ claims:
 
     # Players cannot open containers (e.g. Chests, Barrels...)
     containers: true
-    # Players can open ender chests even if other containers are protected
-    allow-ender-chests: true
 
     # Players cannot pick up items
     item-pickup: false

@@ -11,15 +11,13 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
-import java.util.EnumSet;
-
 public class ClaimNameTagUseListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onNameTagUse(PlayerInteractEntityEvent event) {
         if (event.getPlayer().getInventory().getItemInMainHand().getType() != Material.NAME_TAG) return;
 
         Player player = event.getPlayer();
-        if (!ClaimManager.isPlayerAllowed(player, EnumSet.of(ProtectionFlag.INTERACTION_NAME_TAGS), event.getRightClicked().getLocation())) {
+        if (!ClaimManager.isPlayerAllowed(player, ProtectionFlag.INTERACTION_NAME_TAGS, event.getRightClicked().getLocation())) {
             event.setCancelled(true);
             CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.entity-rename"));
         }

@@ -112,11 +112,93 @@ public class ClaimManager {
         }
     }
 
+    /**Checks if the given player is allowed on this claim.
+     * <p>This means that the player is allowed to do anything on the given claim.</p>
+     * @return True if, the player is the owner or whitelisted and the ProtectionFlags are set on the given claim.*/
+    public static boolean isPlayerAllowed(@NotNull Player player, @NotNull ProtectionFlag protectionFlag, @Nullable Claim claim) {
+        if (player.hasPermission("buildmc.bypass-claims")) return true;
+
+        // Allow if no claim found
+        if (claim == null) return true;
+
+        // Allow if player is explicitly whitelisted
+        if (claim.getWhitelistedPlayers().contains(player.getUniqueId())) return true;
+
+        // Allow if claim is a placeholder
+        if (claim.getType() == ClaimType.PLACEHOLDER) return true;
+
+        String playerId = player.getUniqueId().toString();
+
+        switch (claim.getType()) {
+            case SERVER:
+                return !hasFlag(claim, protectionFlag);
+
+            case PLAYER:
+                if (Objects.equals(claim.getOwnerId(), playerId)) return true;
+                return !hasFlag(claim, protectionFlag);
+
+            case TEAM:
+                Team playerTeam = getPlayerTeam(player);
+                if (playerTeam != null && Objects.equals(playerTeam.getName(), claim.getOwnerId())) return true;
+                return !hasFlag(claim, protectionFlag);
+
+            default:
+                return true;
+        }
+    }
+
+    /**Checks if the given player is allowed on this claim.
+     * <p>This means that the player is allowed to do anything on the claim at that location.</p>
+     * @return True if, the player is the owner or whitelisted and the ProtectionFlags are set at the given location.*/
+    public static boolean isPlayerAllowed(@NotNull Player player, @NotNull ProtectionFlag protectionFlag, Location location) {
+        if (player.hasPermission("buildmc.bypass-claims")) return true;
+
+        Claim claim;
+        try {
+            claim = ClaimManager.getClaim(location);
+        } catch (SQLException e) {
+            CoreMain.plugin.getLogger().severe("SQL Error while getting claim: " + e.getMessage());
+            return true; // Allow by default on error. Not sure what to do here.
+        }
+
+        // Allow if no claim found
+        if (claim == null) return true;
+
+        // Allow if player is explicitly whitelisted
+        if (claim.getWhitelistedPlayers().contains(player.getUniqueId())) return true;
+
+        // Allow if claim is a placeholder
+        if (claim.getType() == ClaimType.PLACEHOLDER) return true;
+
+        String playerId = player.getUniqueId().toString();
+
+        switch (claim.getType()) {
+            case SERVER:
+                return !hasFlag(claim, protectionFlag);
+
+            case PLAYER:
+                if (Objects.equals(claim.getOwnerId(), playerId)) return true;
+                return !hasFlag(claim, protectionFlag);
+
+            case TEAM:
+                Team playerTeam = getPlayerTeam(player);
+                if (playerTeam != null && Objects.equals(playerTeam.getName(), claim.getOwnerId())) return true;
+                return !hasFlag(claim, protectionFlag);
+
+            default:
+                return true;
+        }
+    }
+
     private static boolean hasAnyFlag(Claim claim, EnumSet<ProtectionFlag> flags) {
         for (ProtectionFlag flag : flags) {
             if (claim.hasFlag(flag)) return true;
         }
         return false;
+    }
+
+    private static boolean hasFlag(Claim claim, ProtectionFlag flag) {
+        return claim.hasFlag(flag);
     }
 
     private static boolean hasAllFlags(Claim claim, EnumSet<ProtectionFlag> flags) {

@@ -124,7 +124,6 @@ public class Claim {
             case PLAYER_BREAK -> "claims.protections.player-break";
             case PLAYER_PLACE -> "claims.protections.player-place";
             case CONTAINER -> "claims.protections.containers";
-            case ALLOW_ENDER_CHESTS -> "claims.protections.allow-ender-chests";
             case ITEM_PICKUP -> "claims.protections.item-pickup";
             case ITEM_DROP -> "claims.protections.item-drop";
             case SIGN_EDITING -> "claims.protections.sign-editing";

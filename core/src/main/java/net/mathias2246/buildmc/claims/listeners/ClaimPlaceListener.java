@@ -10,15 +10,13 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 
-import java.util.EnumSet;
-
 public class ClaimPlaceListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerPlace(BlockPlaceEvent event) {
         Player player = event.getPlayer();
 
-        if (!ClaimManager.isPlayerAllowed(player, EnumSet.of((ProtectionFlag.PLAYER_PLACE)), event.getBlock().getLocation())) {
+        if (!ClaimManager.isPlayerAllowed(player, ProtectionFlag.PLAYER_PLACE, event.getBlock().getLocation())) {
             CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.block-place"));
             event.setCancelled(true);
         }

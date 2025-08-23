@@ -12,8 +12,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 
-import java.util.EnumSet;
-
 public class ClaimVehicleEnterListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -22,7 +20,7 @@ public class ClaimVehicleEnterListener implements Listener {
         Entity entered = event.getEntered();
 
         if (!(entered instanceof Player player)) return;
-        if (!ClaimManager.isPlayerAllowed(player, EnumSet.of(ProtectionFlag.VEHICLE_ENTER), victim.getLocation())) {
+        if (!ClaimManager.isPlayerAllowed(player, ProtectionFlag.VEHICLE_ENTER, victim.getLocation())) {
             CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.vehicle"));
             event.setCancelled(true);
         }

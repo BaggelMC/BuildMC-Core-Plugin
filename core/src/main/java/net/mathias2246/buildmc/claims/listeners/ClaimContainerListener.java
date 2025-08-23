@@ -16,7 +16,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerTakeLecternBookEvent;
 import org.bukkit.scoreboard.Team;
 
@@ -71,10 +70,6 @@ public class ClaimContainerListener implements Listener {
                 event.setCancelled(true);
             }
         } else {
-            // Fallback logic.
-            if (event.getInventory().getType() == InventoryType.ENDER_CHEST && claim.hasFlag(ProtectionFlag.ALLOW_ENDER_CHESTS)) {
-                return;
-            }
             if (!ClaimManager.isPlayerAllowed(player, EnumSet.of(ProtectionFlag.CONTAINER), claim)) {
                 CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.container"));
                 event.setCancelled(true);

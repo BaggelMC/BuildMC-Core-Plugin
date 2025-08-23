@@ -12,8 +12,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import java.util.EnumSet;
-
 public class ClaimBonemealInteractListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBonemealUse(PlayerInteractEvent event) {
@@ -22,7 +20,7 @@ public class ClaimBonemealInteractListener implements Listener {
         if (event.getItem() == null || event.getItem().getType() != Material.BONE_MEAL) return;
 
         Player player = event.getPlayer();
-        if (!ClaimManager.isPlayerAllowed(player, EnumSet.of(ProtectionFlag.INTERACTION_BONEMEAL), event.getClickedBlock().getLocation())) {
+        if (!ClaimManager.isPlayerAllowed(player, ProtectionFlag.INTERACTION_BONEMEAL, event.getClickedBlock().getLocation())) {
             event.setCancelled(true);
             CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.interact"));
         }

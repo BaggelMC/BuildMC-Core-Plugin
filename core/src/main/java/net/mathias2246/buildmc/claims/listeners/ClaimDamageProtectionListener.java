@@ -15,7 +15,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 
 import java.sql.SQLException;
-import java.util.EnumSet;
 
 public class ClaimDamageProtectionListener implements Listener {
 
@@ -39,7 +38,7 @@ public class ClaimDamageProtectionListener implements Listener {
 
         if (claim.hasFlag(ProtectionFlag.EXCLUDE_PLAYERS) && victim instanceof Player player) return;
 
-        if (claim.hasFlag(ProtectionFlag.ENTITY_DAMAGE) && !ClaimManager.isPlayerAllowed(attacker, EnumSet.of(ProtectionFlag.ENTITY_DAMAGE), claim)) {
+        if (claim.hasFlag(ProtectionFlag.ENTITY_DAMAGE) && !ClaimManager.isPlayerAllowed(attacker, ProtectionFlag.ENTITY_DAMAGE, claim)) {
             CoreMain.mainClass.sendPlayerActionBar(attacker, Component.translatable("messages.claims.not-accessible.entity-damage"));
             event.setCancelled(true);
         }
@@ -52,7 +51,7 @@ public class ClaimDamageProtectionListener implements Listener {
 
         if (!(damager instanceof Player attacker)) return;
 
-        if (!ClaimManager.isPlayerAllowed(attacker, EnumSet.of(ProtectionFlag.ENTITY_DAMAGE), victim.getLocation())) {
+        if (!ClaimManager.isPlayerAllowed(attacker, ProtectionFlag.ENTITY_DAMAGE, victim.getLocation())) {
             CoreMain.mainClass.sendPlayerActionBar(attacker, Component.translatable("messages.claims.not-accessible.entity-damage"));
             event.setCancelled(true);
         }

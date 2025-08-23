@@ -12,8 +12,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import java.util.EnumSet;
-
 public class ClaimBeehiveInteractListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBeehiveInteract(PlayerInteractEvent event) {
@@ -24,7 +22,7 @@ public class ClaimBeehiveInteractListener implements Listener {
         if (type != Material.BEEHIVE && type != Material.BEE_NEST) return;
 
         Player player = event.getPlayer();
-        if (!ClaimManager.isPlayerAllowed(player, EnumSet.of(ProtectionFlag.INTERACTION_BEEHIVES), event.getClickedBlock().getLocation())) {
+        if (!ClaimManager.isPlayerAllowed(player, ProtectionFlag.INTERACTION_BEEHIVES, event.getClickedBlock().getLocation())) {
             event.setCancelled(true);
             CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.interact"));
         }

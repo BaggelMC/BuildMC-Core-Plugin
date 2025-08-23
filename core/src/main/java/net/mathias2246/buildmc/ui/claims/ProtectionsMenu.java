@@ -262,7 +262,6 @@ public class ProtectionsMenu {
             case PLAYER_BREAK -> Material.IRON_PICKAXE;
             case PLAYER_PLACE -> Material.STONE;
             case CONTAINER -> Material.CHEST;
-            case ALLOW_ENDER_CHESTS -> Material.ENDER_CHEST;
             case ITEM_PICKUP -> Material.HOPPER;
             case ITEM_DROP -> Material.DROPPER;
             case SIGN_EDITING -> Material.OAK_SIGN;

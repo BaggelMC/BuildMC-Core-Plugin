@@ -11,15 +11,13 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PotionSplashEvent;
 
-import java.util.EnumSet;
-
 public class ClaimPotionSplashListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPotionSplash(PotionSplashEvent event) {
         ThrownPotion thrownPotion = event.getPotion();
         if (thrownPotion.getShooter() instanceof Player player) {
-            if (!ClaimManager.isPlayerAllowed(player, EnumSet.of(ProtectionFlag.SPLASH_POTIONS), thrownPotion.getLocation())) {
+            if (!ClaimManager.isPlayerAllowed(player, ProtectionFlag.SPLASH_POTIONS, thrownPotion.getLocation())) {
                 CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.potion-splash"));
                 event.setCancelled(true);
             }

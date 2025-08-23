@@ -15,8 +15,6 @@ import org.bukkit.event.player.PlayerBucketEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.EnumSet;
-
 public class ClaimBucketUseEvent implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -40,7 +38,7 @@ public class ClaimBucketUseEvent implements Listener {
 
         if (!isBucketUse) return;
 
-        if (!ClaimManager.isPlayerAllowed(player, EnumSet.of(ProtectionFlag.BUCKET_USAGE), block.getLocation())) {
+        if (!ClaimManager.isPlayerAllowed(player, ProtectionFlag.BUCKET_USAGE, block.getLocation())) {
             CoreMain.mainClass.sendPlayerActionBar(player,
                     Component.translatable("messages.claims.not-accessible.block-place"));
             event.setCancelled(true);
@@ -52,7 +50,7 @@ public class ClaimBucketUseEvent implements Listener {
         Player player = event.getPlayer();
         Entity entity = event.getEntity();
 
-        if (!ClaimManager.isPlayerAllowed(player, EnumSet.of(ProtectionFlag.BUCKET_USAGE), entity.getLocation())) {
+        if (!ClaimManager.isPlayerAllowed(player, ProtectionFlag.BUCKET_USAGE, entity.getLocation())) {
             CoreMain.mainClass.sendPlayerActionBar(player,
                     Component.translatable("messages.claims.not-accessible.entity-bucket"));
             event.setCancelled(true);

@@ -124,18 +124,18 @@ messages:
       added: "<green>Protection flag <yellow>%flag%</yellow> was <green>enabled</green> for this claim."
       removed: "<green>Protection flag <yellow>%flag%</yellow> was <red>disabled</red> for this claim."
 
-    # TODO: Update
     help-message: |-
       <gold>------------- <green>Claims Help</green> -------------</gold>
       <aqua>Click <green><click:open_url:'https://github.com/BaggelMC/BuildMC-Core-Plugin/blob/master/docs/usage/claim_system.md'>here</click></green> to open the full documentation.</aqua>
       <gray>- Use '<gold>/claim claimtool</gold>' to get the claim tool.</gray>
-      <gray>- Click to select your first chunk.</gray>
-      <gray>- Sneak + Click to select your second chunk.</gray>
-      <gray>- That area will then be claimed.</gray>
+      <gray>- Left-Click to select your first chunk.</gray>
+      <gray>- Right-Click to select your second chunk.</gray>
+      <gray>- Use '<gold>/claim create \<team/player> <name></gold>'
+        to create a claim for yourself or your team.</gray>
       
-      <gray>- Use '<gold>/claim removetool</gold>' to get the claim remover.
-      <gray>- Select corners to remove area.
-      <gold>------------------------------------</gold>
+      <gray>- Use '<gold>/claim</gold>' to open the claims menu.
+      <gray>- In the claims menu you can manage the settings of your claims.
+      <gold>---------------------------------------</gold>
 
     not-accessible:
       container: "<red>This container is protected by a land claim.</red>"
@@ -215,9 +215,6 @@ messages:
           container:
             name: "<green>Containers</green>"
             lore: "<gray>Prevents players from using containers (e.g. Chests, Hoppers..).</gray>"
-          allow_ender_chests:
-            name: "<green>Allow Ender Chests</green>"
-            lore: "<gray>Allows players to still use ender chests, even if containers are disabled.</gray>"
           item_pickup:
             name: "<green>Item Pickup</green>"
             lore: "<gray>Prevents players from picking up items.</gray>"

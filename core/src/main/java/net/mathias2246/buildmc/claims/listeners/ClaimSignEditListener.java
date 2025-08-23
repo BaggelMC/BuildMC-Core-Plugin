@@ -11,8 +11,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 
-import java.util.EnumSet;
-
 public class ClaimSignEditListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -20,7 +18,7 @@ public class ClaimSignEditListener implements Listener {
 
         Player player = event.getPlayer();
 
-        if (!ClaimManager.isPlayerAllowed(player, EnumSet.of(ProtectionFlag.SIGN_EDITING), event.getBlock().getLocation())) {
+        if (!ClaimManager.isPlayerAllowed(player, ProtectionFlag.SIGN_EDITING, event.getBlock().getLocation())) {
             // Cancel the sign change
             event.setCancelled(true);
 

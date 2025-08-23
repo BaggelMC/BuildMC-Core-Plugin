@@ -57,7 +57,7 @@
 
     <build>
 
-        <finalName>BuildMC-Core-Paper-${project.buildVersion}-${minecraft.supportedVersions}.jar</finalName>
+        <finalName>BuildMC-Core-Paper-${project.buildVersion}-${minecraft.supportedVersions}</finalName>
 
         <resources>
             <resource>

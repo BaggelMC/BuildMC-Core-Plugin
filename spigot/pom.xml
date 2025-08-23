@@ -69,7 +69,7 @@
 
     <build>
 
-        <finalName>BuildMC-Core-Spigot-${project.buildVersion}-${minecraft.supportedVersions}.jar</finalName>
+        <finalName>BuildMC-Core-Spigot-${project.buildVersion}-${minecraft.supportedVersions}</finalName>
 
         <resources>
             <resource>

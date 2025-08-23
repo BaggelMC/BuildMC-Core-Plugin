@@ -17,7 +17,6 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.sql.SQLException;
-import java.util.EnumSet;
 
 public class ClaimInteractionListener implements Listener {
 
@@ -42,7 +41,7 @@ public class ClaimInteractionListener implements Listener {
         }
         if (claim == null) return;
 
-        if (claim.hasFlag(flag) && !ClaimManager.isPlayerAllowed(player, EnumSet.of(flag), claim)) {
+        if (claim.hasFlag(flag) && !ClaimManager.isPlayerAllowed(player, flag, claim)) {
             event.setCancelled(true);
             CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.interact"));
         }
@@ -61,7 +60,7 @@ public class ClaimInteractionListener implements Listener {
         }
         if (claim == null) return;
 
-        if (claim.hasFlag(ProtectionFlag.INTERACTION_FARMLAND) && !ClaimManager.isPlayerAllowed(player, EnumSet.of(ProtectionFlag.INTERACTION_FARMLAND), claim)) {
+        if (claim.hasFlag(ProtectionFlag.INTERACTION_FARMLAND) && !ClaimManager.isPlayerAllowed(player, ProtectionFlag.INTERACTION_FARMLAND, claim)) {
             event.setCancelled(true);
             CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.interact"));
         }

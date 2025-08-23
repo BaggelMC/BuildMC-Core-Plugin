@@ -12,8 +12,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 
-import java.util.EnumSet;
-
 public class ClaimItemPickupListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -24,7 +22,7 @@ public class ClaimItemPickupListener implements Listener {
         if (!(entity instanceof Player player)) return;
 
 
-        if (!ClaimManager.isPlayerAllowed(player, EnumSet.of(ProtectionFlag.ITEM_PICKUP), item.getLocation())) {
+        if (!ClaimManager.isPlayerAllowed(player, ProtectionFlag.ITEM_PICKUP, item.getLocation())) {
             event.setCancelled(true);
             CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.item-pickup"));
         }

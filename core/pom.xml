@@ -83,7 +83,7 @@
 
     <build>
 
-        <finalName>BuildMC-Core-${project.buildVersion}-${minecraft.supportedVersions}.jar</finalName>
+        <finalName>BuildMC-Core-${project.buildVersion}-${minecraft.supportedVersions}</finalName>
 
         <plugins>
             <plugin>

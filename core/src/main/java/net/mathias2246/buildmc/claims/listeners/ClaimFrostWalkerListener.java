@@ -14,8 +14,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.EnumSet;
-
 public class ClaimFrostWalkerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onFrostWalkerUse(EntityBlockFormEvent event) {
@@ -27,7 +25,7 @@ public class ClaimFrostWalkerListener implements Listener {
         ItemStack boots = player.getInventory().getBoots();
         if (boots == null || !boots.containsEnchantment(Enchantment.FROST_WALKER)) return;
 
-        if (!ClaimManager.isPlayerAllowed(player, EnumSet.of(ProtectionFlag.FROST_WALKER), event.getBlock().getLocation())) {
+        if (!ClaimManager.isPlayerAllowed(player, ProtectionFlag.FROST_WALKER, event.getBlock().getLocation())) {
             event.setCancelled(true);
             CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.frostwalker"));
         }
