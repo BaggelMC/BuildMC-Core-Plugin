@@ -1,6 +1,9 @@
 package net.mathias2246.buildmc.claims.listeners;
 
+import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.claims.Claim;
 import net.mathias2246.buildmc.claims.ClaimManager;
+import net.mathias2246.buildmc.claims.ProtectionFlag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
@@ -8,77 +11,108 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public class ClaimPistonMovementListener implements Listener {
 
     @EventHandler
     public void onPistonExtend(BlockPistonExtendEvent event) {
-        Block piston = event.getBlock();
-        Long pistonOwner = ClaimManager.getClaimId(piston.getChunk());
-        BlockFace direction = event.getDirection();
-        List<Block> movedBlocks = event.getBlocks();
+        try {
+            Block piston = event.getBlock();
+            Claim pistonClaim = ClaimManager.getClaim(piston.getChunk());
+            BlockFace direction = event.getDirection();
 
-        for (Block movedBlock : movedBlocks) {
-            Block destinationBlock = movedBlock.getRelative(direction);
+            List<Block> movedBlocks = event.getBlocks();
+            for (Block movedBlock : movedBlocks) {
+                Block destinationBlock = movedBlock.getRelative(direction);
 
-            Long fromOwner = ClaimManager.getClaimId(movedBlock.getChunk());
-            Long toOwner = ClaimManager.getClaimId(destinationBlock.getChunk());
+                Claim fromClaim = ClaimManager.getClaim(movedBlock.getChunk());
+                Claim toClaim = ClaimManager.getClaim(destinationBlock.getChunk());
 
-            // Prevent if moving across different ownership
-            if (!equalsOrNull(fromOwner, toOwner)) {
-                event.setCancelled(true);
-                return;
+                if (pistonClaim != null && toClaim == null) {
+                    continue;
+                }
+
+                if (!isPistonMoveAllowed(pistonClaim, fromClaim, toClaim)) {
+                    event.setCancelled(true);
+                    return;
+                }
             }
-
-            // Prevent if piston doesn't own the destination area
-            if (!equalsOrNull(pistonOwner, toOwner)) {
-                event.setCancelled(true);
-                return;
-            }
-
-            // Prevent if piston doesn't own the block being moved
-            if (!equalsOrNull(pistonOwner, fromOwner)) {
-                event.setCancelled(true);
-                return;
-            }
+        } catch (SQLException e) {
+            CoreMain.plugin.getLogger().severe("An SQLException occurred in ClaimPistonMovementListener in onPistonExtend: " + e);
+            event.setCancelled(true);
         }
     }
+
 
     @EventHandler
     public void onPistonRetract(BlockPistonRetractEvent event) {
         if (!event.isSticky()) return;
 
-        Block piston = event.getBlock();
-        Long pistonOwner = ClaimManager.getClaimId(piston.getChunk());
+        try {
+            Block piston = event.getBlock();
+            Claim pistonClaim = ClaimManager.getClaim(piston.getChunk());
+            BlockFace direction = event.getDirection();
 
-        BlockFace direction = event.getDirection();
-        Block blockToPull = piston.getRelative(direction.getOppositeFace()).getRelative(direction.getOppositeFace());
-        Block pullDestination = blockToPull.getRelative(direction);
+            List<Block> movedBlocks = event.getBlocks();
+            for (Block movedBlock : movedBlocks) {
+                Block destinationBlock = movedBlock.getRelative(direction);
 
-        Long pulledBlockOwner = ClaimManager.getClaimId(blockToPull.getChunk());
-        Long destinationOwner = ClaimManager.getClaimId(pullDestination.getChunk());
+                Claim fromClaim = ClaimManager.getClaim(movedBlock.getChunk());
+                Claim toClaim = ClaimManager.getClaim(destinationBlock.getChunk());
 
-        // Prevent pulling if a piston doesn't own the block it's pulling
-        if (!equalsOrNull(pistonOwner, pulledBlockOwner)) {
-            event.setCancelled(true);
-            return;
-        }
+                if (pistonClaim != null && !requiresProtection(fromClaim)) {
+                    continue;
+                }
 
-        // Prevent pulling if piston doesn't own the destination
-        if (!equalsOrNull(pistonOwner, destinationOwner)) {
-            event.setCancelled(true);
-            return;
-        }
+                // Optimization: Skip extra checks if staying in same chunk
+                if (movedBlock.getChunk().equals(destinationBlock.getChunk())) {
+                    if (!isPistonMoveAllowed(pistonClaim, fromClaim, fromClaim)) {
+                        event.setCancelled(true);
+                        return;
+                    }
+                    continue;
+                }
 
-        // Prevent pulling if ownership changes between pulled block and destination
-        if (!equalsOrNull(pulledBlockOwner, destinationOwner)) {
+                if (!isPistonMoveAllowed(pistonClaim, fromClaim, toClaim)) {
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+        } catch (SQLException e) {
+            CoreMain.plugin.getLogger().severe("An SQLException occurred in ClaimPistonMovementListener in onPistonRetract: " + e);
             event.setCancelled(true);
         }
     }
 
+
+    /**
+     * Determines if piston movement between claims is allowed.
+     * Takes into account ownership and claim flags.
+     */
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    private boolean equalsOrNull(Long a, Long b) {
+    private boolean isPistonMoveAllowed(Claim pistonClaim, Claim fromClaim, Claim toClaim) {
+        String pistonOwner = pistonClaim != null ? pistonClaim.getOwnerId() : null;
+        String fromOwner = fromClaim != null ? fromClaim.getOwnerId() : null;
+        String toOwner = toClaim != null ? toClaim.getOwnerId() : null;
+
+        // Check flags
+        if (requiresProtection(pistonClaim) || requiresProtection(fromClaim) || requiresProtection(toClaim)) {
+            if (!equalsOrNull(fromOwner, toOwner)) return false;
+            if (!equalsOrNull(pistonOwner, toOwner)) return false;
+            if (!equalsOrNull(pistonOwner, fromOwner)) return false;
+        }
+
+        return true;
+    }
+
+    private boolean requiresProtection(Claim claim) {
+        return claim != null && claim.hasFlag(ProtectionFlag.PISTON_MOVEMENT_ACROSS_CLAIM_BORDERS);
+    }
+
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    private boolean equalsOrNull(String a, String b) {
         if (a == null && b == null) return true;
         if (a == null || b == null) return false;
         return a.equals(b);
