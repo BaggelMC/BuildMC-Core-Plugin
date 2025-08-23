@@ -86,6 +86,8 @@ public final class Main extends JavaPlugin implements MainClass {
         config = this.getConfig();
 
         audiences = BukkitAudiences.create(plugin);
+
+        SoundManagerSpigotImpl.setup();
         CoreMain.soundManager = new SoundManagerSpigotImpl();
         customItems = new CustomItemRegistry();
         getServer().getPluginManager().registerEvents(new CustomItemListener(customItems), this);
