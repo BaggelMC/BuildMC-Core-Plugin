@@ -44,18 +44,18 @@ public class ClaimManager {
         try {
             claim = ClaimManager.getClaim(location);
         } catch (SQLException e) {
-            CoreMain.plugin.getLogger().severe("SQL Error while getting claim: " + e.getMessage());
+            CoreMain.plugin.getLogger().severe("SQL Error while getting claim: " + e);
             return true; // Allow by default on error. Not sure what to do here.
         }
 
         // Allow if no claim found
         if (claim == null) return true;
 
-        // Allow if player is explicitly whitelisted
-        if (claim.getWhitelistedPlayers().contains(player.getUniqueId())) return true;
-
         // Allow if claim is a placeholder
         if (claim.getType() == ClaimType.PLACEHOLDER) return true;
+
+        // Allow if player is explicitly whitelisted
+        if (claim.getWhitelistedPlayers().contains(player.getUniqueId())) return true;
 
         String playerId = player.getUniqueId().toString();
 
@@ -86,11 +86,11 @@ public class ClaimManager {
         // Allow if no claim found
         if (claim == null) return true;
 
-        // Allow if player is explicitly whitelisted
-        if (claim.getWhitelistedPlayers().contains(player.getUniqueId())) return true;
-
         // Allow if claim is a placeholder
         if (claim.getType() == ClaimType.PLACEHOLDER) return true;
+
+        // Allow if player is explicitly whitelisted
+        if (claim.getWhitelistedPlayers().contains(player.getUniqueId())) return true;
 
         String playerId = player.getUniqueId().toString();
 
@@ -121,11 +121,11 @@ public class ClaimManager {
         // Allow if no claim found
         if (claim == null) return true;
 
-        // Allow if player is explicitly whitelisted
-        if (claim.getWhitelistedPlayers().contains(player.getUniqueId())) return true;
-
         // Allow if claim is a placeholder
         if (claim.getType() == ClaimType.PLACEHOLDER) return true;
+
+        // Allow if player is explicitly whitelisted
+        if (claim.getWhitelistedPlayers().contains(player.getUniqueId())) return true;
 
         String playerId = player.getUniqueId().toString();
 
@@ -157,18 +157,19 @@ public class ClaimManager {
         try {
             claim = ClaimManager.getClaim(location);
         } catch (SQLException e) {
-            CoreMain.plugin.getLogger().severe("SQL Error while getting claim: " + e.getMessage());
+            CoreMain.plugin.getLogger().severe("SQL Error while getting claim: " + e);
             return true; // Allow by default on error. Not sure what to do here.
         }
 
         // Allow if no claim found
         if (claim == null) return true;
 
+        // Allow if claim is a placeholder
+        if (claim.getType() == ClaimType.PLACEHOLDER) return true;
+
         // Allow if player is explicitly whitelisted
         if (claim.getWhitelistedPlayers().contains(player.getUniqueId())) return true;
 
-        // Allow if claim is a placeholder
-        if (claim.getType() == ClaimType.PLACEHOLDER) return true;
 
         String playerId = player.getUniqueId().toString();
 
@@ -265,7 +266,7 @@ public class ClaimManager {
         try {
             return CoreMain.claimTable.getClaimById(CoreMain.databaseManager.getConnection(), claimID);
         } catch (SQLException e) {
-            CoreMain.plugin.getLogger().severe("SQL Error while trying to get a claim by ID: " + e.getMessage());
+            CoreMain.plugin.getLogger().severe("SQL Error while trying to get a claim by ID: " + e);
         }
         return null;
     }
@@ -317,7 +318,7 @@ public class ClaimManager {
         try {
             claimId = CoreMain.claimTable.insertClaim(CoreMain.databaseManager.getConnection(), claim);
         } catch (SQLException e) {
-            CoreMain.plugin.getLogger().severe("Failed to insert claim into database: " + e.getMessage());
+            CoreMain.plugin.getLogger().severe("Failed to insert claim into database: " + e);
             return false;
         }
 
@@ -358,7 +359,7 @@ public class ClaimManager {
         try {
             claim = CoreMain.claimTable.getClaimById(CoreMain.databaseManager.getConnection(), claimID);
         } catch (SQLException e) {
-            CoreMain.plugin.getLogger().severe("SQL error while getting claim: " + e.getMessage());
+            CoreMain.plugin.getLogger().severe("SQL error while getting claim: " + e);
         }
 
         if (claim == null) return;
@@ -379,7 +380,7 @@ public class ClaimManager {
         try {
             claim = CoreMain.claimTable.getClaimById(CoreMain.databaseManager.getConnection(), claimID);
         } catch (SQLException e) {
-            CoreMain.plugin.getLogger().severe("SQL error while getting claim: " + e.getMessage());
+            CoreMain.plugin.getLogger().severe("SQL error while getting claim: " + e);
         }
 
         if (claim == null) return;
@@ -433,7 +434,7 @@ public class ClaimManager {
         try {
             name = CoreMain.claimTable.getClaimNameById(CoreMain.databaseManager.getConnection(), claimId);
         } catch (SQLException e) {
-            CoreMain.plugin.getLogger().severe("SQL Error while trying to get name by ID " + e.getMessage());
+            CoreMain.plugin.getLogger().severe("SQL Error while trying to get name by ID " + e);
         }
         return name;
     }
@@ -444,7 +445,7 @@ public class ClaimManager {
         try {
             CoreMain.claimTable.deleteClaimById(CoreMain.databaseManager.getConnection(), claimId);
         } catch (SQLException e) {
-            CoreMain.plugin.getLogger().severe("Failed to remove claim from database: " + e.getMessage());
+            CoreMain.plugin.getLogger().severe("Failed to remove claim from database: " + e);
             return false;
         }
         return true;

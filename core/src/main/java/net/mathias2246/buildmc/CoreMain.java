@@ -97,9 +97,9 @@ public final class CoreMain {
             config.loadConfig();
             config.validateConfig();
         } catch (IOException e) {
-            plugin.getLogger().severe("Failed to load config: " + e.getMessage());
+            plugin.getLogger().severe("Failed to load config: " + e);
         } catch (ConfigurationValidationException e) {
-            plugin.getLogger().severe("Config validation failed: " + e.getMessage());
+            plugin.getLogger().severe("Config validation failed: " + e);
         }
     }
 }

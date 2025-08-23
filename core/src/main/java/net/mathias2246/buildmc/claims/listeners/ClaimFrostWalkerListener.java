@@ -17,7 +17,7 @@ import org.bukkit.inventory.ItemStack;
 public class ClaimFrostWalkerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onFrostWalkerUse(EntityBlockFormEvent event) {
-        if (event.getNewState().getType() != Material.FROSTED_ICE) return;
+        if (!event.getNewState().getType().equals(Material.FROSTED_ICE)) return;
 
         Entity entity = event.getEntity();
         if (!(entity instanceof Player player)) return;

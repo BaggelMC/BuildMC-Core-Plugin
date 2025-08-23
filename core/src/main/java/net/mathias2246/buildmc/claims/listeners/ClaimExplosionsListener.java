@@ -20,11 +20,12 @@ public class ClaimExplosionsListener implements Listener {
     public void onExplosion(EntityExplodeEvent event) {
         Location location = event.getLocation();
 
-        Claim claim = null;
+        Claim claim;
         try {
             claim = ClaimManager.getClaim(location);
         } catch (SQLException e) {
-            CoreMain.plugin.getLogger().severe("SQL error while getting claim: " + e.getMessage());
+            CoreMain.plugin.getLogger().severe("SQL error while getting claim: " + e);
+            return;
         }
         if (claim == null) return;
 
@@ -41,7 +42,7 @@ public class ClaimExplosionsListener implements Listener {
         try {
             claim = ClaimManager.getClaim(location);
         } catch (SQLException e) {
-            CoreMain.plugin.getLogger().severe("SQL error while getting claim: " + e.getMessage());
+            CoreMain.plugin.getLogger().severe("SQL error while getting claim: " + e);
         }
         if (claim == null) return;
 
@@ -58,7 +59,7 @@ public class ClaimExplosionsListener implements Listener {
         try {
             claim = ClaimManager.getClaim(location);
         } catch (SQLException e) {
-            CoreMain.plugin.getLogger().severe("SQL error while getting claim: " + e.getMessage());
+            CoreMain.plugin.getLogger().severe("SQL error while getting claim: " + e);
         }
         if (claim == null) return;
 

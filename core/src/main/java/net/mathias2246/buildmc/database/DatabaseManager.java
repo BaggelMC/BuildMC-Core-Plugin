@@ -47,7 +47,7 @@ public class DatabaseManager {
                 connection.close();
             }
         } catch (SQLException e) {
-            logger.warning("Error closing old database connection: " + e.getMessage());
+            logger.warning("Error closing old database connection: " + e);
         }
 
         String databaseFilePath = new File(databaseFolder, "database").getAbsolutePath();
@@ -57,7 +57,7 @@ public class DatabaseManager {
             Class.forName("org.h2.Driver");
             connection = DriverManager.getConnection(url, "sa", "");
         } catch (ClassNotFoundException | SQLException e) {
-            logger.severe("Database connection failed: " + e.getMessage());
+            logger.severe("Database connection failed: " + e);
         }
 
         runMigrations();
@@ -70,7 +70,7 @@ public class DatabaseManager {
                 connect();
             }
         } catch (SQLException e) {
-            logger.severe("Failed to check or re-establish database connection: " + e.getMessage());
+            logger.severe("Failed to check or re-establish database connection: " + e);
         }
         return connection;
     }
@@ -92,7 +92,7 @@ public class DatabaseManager {
             }
 
         } catch (SQLException e) {
-            logger.severe("Migration failed: " + e.getMessage());
+            logger.severe("Migration failed: " + e);
             throw new RuntimeException("Database migration failed", e);
         }
     }
@@ -102,7 +102,7 @@ public class DatabaseManager {
         try {
             table.createTable(getConnection());
         } catch (SQLException e) {
-            logger.severe("Failed to create table: " + table.getClass().getSimpleName() + " - " + e.getMessage());
+            logger.severe("Failed to create table: " + table.getClass().getSimpleName() + " - " + e);
         }
     }
 
@@ -112,7 +112,7 @@ public class DatabaseManager {
                 connection.close();
                 logger.info("Database connection closed.");
             } catch (SQLException e) {
-                logger.severe("Error closing database connection: " + e.getMessage());
+                logger.severe("Error closing database connection: " + e);
             }
         }
     }

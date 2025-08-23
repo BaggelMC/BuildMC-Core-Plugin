@@ -19,11 +19,12 @@ public class ClaimEntityChangeBlockListener implements Listener {
         EntityType entityType = event.getEntityType();
         Location location = event.getBlock().getLocation();
 
-        Claim claim = null;
+        Claim claim;
         try {
             claim = ClaimManager.getClaim(location);
         } catch (SQLException e) {
-            CoreMain.plugin.getLogger().severe("SQL error while getting claim: " + e.getMessage());
+            CoreMain.plugin.getLogger().severe("SQL error while getting claim: " + e);
+            return;
         }
 
         if (claim == null) return;

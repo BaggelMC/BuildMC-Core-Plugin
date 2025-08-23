@@ -27,17 +27,21 @@ public class ClaimInteractionListener implements Listener {
 
         Block block = event.getClickedBlock();
         Material type = block.getType();
+
+        if (!type.isInteractable()) return;
+
         Player player = event.getPlayer();
 
         // Check if it's an interactable block we want to restrict
         ProtectionFlag flag = getProtectionFlagFor(type);
         if (flag == null) return;
 
-        Claim claim = null;
+        Claim claim;
         try {
             claim = ClaimManager.getClaim(block.getLocation());
         } catch (SQLException e) {
-            CoreMain.plugin.getLogger().severe("SQL error while getting claim: " + e.getMessage());
+            CoreMain.plugin.getLogger().severe("SQL error while getting claim: " + e);
+            return;
         }
         if (claim == null) return;
 
@@ -56,7 +60,7 @@ public class ClaimInteractionListener implements Listener {
         try {
             claim = ClaimManager.getClaim(event.getBlock().getLocation());
         } catch (SQLException e) {
-            CoreMain.plugin.getLogger().severe("SQL error while getting claim: " + e.getMessage());
+            CoreMain.plugin.getLogger().severe("SQL error while getting claim: " + e);
         }
         if (claim == null) return;
 

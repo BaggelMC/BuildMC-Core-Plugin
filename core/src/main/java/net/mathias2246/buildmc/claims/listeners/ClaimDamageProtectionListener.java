@@ -29,7 +29,7 @@ public class ClaimDamageProtectionListener implements Listener {
         try {
             claim = ClaimManager.getClaim(victim.getLocation());
         } catch (SQLException e) {
-            CoreMain.plugin.getLogger().severe("SQL error while getting claim: " + e.getMessage());
+            CoreMain.plugin.getLogger().severe("SQL error while getting claim: " + e);
         }
 
         if (claim == null) return;

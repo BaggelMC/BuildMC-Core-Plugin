@@ -130,9 +130,8 @@ public class ClaimTable implements DatabaseTable {
         }
 
         try (PreparedStatement ps = conn.prepareStatement("""
-        SELECT type, owner_id, world_id, chunk_x1, chunk_z1, chunk_x2, chunk_z2, name
-        FROM claims WHERE id = ?
-    """)) {
+                SELECT * FROM claims WHERE id = ?
+            """)) {
             ps.setLong(1, id);
 
             try (ResultSet rs = ps.executeQuery()) {

@@ -39,7 +39,7 @@ public class DatabaseConfig implements ConfigHandler {
                 }
                 Files.copy(defaultConfigStream, configFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
-                logger.severe("Error generating config: " + e.getMessage());
+                logger.severe("Error generating config: " + e);
             }
         }
     }
@@ -105,7 +105,7 @@ public class DatabaseConfig implements ConfigHandler {
             try {
                 config.save(configFile);
             } catch (IOException e) {
-                logger.severe("Could not save config database.yml: " + e.getMessage());
+                logger.severe("Could not save config database.yml: " + e);
             }
         } else {
             CoreMain.plugin.getServer().getScheduler().runTask(CoreMain.plugin, this::saveConfig);

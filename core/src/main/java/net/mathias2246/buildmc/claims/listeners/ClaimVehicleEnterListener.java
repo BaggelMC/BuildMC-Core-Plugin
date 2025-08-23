@@ -16,11 +16,11 @@ public class ClaimVehicleEnterListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onVehicleEnter(VehicleEnterEvent event) {
-        Vehicle victim = event.getVehicle();
+        Vehicle vehicle = event.getVehicle();
         Entity entered = event.getEntered();
 
         if (!(entered instanceof Player player)) return;
-        if (!ClaimManager.isPlayerAllowed(player, ProtectionFlag.VEHICLE_ENTER, victim.getLocation())) {
+        if (!ClaimManager.isPlayerAllowed(player, ProtectionFlag.VEHICLE_ENTER, vehicle.getLocation())) {
             CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.vehicle"));
             event.setCancelled(true);
         }
