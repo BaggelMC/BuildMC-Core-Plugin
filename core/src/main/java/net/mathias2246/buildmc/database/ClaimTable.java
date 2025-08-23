@@ -405,4 +405,21 @@ public class ClaimTable implements DatabaseTable {
             }
         }
     }
+
+    public boolean doesOwnerHaveClaimWithName(Connection conn, String ownerId, String claimName) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement("""
+        SELECT 1 FROM claims
+        WHERE owner_id = ? AND name = ?
+        LIMIT 1
+    """)) {
+            ps.setString(1, ownerId);
+            ps.setString(2, claimName);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+
 }

@@ -177,6 +177,18 @@ public class ClaimCommand implements CustomCommand {
 
                                     switch (type.toLowerCase()) {
                                         case "player" -> {
+
+                                            try {
+                                                if (ClaimManager.doesOwnerHaveClaimWithName(player.getUniqueId().toString(), name)) {
+                                                    audiences.player(player).sendMessage(Component.translatable("messages.claims.create.duplicate-name"));
+                                                    return 1;
+                                                }
+                                            } catch (SQLException e) {
+                                                CoreMain.plugin.getLogger().severe("SQL Error while trying to check claim name availability: " + e);
+                                                audiences.player(player).sendMessage(Component.translatable("messages.claims.create.error-database"));
+                                                return 0;
+                                            }
+
                                             boolean success = ClaimManager.tryClaimPlayerArea(player, name, pos1, pos2);
                                             if (success) {
                                                 audiences.player(player).sendMessage(Component.translatable("messages.claims.create.success"));
@@ -195,6 +207,18 @@ public class ClaimCommand implements CustomCommand {
                                                 audiences.player(player).sendMessage(Component.translatable("messages.error.not-in-a-team"));
                                                 return 0;
                                             }
+
+                                            try {
+                                                if (ClaimManager.doesOwnerHaveClaimWithName(team.getName(), name)) {
+                                                    audiences.player(player).sendMessage(Component.translatable("messages.claims.create.duplicate-name"));
+                                                    return 1;
+                                                }
+                                            } catch (SQLException e) {
+                                                CoreMain.plugin.getLogger().severe("SQL Error while trying to check claim name availability: " + e);
+                                                audiences.player(player).sendMessage(Component.translatable("messages.claims.create.error-database"));
+                                                return 0;
+                                            }
+
                                             boolean success = ClaimManager.tryClaimTeamArea(team, name, pos1, pos2);
                                             if (success) {
                                                 audiences.player(player).sendMessage(Component.translatable("messages.claims.create.success"));

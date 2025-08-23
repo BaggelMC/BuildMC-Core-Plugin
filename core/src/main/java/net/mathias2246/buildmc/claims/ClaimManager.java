@@ -450,4 +450,8 @@ public class ClaimManager {
         }
         return true;
     }
+
+    public static boolean doesOwnerHaveClaimWithName(String ownerId, String claimName) throws SQLException {
+        return CoreMain.claimTable.doesOwnerHaveClaimWithName(CoreMain.databaseManager.getConnection(), ownerId, claimName);
+    }
 }
