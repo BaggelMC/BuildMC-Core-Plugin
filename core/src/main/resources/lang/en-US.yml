@@ -36,9 +36,6 @@ messages:
 
   claims:
     tool:
-      # NOTE: tool-name and tool-tooltip will only display formating on the paper version of this plugin.
-
-
       tool-name: "Select Claim Corners"
 
       tool-tooltip-line1: "Use this tool to set the corners of your teams claim."
@@ -52,6 +49,8 @@ messages:
       full-inventory: "<red>Your inventory is full! Please make space for the claim tool.</red>"
 
       selection-too-large: "<red>Your selection cannot be wider or longer than %selection_limit% chunks!</red>"
+
+      no-first-selection: "<red>You need to set the first position!</red>"
 
       set-pos1: "<green>Successfully set position 1!</green>"
       set-pos2: "<green>Successfully set position 2!</green>"

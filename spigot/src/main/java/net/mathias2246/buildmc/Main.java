@@ -4,7 +4,6 @@ import dev.jorel.commandapi.CommandAPI;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.mathias2246.buildmc.claims.ClaimCommand;
 import net.mathias2246.buildmc.claims.ClaimToolParticles;
 import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
@@ -28,7 +27,6 @@ import net.mathias2246.buildmc.util.config.ConfigurationValidationException;
 import net.mathias2246.buildmc.util.language.LanguageManager;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
@@ -81,14 +79,14 @@ public final class Main extends JavaPlugin implements MainClass {
             pluginFolder.mkdir();
         }
 
-        CoreMain.initialize(this);
-
-        LanguageManager.init();
-
         configFile = new File(plugin.getDataFolder(), "config.yml");
 
         if (!configFile.exists()) this.saveResource("config.yml", false);
         config = this.getConfig();
+
+        CoreMain.initialize(this);
+
+        LanguageManager.init();
 
         audiences = BukkitAudiences.create(plugin);
 
@@ -97,7 +95,6 @@ public final class Main extends JavaPlugin implements MainClass {
         customItems = new CustomItemRegistry();
         getServer().getPluginManager().registerEvents(new CustomItemListener(customItems), this);
 
-        CoreMain.initialize(this);
         try {
             EndListener.loadFromConfig();
         } catch (ConfigurationValidationException e) {

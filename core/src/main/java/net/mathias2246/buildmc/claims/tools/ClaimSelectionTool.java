@@ -22,8 +22,6 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
 @SuppressWarnings({"PatternValidation", "UnstableApiUsage"})
 public class ClaimSelectionTool extends AbstractSelectionTool {
 
@@ -55,7 +53,7 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
         return !event.getPlayer().hasCooldown(item);
     }
 
-    private int maxSelectionSize;
+    private final int maxSelectionSize;
 
     @Override
     protected @NotNull ItemStack buildDefaultItemStack() {
@@ -91,11 +89,17 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
 
     public boolean isSelectionToLarge(@NotNull Location from, @NotNull Location to, @NotNull Player player) {
         if (maxSelectionSize < 0) return false;
-        var startX = Math.min(from.getX(), to.getX());
-        var startZ = Math.min(from.getZ(), to.getZ());
-        var endX = Math.max(from.getX(), to.getX());
-        var endZ = Math.max(from.getZ(), to.getZ());
-        return (endX - startX >= maxSelectionSize) || (endZ - startZ >= maxSelectionSize);
+
+        var fx = from.getChunk().getX();
+        var fz = from.getChunk().getZ();
+        var tx = to.getChunk().getX();
+        var tz = to.getChunk().getZ();
+
+        var startX = Math.min(fx, tx);
+        var startZ = Math.min(fz, tz);
+        var endX = Math.max(fx, tx);
+        var endZ = Math.max(fz, tz);
+        return (endX - startX > maxSelectionSize) || (endZ - startZ > maxSelectionSize);
     }
 
     @Override
@@ -103,12 +107,18 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
         Player player = event.getPlayer();
         Chunk chunk = player.getLocation().getChunk();
 
+        var first = getFirstSelection(player);
 
         if (player.hasCooldown(item)) {
             CoreMain.mainClass.sendPlayerMessage(player, Component.translatable("messages.claims.tool.tool-cooldown"));
             CoreMain.soundManager.playSound(player, mistakeSound);
             return false;
-        } else if (isSelectionToLarge(Objects.requireNonNull(getFirstSelection(player)), at, player)) {
+        } else if (first == null) {
+            CoreMain.mainClass.sendPlayerMessage(player, Component.translatable("messages.claims.tool.no-first-selection"));
+            CoreMain.soundManager.playSound(player, mistakeSound);
+
+            return false;
+        } else if (isSelectionToLarge(first, at, player)) {
             var msg = Message.msg(player, "messages.claims.tool.selection-too-large");
             msg = msg.replaceText(
                     TextReplacementConfig.builder().matchLiteral("%selection_limit%").replacement(Integer.toString(maxSelectionSize)).build()

@@ -11,6 +11,7 @@ import net.mathias2246.buildmc.util.config.ConfigurationValidationException;
 import net.mathias2246.buildmc.util.language.LanguageManager;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -29,10 +30,19 @@ public final class CoreMain {
     public static DatabaseManager databaseManager;
     public static ClaimTable claimTable;
 
+    private static boolean isInitialized = false;
+
+    public static boolean isInitialized() {
+        return isInitialized;
+    }
+
+
+    @ApiStatus.Internal
     public static void initialize(@NotNull Plugin plugin) {
         CoreMain.plugin = plugin;
 
         CoreMain.mainClass = (MainClass) plugin;
+
 
         initializeConfigs();
 
@@ -67,12 +77,14 @@ public final class CoreMain {
             registerEvent(new ClaimArmorStandListener());
             registerEvent(new ClaimEntityTameListener());
         }
+        isInitialized = true;
     }
 
     public static void registerEvent(@NotNull Listener event) {
         plugin.getServer().getPluginManager().registerEvents(event, plugin);
     }
 
+    @ApiStatus.Internal
     public static void stop() {
         if (plugin.getConfig().getBoolean("claims.enabled")) databaseManager.close();
     }
