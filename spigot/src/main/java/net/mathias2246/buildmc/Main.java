@@ -3,6 +3,8 @@ package net.mathias2246.buildmc;
 import dev.jorel.commandapi.CommandAPI;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.mathias2246.buildmc.claims.ClaimCommand;
 import net.mathias2246.buildmc.claims.ClaimToolParticles;
 import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
@@ -24,6 +26,9 @@ import net.mathias2246.buildmc.status.StatusConfig;
 import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.config.ConfigurationValidationException;
 import net.mathias2246.buildmc.util.language.LanguageManager;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
@@ -217,6 +222,10 @@ public final class Main extends JavaPlugin implements MainClass {
 
     @Override
     public void sendPlayerActionBar(Player player, Component message) {
-        audiences.player(player).sendActionBar(message);
+        // audiences.player(player).sendActionBar(message);
+
+        // This is stupid, but you can't argue with the results
+        BaseComponent[] components = BungeeComponentSerializer.get().serialize(message);
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, components);
     }
 }
