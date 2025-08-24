@@ -66,7 +66,6 @@ public class DatabaseManager {
     public Connection getConnection() {
         try {
             if (connection == null || connection.isClosed()) {
-                logger.warning("Database connection was closed or null. Reconnecting...");
                 connect();
             }
         } catch (SQLException e) {
