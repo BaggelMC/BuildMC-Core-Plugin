@@ -132,7 +132,6 @@ public class Claim {
             case BUCKET_USAGE -> "claims.protections.bucket-usage";
             case FROST_WALKER -> "claims.protections.frostwalker";
             case PISTON_MOVEMENT_ACROSS_CLAIM_BORDERS -> "claims.protections.piston-movement-across-claim-borders";
-            case PREVENT_INTERACTIONS -> "claims.protections.prevent-interactions";
             case INTERACTION_LEVERS -> "claims.protections.interactions.levers";
             case INTERACTION_BUTTONS -> "claims.protections.interactions.buttons";
             case INTERACTION_REPEATERS -> "claims.protections.interactions.repeaters";
@@ -155,7 +154,6 @@ public class Claim {
             case EXCLUDE_PLAYERS -> "claims.protections.damage.exclude-players";
             case EXPLOSION_BLOCK_DAMAGE -> "claims.protections.damage.explosion-block-damage";
             case EXPLOSION_ENTITY_DAMAGE -> "claims.protections.damage.explosion-entity-damage";
-            case PREVENT_ENTITY_MODIFICATIONS -> "claims.protections.prevent-entity-modifications";
             case ENTITY_MODIFICATIONS_WITHER -> "claims.protections.entity-modifications.wither";
             case ENTITY_MODIFICATIONS_ENDERMAN -> "claims.protections.entity-modifications.enderman";
             case ENTITY_MODIFICATIONS_RAVAGER -> "claims.protections.entity-modifications.ravager";

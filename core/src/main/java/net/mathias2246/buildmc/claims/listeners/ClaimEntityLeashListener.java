@@ -19,7 +19,7 @@ public class ClaimEntityLeashListener implements Listener {
         Player player = event.getPlayer();
         Entity entity = event.getEntity();
 
-        if (!ClaimManager.isPlayerAllowed(player, EnumSet.of(ProtectionFlag.INTERACTION_ATTACH_LEASH, ProtectionFlag.PREVENT_INTERACTIONS), entity.getLocation())) {
+        if (!ClaimManager.isPlayerAllowed(player, EnumSet.of(ProtectionFlag.INTERACTION_ATTACH_LEASH), entity.getLocation())) {
             CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.attach-leash"));
             event.setCancelled(true);
         }

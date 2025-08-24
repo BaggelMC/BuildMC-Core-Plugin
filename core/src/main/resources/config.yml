@@ -114,8 +114,6 @@ claims:
     # Prevents pistons from moving into claims and pulling out of claims
     piston-movement-across-claim-borders: true
 
-    # Players cannot interact with the things listed in "interactions"
-    prevent-interactions: true
     # Interaction related protections
     interactions:
       levers: true
@@ -153,7 +151,6 @@ claims:
       explosion-entity-damage: true
 
     # Entities in entity-modifications cannot modify blocks
-    prevent-entity-modifications: true
     entity-modifications:
       wither: true
       enderman: false

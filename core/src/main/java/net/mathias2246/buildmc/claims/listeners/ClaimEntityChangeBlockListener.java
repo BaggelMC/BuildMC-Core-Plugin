@@ -29,8 +29,6 @@ public class ClaimEntityChangeBlockListener implements Listener {
 
         if (claim == null) return;
 
-        if (!claim.hasFlag(ProtectionFlag.PREVENT_ENTITY_MODIFICATIONS)) return;
-
         if (claim.hasFlag(ProtectionFlag.ENTITY_MODIFICATIONS_WITHER) && entityType == EntityType.WITHER) {
             event.setCancelled(true);
         } else if (claim.hasFlag(ProtectionFlag.ENTITY_MODIFICATIONS_ENDERMAN) && entityType == EntityType.ENDERMAN) {

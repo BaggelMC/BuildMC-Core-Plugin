@@ -18,7 +18,7 @@ public class ClaimArmorStandListener implements Listener {
         Player player = event.getPlayer();
         Entity entity = event.getRightClicked();
 
-        if (!ClaimManager.isPlayerAllowed(player, EnumSet.of(ProtectionFlag.INTERACTION_ARMOR_STAND, ProtectionFlag.PREVENT_INTERACTIONS), entity.getLocation())) {
+        if (!ClaimManager.isPlayerAllowed(player, EnumSet.of(ProtectionFlag.INTERACTION_ARMOR_STAND), entity.getLocation())) {
             CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.armor-stand"));
             event.setCancelled(true);
         }

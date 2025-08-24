@@ -18,7 +18,7 @@ public class ClaimEntityTameListener implements Listener {
         if (!(event.getOwner() instanceof Player player)) return;
         Entity entity = event.getEntity();
 
-        if (!ClaimManager.isPlayerAllowed(player, EnumSet.of(ProtectionFlag.INTERACTION_TAME_ENTITY, ProtectionFlag.PREVENT_INTERACTIONS), entity.getLocation())) {
+        if (!ClaimManager.isPlayerAllowed(player, EnumSet.of(ProtectionFlag.INTERACTION_TAME_ENTITY), entity.getLocation())) {
             CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.tame-entity"));
             event.setCancelled(true);
         }

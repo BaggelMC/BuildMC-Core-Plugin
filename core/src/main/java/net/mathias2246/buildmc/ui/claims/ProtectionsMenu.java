@@ -270,7 +270,6 @@ public class ProtectionsMenu {
             case BUCKET_USAGE -> Material.BUCKET;
             case FROST_WALKER -> Material.ICE;
             case PISTON_MOVEMENT_ACROSS_CLAIM_BORDERS -> Material.PISTON;
-            case PREVENT_INTERACTIONS, PREVENT_ENTITY_MODIFICATIONS -> Material.BARRIER;
             case INTERACTION_LEVERS -> Material.LEVER;
             case INTERACTION_BUTTONS -> Material.STONE_BUTTON;
             case INTERACTION_REPEATERS -> Material.REPEATER;
