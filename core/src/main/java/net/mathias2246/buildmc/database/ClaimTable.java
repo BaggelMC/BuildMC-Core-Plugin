@@ -2,6 +2,7 @@ package net.mathias2246.buildmc.database;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.claims.Claim;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.claims.ClaimType;
@@ -11,6 +12,8 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+
+import static net.mathias2246.buildmc.claims.ClaimManager.*;
 
 public class ClaimTable implements DatabaseTable {
 
@@ -104,6 +107,9 @@ public class ClaimTable implements DatabaseTable {
                     }
 
                     claimCache.put(id, claim);
+
+                    updateRemainingClaims(claim);
+
                     return id;
                 } else {
                     throw new SQLException("Inserting claim failed, no ID obtained.");
@@ -112,16 +118,101 @@ public class ClaimTable implements DatabaseTable {
         }
     }
 
+    private void updateRemainingClaims(Claim claim) {
+        // Calculate claimed area in chunks - pls work
+        int width = Math.abs(claim.getChunkX2() - claim.getChunkX1()) + 1;
+        int height = Math.abs(claim.getChunkZ2() - claim.getChunkZ1()) + 1;
+        int claimedArea = width * height;
+
+        String ownerId = claim.getOwnerId();
+        if (ownerId == null || ownerId.isEmpty()) {
+            CoreMain.plugin.getLogger().warning("Claim inserted without ownerId. Skipping remaining claims update.");
+            return;
+        }
+
+        int maxChunks = CoreMain.plugin.getConfig().getInt("claims.max-chunk-claim-amount", 0);
+
+        switch (claim.getType()) {
+            case TEAM -> {
+                teamRemainingClaims.compute(ownerId, (team, remaining) -> {
+                    if (remaining == null) {
+                        remaining = maxChunks; // Initialize
+                    }
+                    int newValue = remaining - claimedArea;
+                    return Math.max(newValue, 0);
+                });
+            }
+            case PLAYER -> {
+                playerRemainingClaims.compute(ownerId, (player, remaining) -> {
+                    if (remaining == null) {
+                        remaining = maxChunks; // Initialize
+                    }
+                    int newValue = remaining - claimedArea;
+                    return Math.max(newValue, 0);
+                });
+            }
+        }
+    }
+
     public void deleteClaimById(Connection conn, long claimId) throws SQLException {
+        // Fetch claim
+        Claim claim = getClaimById(conn, claimId);
+        if (claim == null) {
+            CoreMain.plugin.getLogger().warning("Attempted to delete claim ID " + claimId + " but it was not found.");
+            return;
+        }
+
         try (PreparedStatement ps = conn.prepareStatement("""
-                    DELETE FROM claims WHERE id = ?
-                """)) {
+                DELETE FROM claims WHERE id = ?
+            """)) {
             ps.setLong(1, claimId);
             ps.executeUpdate();
         }
 
+        // Invalidate cache
         claimCache.invalidate(claimId);
+
+        // Update remaining claims
+        restoreRemainingClaims(claim);
     }
+
+
+    private void restoreRemainingClaims(Claim claim) {
+        // Calculate claimed area in chunks
+        int width = Math.abs(claim.getChunkX2() - claim.getChunkX1()) + 1;
+        int height = Math.abs(claim.getChunkZ2() - claim.getChunkZ1()) + 1;
+        int claimedArea = width * height;
+
+        String ownerId = claim.getOwnerId();
+        if (ownerId == null || ownerId.isEmpty()) {
+            CoreMain.plugin.getLogger().warning("Claim deletion without ownerId. Skipping remaining claims restore.");
+            return;
+        }
+
+        int maxChunks = CoreMain.plugin.getConfig().getInt("claims.max-chunk-claim-amount", 0);
+
+        switch (claim.getType()) {
+            case TEAM -> {
+                teamRemainingClaims.compute(ownerId, (team, remaining) -> {
+                    if (remaining == null) {
+                        remaining = maxChunks; // Initialize
+                    }
+                    int newValue = remaining + claimedArea;
+                    return Math.min(newValue, maxChunks); // Do not exceed max
+                });
+            }
+            case PLAYER -> {
+                playerRemainingClaims.compute(ownerId, (player, remaining) -> {
+                    if (remaining == null) {
+                        remaining = maxChunks; // Initialize
+                    }
+                    int newValue = remaining + claimedArea;
+                    return Math.min(newValue, maxChunks); // Do not exceed max
+                });
+            }
+        }
+    }
+
 
     public Claim getClaimById(Connection conn, long id) throws SQLException {
         Claim cached = claimCache.getIfPresent(id);
@@ -377,7 +468,7 @@ public class ClaimTable implements DatabaseTable {
         }
 
         // Set the fields
-        ClaimManager.teamOwner = teamMap;
+        teamOwner = teamMap;
         ClaimManager.playerOwner = playerMap;
         ClaimManager.serverOwner = serverList;
     }
@@ -420,6 +511,56 @@ public class ClaimTable implements DatabaseTable {
             }
         }
     }
+
+    public static void calculateRemainingClaims(Connection conn) throws SQLException {
+        int maxChunks = CoreMain.plugin.getConfig().getInt("claims.max-chunk-claim-amount");
+
+        teamRemainingClaims = new HashMap<>();
+        playerRemainingClaims = new HashMap<>();
+
+        // Initialize with the max
+        for (String team : teamOwner.keySet()) {
+            teamRemainingClaims.put(team, maxChunks);
+        }
+        for (UUID player : playerOwner.keySet()) {
+            playerRemainingClaims.put(player.toString(), maxChunks);
+        }
+
+        String sql = "SELECT type, owner_id, chunk_x1, chunk_z1, chunk_x2, chunk_z2 FROM claims";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                ClaimType type = ClaimType.valueOf(rs.getString("type"));
+                String ownerId = rs.getString("owner_id");
+                int x1 = rs.getInt("chunk_x1");
+                int z1 = rs.getInt("chunk_z1");
+                int x2 = rs.getInt("chunk_x2");
+                int z2 = rs.getInt("chunk_z2");
+
+                // Calculate chunk area for this claim
+                int width = Math.abs(x2 - x1) + 1;
+                int height = Math.abs(z2 - z1) + 1;
+                int chunkCount = width * height;
+
+                switch (type) {
+                    case TEAM -> {
+                        int remaining = teamRemainingClaims.getOrDefault(ownerId, maxChunks);
+                        teamRemainingClaims.put(ownerId, Math.max(remaining - chunkCount, 0));
+                    }
+                    case PLAYER -> {
+                        UUID playerUuid = UUID.fromString(ownerId);
+                        int remaining = playerRemainingClaims.getOrDefault(playerUuid.toString(), maxChunks);
+                        playerRemainingClaims.put(playerUuid.toString(), Math.max(remaining - chunkCount, 0));
+                    }
+                    default -> {
+                        // Ignore others
+                    }
+                }
+            }
+        }
+    }
+
 
 
 }

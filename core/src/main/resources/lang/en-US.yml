@@ -88,11 +88,11 @@ messages:
 
     create:
       missing-positions: "<red>You have not set both positions yet.</red>"
-      success: "<green>Successfully claimed area!</green>"
+      success: "<blue>------------------------</blue>\n<green>Successfully claimed area!\n</green>\n<green>You have <gold>%remaining_claims%</gold> left.</green>\n<blue>------------------------</blue>"
       failed: "<red>Error: Failed to claim region.</red>"
       invalid-type: "<red>Error: Argument 'type' must be either 'player' or 'team'.</red>"
       different-worlds: "<red>Error: Both positions must be in the same world.</red>"
-
+      no-remaining-claims: "<red>You do not have enough claims left.\nClaims left: %remaining_claims%</red>"
       duplicate-name: "<red>There already is a claim with that name.</red>"
 
       error-database: "<red>There was a database error.</red>"

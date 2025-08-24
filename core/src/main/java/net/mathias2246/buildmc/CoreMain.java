@@ -101,6 +101,7 @@ public final class CoreMain {
 
         try {
             claimTable.loadClaimOwners(databaseManager.getConnection());
+            ClaimTable.calculateRemainingClaims(databaseManager.getConnection());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

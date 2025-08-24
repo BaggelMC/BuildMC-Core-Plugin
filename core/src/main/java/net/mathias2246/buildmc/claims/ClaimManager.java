@@ -25,6 +25,12 @@ public class ClaimManager {
     /** Map of player UUIDs and the claim IDs they own */
     public static Map<UUID, List<Long>> playerOwner;
 
+    /** Map of team names and the remaining claims */
+    public static Map<String, Integer> teamRemainingClaims;
+
+    /** Map of player UUIDs and the remaining claims */
+    public static Map<String, Integer> playerRemainingClaims;
+
     /** List of claim IDs the server owns */
     public static List<Long> serverOwner;
 

@@ -201,6 +201,13 @@ public class ClaimCommand implements CustomCommand {
 
                                                             switch (type.toLowerCase()) {
                                                                 case "player" -> {
+                                                                    // Check remaining claims for player
+                                                                    // TODO: Take current claim size into account
+                                                                    int remainingPlayerClaims = ClaimManager.playerRemainingClaims.getOrDefault(player.getUniqueId().toString(), CoreMain.plugin.getConfig().getInt("claims.max-chunk-claim-amount"));
+                                                                    if (remainingPlayerClaims <= 0) {
+                                                                        player.sendMessage(Message.msg(player, "messages.claims.create.no-remaining-claims", Map.of("no-remaining-claims", String.valueOf(remainingPlayerClaims))));
+                                                                        return 0;
+                                                                    }
 
                                                                     try {
                                                                         if (ClaimManager.doesOwnerHaveClaimWithName(player.getUniqueId().toString(), name)) {
@@ -232,6 +239,14 @@ public class ClaimCommand implements CustomCommand {
                                                                         return 0;
                                                                     }
 
+                                                                    // Check remaining claims for team
+                                                                    // TODO: Take current claim size into account
+                                                                    int remainingTeamClaims = ClaimManager.teamRemainingClaims.getOrDefault(team.getName(), CoreMain.plugin.getConfig().getInt("claims.max-chunk-claim-amount"));
+                                                                    if (remainingTeamClaims <= 0) {
+                                                                        player.sendMessage(Message.msg(player, "messages.claims.create.no-remaining-claims", Map.of("remaining_claims", String.valueOf(remainingTeamClaims))));
+                                                                        return 0;
+                                                                    }
+
                                                                     try {
                                                                         if (ClaimManager.doesOwnerHaveClaimWithName(team.getName(), name)) {
                                                                             player.sendMessage(Component.translatable("messages.claims.create.duplicate-name"));
@@ -245,7 +260,7 @@ public class ClaimCommand implements CustomCommand {
 
                                                                     boolean success = ClaimManager.tryClaimTeamArea(team, name, pos1, pos2);
                                                                     if (success) {
-                                                                        player.sendMessage(Component.translatable("messages.claims.create.success"));
+                                                                        player.sendMessage(Message.msg(player, "messages.claims.create.success", Map.of("remaining_claims", String.valueOf(remainingTeamClaims))));
                                                                         player.removeMetadata(claimTool.firstSelectionKey, claimTool.getPlugin());
                                                                         player.removeMetadata(claimTool.secondSelectionKey, claimTool.getPlugin());
                                                                         return 1;
