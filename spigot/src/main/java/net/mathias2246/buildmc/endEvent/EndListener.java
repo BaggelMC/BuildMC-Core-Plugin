@@ -1,6 +1,7 @@
 package net.mathias2246.buildmc.endEvent;
 
 import net.kyori.adventure.text.Component;
+import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.config.ConfigurationValidationException;
@@ -79,7 +80,7 @@ public class EndListener implements Listener {
             event.setCancelled(true);
 
             Component message = Message.msg(event.getPlayer(), "messages.end-event.closed-message");
-            Main.audiences.player(event.getPlayer()).sendActionBar(message);
+            CoreMain.mainClass.sendPlayerActionBar(event.getPlayer(), message);
         }
     }
 }
