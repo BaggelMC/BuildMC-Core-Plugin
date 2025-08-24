@@ -101,6 +101,12 @@ messages:
       protected-server: "<red>The area you're trying to claim is protected by the server.</red>"
       overlap: "<red>The area you're trying to claim already contains claims by someone else.</red>"
 
+    remove:
+      invalid-type: "<red>Error: Argument 'type' must be either 'player' or 'team'.</red>"
+      not-found: "<red>That claim could not be found or is not owned by you."
+      failed: "<red>Failed to remove claim.</red>"
+      success: "<green>Claim successfully removed.</green>"
+
     who:
       team-message: "<gold>This chunk is owned by team <white>%owner%</white>.</gold>"
       player-message: "<gold>This chunk is owned by player <white>%owner%</white>.</gold>"

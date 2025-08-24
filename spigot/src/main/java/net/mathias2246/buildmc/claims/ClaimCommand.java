@@ -120,7 +120,13 @@ public class ClaimCommand implements CustomCommand {
 
                 .withSubcommand(
                         new CommandAPICommand("create")
-                                .withArguments(new StringArgument("type"))
+                                .withArguments(
+                                        new StringArgument("type")
+                                                .replaceSuggestions((info, builder) -> {
+                                                    builder.suggest("player").suggest("team");
+                                                    return builder.buildFuture();
+                                                })
+                                )
                                 .withArguments(new StringArgument("name"))
                                 .executes((command) -> {
                                     if (!(command.sender() instanceof Player player)) {
@@ -240,11 +246,132 @@ public class ClaimCommand implements CustomCommand {
                 )
 
                 .withSubcommand(
+                        new CommandAPICommand("remove")
+                                .withArguments(
+                                        new StringArgument("type")
+                                                .replaceSuggestions((info, builder) -> {
+                                                    builder.suggest("player").suggest("team");
+                                                    return builder.buildFuture();
+                                                }),
+                                        new StringArgument("claim")
+                                                .replaceSuggestions((info, builder) -> {
+                                                    if (!(info.sender() instanceof Player player)) {
+                                                        return builder.buildFuture();
+                                                    }
+
+                                                    String type = info.previousArgs().getOrDefault("type", "").toString().toLowerCase();
+                                                    List<Long> claimIds = switch (type) {
+                                                        case "player" -> ClaimManager.playerOwner.getOrDefault(player.getUniqueId(), List.of());
+                                                        case "team" -> {
+                                                            Team team = ClaimManager.getPlayerTeam(player);
+                                                            if (team == null) yield List.of();
+                                                            yield ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
+                                                        }
+                                                        default -> List.of();
+                                                    };
+
+                                                    for (Long id : claimIds) {
+                                                        String name = ClaimManager.getClaimNameById(id);
+                                                        if (name != null) builder.suggest(name);
+                                                    }
+
+                                                    return builder.buildFuture();
+                                                })
+                                )
+                                .executes((command) -> {
+                                    if (!(command.sender() instanceof Player player)) {
+                                        audiences.sender(command.sender()).sendMessage(Component.translatable("messages.error.not-a-player"));
+                                        return 0;
+                                    }
+
+                                    String type = command.args().getByClass("type", String.class);
+                                    String claimName = command.args().getByClass("claim", String.class);
+
+                                    if (type == null || claimName == null) {
+                                        audiences.player(player).sendMessage(Component.translatable("messages.error.invalid-args"));
+                                        return 0;
+                                    }
+
+                                    long claimId = -1;
+                                    switch (type.toLowerCase()) {
+                                        case "player" -> {
+                                            List<Long> ids = ClaimManager.playerOwner.getOrDefault(player.getUniqueId(), List.of());
+                                            for (long id : ids) {
+                                                String name = ClaimManager.getClaimNameById(id);
+                                                if (name != null && name.equalsIgnoreCase(claimName)) {
+                                                    claimId = id;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        case "team" -> {
+                                            Team team = ClaimManager.getPlayerTeam(player);
+                                            if (team == null) {
+                                                audiences.player(player).sendMessage(Component.translatable("messages.error.not-in-a-team"));
+                                                return 0;
+                                            }
+                                            List<Long> ids = ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
+                                            for (long id : ids) {
+                                                String name = ClaimManager.getClaimNameById(id);
+                                                if (name != null && name.equalsIgnoreCase(claimName)) {
+                                                    claimId = id;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        default -> {
+                                            audiences.player(player).sendMessage(Component.translatable("messages.claims.remove.invalid-type"));
+                                            return 0;
+                                        }
+                                    }
+
+                                    if (claimId == -1) {
+                                        audiences.player(player).sendMessage(Component.translatable("messages.claims.remove.not-found"));
+                                        return 0;
+                                    }
+
+                                    boolean success = ClaimManager.removeClaimById(claimId);
+                                    if (success) {
+                                        audiences.player(player).sendMessage(Component.translatable("messages.claims.remove.success"));
+                                        return 1;
+                                    } else {
+                                        audiences.player(player).sendMessage(Component.translatable("messages.claims.remove.failed"));
+                                        return 0;
+                                    }
+                                })
+                )
+
+                .withSubcommand(
                         new CommandAPICommand("whitelist")
                                 .withArguments(
                                         new StringArgument("action").replaceSuggestions((info, builder) -> builder.suggest("add").suggest("remove").buildFuture()),
                                         new StringArgument("type").replaceSuggestions((info, builder) -> builder.suggest("player").suggest("team").buildFuture()),
-                                        new StringArgument("claim"),
+                                        new StringArgument("claim")
+                                                .replaceSuggestions((info, builder) -> {
+                                                    if (!(info.sender() instanceof Player player)) {
+                                                        return builder.buildFuture();
+                                                    }
+
+                                                    String type = info.previousArgs().getOrDefault("type", "").toString().toLowerCase();
+
+                                                    List<Long> claimIds = switch (type) {
+                                                        case "player" -> ClaimManager.playerOwner.getOrDefault(player.getUniqueId(), List.of());
+                                                        case "team" -> {
+                                                            Team team = ClaimManager.getPlayerTeam(player);
+                                                            if (team == null) yield List.of();
+                                                            yield ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
+                                                        }
+                                                        default -> List.of();
+                                                    };
+
+                                                    for (Long claimId : claimIds) {
+                                                        String name = ClaimManager.getClaimNameById(claimId);
+                                                        if (name != null) builder.suggest(name);
+                                                    }
+
+                                                    return builder.buildFuture();
+                                                }),
+
                                         new StringArgument("targetPlayer")
                                                 .replaceSuggestions((info, builder) -> {
                                                     CommandSender sender = info.sender();
