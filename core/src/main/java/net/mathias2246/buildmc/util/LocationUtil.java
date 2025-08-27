@@ -6,6 +6,8 @@ import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 public class LocationUtil {
 
     /**
@@ -87,5 +89,33 @@ public class LocationUtil {
         float pitch = Float.parseFloat(parts[5]);
 
         return new Location(world, x, y, z, yaw, pitch);
+    }
+
+    /**
+     * Calculates the number of chunks covered by the area defined by two positions.
+     * Both positions must be in the same world.
+     *
+     * @param pos1 First corner location
+     * @param pos2 Second corner location
+     * @return Number of chunks in the rectangular selection
+     */
+    public static int calculateChunkArea(@NotNull Location pos1, @NotNull Location pos2) {
+        if (!Objects.equals(pos1.getWorld(), pos2.getWorld())) {
+            throw new IllegalArgumentException("Positions are in different worlds");
+        }
+
+        int chunkX1 = pos1.getBlockX() >> 4;
+        int chunkZ1 = pos1.getBlockZ() >> 4;
+        int chunkX2 = pos2.getBlockX() >> 4;
+        int chunkZ2 = pos2.getBlockZ() >> 4;
+
+        return calculateChunkArea(chunkX1, chunkZ1, chunkX2, chunkZ2);
+    }
+
+    public static int calculateChunkArea(int chunkX1, int chunkZ1, int chunkX2, int chunkZ2) {
+        int width = Math.abs(chunkX2 - chunkX1) + 1;
+        int height = Math.abs(chunkZ2 - chunkZ1) + 1;
+
+        return width * height;
     }
 }

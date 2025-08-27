@@ -65,8 +65,10 @@ claims:
   # Only change this to false if you really need to
   save-on-world-save: true # Default: true
 
+  # The amount of chunks each player can claim
+  player-max-chunk-claim-amount: 1024 # Default: 1024
   # The amount of chunks each team can claim
-  max-chunk-claim-amount: 1024 # Default: 1024
+  team-max-chunk-claim-amount: 1024 # Default: 1024
 
   # Settings related to the claim-tool. The claim-tool (if enabled) can be obtained using '/buildmc claimtool'
   tool:

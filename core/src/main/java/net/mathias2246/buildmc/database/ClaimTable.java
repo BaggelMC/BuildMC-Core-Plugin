@@ -7,6 +7,7 @@ import net.mathias2246.buildmc.claims.Claim;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.claims.ClaimType;
 import net.mathias2246.buildmc.claims.ProtectionFlag;
+import net.mathias2246.buildmc.util.LocationUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.*;
@@ -130,10 +131,9 @@ public class ClaimTable implements DatabaseTable {
             return;
         }
 
-        int maxChunks = CoreMain.plugin.getConfig().getInt("claims.max-chunk-claim-amount", 0);
-
         switch (claim.getType()) {
             case TEAM -> {
+                int maxChunks = CoreMain.plugin.getConfig().getInt("claims.team-max-chunk-claim-amount", 0);
                 teamRemainingClaims.compute(ownerId, (team, remaining) -> {
                     if (remaining == null) {
                         remaining = maxChunks; // Initialize
@@ -143,6 +143,7 @@ public class ClaimTable implements DatabaseTable {
                 });
             }
             case PLAYER -> {
+                int maxChunks = CoreMain.plugin.getConfig().getInt("claims.player-max-chunk-claim-amount", 0);
                 playerRemainingClaims.compute(ownerId, (player, remaining) -> {
                     if (remaining == null) {
                         remaining = maxChunks; // Initialize
@@ -189,10 +190,9 @@ public class ClaimTable implements DatabaseTable {
             return;
         }
 
-        int maxChunks = CoreMain.plugin.getConfig().getInt("claims.max-chunk-claim-amount", 0);
-
         switch (claim.getType()) {
             case TEAM -> {
+                int maxChunks = CoreMain.plugin.getConfig().getInt("claims.team-max-chunk-claim-amount", 0);
                 teamRemainingClaims.compute(ownerId, (team, remaining) -> {
                     if (remaining == null) {
                         remaining = maxChunks; // Initialize
@@ -202,6 +202,7 @@ public class ClaimTable implements DatabaseTable {
                 });
             }
             case PLAYER -> {
+                int maxChunks = CoreMain.plugin.getConfig().getInt("claims.player-max-chunk-claim-amount", 0);
                 playerRemainingClaims.compute(ownerId, (player, remaining) -> {
                     if (remaining == null) {
                         remaining = maxChunks; // Initialize
@@ -513,16 +514,16 @@ public class ClaimTable implements DatabaseTable {
     }
 
     public static void calculateRemainingClaims(Connection conn) throws SQLException {
-        int maxChunks = CoreMain.plugin.getConfig().getInt("claims.max-chunk-claim-amount");
-
         teamRemainingClaims = new HashMap<>();
         playerRemainingClaims = new HashMap<>();
 
         // Initialize with the max
         for (String team : teamOwner.keySet()) {
+            int maxChunks = CoreMain.plugin.getConfig().getInt("claims.team-max-chunk-claim-amount", 0);
             teamRemainingClaims.put(team, maxChunks);
         }
         for (UUID player : playerOwner.keySet()) {
+            int maxChunks = CoreMain.plugin.getConfig().getInt("claims.player-max-chunk-claim-amount", 0);
             playerRemainingClaims.put(player.toString(), maxChunks);
         }
 
@@ -538,18 +539,17 @@ public class ClaimTable implements DatabaseTable {
                 int x2 = rs.getInt("chunk_x2");
                 int z2 = rs.getInt("chunk_z2");
 
-                // Calculate chunk area for this claim
-                int width = Math.abs(x2 - x1) + 1;
-                int height = Math.abs(z2 - z1) + 1;
-                int chunkCount = width * height;
+                int chunkCount = LocationUtil.calculateChunkArea(x1, z1, x2, z2);
 
                 switch (type) {
                     case TEAM -> {
+                        int maxChunks = CoreMain.plugin.getConfig().getInt("claims.team-max-chunk-claim-amount");
                         int remaining = teamRemainingClaims.getOrDefault(ownerId, maxChunks);
                         teamRemainingClaims.put(ownerId, Math.max(remaining - chunkCount, 0));
                     }
                     case PLAYER -> {
                         UUID playerUuid = UUID.fromString(ownerId);
+                        int maxChunks = CoreMain.plugin.getConfig().getInt("claims.player-max-chunk-claim-amount");
                         int remaining = playerRemainingClaims.getOrDefault(playerUuid.toString(), maxChunks);
                         playerRemainingClaims.put(playerUuid.toString(), Math.max(remaining - chunkCount, 0));
                     }
