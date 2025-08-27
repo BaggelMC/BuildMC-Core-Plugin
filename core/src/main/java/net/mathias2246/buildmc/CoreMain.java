@@ -4,6 +4,7 @@ import net.mathias2246.buildmc.claims.listeners.*;
 import net.mathias2246.buildmc.database.ClaimTable;
 import net.mathias2246.buildmc.database.DatabaseConfig;
 import net.mathias2246.buildmc.database.DatabaseManager;
+import net.mathias2246.buildmc.event.claims.PlayerEnterClaimListener;
 import net.mathias2246.buildmc.util.BStats;
 import net.mathias2246.buildmc.util.SoundManager;
 import net.mathias2246.buildmc.util.config.ConfigHandler;
@@ -52,6 +53,8 @@ public final class CoreMain {
 
         if (plugin.getConfig().getBoolean("claims.enabled")) {
             initializeDatabase();
+
+            registerEvent(new PlayerEnterClaimListener());
 
             registerEvent(new ClaimContainerListener());
             registerEvent(new ClaimExplosionsListener());
