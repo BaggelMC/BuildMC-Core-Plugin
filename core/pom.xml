@@ -75,6 +75,13 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>5.19.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>com.github.stefvanschie.inventoryframework</groupId>
             <artifactId>IF</artifactId>
             <version>0.11.3</version>
@@ -123,6 +130,9 @@
                 <version>3.5.3</version>
                 <configuration>
                     <useModulePath>false</useModulePath>
+                    <argLine>
+                        -javaagent:${settings.localRepository}/net/bytebuddy/byte-buddy-agent/1.17.6/byte-buddy-agent-1.17.6.jar
+                    </argLine>
                 </configuration>
             </plugin>
             <plugin>
