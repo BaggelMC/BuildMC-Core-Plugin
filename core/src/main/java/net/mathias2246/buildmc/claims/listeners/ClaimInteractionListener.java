@@ -54,7 +54,7 @@ public class ClaimInteractionListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityChangeBlock(EntityChangeBlockEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
-        if (event.getBlock().getType() != Material.FARMLAND) return;
+        //if (event.getBlock().getType() != Material.FARMLAND) return;
 
         Claim claim = null;
         try {
