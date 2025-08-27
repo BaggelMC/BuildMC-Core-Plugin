@@ -72,10 +72,12 @@ public final class CoreMain {
             registerEvent(new ClaimItemPickupListener());
             registerEvent(new ClaimItemDropListener());
             registerEvent(new ClaimFrostWalkerListener());
+            registerEvent(new ClaimSculkSensorListener());
             registerEvent(new ClaimPistonMovementListener());
             registerEvent(new ClaimBeehiveInteractListener());
             registerEvent(new ClaimBonemealInteractListener());
             registerEvent(new ClaimEntityLeashListener());
+            registerEvent(new ClaimShearEntityListener());
             registerEvent(new ClaimItemFrameRotateListener());
             registerEvent(new ClaimNameTagUseListener());
             registerEvent(new ClaimHangingInteractListener());

@@ -131,6 +131,7 @@ public class Claim {
             case VEHICLE_ENTER -> "claims.protections.vehicle-enter";
             case BUCKET_USAGE -> "claims.protections.bucket-usage";
             case FROST_WALKER -> "claims.protections.frostwalker";
+            case SCULK_SENSOR -> "claims.protections.sculk-sensor";
             case PISTON_MOVEMENT_ACROSS_CLAIM_BORDERS -> "claims.protections.piston-movement-across-claim-borders";
             case INTERACTION_JUKEBOX -> "claims.protections.interactions.jukebox";
             case INTERACTION_LEVERS -> "claims.protections.interactions.levers";
@@ -155,6 +156,7 @@ public class Claim {
             case INTERACTION_LIGHT_TNT -> "claims.protections.interactions.light-tnt";
             case INTERACTION_ARMOR_STAND -> "claims.protections.interactions.armor-stand";
             case INTERACTION_TAME_ENTITY -> "claims.protections.interactions.tame-entity";
+            case INTERACTION_SHEAR_ENTITY -> "claims.protections.interactions.shear-entity";
             case ENTITY_DAMAGE -> "claims.protections.damage.entity-damage";
             case EXCLUDE_PLAYERS -> "claims.protections.damage.exclude-players";
             case PROJECTILE_INTERACTIONS -> "claims.protections.projectile-interactions";

@@ -171,6 +171,7 @@ messages:
       entity-bucket: "<red>This cute %entity% protected by a land claim.</red>"
 
       attach-leash: "<red>This entity is protected by a land claim.</red>"
+      shear-entity: "<red>This entity is protected by a land claim.</red>"
 
     ui:
       general:
@@ -245,6 +246,9 @@ messages:
           frost_walker:
             name: "<green>Frost Walker</green>"
             lore: "<gray>Prevents players from using frost walker.</gray>"
+          sculk_sensor:
+            name: "<green>Sculk Sensor</green>"
+            lore: "<gray>Prevents players from triggering sculk sensors.</gray>"
           piston_movement_across_claim_borders:
             name: "<green>Pistons</green>"
             lore: "<gray>Prevents pistons from moving blocks into and out of claims.</gray>"
@@ -317,6 +321,9 @@ messages:
           interaction_tame_entity:
             name: "<green>Tame Mobs</green>"
             lore: '<gray>Prevents players from taming mobs.</gray>'
+          interaction_shear_entity:
+            name: "<green>Shear Mobs</green>"
+            lore: '<gray>Prevents players from shearing mobs.</gray>'
           entity_damage:
             name: "<green>Entity Damage</green>"
             lore: "<gray>Prevents players from damaging entities.</gray>"

@@ -269,6 +269,7 @@ public class ProtectionsMenu {
             case VEHICLE_ENTER -> Material.MINECART;
             case BUCKET_USAGE -> Material.BUCKET;
             case FROST_WALKER -> Material.ICE;
+            case SCULK_SENSOR -> Material.SCULK_SENSOR;
             case PISTON_MOVEMENT_ACROSS_CLAIM_BORDERS -> Material.PISTON;
             case INTERACTION_JUKEBOX -> Material.JUKEBOX;
             case INTERACTION_LEVERS -> Material.LEVER;
@@ -293,6 +294,7 @@ public class ProtectionsMenu {
             case INTERACTION_LIGHT_TNT, EXPLOSION_BLOCK_DAMAGE -> Material.TNT;
             case INTERACTION_ARMOR_STAND -> Material.ARMOR_STAND;
             case INTERACTION_TAME_ENTITY -> Material.BONE;
+            case INTERACTION_SHEAR_ENTITY -> Material.SHEARS;
             case ENTITY_DAMAGE -> Material.IRON_SWORD;
             case EXCLUDE_PLAYERS -> Material.PLAYER_HEAD;
             case PROJECTILE_INTERACTIONS -> Material.ARROW;

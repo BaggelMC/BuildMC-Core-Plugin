@@ -113,6 +113,9 @@ claims:
     # Players can't use frost walker enchantment
     frostwalker: true
 
+    # Players can't trigger sculk sensors
+    sculk-sensor: true
+
     # Prevents pistons from moving into claims and pulling out of claims
     piston-movement-across-claim-borders: true
 
@@ -145,6 +148,7 @@ claims:
       light-tnt: true
       armor-stand: true
       tame-entity: true
+      shear-entity: true
 
     projectile-interactions: true
 
