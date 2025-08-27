@@ -118,17 +118,23 @@ claims:
 
     # Interaction related protections
     interactions:
+      jukebox: true
+
       levers: true
       buttons: true
       repeaters: true
       comparators: true
+      daylight-sensors: true
 
+      tripwire: true
       pressure-plates: true
       trapdoors: true
       doors: true
       fence-gates: true
       farmland: true
 
+      campfire: true
+      bells: true
       attach-leash: true
       bonemeal: true
       beehives: true
@@ -139,6 +145,10 @@ claims:
       light-tnt: true
       armor-stand: true
       tame-entity: true
+
+    projectile-interactions: true
+
+    fishing: true
 
     # Damage related protections
     damage:

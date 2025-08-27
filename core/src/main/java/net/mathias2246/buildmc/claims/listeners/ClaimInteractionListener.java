@@ -14,6 +14,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.sql.SQLException;
@@ -22,18 +23,26 @@ public class ClaimInteractionListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
-        if (event.getClickedBlock() == null) return;
+        Action action = event.getAction();
+
+        // Check if it's a relevant action
+        if (action != Action.RIGHT_CLICK_BLOCK && action != Action.LEFT_CLICK_BLOCK && action != Action.PHYSICAL) return;
+        if (event.getClickedBlock() == null && action != Action.PHYSICAL) return;
 
         Block block = event.getClickedBlock();
-        Material type = block.getType();
-
-        if (!type.isInteractable()) return;
+        Material type = block != null ? block.getType() : null;
 
         Player player = event.getPlayer();
 
-        // Check if it's an interactable block we want to restrict
-        ProtectionFlag flag = getProtectionFlagFor(type);
+        ProtectionFlag flag = null;
+
+        if (action == Action.PHYSICAL && type != null && Tag.PRESSURE_PLATES.isTagged(type)) {
+            flag = ProtectionFlag.INTERACTION_PRESSURE_PLATES;
+        } else if (type != null) {
+            // For clicks
+            flag = getProtectionFlagFor(type);
+        }
+
         if (flag == null) return;
 
         Claim claim;
@@ -72,14 +81,19 @@ public class ClaimInteractionListener implements Listener {
 
     private ProtectionFlag getProtectionFlagFor(Material type) {
 
+        if (type.equals(Material.JUKEBOX)) return ProtectionFlag.INTERACTION_JUKEBOX;
         if (type.equals(Material.LEVER)) return ProtectionFlag.INTERACTION_LEVERS;
         if (Tag.BUTTONS.isTagged(type)) return ProtectionFlag.INTERACTION_BUTTONS;
+        if (type.equals(Material.TRIPWIRE)) return ProtectionFlag.INTERACTION_TRIPWIRE;
         if (Tag.PRESSURE_PLATES.isTagged(type)) return ProtectionFlag.INTERACTION_PRESSURE_PLATES;
         if (type.equals(Material.REPEATER)) return ProtectionFlag.INTERACTION_REPEATERS;
         if (type.equals(Material.COMPARATOR)) return ProtectionFlag.INTERACTION_COMPARATORS;
+        if (type.equals(Material.DAYLIGHT_DETECTOR)) return ProtectionFlag.INTERACTION_DAYLIGHT_SENSORS;
         if (Tag.DOORS.isTagged(type)) return ProtectionFlag.INTERACTION_TRAPDOORS;
         if (Tag.TRAPDOORS.isTagged(type)) return ProtectionFlag.INTERACTION_DOORS;
         if (Tag.FENCE_GATES.isTagged(type)) return ProtectionFlag.INTERACTION_FENCE_GATES;
+        if (type.equals(Material.CAMPFIRE) || type.equals(Material.SOUL_CAMPFIRE)) return ProtectionFlag.INTERACTION_CAMPFIRE;
+        if (type.equals(Material.BELL)) return ProtectionFlag.INTERACTION_BELLS;
         if (Tag.CANDLES.isTagged(type)) return ProtectionFlag.INTERACTION_CANDLES;
         if (type.equals(Material.TNT)) return ProtectionFlag.INTERACTION_LIGHT_TNT;
         return null;

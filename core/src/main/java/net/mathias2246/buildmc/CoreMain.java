@@ -60,9 +60,11 @@ public final class CoreMain {
             registerEvent(new ClaimDamageProtectionListener());
             registerEvent(new ClaimSignEditListener());
             registerEvent(new ClaimInteractionListener());
+            registerEvent(new ClaimProjectileInteractListener());
+            registerEvent(new ClaimFishingListener());
             registerEvent(new ClaimPotionSplashListener());
             registerEvent(new ClaimVehicleEnterListener());
-            registerEvent(new ClaimBucketUseEvent());
+            registerEvent(new ClaimBucketUseListener());
             registerEvent(new ClaimEntityChangeBlockListener());
             registerEvent(new ClaimItemPickupListener());
             registerEvent(new ClaimItemDropListener());

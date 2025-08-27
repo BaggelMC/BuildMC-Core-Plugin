@@ -15,7 +15,7 @@ import org.bukkit.event.player.PlayerBucketEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class ClaimBucketUseEvent implements Listener {
+public class ClaimBucketUseListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBucketUse(PlayerInteractEvent event) {

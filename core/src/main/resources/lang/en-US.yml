@@ -160,6 +160,8 @@ messages:
 
       potion-splash: "<red>This area is protected by a land claim.</red>"
 
+      fishing: "<red>This area is protected by a land claim.</red>"
+
       vehicle: "<red>This vehicle is protected by a land claim.</red>"
 
       item-pickup: "<red>This item is protected by a land claim.</red>"
@@ -246,6 +248,9 @@ messages:
           piston_movement_across_claim_borders:
             name: "<green>Pistons</green>"
             lore: "<gray>Prevents pistons from moving blocks into and out of claims.</gray>"
+          interaction_jukebox:
+            name: "<green>Jukebox</green>"
+            lore: '<gray>Prevents players from using jokeboxes.</gray>'
           interaction_levers:
             name: "<green>Lever Interactions</green>"
             lore: '<gray>Prevents players from using levers.</gray>'
@@ -258,9 +263,15 @@ messages:
           interaction_comparators:
             name: "<green>Comparator Interactions</green>"
             lore: '<gray>Prevents players from changing comparators.</gray>'
+          interaction_daylight_sensors:
+            name: "<green>Daylight Sensor Interactions</green>"
+            lore: '<gray>Prevents players from changing daylight detectors.</gray>'
           interaction_pressure_plates:
             name: "<green>Pressure Plate Interactions</green>"
             lore: '<gray>Prevents players from using pressure plates.</gray>'
+          interaction_tripwire:
+            name: "<green>Tripwire Interactions</green>"
+            lore: '<gray>Prevents players from triggering tripwires.</gray>'
           interaction_trapdoors:
             name: "<green>Trapdoor Interactions</green>"
             lore: '<gray>Prevents players from using trapdoors.</gray>'
@@ -273,6 +284,12 @@ messages:
           interaction_farmland:
             name: "<green>Farmland Interactions</green>"
             lore: '<gray>Prevents players from trampling farmlands.</gray>'
+          interaction_campfire:
+            name: "<green>Campfires</green>"
+            lore: '<gray>Prevents players from using campfiresst.</gray>'
+          interaction_bells:
+            name: "<green>Bells</green>"
+            lore: '<gray>Prevents players from using bells.</gray>'
           interaction_attach_leash:
             name: "<green>Leashes</green>"
             lore: '<gray>Prevents players from leashing mobs.</gray>'
@@ -306,6 +323,12 @@ messages:
           exclude_players:
             name: "<green>Exclude Players</green>"
             lore: "<gray>Excludes players from being protected from attacks.</gray>"
+          projectile_interactions:
+            name: "<green>Projectile Interactions</green>"
+            lore: "<gray>Prevents projectiles from interacting with things. Does not affect projectile damage.</gray>"
+          fishing:
+            name: "<green>Fishing</green>"
+            lore: "<gray>Prevents players from fishing.</gray>"
           explosion_block_damage:
             name: "<green>Explosion Destruction</green>"
             lore: "<gray>Prevents all explosions from destroying blocks.</gray>"
