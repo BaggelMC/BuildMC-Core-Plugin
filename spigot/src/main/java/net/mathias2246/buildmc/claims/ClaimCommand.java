@@ -8,6 +8,7 @@ import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.commands.CustomCommand;
 import net.mathias2246.buildmc.ui.claims.ClaimSelectMenu;
+import net.mathias2246.buildmc.util.LocationUtil;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -19,6 +20,7 @@ import org.bukkit.scoreboard.Team;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -181,8 +183,17 @@ public class ClaimCommand implements CustomCommand {
                                         return 0;
                                     }
 
+                                    int newClaimChunks = LocationUtil.calculateChunkArea(pos1, pos2);
+
                                     switch (type.toLowerCase()) {
                                         case "player" -> {
+
+                                            int maxChunksAllowed = CoreMain.plugin.getConfig().getInt("claims.player-max-chunk-claim-amount");
+                                            int currentClaimedChunks = ClaimManager.playerRemainingClaims.getOrDefault(player.getUniqueId().toString(), maxChunksAllowed);
+                                            if ((currentClaimedChunks - newClaimChunks) <= 0) {
+                                                audiences.player(player).sendMessage(Message.msg(player, "messages.claims.create.no-remaining-claims", Map.of("no-remaining-claims", String.valueOf(currentClaimedChunks))));
+                                                return 0;
+                                            }
 
                                             try {
                                                 if (ClaimManager.doesOwnerHaveClaimWithName(player.getUniqueId().toString(), name)) {
@@ -211,6 +222,13 @@ public class ClaimCommand implements CustomCommand {
                                             Team team = ClaimManager.getPlayerTeam(player);
                                             if (team == null) {
                                                 audiences.player(player).sendMessage(Component.translatable("messages.error.not-in-a-team"));
+                                                return 0;
+                                            }
+
+                                            int maxChunksAllowed = CoreMain.plugin.getConfig().getInt("claims.team-max-chunk-claim-amount");
+                                            int currentClaimedChunks = ClaimManager.teamRemainingClaims.getOrDefault(team.getName(), maxChunksAllowed);
+                                            if ((currentClaimedChunks - newClaimChunks) <= 0) {
+                                                audiences.player(player).sendMessage(Message.msg(player, "messages.claims.create.no-remaining-claims", Map.of("remaining_claims", String.valueOf(currentClaimedChunks))));
                                                 return 0;
                                             }
 

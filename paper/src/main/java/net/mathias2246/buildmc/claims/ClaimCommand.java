@@ -245,9 +245,6 @@ public class ClaimCommand implements CustomCommand {
                                                                     // Check remaining claims for team
                                                                     int maxChunksAllowed = CoreMain.plugin.getConfig().getInt("claims.team-max-chunk-claim-amount");
                                                                     int currentClaimedChunks = ClaimManager.teamRemainingClaims.getOrDefault(team.getName(), maxChunksAllowed);
-                                                                    System.out.println(ClaimManager.teamRemainingClaims);
-                                                                    System.out.println(currentClaimedChunks);
-                                                                    System.out.println(newClaimChunks);
                                                                     if ((currentClaimedChunks - newClaimChunks) <= 0) {
                                                                         player.sendMessage(Message.msg(player, "messages.claims.create.no-remaining-claims", Map.of("remaining_claims", String.valueOf(currentClaimedChunks))));
                                                                         return 0;
