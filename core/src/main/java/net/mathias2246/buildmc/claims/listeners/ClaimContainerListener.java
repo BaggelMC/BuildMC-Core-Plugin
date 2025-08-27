@@ -42,7 +42,7 @@ public class ClaimContainerListener implements Listener {
         // Exceptions
         if (event.getInventory().getHolder() instanceof Lectern) return;
         if (event.getView().getType().equals(InventoryType.ENDER_CHEST)) return;
-        if (event.getView().getType().equals(InventoryType.CRAFTING)) return;
+        if (event.getView().getType().equals(InventoryType.WORKBENCH)) return;
         if (event.getView().getType().equals(InventoryType.ENCHANTING)) return;
         if (event.getView().getType().equals(InventoryType.SMITHING)) return;
         if (event.getView().getType().equals(InventoryType.LOOM)) return;
