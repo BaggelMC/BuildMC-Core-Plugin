@@ -4,6 +4,7 @@ package net.mathias2246.buildmc.claims;
 public enum ProtectionFlag {
     PLAYER_BREAK,
     PLAYER_PLACE,
+    PLAYER_PLACE_ENTITY,
     CONTAINER,
     ITEM_PICKUP,
     ITEM_DROP,

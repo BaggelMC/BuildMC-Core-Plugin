@@ -261,6 +261,7 @@ public class ProtectionsMenu {
         return switch (flag) {
             case PLAYER_BREAK -> Material.IRON_PICKAXE;
             case PLAYER_PLACE -> Material.STONE;
+            case PLAYER_PLACE_ENTITY -> Material.OAK_BOAT;
             case CONTAINER -> Material.CHEST;
             case ITEM_PICKUP -> Material.HOPPER;
             case ITEM_DROP -> Material.DROPPER;

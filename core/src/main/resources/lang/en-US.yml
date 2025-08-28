@@ -149,6 +149,7 @@ messages:
       entity-container: "<red>This entity is protected by a land claim.</red>"
       block-break: "<red>This block is protected by a land claim.</red>"
       block-place: "<red>This area is protected by a land claim.</red>"
+      entity-place: "<red>This area is protected by a land claim.</red>"
 
       entity-damage: "<red>This entity is protected by a land claim.</red>"
 
@@ -222,6 +223,9 @@ messages:
           player_place:
             name: "<green>Player Block Placing</green>"
             lore: "<gray>Prevents players from placing blocks.</gray>"
+          player_place_entity:
+            name: "<green>Entity Placing</green>"
+            lore: "<gray>Prevents players from placing entities.</gray>\n<dark_gray>Armor Stands, Boats, Minecarts, and End Crystals.</dark_gray>"
           container:
             name: "<green>Containers</green>"
             lore: "<gray>Prevents players from using containers (e.g. Chests, Hoppers..).</gray>"

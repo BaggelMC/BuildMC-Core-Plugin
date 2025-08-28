@@ -89,6 +89,9 @@ claims:
     # Players cannot place blocks
     player-place: true
 
+    # Players cannot place entities (armor stands, boats, minecarts, and end crystals.)
+    player-place-entity: true
+
     # Players cannot open containers (e.g. Chests, Barrels...)
     containers: true
 

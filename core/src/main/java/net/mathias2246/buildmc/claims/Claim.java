@@ -123,6 +123,7 @@ public class Claim {
         return switch (flag) {
             case PLAYER_BREAK -> "claims.protections.player-break";
             case PLAYER_PLACE -> "claims.protections.player-place";
+            case PLAYER_PLACE_ENTITY -> "claims.protections.player-place-entity";
             case CONTAINER -> "claims.protections.containers";
             case ITEM_PICKUP -> "claims.protections.item-pickup";
             case ITEM_DROP -> "claims.protections.item-drop";
