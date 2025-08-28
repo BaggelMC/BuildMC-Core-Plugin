@@ -12,8 +12,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
 /**An Event Listener that when register makes it so players drop their head on death.*/
 public record PlayerHeadDropDeathListener(@Nullable ItemMetaModifier modifier) implements Listener {
 

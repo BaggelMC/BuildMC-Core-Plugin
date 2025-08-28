@@ -84,30 +84,43 @@ public class ClaimCommand implements CustomCommand {
                                         (command) -> {
                                             if (!(command.sender() instanceof Player player)) {
                                                 audiences.sender(command.sender()).sendMessage(Component.translatable("messages.error.not-a-player"));
-                                                return;
+                                                return 0;
                                             }
 
+                                            Claim claim;
 
-                                            String owner = null;
-                                            Long id = ClaimManager.getClaimId(player.getLocation().getChunk());
-                                            if (id != null) {
-                                                owner = ClaimManager.getClaimNameById(
-                                                    id
-                                                );
+                                            try {
+                                                claim = ClaimManager.getClaim(player.getLocation());
+                                            } catch (SQLException e) {
+                                                CoreMain.plugin.getLogger().severe("An error occurred while getting a claim from the database: " + e.getMessage());
+                                                audiences.player(player).sendMessage(Component.translatable("messages.error.sql"));
+                                                return 0;
                                             }
 
-                                            if (owner == null) {
+                                            if (claim == null) {
                                                 audiences.sender(command.sender()).sendMessage(Component.translatable("messages.claims.who.unclaimed"));
-                                                return;
+                                                return 1;
                                             }
 
-                                            Component message = Message.msg(player, "messages.claims.who.message");
+                                            ClaimType claimType = claim.getType();
 
-                                            TextReplacementConfig.Builder b = TextReplacementConfig.builder();
-                                            b.matchLiteral("%owner%");
-                                            b.replacement(owner);
+                                            if (claimType == ClaimType.TEAM) {
+                                                audiences.player(player).sendMessage(Message.msg(player, "messages.claims.who.team-message", Map.of("owner", claim.getOwnerId())));
+                                            } else if (claimType == ClaimType.PLAYER) {
+                                                UUID ownerId = UUID.fromString(claim.getOwnerId());
+                                                OfflinePlayer owner = Bukkit.getOfflinePlayer(ownerId);
+                                                String ownerName = owner.getName();
 
-                                            audiences.sender(command.sender()).sendMessage(message.replaceText(b.build()));
+                                                if (ownerName == null) {
+                                                    ownerName = "Unknown";
+                                                }
+
+                                                audiences.player(player).sendMessage(Message.msg(player, "messages.claims.who.player-message", Map.of("owner", ownerName)));
+                                            } else if (claimType == ClaimType.SERVER || claimType == ClaimType.PLACEHOLDER) {
+                                                audiences.player(player).sendMessage(Message.msg(player, "messages.claims.who.server-message"));
+                                            }
+
+                                            return 1;
                                         }
                                 )
                 )

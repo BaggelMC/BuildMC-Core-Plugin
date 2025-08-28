@@ -304,7 +304,6 @@ public class ProtectionsMenu {
             case ENTITY_MODIFICATIONS_WITHER -> Material.WITHER_SKELETON_SKULL;
             case ENTITY_MODIFICATIONS_ENDERMAN -> Material.ENDER_PEARL;
             case ENTITY_MODIFICATIONS_RAVAGER -> Material.SADDLE;
-            default -> Material.BOOK;
         };
     }
 

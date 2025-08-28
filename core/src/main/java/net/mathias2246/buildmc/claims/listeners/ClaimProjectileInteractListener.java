@@ -46,12 +46,7 @@ public class ClaimProjectileInteractListener implements Listener {
 
         if (!ClaimManager.isPlayerAllowed(player, ProtectionFlag.PROJECTILE_INTERACTIONS, event.getBlock().getLocation())) {
             event.setCancelled(true);
-
-            // Sending should already be handled by onProjectileHit()
-//            CoreMain.mainClass.sendPlayerActionBar(
-//                    player,
-//                    Component.translatable("messages.claims.not-accessible.interact")
-//            );
+            // Message sending should already be handled by onProjectileHit()
         }
     }
 }

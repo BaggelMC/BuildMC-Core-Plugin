@@ -105,6 +105,10 @@ public class DatabaseManager {
         }
     }
 
+    public List<DatabaseTable> getRegisteredTables() {
+        return registeredTables;
+    }
+
     public void close() {
         if (connection != null) {
             try {

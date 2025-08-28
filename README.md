@@ -18,7 +18,7 @@ BuildMC-Core provides a solid foundation for any Minecraft project. Designed for
   Enable or disable the End dimension **dynamically**. No restarts required. Broadcasts the change to all players.
 
 - 🧱 **Survival-Friendly Chunk Claiming**  
-  A secure, intuitive chunk claim system tied into the teams system. Built for balance and survival fairness.
+  A secure, intuitive chunk claim system tied into the team system. Built for balance and survival fairness.
 
 - ⚙️ **Easy Setup**  
   Configure the plugin using `/buildmc` or edit the config files directly.
