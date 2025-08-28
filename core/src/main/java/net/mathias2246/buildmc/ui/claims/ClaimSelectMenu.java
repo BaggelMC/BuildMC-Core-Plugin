@@ -50,7 +50,7 @@ public class ClaimSelectMenu {
         StaticPane background = new StaticPane(0, 0, 9, 5);
         background.setPriority(Pane.Priority.LOW);
         ItemStack filler = createFiller(player);
-        background.fillWith(filler);
+        background.fillWith(filler, e -> e.setCancelled(true));
         gui.addPane(background);
 
         PaginatedPane pages = new PaginatedPane(0, 0, 9, 5);
@@ -83,7 +83,7 @@ public class ClaimSelectMenu {
         StaticPane controls = new StaticPane(0, 5, 9, 1);
         controls.setPriority(Pane.Priority.HIGHEST);
         ItemStack gray = createGrayPane(player);
-        controls.fillWith(gray);
+        controls.fillWith(gray, e -> e.setCancelled(true));
 
         // Prev button
         ItemStack prevItem = createNavItem(player, "messages.claims.ui.general.previous");
