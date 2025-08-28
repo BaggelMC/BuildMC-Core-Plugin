@@ -194,6 +194,7 @@ messages:
         player-type: "<gray>Type: Player Claim</gray>"
         team-type: "<gray>Type: Team Claim</gray>"
         id: "<dark_gray>ID: %id%</dark_gray>"
+        empty: "<red>You have not claimed anything yet.</red>"
 
       edit-menu:
         title: "<gold>Edit Claim: '%claim%'</gold>"

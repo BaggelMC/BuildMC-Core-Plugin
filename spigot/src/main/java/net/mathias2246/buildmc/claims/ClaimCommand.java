@@ -221,7 +221,7 @@ public class ClaimCommand implements CustomCommand {
 
                                             boolean success = ClaimManager.tryClaimPlayerArea(player, name, pos1, pos2);
                                             if (success) {
-                                                audiences.player(player).sendMessage(Component.translatable("messages.claims.create.success"));
+                                                audiences.player(player).sendMessage(Message.msg(player, "messages.claims.create.success", Map.of("remaining_claims", String.valueOf(currentClaimedChunks - newClaimChunks))));
                                                 player.removeMetadata(claimTool.firstSelectionKey, claimTool.getPlugin());
                                                 player.removeMetadata(claimTool.secondSelectionKey, claimTool.getPlugin());
                                                 return 1;
