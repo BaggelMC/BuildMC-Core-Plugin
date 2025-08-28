@@ -1,7 +1,7 @@
 messages:
 
   spawn-elytra:
-    boost-hint: "Drücke <key:key.swapOffhand>, um einen Schub zu bekommen!"
+    boost-hint: "Drücke <key:key.swapOffhand> um zu beschleunigen!"
     firework-disabled-hint: "<red>Raketen sind für Spawn-Elytren deaktiviert.</red>"
 
     pos1-set: "<green>Position 1 gesetzt.</green>"
@@ -18,35 +18,30 @@ messages:
 
     broadcast-closed: "<gold>--------------------------------</gold>\n\n<yellow>Das Ende wurde <red>GESCHLOSSEN</red>!</yellow>\n\n<gold>--------------------------------</gold>"
     broadcast-opened: "<gold>--------------------------------</gold>\n\n<yellow>Das Ende wurde <green>GEÖFFNET</green>!</yellow>\n\n<gold>--------------------------------</gold>"
-    closed-message: "<red>Das Ende ist derzeit geschlossen.</red>"
+    closed-message: "<red>Das Ende ist derzeit geschlossen."
 
   error:
-    general: "<red>Ein Fehler ist aufgetreten: <red>%error_message%</red>"
+    general: "<red>Ein Fehler ist aufgetreten: <red>%error_message%"
     general-str: "Ein Fehler ist aufgetreten: %error_message%"
-    no-permission: "<red>Du hast keine Berechtigung, dies zu tun.</red>"
+    no-permission: "<red>Du hast keine Berechtigung, dies zu tun."
     no-permission-str: "Du hast keine Berechtigung, dies zu tun."
     not-a-player: "<red>Dieser Befehl kann nur von Spielern verwendet werden.</red>"
     not-a-player-str: "Dieser Befehl kann nur von Spielern verwendet werden."
 
-    not-in-a-team: "<red>Du musst in einem Team sein, um dies zu tun.</red>"
+    not-in-a-team: "<red>You need to be in a team to perform this action.</red>"
 
-    command-disabled: "<red>Dieser Befehl wurde deaktiviert.</red>"
+    command-disabled: "<red>Du musst in einem Team sein, um dies zu tun.</red>"
+
+    sql: "<red>Dieser Befehl wurde deaktiviert.</red>"
 
   claims:
     tool:
       tool-name: "Claim-Ecken auswählen"
 
-      remove-tool-name: "Claim-Ecken zum Entfernen auswählen"
-
       tool-tooltip-line1: "Benutze dieses Tool, um die Ecken deines Team-Claims festzulegen."
       tool-tooltip-line2: "Nachdem du die erste Ecke durch Klicken mit dem Tool gesetzt hast, wähle die zweite durch Sneak-Klick aus."
       tool-tooltip-line3: ""
       tool-tooltip-line4: ""
-
-      remove-tool-tooltip-line1: "Benutze dieses Tool, um deinen Claim zu entfernen."
-      remove-tool-tooltip-line2: "Nachdem du die erste Ecke durch Klicken mit dem Tool gesetzt hast, wähle die zweite durch Sneak-Klick aus."
-      remove-tool-tooltip-line3: ""
-      remove-tool-tooltip-line4: ""
 
       tool-cooldown: "<red>Warte Kurz!</red>"
 
@@ -55,15 +50,19 @@ messages:
 
       selection-too-large: "<red>Deine Auswahl darf nicht breiter oder länger als %selection_limit% sein!</red>"
 
-      missing-first-pos: "<red>Du musst zuerst die andere Ecke auswählen!</red>"
-      successfully-set-pos: "<green>Position erfolgreich gesetzt!</green>"
+      no-first-selection: "<red>Du musst zuerst die andere Ecke auswählen!</red>"
+
+      set-pos1: "<green>Position erfolgreich gesetzt 1!</green>"
+      set-pos2: "<green>Position erfolgreich gesetzt 2!</green>"
+
+      both-positions-set: "<green>beide positionen gesetzt! Die Zone kann jetzt beansprucht werden.</green>"
 
       no-team-to-select: "<red>Du musst in einem Team sein, um einen Claim zu setzen!</red>"
 
       successfully-claimed-area: |-
         <gold>---------------------------------------</gold>
         <green>Gebiet erfolgreich geclaimt!</green>
-        <blue>Du hast noch </blue>%chunks_left%<blue> Chunks zum Claim verfügbar</blue>
+        <blue>du hast noch </blue>%chunks_left%<blue> Chunks zum Claim verfügbar</blue>
         <gold>---------------------------------------</gold>
 
       successfully-claimed-area-no-count: |-
@@ -81,57 +80,343 @@ messages:
         <gold>---------------------------------------</gold>
         <green>Gebiet erfolgreich entfernt!</green>
         <gold>---------------------------------------</gold>
+      
 
       other-claim-in-selection: "\n<red>In deiner Auswahl befindet sich ein fremder Claim!</red>\n"
 
       no-chunks-left: "<red>Du hast keine Chunks mehr zum Claim verfügbar!</red>"
 
-    who:
-      message: "<gold>Dieser Chunk gehört <white>%owner%</white>.</gold>"
-      unclaimed: "<gold>Dieser Chunk gehört niemandem.</gold>"
+    create:
+      missing-positions: "<red>Du hast noch nicht beide Positionen gesetzt.</red>"
+      success: "<blue>------------------------</blue>\n<green>Gebiet erfolgreich geclaimt.\n</green>\n<green>Du hast <gold>%remaining_claims%</gold> chunks übrig.</green>\n<blue>------------------------</blue>"
+      failed: "<red>Fehler: Gebiet konnte nicht geclaimt werden.</red>"
+      invalid-type: "<red>Fehler: Argument 'type' muss entweder 'player' oder 'team' sein.</red>"
+      different-worlds: "<red>Fehler: Beide Positionen müssen in der selben Welt sein.</red>"
+      no-remaining-claims: "<red>Du hast nicht genug Chunks übrig\nÜbrige Chunks: %remaining_claims%</red>"
+      duplicate-name: "<red>Ein Claim mit diesem namen existiert bereits.</red>"
 
-    successfully-whitelisted: "<green>Spieler erfolgreich zur Whitelist hinzugefügt!</green>"
-    successfully-removed-whitelisted: "<green>Spieler erfolgreich von der Whitelist entfernt!</green>"
-    already-whitelisted: "<red>%player% ist bereits auf der Whitelist.</red>"
+      error-database: "<red>Ein Datenbank Fehler ist aufgetreten.</red>"
+
+      protected-server: "<red>Das ausgewählte Gebiet enthält einen Schutz vom Server.</red>"
+      overlap: "<red>Das ausgewählte Gebiet enthält einen anderen Claim.</red>"
+
+    remove:
+      invalid-type: "<red>Fehler: Argument 'type' muss entweder 'player' oder 'team' sein.</red>"
+      not-found: "<red>Der Claim konnte nicht gefunden werden oder gehört nicht dir."
+      failed: "<red>Claim konnte nicht entfernt werden.</red>"
+      success: "<green>Claim erfolgreich entfernt.</green>"
+
+    who:
+      team-message: "<gold>Dieser Chunk gehört dem Team <white>%owner%</white>.</gold>"
+      player-message: "<gold>Dieser Chunk gehört dem Spieler <white>%owner%</white>.</gold>"
+      server-message: "<gold>Dieser Chunk gehört dem Server.</gold>"
+      unclaimed: "<gold>Dieser Chunk gehört niemanden.</gold>"
+
+    whitelist:
+      added: "<green>Der Spieler wurde zu der Claim Whitelist hinzugefügt."
+      removed: "<green>Der Spieler wurde von der Claim Whitelist entfernt."
+      already: "<yellow>Dieser Spieler ist bereits auf der Whitelist."
+      error: "<red>Ein Fehler ist beim ändern der Whitelist aufgetreten."
+      invalid-action: "<red>Invalide aktion. Benutze 'add' oder 'remove'."
+      not-on-list: "<yellow>Dieser Spieler ist nicht auf der Whitelist."
+      already-added: "<yellow>Dieser Spieler ist bereits auf der Whitelist."
+      player-not-found: "<red>Der angegebene Spieler konnte nicht gefunden werden."
+      claim-not-found: "<red>Der Claim konnte nicht gefunden werden oder gehört nicht dir."
+
+    protections:
+      invalid-type: "<red>Invalider Claim typ. Benutze <yellow>player</yellow> oder <yellow>team</yellow>."
+      invalid-flag: "<red>Dieser Schutz existiert nicht."
+      invalid-value: "<red>Invalider wert. Er kann entweder <yellow>true</yellow> oder <yellow>false</yellow> sein."
+      not-found: "<red>Keinen Claim mit diesem Namen gefunden."
+      added: "<green>Schutz <yellow>%flag%</yellow> wurde für diesen Claim <green>aktiviert</green>."
+      removed: "<green>Schutz <yellow>%flag%</yellow> wurde für diesen Claim <red>deaktiviert</red>."
 
     help-message: |-
-      <gold>------------- <green>Claims Hilfe</green> -------------</gold>
-      <aqua>Klicke <green><click:open_url:'https://github.com/BaggelMC/BuildMC-Core-Plugin/blob/master/docs/usage/claim_system.md'>hier</click></green> um die vollständigen docs zu öffnen.</aqua>
-      <gray>- Verwende '<gold>/claim claimtool</gold>', um das Claim-Tool zu erhalten.</gray>
-      <gray>- Klicke, um deinen ersten Chunk auszuwählen.</gray>
-      <gray>- Sneak + Klicke, um den zweiten Chunk auszuwählen.</gray>
-      <gray>- Dieses Gebiet wird dann geclaimt.</gray>
+      <gold>------------- <green>Claims Help</green> -------------</gold>
+      <aqua>Drücke <green><click:open_url:'https://github.com/BaggelMC/BuildMC-Core-Plugin/blob/master/docs/usage/claim_system.md'>hier</click></green> um die vollständigen Docs zu öffnen.</aqua>
+      <gray>- Benutze '<gold>/claim claimtool</gold>' um das Claim Werkzeug zu erhalten.</gray>
+      <gray>- Links-Klick um den ersten Chunk auszuwählen.</gray>
+      <gray>- Rechts-Klick um den zweiten Chunk auszuwählen.</gray>
+      <gray>- Benutze '<gold>/claim create \<team/player> <name></gold>' um einen Claim für dich selbst oder dein Team zu erstellen</gray>
       
-      <gray>- Verwende '<gold>/claim removetool</gold>', um das Claim-Entfernungs-Tool zu erhalten.</gray>
-      <gray>- Wähle Ecken, um das Gebiet zu entfernen.</gray>
-      <gold>------------------------------------</gold>
+      <gray>- Benutze '<gold>/claim</gold>' um das Claims Menü zu öffnen.
+      <gray>- In dem Claims Menü kannst du alle deine Claims bearbeiten.
+      <gold>---------------------------------------</gold>
 
     not-accessible:
-      container: "<red>Dieser Behälter ist durch einen Claim geschützt.</red>"
-      entity-container: "<red>Dieses Entity ist durch einen Claim geschützt.</red>"
-      block-break: "<red>Dieser Block ist durch einen Claim geschützt.</red>"
-      block-place: "<red>Dieses Gebiet ist durch einen Claim geschützt.</red>"
+      container: "<red>Dieser Behälter ist durch ein Land-Claim geschützt.</red>"
+      entity-container: "<red>Dieses Entity ist durch ein Land-Claim geschützt.</red>"
+      block-break: "<red>Dieser Block ist durch ein Land-Claim geschützt.</red>"
+      block-place: "<red>Dieses Gebiet ist durch ein Land-Claim geschützt.</red>"
+      entity-place: "<red>Dieses Gebiet ist durch ein Land-Claim geschützt.</red>"
 
-      entity-damage: "<red>Dieses Entity ist durch einen Claim geschützt.</red>"
+      entity-damage: "<red>Dieses Entity ist durch ein Land-Claim geschützt.</red>"
 
-      sign: "<red>Dieses Schild ist durch einen Claim geschützt.</red>"
-      interact: "<red>Dieses Block ist durch einen Claim geschützt.</red>"
+      sign: "<red>Dieses Schild ist durch ein Land-Claim geschützt.</red>"
+      interact: "<red>Dieser Block ist durch ein Land-Claim geschützt.</red>"
+      entity-rename: "<red>Du kannst keine Entities umbenennen, die durch ein Land-Claim geschützt sind.</red>"
+      armor-stand: "<red>Dieser Rüstungsständer ist durch ein Land-Claim geschützt.</red>"
+      tame-entity: "<red>Dieses Entity ist durch ein Land-Claim geschützt.</red>"
 
-      potion-splash: "<red>Dieses Gebiet ist durch einen Claim geschützt.</red>"
+      potion-splash: "<red>Dieses Gebiet ist durch ein Land-Claim geschützt.</red>"
 
-      vehicle: "<red>Dieses Gefährt ist durch einen Claim geschützt.</red>"
+      fishing: "<red>Dieses Gebiet ist durch ein Land-Claim geschützt.</red>"
 
-      item-pickup: "<red>Dieses Item ist durch einen Claim geschützt.</red>"
-      item-drop: "<red>Du kannst keine Items droppen in einem Gebiet, dass durch einen Claim geschützt ist.</red>"
+      vehicle: "<red>Dieses Fahrzeug ist durch ein Land-Claim geschützt.</red>"
 
-      frostwalker: "<red>Du kannst kein <lang:enchantment.minecraft.frost_walker> benutzen in einem Gebiet, dass durch einen Claim geschützt ist.</red>"
-      entity-bucket: "<red>Dieses süße %entity% is durch einen Claim geschützt.</red>"
+      item-pickup: "<red>Dieses Item ist durch ein Land-Claim geschützt.</red>"
+      item-drop: "<red>Du kannst keine Items in einem durch ein Land-Claim geschützten Gebiet fallen lassen.</red>"
+
+      frostwalker: "<red>Du kannst <lang:enchantment.minecraft.frost_walker> in einem durch ein Land-Claim geschützten Gebiet nicht benutzen.</red>"
+      entity-bucket: "<red>Dieses niedliche %entity% ist durch ein Land-Claim geschützt.</red>"
+
+      attach-leash: "<red>Dieses Entity ist durch ein Land-Claim geschützt.</red>"
+      shear-entity: "<red>Dieses Entity ist durch ein Land-Claim geschützt.</red>"
+
+    ui:
+      general:
+        previous: "<yellow>Zurück</yellow>"
+        next: "<yellow>Weiter</yellow>"
+        page-indicator: "<yellow>Seite %current%/%total%</yellow>"
+
+        back: "<red>Zurück</red>"
+
+        confirm: "<red>Bestätigen</red>"
+        cancel: "<green>Abbruch</green>"
+
+      errors:
+        no-item-meta: "<red>Fehler: item-meta konnte nicht generiert werden."
+
+      select-menu:
+        title: "<gold>Wähle einen Claim aus.</gold>"
+
+        player-type: "<gray>Typ: Spieler Claim</gray>"
+        team-type: "<gray>Typ: Team Claim</gray>"
+        id: "<dark_gray>ID: %id%</dark_gray>"
+        empty: "<red>Du hast noch keine claims.</red>"
+
+      edit-menu:
+        title: "<gold>Claim bearbeiten: '%claim%'</gold>"
+
+        protections: "<green>Schutz</green>"
+        whitelist: "<aqua>Whitelist</aqua>"
+        delete: "<red>Claim Löschen</red>"
+
+        delete-confirm-menu:
+          title: "<red>Löschung von %claim% bestätigen.</red>"
+
+          success: "<green>Claim erfolgreich gelöscht.</green>"
+          fail: "<red>Fehler: Claim konnte nicht gelöscht werden.</red>"
+
+      protections-menu:
+        title: "<gold>Schutz: '%claim%'</gold>"
+
+        enabled: "<green>Angeschaltet</green> <gray>(Drücke zum Ausschalten)</gray>"
+        disabled: "<red>Ausgeschaltet</red> <gray>(Drücke zum Anschalten)</gray>"
+
+        toggle-hint: "<dark_gray>Klicke unten, um umzuschalten</dark_gray>"
+
+        flag:
+          player_break:
+            name: "<green>Blöcke Zerstören</green>"
+            lore: "<gray>Hindert Spieler am Zerstören von Blöcken.</gray>"
+
+          player_place:
+            name: "<green>Blöcke Platzieren</green>"
+            lore: "<gray>Hindert Spieler am Platzieren von Blöcken.</gray>"
+
+          player_place_entity:
+            name: "<green>Entitäten Platzieren</green>"
+            lore: "<gray>Hinderter am Platzieren von Entitäten wie:</gray>\n<gray>Rüstungsständer, Boote, Loren, Enderkristalle.</gray>"
+
+          container:
+            name: "<green>Behälter</green>"
+            lore: "<gray>Hindert Spieler am Benutzen von Behältern (Kisten, Trichter...).</gray>"
+
+          item_pickup:
+            name: "<green>Gegenstände aufheben</green>"
+            lore: "<gray>Hindert Spieler am Aufheben von Gegenständen.</gray>"
+
+          item_drop:
+            name: "<green>Gegenstände fallen lassen</green>"
+            lore: "<gray>Hindert Spieler am Fallen lassen von Gegenständen.</gray>"
+
+          sign_editing:
+            name: "<green>Schild Bearbeitung</green>"
+            lore: "<gray>Hindert Spieler am Bearbeiten von Schildern.</gray>"
+
+          splash_potions:
+            name: "<green>Wurftränke</green>"
+            lore: "<gray>Hindert Spieler am Benutzen von Wurftränken.</gray>"
+
+          vehicle_enter:
+            name: "<green>Gefährt Eintritt</green>"
+            lore: "<gray>Hindert Spieler am Fahren von Gefährten.</gray>"
+
+          bucket_usage:
+            name: "<green>Eimer Benutzung</green>"
+            lore: "<gray>Hindert Spieler am Benutzen von Eimern.</gray>"
+
+          frost_walker:
+            name: "<green>Eisläufer</green>"
+            lore: "<gray>Hindert Spieler am Benutzen der Eisläufer Verzauberung.</gray>"
+
+          sculk_sensor:
+            name: "<green>Sculk Sensoren</green>"
+            lore: "<gray>Hindert Spieler am Auslösen von Sculk Sensoren.</gray>"
+
+          piston_movement_across_claim_borders:
+            name: "<green>Kolben Bewegung</green>"
+            lore: "<gray>Hindert Kolben am Bewegen von Blöcken über Claim grenzen.</gray>"
+
+          interaction_jukebox:
+            name: "<green>Plattenspieler</green>"
+            lore: "<gray>Hindert Spieler am Benutzen von Plattenspielern.</gray>"
+
+          interaction_levers:
+            name: "<green>Hebel</green>"
+            lore: "<gray>Hindert Spieler am Benutzen von Hebeln.</gray>"
+
+          interaction_buttons:
+            name: "<green>Knöpfe</green>"
+            lore: "<gray>Hindert Spieler am Benutzen von Knöpfen.</gray>"
+
+          interaction_repeaters:
+            name: "<green>Verstärker</green>"
+            lore: "<gray>Hindert Spieler am Verädern von Verstärkern.</gray>"
+
+          interaction_comparators:
+            name: "<green>Komparatoren</green>"
+            lore: "<gray>Hindert Spieler am Verädern von Komparatoren.</gray>"
+
+          interaction_daylight_sensors:
+            name: "<green>Tageslichtsensoren</green>"
+            lore: "<gray>Hindert Spieler am Verädern von Tageslichtsensoren.</gray>"
+
+          interaction_pressure_plates:
+            name: "<green>Druckplatten</green>"
+            lore: "<gray>Hindert Spieler am Benutzen von Druckplatten.</gray>"
+
+          interaction_tripwire:
+            name: "<green>Stolperdrähte</green>"
+            lore: "<gray>Hindert Spieler am Auslösen von Stolperdrähten.</gray>"
+
+          interaction_trapdoors:
+            name: "<green>Falltüren</green>"
+            lore: "<gray>Hindert Spieler am Benutzen von Falltüren.</gray>"
+
+          interaction_doors:
+            name: "<green>Türen</green>"
+            lore: "<gray>Hindert Spieler am Benutzen von Türen.</gray>"
+
+          interaction_fence_gates:
+            name: "<green>Zauntore</green>"
+            lore: "<gray>Hindert Spieler am Benutzen von Zauntoren.</gray>"
+
+          interaction_farmland:
+            name: "<green>Ackerböden</green>"
+            lore: "<gray>Hindert Spieler am Zertrampeln von Ackerböden.</gray>"
+
+          interaction_campfire:
+            name: "<green>Lagerfeuer</green>"
+            lore: "<gray>Hindert Spieler am Benutzen von Lagerfeuern.</gray>"
+
+          interaction_bells:
+            name: "<green>Glocken</green>"
+            lore: "<gray>Hindert Spieler am Benutzen von Glocken.</gray>"
+
+          interaction_attach_leash:
+            name: "<green>Leinen</green>"
+            lore: "<gray>Hindert Spieler am Anleinen von Entitäten.</gray>"
+
+          interaction_bonemeal:
+            name: "<green>Knochenmehl</green>"
+            lore: "<gray>Hindert Spieler am Benutzen von Knochenmehl.</gray>"
+
+          interaction_beehives:
+            name: "<green>Bienenstöcke</green>"
+            lore: "<gray>Hindert Spieler am Benutzen von Bienenstöcken.</gray>"
+
+          interaction_name_tags:
+            name: "<green>Namensschilder</green>"
+            lore: "<gray>Hindert Spieler am Benutzen von Namenschildern.</gray>"
+
+          interaction_light_tnt:
+            name: "<green>TNT Zünden</green>"
+            lore: "<gray>Hindert Spieler am Zünden von TNT.</gray>"
+
+          interaction_hanging_entities:
+            name: "<green>Hängende Entitäten</green>"
+            lore: "<gray>Verhindert, Rahmen und Gemälde zu platzieren, zu zerstören oder zu ändern.</gray>"
+
+          interaction_armor_stand:
+            name: "<green>Rüstungsständer</green>"
+            lore: "<gray>Hindert Spieler vom Wechseln der Ausrüstung von Rüstungsständern.</gray>"
+
+          interaction_candles:
+            name: "<green>Kerzen</green>"
+            lore: "<gray>Hindert Spieler am Löschen von Kerzen.</gray>"
+
+          interaction_tame_entity:
+            name: "<green>Tiere Zähmen</green>"
+            lore: "<gray>Hindert Spieler am Zähmen von Tieren.</gray>"
+
+          interaction_shear_entity:
+            name: "<green>Tiere scheren</green>"
+            lore: "<gray>Hindert Spieler am Scheren von Tieren.</gray>"
+
+          entity_damage:
+            name: "<green>Entitäten Schaden</green>"
+            lore: "<gray>Hindert Spielen vom Schädigen von Entitäten.</gray>"
+
+          exclude_players:
+            name: "<green>Spieler ausschließen</green>"
+            lore: "<gray>Schließt Spieler vor dem Schutz vor Angriffen aus.</gray>"
+
+          projectile_interactions:
+            name: "<green>Projektil Interaktionen</green>"
+            lore: "<gray>Verhindert, dass Projektile mit Dingen interagieren.</gray>\n<dark_gray>Dies hat keinen effekt auf den Schaden.</dark_gray>"
+
+          fishing:
+            name: "<green>Fischen</green>"
+            lore: "<gray>Hindert Spieler am Fischen.</gray>"
+
+          explosion_block_damage:
+            name: "<green>Explosion Block Schaden</green>"
+            lore: "<gray>Hindert explosionen am Zerstören von Entitäten.</gray>"
+
+          explosion_entity_damage:
+            name: "<green>Explosion Entitäten Schaden</green>"
+            lore: "<gray>Hindert explosionen am Schädigen von Entitäten.</gray>"
+
+          entity_modifications_wither:
+            name: "<green>Wither Modifikationen</green>"
+            lore: "<gray>Hindert Wither am Zerstören von Blöcken.</gray>"
+
+          entity_modifications_enderman:
+            name: "<green>Enderman Modifikationen</green>"
+            lore: "<gray>Hindert Endermen am Verändern von Blöcken.</gray>"
+
+          entity_modifications_ravager:
+            name: "<green>Verwüster Modifikationen</green>"
+            lore: "<gray>Hindert Verwüster am Zerstören von Blöcken.</gray>"
+
+      whitelist-menu:
+        title: "<gold>Whitelist für '%claim%'</gold>"
+
+        add: "<green>Spieler hinzufügen</green>"
+        remove: "<red>Spieler entfernen</red>"
+
+        delete-confirm-menu:
+          title: "player% entfernen??"
+          success: "<green>Spieler erfolgreich von der Whitelist entfernt.</green>"
+
 
   status:
-    only-players: "<red>Nur Spieler können einen Status haben!</red>"
-    successfully-removed: "<green>Status erfolgreich entfernt!</green>"
+    only-players: "<red>Nur Spieler können einen Status haben.</red>"
+    successfully-removed: "<green>Status erfolgreich entfernt.</green>"
     join-doesn't-exist: "<red>Dein Status wurde entfernt.</red>"
-    not-found: "<red>Dieser Status scheint nicht zu existieren.</red>"
+    not-found: "<red>Dieser Status existiert nicht.</red>"
     successfully-set: "<green>Status erfolgreich gesetzt!</green>"
-    not-in-team: "<red>Du bist nicht im benötigten Team für diesen Status!</red>"
-    no-permission: "<red>Du hast nicht die benötigten Berechtigungen für diesen Status!</red>"
+    not-in-team: "<red>Du bist nicht in dem benötigtem Team für diesen Status.</red>"
+    no-permission: "<red>Du hast nicht die benötigte Berechtigung für diesen Status.</red>"
