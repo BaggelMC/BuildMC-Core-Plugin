@@ -144,32 +144,37 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.5.3</version>
-                <configuration>
-                    <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
-                    <relocations>
-                        <relocation>
-                            <pattern>com.github.stefvanschie.inventoryframework</pattern>
-                            <shadedPattern>net.mathias2246.buildmc.inventoryframework</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>org.bstats</pattern>
-                            <shadedPattern>net.mathias2246.buildmc.bstats</shadedPattern>
-                        </relocation>
-                    </relocations>
-                </configuration>
                 <executions>
                     <execution>
-
                         <phase>package</phase>
                         <goals>
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
                             <minimizeJar>false</minimizeJar>
+                            <artifactSet>
+                                <includes>
+                                    <include>net.mathias2246:buildmc-api</include>
+                                    <include>com.github.stefvanschie.inventoryframework:IF</include>
+                                    <include>org.bstats:bstats-bukkit</include>
+                                </includes>
+                            </artifactSet>
+                            <relocations>
+                                <relocation>
+                                    <pattern>com.github.stefvanschie.inventoryframework</pattern>
+                                    <shadedPattern>net.mathias2246.buildmc.inventoryframework</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.bstats</pattern>
+                                    <shadedPattern>net.mathias2246.buildmc.bstats</shadedPattern>
+                                </relocation>
+                            </relocations>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
     </build>
     <properties>

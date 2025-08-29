@@ -3,7 +3,6 @@ package net.mathias2246.buildmc;
 import net.mathias2246.buildmc.api.BuildMcAPI;
 import net.mathias2246.buildmc.api.BuildMcAPIImpl;
 import net.mathias2246.buildmc.api.event.BuildMcInitializedEvent;
-import net.mathias2246.buildmc.claims.listeners.*;
 import net.mathias2246.buildmc.claims.Protection;
 import net.mathias2246.buildmc.claims.protections.misc.ExplosionProtection;
 import net.mathias2246.buildmc.database.ClaimTable;

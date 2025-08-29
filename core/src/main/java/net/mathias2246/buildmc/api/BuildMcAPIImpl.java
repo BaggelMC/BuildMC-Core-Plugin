@@ -1,6 +1,5 @@
 package net.mathias2246.buildmc.api;
 
-import com.sun.tools.javac.Main;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.MainClass;
 import net.mathias2246.buildmc.util.SoundManager;
