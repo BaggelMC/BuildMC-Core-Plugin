@@ -39,7 +39,7 @@ messages:
       tool-name: "Select Claim Corners"
 
       tool-tooltip-line1: "Use this tool to set the corners of your teams claim."
-      tool-tooltip-line2: "After setting the first corner by clicking with the tool select the second corner by sneak clicking."
+      tool-tooltip-line2: "Use '/claim help' to get help."
       tool-tooltip-line3: ""
       tool-tooltip-line4: ""
 

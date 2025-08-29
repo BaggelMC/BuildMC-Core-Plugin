@@ -39,7 +39,7 @@ messages:
       tool-name: "Claim-Ecken auswählen"
 
       tool-tooltip-line1: "Benutze dieses Tool, um die Ecken deines Team-Claims festzulegen."
-      tool-tooltip-line2: "Nachdem du die erste Ecke durch Klicken mit dem Tool gesetzt hast, wähle die zweite durch Sneak-Klick aus."
+      tool-tooltip-line2: "Benutze '/claim help' um hilfe zu erhalten."
       tool-tooltip-line3: ""
       tool-tooltip-line4: ""
 
