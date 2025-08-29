@@ -1,6 +1,7 @@
 package net.mathias2246.buildmc.claims;
 
 import dev.jorel.commandapi.CommandAPICommand;
+import dev.jorel.commandapi.arguments.NamespacedKeyArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
@@ -562,10 +563,11 @@ public class ClaimCommand implements CustomCommand {
 
                                                     return builder.buildFuture();
                                                 }),
-                                        new StringArgument("flag")
+                                        new NamespacedKeyArgument("flag")
                                                 .replaceSuggestions((info, builder) -> {
-                                                    for (ProtectionFlag flag : ProtectionFlag.values()) {
-                                                        builder.suggest(flag.name());
+                                                    for (NamespacedKey flag : Protection.protections.keyStream().toList()) {
+                                                        builder.suggest(flag.toString());
+                                                        // TODO: Check if protection is registered
                                                     }
                                                     return builder.buildFuture();
                                                 }),
@@ -580,10 +582,11 @@ public class ClaimCommand implements CustomCommand {
 
                                     String type = command.args().getByClass("type", String.class);
                                     String claimName = command.args().getByClass("claim", String.class);
-                                    String flagName = command.args().getByClass("flag", String.class);
+                                    NamespacedKey flag = command.args().getByClass("flag", NamespacedKey.class);
+                                    // TODO: Check if protection is registered
                                     String value = command.args().getByClass("value", String.class);
 
-                                    if (type == null || claimName == null || flagName == null || value == null) {
+                                    if (type == null || claimName == null || flag == null || value == null) {
                                         audiences.player(player).sendMessage(Component.translatable("messages.error.invalid-args"));
                                         return 0;
                                     }
@@ -619,14 +622,6 @@ public class ClaimCommand implements CustomCommand {
                                         return 0;
                                     }
 
-                                    // --- Check flag ---
-                                    ProtectionFlag flag;
-                                    try {
-                                        flag = ProtectionFlag.valueOf(flagName.toUpperCase());
-                                    } catch (IllegalArgumentException e) {
-                                        audiences.player(player).sendMessage(Component.translatable("messages.claims.protections.invalid-flag"));
-                                        return 0;
-                                    }
 
                                     // --- Check value ---
                                     boolean enable;
@@ -646,16 +641,16 @@ public class ClaimCommand implements CustomCommand {
                                     }
 
                                     if (enable) {
-                                        ClaimManager.addProtectionFlag(claim, flag);
+                                        ClaimManager.addProtection(claim, flag);
                                         audiences.player(player).sendMessage(
                                                 Message.msg(player, "messages.claims.protections.added")
-                                                        .replaceText(TextReplacementConfig.builder().matchLiteral("%flag%").replacement(flag.name()).build())
+                                                        .replaceText(TextReplacementConfig.builder().matchLiteral("%flag%").replacement(flag.toString()).build())
                                         );
                                     } else {
-                                        ClaimManager.removeProtectionFlag(claim, flag);
+                                        ClaimManager.removeProtection(claim, flag);
                                         audiences.player(player).sendMessage(
                                                 Message.msg(player, "messages.claims.protections.removed")
-                                                        .replaceText(TextReplacementConfig.builder().matchLiteral("%flag%").replacement(flag.name()).build())
+                                                        .replaceText(TextReplacementConfig.builder().matchLiteral("%flag%").replacement(flag.toString()).build())
                                         );
                                     }
 

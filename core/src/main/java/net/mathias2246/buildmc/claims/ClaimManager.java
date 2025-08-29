@@ -43,7 +43,7 @@ public class ClaimManager {
     /**Checks if the given player is allowed on this claim.
      * <p>This means that the player is allowed to do anything on the claim at that location.</p>
      * @return True if, the player is the owner or whitelisted and the ProtectionFlags are set at the given location.*/
-    public static boolean isPlayerAllowed(@NotNull Player player, @NotNull EnumSet<ProtectionFlag> protectionFlags, Location location) {
+    public static boolean isPlayerAllowed(@NotNull Player player, @NotNull Collection<NamespacedKey> protections, Location location) {
         if (player.hasPermission("buildmc.bypass-claims")) return true;
 
         Claim claim;
@@ -67,16 +67,16 @@ public class ClaimManager {
 
         switch (claim.getType()) {
             case SERVER:
-                return !hasAllFlags(claim, protectionFlags);
+                return !hasAllFlags(claim, protections);
 
             case PLAYER:
                 if (Objects.equals(claim.getOwnerId(), playerId)) return true;
-                return !hasAllFlags(claim, protectionFlags);
+                return !hasAllFlags(claim, protections);
 
             case TEAM:
                 Team playerTeam = getPlayerTeam(player);
                 if (playerTeam != null && Objects.equals(playerTeam.getName(), claim.getOwnerId())) return true;
-                return !hasAllFlags(claim, protectionFlags);
+                return !hasAllFlags(claim, protections);
 
             default:
                 return true;
@@ -86,7 +86,7 @@ public class ClaimManager {
     /**Checks if the given player is allowed on this claim.
      * <p>This means that the player is allowed to do anything on the given claim.</p>
      * @return True if, the player is the owner or whitelisted and the ProtectionFlags are set on the given claim.*/
-    public static boolean isPlayerAllowed(@NotNull Player player, @NotNull EnumSet<ProtectionFlag> protectionFlags, @Nullable Claim claim) {
+    public static boolean isPlayerAllowed(@NotNull Player player, @NotNull Collection<NamespacedKey> protections, @Nullable Claim claim) {
         if (player.hasPermission("buildmc.bypass-claims")) return true;
 
         // Allow if no claim found
@@ -102,16 +102,16 @@ public class ClaimManager {
 
         switch (claim.getType()) {
             case SERVER:
-                return !hasAnyFlag(claim, protectionFlags);
+                return !hasAnyFlag(claim, protections);
 
             case PLAYER:
                 if (Objects.equals(claim.getOwnerId(), playerId)) return true;
-                return !hasAnyFlag(claim, protectionFlags);
+                return !hasAnyFlag(claim, protections);
 
             case TEAM:
                 Team playerTeam = getPlayerTeam(player);
                 if (playerTeam != null && Objects.equals(playerTeam.getName(), claim.getOwnerId())) return true;
-                return !hasAnyFlag(claim, protectionFlags);
+                return !hasAnyFlag(claim, protections);
 
             default:
                 return true;
@@ -121,7 +121,7 @@ public class ClaimManager {
     /**Checks if the given player is allowed on this claim.
      * <p>This means that the player is allowed to do anything on the given claim.</p>
      * @return True if, the player is the owner or whitelisted and the ProtectionFlags are set on the given claim.*/
-    public static boolean isPlayerAllowed(@NotNull Player player, @NotNull ProtectionFlag protectionFlag, @Nullable Claim claim) {
+    public static boolean isPlayerAllowed(@NotNull Player player, @NotNull NamespacedKey protection, @Nullable Claim claim) {
         if (player.hasPermission("buildmc.bypass-claims")) return true;
 
         // Allow if no claim found
@@ -137,16 +137,16 @@ public class ClaimManager {
 
         switch (claim.getType()) {
             case SERVER:
-                return !hasFlag(claim, protectionFlag);
+                return !hasFlag(claim, protection);
 
             case PLAYER:
                 if (Objects.equals(claim.getOwnerId(), playerId)) return true;
-                return !hasFlag(claim, protectionFlag);
+                return !hasFlag(claim, protection);
 
             case TEAM:
                 Team playerTeam = getPlayerTeam(player);
                 if (playerTeam != null && Objects.equals(playerTeam.getName(), claim.getOwnerId())) return true;
-                return !hasFlag(claim, protectionFlag);
+                return !hasFlag(claim, protection);
 
             default:
                 return true;
@@ -156,7 +156,7 @@ public class ClaimManager {
     /**Checks if the given player is allowed on this claim.
      * <p>This means that the player is allowed to do anything on the claim at that location.</p>
      * @return True if, the player is the owner or whitelisted and the ProtectionFlags are set at the given location.*/
-    public static boolean isPlayerAllowed(@NotNull Player player, @NotNull ProtectionFlag protectionFlag, Location location) {
+    public static boolean isPlayerAllowed(@NotNull Player player, @NotNull NamespacedKey protection, Location location) {
         if (player.hasPermission("buildmc.bypass-claims")) return true;
 
         Claim claim;
@@ -181,35 +181,35 @@ public class ClaimManager {
 
         switch (claim.getType()) {
             case SERVER:
-                return !hasFlag(claim, protectionFlag);
+                return !hasFlag(claim, protection);
 
             case PLAYER:
                 if (Objects.equals(claim.getOwnerId(), playerId)) return true;
-                return !hasFlag(claim, protectionFlag);
+                return !hasFlag(claim, protection);
 
             case TEAM:
                 Team playerTeam = getPlayerTeam(player);
                 if (playerTeam != null && Objects.equals(playerTeam.getName(), claim.getOwnerId())) return true;
-                return !hasFlag(claim, protectionFlag);
+                return !hasFlag(claim, protection);
 
             default:
                 return true;
         }
     }
 
-    private static boolean hasAnyFlag(Claim claim, EnumSet<ProtectionFlag> flags) {
-        for (ProtectionFlag flag : flags) {
-            if (claim.hasFlag(flag)) return true;
+    private static boolean hasAnyFlag(Claim claim, Collection<NamespacedKey> protections) {
+        for (NamespacedKey key : protections) {
+            if (claim.hasFlag(key)) return true;
         }
         return false;
     }
 
-    private static boolean hasFlag(Claim claim, ProtectionFlag flag) {
-        return claim.hasFlag(flag);
+    private static boolean hasFlag(Claim claim, NamespacedKey protection) {
+        return claim.hasFlag(protection);
     }
 
-    private static boolean hasAllFlags(Claim claim, EnumSet<ProtectionFlag> flags) {
-        return claim.getProtectionFlags().containsAll(flags);
+    private static boolean hasAllFlags(Claim claim, Collection<NamespacedKey> flags) {
+        return new HashSet<>(claim.getProtections()).containsAll(flags);
     }
 
     /** @return True if a claim is in the given area.*/
@@ -317,7 +317,7 @@ public class ClaimManager {
                 chunkZ2,
                 claimName,
                 List.of(),
-                EnumSet.noneOf(ProtectionFlag.class)
+                new ArrayList<>()
         );
 
         long claimId;
@@ -400,33 +400,66 @@ public class ClaimManager {
         }
     }
 
-    public static void addProtectionFlag(long claimId, ProtectionFlag flag) {
+    public static void addProtection(long claimId, @NotNull Protection protection) {
         try {
-            CoreMain.claimTable.addProtectionFlag(CoreMain.databaseManager.getConnection(), claimId, flag);
+            CoreMain.claimTable.addProtectionFlag(CoreMain.databaseManager.getConnection(), claimId, protection.getKey());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static void addProtectionFlag(Claim claim, ProtectionFlag flag) {
+
+    public static void addProtection(long claimId, @NotNull NamespacedKey protection) {
         try {
-            CoreMain.claimTable.addProtectionFlag(CoreMain.databaseManager.getConnection(), claim.getId(), flag);
+            CoreMain.claimTable.addProtectionFlag(CoreMain.databaseManager.getConnection(), claimId, protection);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static void removeProtectionFlag(long claimId, ProtectionFlag flag) {
+    public static void addProtection(@NotNull Claim claim, @NotNull Protection protection) {
         try {
-            CoreMain.claimTable.removeProtectionFlag(CoreMain.databaseManager.getConnection(), claimId, flag);
+            CoreMain.claimTable.addProtectionFlag(CoreMain.databaseManager.getConnection(), claim.getId(), protection.getKey());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static void removeProtectionFlag(Claim claim, ProtectionFlag flag) {
+    public static void addProtection(@NotNull Claim claim, @NotNull NamespacedKey protection) {
         try {
-            CoreMain.claimTable.removeProtectionFlag(CoreMain.databaseManager.getConnection(), claim.getId(), flag);
+            CoreMain.claimTable.addProtectionFlag(CoreMain.databaseManager.getConnection(), claim.getId(), protection);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void removeProtection(long claimId, @NotNull Protection protection) {
+        try {
+            CoreMain.claimTable.removeProtectionFlag(CoreMain.databaseManager.getConnection(), claimId, protection.getKey());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void removeProtection(long claimId, @NotNull NamespacedKey protection) {
+        try {
+            CoreMain.claimTable.removeProtectionFlag(CoreMain.databaseManager.getConnection(), claimId, protection);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void removeProtection(@NotNull Claim claim, @NotNull Protection protection) {
+        try {
+            CoreMain.claimTable.removeProtectionFlag(CoreMain.databaseManager.getConnection(), claim.getId(), protection.getKey());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void removeProtection(@NotNull Claim claim, @NotNull NamespacedKey protection) {
+        try {
+            CoreMain.claimTable.removeProtectionFlag(CoreMain.databaseManager.getConnection(), claim.getId(), protection);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

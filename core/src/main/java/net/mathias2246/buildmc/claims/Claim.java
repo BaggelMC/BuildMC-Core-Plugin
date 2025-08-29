@@ -1,10 +1,9 @@
 package net.mathias2246.buildmc.claims;
 
-import net.mathias2246.buildmc.CoreMain;
 import org.bukkit.Chunk;
+import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,11 +21,11 @@ public class Claim {
 
     private final List<UUID> whitelistedPlayers;
 
-    private final EnumSet<ProtectionFlag> protectionFlags;
+    private final List<String> protections;
 
     public Claim(Long id, ClaimType type, String ownerId, UUID worldId,
                  int chunkX1, int chunkZ1, int chunkX2, int chunkZ2, String name,
-                 List<UUID> whitelistedPlayers, EnumSet<ProtectionFlag> protectionFlags) {
+                 List<UUID> whitelistedPlayers, List<String> protectionFlags) {
 
         this.id = id;
         this.type = type;
@@ -41,15 +40,10 @@ public class Claim {
         this.whitelistedPlayers = whitelistedPlayers;
 
         if (protectionFlags.isEmpty()) {
-            this.protectionFlags = protectionFlags;
-            for (ProtectionFlag flag : ProtectionFlag.values()) {
-                String path = toConfigPath(flag);
-                if (CoreMain.plugin.getConfig().getBoolean(path, false)) {
-                    this.protectionFlags.add(flag);
-                }
-            }
+            this.protections = protectionFlags;
+            // TODO: Implement logic for default Protections
         } else {
-            this.protectionFlags = protectionFlags;
+            this.protections = protectionFlags;
         }
     }
 
@@ -89,18 +83,21 @@ public class Claim {
     }
 
     /**@return An EnumSet containing the protections that are enabled on this claim.*/
-    public EnumSet<ProtectionFlag> getProtectionFlags() { return protectionFlags; }
+    public List<String> getProtections() { return protections; }
 
     /**@return True if, this claim has a certain ProtectionFlag set; otherwise false*/
-    public boolean hasFlag(ProtectionFlag flag) { return protectionFlags.contains(flag); }
+    public boolean hasFlag(NamespacedKey protection) { return protections.contains(protection.toString()); }
+
+    /**@return True if, this claim has a certain ProtectionFlag set; otherwise false*/
+    public boolean hasFlag(Protection protection) { return protections.contains(protection.getKey().toString()); }
 
     /**Adds a protection flag to this claim.
-     * @param flag The ProtectionFlag to add.*/
-    public void addProtectionFlag(ProtectionFlag flag) { protectionFlags.add(flag); }
+     * @param protection The ProtectionFlag to add.*/
+    public void addProtectionFlag(NamespacedKey protection) { protections.add(protection.toString()); }
 
     /**Removes a protection flag from this claim.
-     * @param flag The ProtectionFlag to remove.*/
-    public void removeProtectionFlag(ProtectionFlag flag) { protectionFlags.remove(flag); }
+     * @param protection The ProtectionFlag to remove.*/
+    public void removeProtectionFlag(NamespacedKey protection) { protections.remove(protection.toString()); }
 
     /**Checks if the given chunk is inside this claim.
      * @return True if, this claim is inside the same world and area.*/
@@ -119,56 +116,56 @@ public class Claim {
         return contains(chunk.getX(), chunk.getZ(), chunk.getWorld().getUID());
     }
 
-    private String toConfigPath(ProtectionFlag flag) {
-        return switch (flag) {
-            case PLAYER_BREAK -> "claims.protections.player-break";
-            case PLAYER_PLACE -> "claims.protections.player-place";
-            case PLAYER_PLACE_ENTITY -> "claims.protections.player-place-entity";
-            case CONTAINER -> "claims.protections.containers";
-            case ITEM_PICKUP -> "claims.protections.item-pickup";
-            case ITEM_DROP -> "claims.protections.item-drop";
-            case SIGN_EDITING -> "claims.protections.sign-editing";
-            case SPLASH_POTIONS -> "claims.protections.splash-potions";
-            case VEHICLE_ENTER -> "claims.protections.vehicle-enter";
-            case BUCKET_USAGE -> "claims.protections.bucket-usage";
-            case FROST_WALKER -> "claims.protections.frostwalker";
-            case SCULK_SENSOR -> "claims.protections.sculk-sensor";
-            case PISTON_MOVEMENT_ACROSS_CLAIM_BORDERS -> "claims.protections.piston-movement-across-claim-borders";
-            case INTERACTION_JUKEBOX -> "claims.protections.interactions.jukebox";
-            case INTERACTION_LEVERS -> "claims.protections.interactions.levers";
-            case INTERACTION_BUTTONS -> "claims.protections.interactions.buttons";
-            case INTERACTION_REPEATERS -> "claims.protections.interactions.repeaters";
-            case INTERACTION_COMPARATORS -> "claims.protections.interactions.comparators";
-            case INTERACTION_DAYLIGHT_SENSORS -> "claims.protections.interactions.daylight-sensors";
-            case INTERACTION_PRESSURE_PLATES -> "claims.protections.interactions.pressure-plates";
-            case INTERACTION_TRIPWIRE -> "claims.protections.interactions.tripwire";
-            case INTERACTION_TRAPDOORS -> "claims.protections.interactions.trapdoors";
-            case INTERACTION_DOORS -> "claims.protections.interactions.doors";
-            case INTERACTION_FENCE_GATES -> "claims.protections.interactions.fence-gates";
-            case INTERACTION_FARMLAND -> "claims.protections.interactions.farmland";
-            case INTERACTION_CAMPFIRE -> "claims.protections.interactions.campfire";
-            case INTERACTION_BELLS -> "claims.protections.interactions.bells";
-            case INTERACTION_ATTACH_LEASH -> "claims.protections.interactions.attach-leash";
-            case INTERACTION_BONEMEAL -> "claims.protections.interactions.bonemeal";
-            case INTERACTION_BEEHIVES -> "claims.protections.interactions.beehives";
-            case INTERACTION_NAME_TAGS -> "claims.protections.interactions.nametags";
-            case INTERACTION_CANDLES -> "claims.protections.interactions.candle-extinguish";
-            case INTERACTION_HANGING_ENTITIES -> "claims.protections.interactions.hanging-entities";
-            case INTERACTION_LIGHT_TNT -> "claims.protections.interactions.light-tnt";
-            case INTERACTION_ARMOR_STAND -> "claims.protections.interactions.armor-stand";
-            case INTERACTION_TAME_ENTITY -> "claims.protections.interactions.tame-entity";
-            case INTERACTION_SHEAR_ENTITY -> "claims.protections.interactions.shear-entity";
-            case ENTITY_DAMAGE -> "claims.protections.damage.entity-damage";
-            case EXCLUDE_PLAYERS -> "claims.protections.damage.exclude-players";
-            case PROJECTILE_INTERACTIONS -> "claims.protections.projectile-interactions";
-            case FISHING -> "claims.protections.fishing";
-            case EXPLOSION_BLOCK_DAMAGE -> "claims.protections.damage.explosion-block-damage";
-            case EXPLOSION_ENTITY_DAMAGE -> "claims.protections.damage.explosion-entity-damage";
-            case ENTITY_MODIFICATIONS_WITHER -> "claims.protections.entity-modifications.wither";
-            case ENTITY_MODIFICATIONS_ENDERMAN -> "claims.protections.entity-modifications.enderman";
-            case ENTITY_MODIFICATIONS_RAVAGER -> "claims.protections.entity-modifications.ravager";
-        };
-    }
+//    private String toConfigPath(ProtectionFlag flag) {
+//        return switch (flag) {
+//            case PLAYER_BREAK -> "claims.protections.player-break";
+//            case PLAYER_PLACE -> "claims.protections.player-place";
+//            case PLAYER_PLACE_ENTITY -> "claims.protections.player-place-entity";
+//            case CONTAINER -> "claims.protections.containers";
+//            case ITEM_PICKUP -> "claims.protections.item-pickup";
+//            case ITEM_DROP -> "claims.protections.item-drop";
+//            case SIGN_EDITING -> "claims.protections.sign-editing";
+//            case SPLASH_POTIONS -> "claims.protections.splash-potions";
+//            case VEHICLE_ENTER -> "claims.protections.vehicle-enter";
+//            case BUCKET_USAGE -> "claims.protections.bucket-usage";
+//            case FROST_WALKER -> "claims.protections.frostwalker";
+//            case SCULK_SENSOR -> "claims.protections.sculk-sensor";
+//            case PISTON_MOVEMENT_ACROSS_CLAIM_BORDERS -> "claims.protections.piston-movement-across-claim-borders";
+//            case INTERACTION_JUKEBOX -> "claims.protections.interactions.jukebox";
+//            case INTERACTION_LEVERS -> "claims.protections.interactions.levers";
+//            case INTERACTION_BUTTONS -> "claims.protections.interactions.buttons";
+//            case INTERACTION_REPEATERS -> "claims.protections.interactions.repeaters";
+//            case INTERACTION_COMPARATORS -> "claims.protections.interactions.comparators";
+//            case INTERACTION_DAYLIGHT_SENSORS -> "claims.protections.interactions.daylight-sensors";
+//            case INTERACTION_PRESSURE_PLATES -> "claims.protections.interactions.pressure-plates";
+//            case INTERACTION_TRIPWIRE -> "claims.protections.interactions.tripwire";
+//            case INTERACTION_TRAPDOORS -> "claims.protections.interactions.trapdoors";
+//            case INTERACTION_DOORS -> "claims.protections.interactions.doors";
+//            case INTERACTION_FENCE_GATES -> "claims.protections.interactions.fence-gates";
+//            case INTERACTION_FARMLAND -> "claims.protections.interactions.farmland";
+//            case INTERACTION_CAMPFIRE -> "claims.protections.interactions.campfire";
+//            case INTERACTION_BELLS -> "claims.protections.interactions.bells";
+//            case INTERACTION_ATTACH_LEASH -> "claims.protections.interactions.attach-leash";
+//            case INTERACTION_BONEMEAL -> "claims.protections.interactions.bonemeal";
+//            case INTERACTION_BEEHIVES -> "claims.protections.interactions.beehives";
+//            case INTERACTION_NAME_TAGS -> "claims.protections.interactions.nametags";
+//            case INTERACTION_CANDLES -> "claims.protections.interactions.candle-extinguish";
+//            case INTERACTION_HANGING_ENTITIES -> "claims.protections.interactions.hanging-entities";
+//            case INTERACTION_LIGHT_TNT -> "claims.protections.interactions.light-tnt";
+//            case INTERACTION_ARMOR_STAND -> "claims.protections.interactions.armor-stand";
+//            case INTERACTION_TAME_ENTITY -> "claims.protections.interactions.tame-entity";
+//            case INTERACTION_SHEAR_ENTITY -> "claims.protections.interactions.shear-entity";
+//            case ENTITY_DAMAGE -> "claims.protections.damage.entity-damage";
+//            case EXCLUDE_PLAYERS -> "claims.protections.damage.exclude-players";
+//            case PROJECTILE_INTERACTIONS -> "claims.protections.projectile-interactions";
+//            case FISHING -> "claims.protections.fishing";
+//            case EXPLOSION_BLOCK_DAMAGE -> "claims.protections.damage.explosion-block-damage";
+//            case EXPLOSION_ENTITY_DAMAGE -> "claims.protections.damage.explosion-entity-damage";
+//            case ENTITY_MODIFICATIONS_WITHER -> "claims.protections.entity-modifications.wither";
+//            case ENTITY_MODIFICATIONS_ENDERMAN -> "claims.protections.entity-modifications.enderman";
+//            case ENTITY_MODIFICATIONS_RAVAGER -> "claims.protections.entity-modifications.ravager";
+//        };
+//    }
 
     @Override
     public String toString() {
@@ -183,7 +180,7 @@ public class Claim {
                 ", chunkZ2=" + chunkZ2 +
                 ", name='" + name + '\'' +
                 ", whitelistedPlayers=" + whitelistedPlayers +
-                ", protectionFlags=" + protectionFlags +
+                ", protections=" + protections +
                 '}';
     }
 }

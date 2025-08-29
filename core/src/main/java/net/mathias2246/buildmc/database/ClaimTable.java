@@ -6,8 +6,9 @@ import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.claims.Claim;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.claims.ClaimType;
-import net.mathias2246.buildmc.claims.ProtectionFlag;
 import net.mathias2246.buildmc.util.LocationUtil;
+import org.bukkit.NamespacedKey;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.*;
@@ -99,9 +100,9 @@ public class ClaimTable implements DatabaseTable {
                     INSERT INTO claim_protection_flags (claim_id, flag)
                     VALUES (?, ?)
                 """)) {
-                        for (var flag : claim.getProtectionFlags()) {
+                        for (var flag : claim.getProtections()) {
                             flagPS.setLong(1, id);
-                            flagPS.setString(2, flag.name());
+                            flagPS.setString(2, flag.toString());
                             flagPS.addBatch();
                         }
                         flagPS.executeBatch();
@@ -230,8 +231,8 @@ public class ClaimTable implements DatabaseTable {
                 if (rs.next()) {
                     // Load related data
                     List<UUID> whitelistedPlayers = new ArrayList<>();
-                    EnumSet<ProtectionFlag> protectionFlags = EnumSet.noneOf(ProtectionFlag.class);
-                    loadClaimRelations(conn, id, whitelistedPlayers, protectionFlags);
+                    List<String> protections = new ArrayList<>();
+                    loadClaimRelations(conn, id, whitelistedPlayers, protections);
 
                     Claim claim = new Claim(
                             id,
@@ -244,7 +245,7 @@ public class ClaimTable implements DatabaseTable {
                             rs.getInt("chunk_z2"),
                             rs.getString("name"),
                             whitelistedPlayers,
-                            protectionFlags
+                            protections
                     );
 
                     claimCache.put(id, claim);
@@ -257,8 +258,8 @@ public class ClaimTable implements DatabaseTable {
     }
 
     private void loadClaimRelations(Connection conn, long claimId,
-                                    List<UUID> whitelistedPlayers,
-                                    EnumSet<ProtectionFlag> protectionFlags) throws SQLException {
+                                    Collection<UUID> whitelistedPlayers,
+                                    Collection<String> protections) throws SQLException {
         // Whitelist
         try (PreparedStatement ps = conn.prepareStatement("""
         SELECT player_uuid FROM claim_whitelisted_players WHERE claim_id = ?
@@ -278,7 +279,7 @@ public class ClaimTable implements DatabaseTable {
             ps.setLong(1, claimId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    protectionFlags.add(Enum.valueOf(ProtectionFlag.class, rs.getString("flag")));
+                    protections.add(rs.getString("flag"));
                 }
             }
         }
@@ -357,8 +358,8 @@ public class ClaimTable implements DatabaseTable {
                     }
 
                     List<UUID> whitelistedPlayers = new ArrayList<>();
-                    EnumSet<ProtectionFlag> protectionFlags = EnumSet.noneOf(ProtectionFlag.class);
-                    loadClaimRelations(conn, id, whitelistedPlayers, protectionFlags);
+                    List<String> protections = new ArrayList<>();
+                    loadClaimRelations(conn, id, whitelistedPlayers, protections);
 
                     Claim claim = new Claim(
                             id,
@@ -371,7 +372,7 @@ public class ClaimTable implements DatabaseTable {
                             rs.getInt("chunk_z2"),
                             rs.getString("name"),
                             whitelistedPlayers,
-                            protectionFlags
+                            protections
                     );
 
                     overlappingClaims.add(claim);
@@ -406,37 +407,37 @@ public class ClaimTable implements DatabaseTable {
         }
     }
 
-    public void addProtectionFlag(Connection conn, long claimId, ProtectionFlag flag) throws SQLException {
+    public void addProtectionFlag(Connection conn, long claimId, @NotNull NamespacedKey protectionKey) throws SQLException {
         try (PreparedStatement ps = conn.prepareStatement("""
             MERGE INTO claim_protection_flags (claim_id, flag)
             KEY (claim_id, flag)
             VALUES (?, ?)
         """)) {
             ps.setLong(1, claimId);
-            ps.setString(2, flag.name());
+            ps.setString(2, protectionKey.toString());
             ps.executeUpdate();
         }
 
         Claim cached = claimCache.getIfPresent(claimId);
         if (cached != null) {
-            cached.addProtectionFlag(flag);
+            cached.addProtectionFlag(protectionKey);
             claimCache.put(claimId, cached);
         }
     }
 
-    public void removeProtectionFlag(Connection conn, long claimId, ProtectionFlag flag) throws SQLException {
+    public void removeProtectionFlag(Connection conn, long claimId, @NotNull NamespacedKey protectionKey) throws SQLException {
         try (PreparedStatement ps = conn.prepareStatement("""
         DELETE FROM claim_protection_flags
         WHERE claim_id = ? AND flag = ?
     """)) {
             ps.setLong(1, claimId);
-            ps.setString(2, flag.name());
+            ps.setString(2, protectionKey.toString());
             ps.executeUpdate();
         }
 
         Claim cached = claimCache.getIfPresent(claimId);
         if (cached != null) {
-            cached.removeProtectionFlag(flag);
+            cached.removeProtectionFlag(protectionKey);
             claimCache.put(claimId, cached);
         }
     }

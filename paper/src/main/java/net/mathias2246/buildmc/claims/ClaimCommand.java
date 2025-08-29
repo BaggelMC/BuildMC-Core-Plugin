@@ -4,6 +4,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
+import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.Main;
@@ -616,12 +617,12 @@ public class ClaimCommand implements CustomCommand {
 
                                             return builder.buildFuture();
                                         })
-                                        .then(Commands.argument("flag", StringArgumentType.word())
+                                        .then(Commands.argument("key", ArgumentTypes.namespacedKey())
                                                 .suggests((ctx, builder) -> {
-                                                    String remaining = builder.getRemaining().toUpperCase();
-                                                    for (ProtectionFlag flag : ProtectionFlag.values()) {
-                                                        if (flag.name().startsWith(remaining)) {
-                                                            builder.suggest(flag.name());
+                                                    String remaining = builder.getRemaining();
+                                                    for (NamespacedKey flag : Protection.protections.keyStream().toList()) {
+                                                        if (flag.toString().startsWith(remaining.toLowerCase())) {
+                                                            builder.suggest(flag.toString());
                                                         }
                                                     }
                                                     return builder.buildFuture();
@@ -632,6 +633,7 @@ public class ClaimCommand implements CustomCommand {
                                                             for (String b : bools) {
                                                                 if (b.startsWith(builder.getRemaining().toLowerCase())) {
                                                                     builder.suggest(b);
+                                                                    // TODO: Check if protection is registered
                                                                 }
                                                             }
                                                             return builder.buildFuture();
@@ -645,7 +647,7 @@ public class ClaimCommand implements CustomCommand {
 
                                                             String type = StringArgumentType.getString(ctx, "type").toLowerCase();
                                                             String claimName = StringArgumentType.getString(ctx, "claim");
-                                                            String flagName = StringArgumentType.getString(ctx, "flag").toUpperCase();
+                                                            String flagName = StringArgumentType.getString(ctx, "key").toLowerCase();
                                                             String valueStr = StringArgumentType.getString(ctx, "value").toLowerCase();
 
                                                             boolean value;
@@ -658,9 +660,15 @@ public class ClaimCommand implements CustomCommand {
                                                                 return 0;
                                                             }
 
-                                                            ProtectionFlag flag;
+                                                            NamespacedKey flag;
                                                             try {
-                                                                flag = ProtectionFlag.valueOf(flagName);
+                                                                flag = NamespacedKey.fromString(flagName);
+
+                                                                if (flag == null) {
+                                                                    player.sendMessage(Component.translatable("messages.claims.protections.invalid-flag"));
+                                                                    return 0;
+                                                                }
+
                                                             } catch (IllegalArgumentException e) {
                                                                 player.sendMessage(Component.translatable("messages.claims.protections.invalid-flag"));
                                                                 return 0;
@@ -707,11 +715,11 @@ public class ClaimCommand implements CustomCommand {
                                                             }
 
                                                             if (value) {
-                                                                ClaimManager.addProtectionFlag(claimId, flag);
-                                                                player.sendMessage(Message.msg(player, "messages.claims.protections.added", Map.of("flag", flag.name())));
+                                                                ClaimManager.addProtection(claimId, flag);
+                                                                player.sendMessage(Message.msg(player, "messages.claims.protections.added", Map.of("flag", flag.toString())));
                                                             } else {
-                                                                ClaimManager.removeProtectionFlag(claimId, flag);
-                                                                player.sendMessage(Message.msg(player, "messages.claims.protections.removed", Map.of("flag", flag.name())));
+                                                                ClaimManager.removeProtection(claimId, flag);
+                                                                player.sendMessage(Message.msg(player, "messages.claims.protections.removed", Map.of("flag", flag.toString())));
                                                             }
 
                                                             return 1;

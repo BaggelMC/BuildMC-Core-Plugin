@@ -1,6 +1,7 @@
 package net.mathias2246.buildmc;
 
-import net.mathias2246.buildmc.claims.listeners.*;
+import net.mathias2246.buildmc.claims.Protection;
+import net.mathias2246.buildmc.claims.protections.misc.ExplosionProtection;
 import net.mathias2246.buildmc.database.ClaimTable;
 import net.mathias2246.buildmc.database.DatabaseConfig;
 import net.mathias2246.buildmc.database.DatabaseManager;
@@ -54,36 +55,46 @@ public final class CoreMain {
         if (plugin.getConfig().getBoolean("claims.enabled")) {
             initializeDatabase();
 
+            Protection.protections.addEntry(
+                    new ExplosionProtection()
+            );
+
+            Protection.protections.initialize();
+            for (Protection protection : Protection.protections) {
+                if (protection.isDefaultEnabled()) Protection.defaultProtections.add(protection.getKey());
+                registerEvent(protection);
+            }
+
             registerEvent(new PlayerEnterClaimListener());
 
-            registerEvent(new ClaimContainerListener());
-            registerEvent(new ClaimExplosionsListener());
-            registerEvent(new ClaimBreakListener());
-            registerEvent(new ClaimPlaceListener());
-            registerEvent(new ClaimEntityPlaceListener());
-            registerEvent(new ClaimDamageProtectionListener());
-            registerEvent(new ClaimSignEditListener());
-            registerEvent(new ClaimInteractionListener());
-            registerEvent(new ClaimProjectileInteractListener());
-            registerEvent(new ClaimFishingListener());
-            registerEvent(new ClaimPotionSplashListener());
-            registerEvent(new ClaimVehicleEnterListener());
-            registerEvent(new ClaimBucketUseListener());
-            registerEvent(new ClaimEntityChangeBlockListener());
-            registerEvent(new ClaimItemPickupListener());
-            registerEvent(new ClaimItemDropListener());
-            registerEvent(new ClaimFrostWalkerListener());
-            registerEvent(new ClaimSculkSensorListener());
-            registerEvent(new ClaimPistonMovementListener());
-            registerEvent(new ClaimBeehiveInteractListener());
-            registerEvent(new ClaimBonemealInteractListener());
-            registerEvent(new ClaimEntityLeashListener());
-            registerEvent(new ClaimShearEntityListener());
-            registerEvent(new ClaimItemFrameRotateListener());
-            registerEvent(new ClaimNameTagUseListener());
-            registerEvent(new ClaimHangingInteractListener());
-            registerEvent(new ClaimArmorStandListener());
-            registerEvent(new ClaimEntityTameListener());
+//            registerEvent(new ClaimContainerListener());
+//            registerEvent(new ClaimExplosionsListener());
+//            registerEvent(new ClaimBreakListener());
+//            registerEvent(new ClaimPlaceListener());
+//            registerEvent(new ClaimEntityPlaceListener());
+//            registerEvent(new ClaimDamageProtectionListener());
+//            registerEvent(new ClaimSignEditListener());
+//            registerEvent(new ClaimInteractionListener());
+//            registerEvent(new ClaimProjectileInteractListener());
+//            registerEvent(new ClaimFishingListener());
+//            registerEvent(new ClaimPotionSplashListener());
+//            registerEvent(new ClaimVehicleEnterListener());
+//            registerEvent(new ClaimBucketUseListener());
+//            registerEvent(new ClaimEntityChangeBlockListener());
+//            registerEvent(new ClaimItemPickupListener());
+//            registerEvent(new ClaimItemDropListener());
+//            registerEvent(new ClaimFrostWalkerListener());
+//            registerEvent(new ClaimSculkSensorListener());
+//            registerEvent(new ClaimPistonMovementListener());
+//            registerEvent(new ClaimBeehiveInteractListener());
+//            registerEvent(new ClaimBonemealInteractListener());
+//            registerEvent(new ClaimEntityLeashListener());
+//            registerEvent(new ClaimShearEntityListener());
+//            registerEvent(new ClaimItemFrameRotateListener());
+//            registerEvent(new ClaimNameTagUseListener());
+//            registerEvent(new ClaimHangingInteractListener());
+//            registerEvent(new ClaimArmorStandListener());
+//            registerEvent(new ClaimEntityTameListener());
         }
         isInitialized = true;
     }

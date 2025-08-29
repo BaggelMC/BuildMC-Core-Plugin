@@ -13,6 +13,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.claims.Claim;
 import net.mathias2246.buildmc.claims.ClaimManager;
+import net.mathias2246.buildmc.ui.UIUtil;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -80,10 +81,8 @@ public class ClaimSelectMenu {
 
         gui.addPane(pages);
 
-        StaticPane controls = new StaticPane(0, 5, 9, 1);
+        StaticPane controls = UIUtil.BOTTOM_BAR.copy();
         controls.setPriority(Pane.Priority.HIGHEST);
-        ItemStack gray = createGrayPane(player);
-        controls.fillWith(gray, e -> e.setCancelled(true));
 
         // Prev button
         ItemStack prevItem = createNavItem(player, "messages.claims.ui.general.previous");
@@ -175,18 +174,6 @@ public class ClaimSelectMenu {
         meta.setHideTooltip(true);
         filler.setItemMeta(meta);
         return filler;
-    }
-
-    private static ItemStack createGrayPane(Player player) {
-        ItemStack grayPane = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
-        ItemMeta meta = grayPane.getItemMeta();
-        if (meta == null) {
-            CoreMain.mainClass.sendPlayerMessage(player, Component.translatable("messages.claims.ui.errors.no-item-meta"));
-            return grayPane;
-        }
-        meta.setHideTooltip(true);
-        grayPane.setItemMeta(meta);
-        return grayPane;
     }
 
     private static ItemStack createNavItem(Player player, String messageKey) {
