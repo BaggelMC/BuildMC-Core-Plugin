@@ -5,8 +5,8 @@ import net.mathias2246.buildmc.api.event.endevent.EndStateChangeEvent;
 /**
  * Represents the reason why the End is being opened or closed.
  * <p>
- * Used in {@link EndStateChangeEvent}
- * and other End-related events to provide context to listeners.
+ * Used in {@link EndStateChangeEvent} and {@link EndAPI}
+ * and other End-related places to provide context to listeners.
  * </p>
  */
 public enum EndChangeCause {

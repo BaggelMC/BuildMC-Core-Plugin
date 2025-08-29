@@ -15,9 +15,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Fired when the End is about to be opened.
+ * Fired when the End state is about to change.
  * <p>
- * This event is cancellable. Plugins can inspect or modify the opening process,
+ * This event is cancellable. Plugins can inspect or modify the changing process,
  * including the announcement key, the cause, and the sender. Listeners can also
  * attach arbitrary metadata to share information across other listeners.
  * </p>
@@ -29,14 +29,22 @@ public class EndStateChangeEvent extends Event implements Cancellable {
     /** Whether the event has been cancelled */
     private boolean cancelled = false;
 
+    /**
+     * The state that the End is transitioning to.
+     * This represents the new state after the event is processed.
+     */
     private final EndState newState;
 
+    /**
+     * The previous state of the End before this change occurred.
+     * May be null if there was no prior state or if the previous state is unknown.
+     */
     private final EndState prevState;
 
-    /** The cause of the End opening (e.g., command, plugin, scheduled) */
+    /** The cause of the End state changing (e.g., command, plugin, scheduled) */
     private final EndChangeCause cause;
 
-    /** The sender responsible for opening the End, if applicable */
+    /** The sender responsible for changing the End state, if applicable */
     private final CommandSender sender;
 
     /** The translatable key used for the announcement message */
@@ -46,11 +54,13 @@ public class EndStateChangeEvent extends Event implements Cancellable {
     private final Map<String, Object> metadata = new HashMap<>();
 
     /**
-     * Constructs a new EndOpenEvent.
+     * Constructs a new EndStateChangeEvent.
      *
-     * @param cause           the reason the End is opening. Defaults to {@link EndChangeCause#OTHER} if null.
-     * @param sender          the CommandSender responsible, or null if not applicable
-     * @param announcementKey the translatable key for the announcement message
+     * @param newState        the new state the End is transitioning to; must not be null
+     * @param previousState   the previous state of the End; may be null if there was no prior state
+     * @param cause           the reason the End state is changing; defaults to {@link EndChangeCause#OTHER} if null
+     * @param sender          the CommandSender responsible for the change, or null if not applicable
+     * @param announcementKey the translatable key used for the announcement message
      */
     public EndStateChangeEvent(
             @NotNull EndState newState,
@@ -69,18 +79,28 @@ public class EndStateChangeEvent extends Event implements Cancellable {
         this.announcementKey = announcementKey;
     }
 
+    /**
+     * Gets the state that the End is transitioning to.
+     *
+     * @return the new EndState; never null
+     */
     @NotNull
     public EndState getNewState() {
         return newState;
     }
 
+    /**
+     * Gets the previous state of the End before this event.
+     *
+     * @return the previous EndState, or null if there was none
+     */
     @Nullable
     public EndState getPreviousState() {
         return prevState;
     }
 
     /**
-     * Gets the cause of the End opening.
+     * Gets the cause of the End state changing.
      *
      * @return the cause
      */
@@ -90,7 +110,7 @@ public class EndStateChangeEvent extends Event implements Cancellable {
     }
 
     /**
-     * Gets the sender responsible for opening the End.
+     * Gets the sender responsible for chaning the End state.
      *
      * @return the CommandSender, or null if not applicable
      */
@@ -100,9 +120,9 @@ public class EndStateChangeEvent extends Event implements Cancellable {
     }
 
     /**
-     * Gets the announcement key for the End opening message.
+     * Gets the translation key for the announcement message.
      *
-     * @return the announcement key
+     * @return the translation key
      */
     @NotNull
     public String getAnnouncementKey() {
@@ -110,9 +130,9 @@ public class EndStateChangeEvent extends Event implements Cancellable {
     }
 
     /**
-     * Sets the announcement key for the End opening message.
+     * Sets the translation key for the announcement message.
      *
-     * @param announcementKey the new announcement key
+     * @param announcementKey the new translation key
      */
     public void setAnnouncementKey(@NotNull String announcementKey) {
         this.announcementKey = announcementKey;
