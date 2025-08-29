@@ -1,0 +1,184 @@
+package net.mathias2246.buildmc.api.event.endevent;
+
+import net.mathias2246.buildmc.api.endevent.EndChangeCause;
+import net.mathias2246.buildmc.api.endevent.EndState;
+import org.bukkit.command.CommandSender;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
+import org.checkerframework.checker.units.qual.N;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Fired when the End is about to be opened.
+ * <p>
+ * This event is cancellable. Plugins can inspect or modify the opening process,
+ * including the announcement key, the cause, and the sender. Listeners can also
+ * attach arbitrary metadata to share information across other listeners.
+ * </p>
+ */
+public class EndStateChangeEvent extends Event implements Cancellable {
+
+    private static final HandlerList HANDLERS = new HandlerList();
+
+    /** Whether the event has been cancelled */
+    private boolean cancelled = false;
+
+    private final EndState newState;
+
+    private final EndState prevState;
+
+    /** The cause of the End opening (e.g., command, plugin, scheduled) */
+    private final EndChangeCause cause;
+
+    /** The sender responsible for opening the End, if applicable */
+    private final CommandSender sender;
+
+    /** The translatable key used for the announcement message */
+    private String announcementKey;
+
+    /** Optional metadata map for plugins to store additional info */
+    private final Map<String, Object> metadata = new HashMap<>();
+
+    /**
+     * Constructs a new EndOpenEvent.
+     *
+     * @param cause           the reason the End is opening. Defaults to {@link EndChangeCause#OTHER} if null.
+     * @param sender          the CommandSender responsible, or null if not applicable
+     * @param announcementKey the translatable key for the announcement message
+     */
+    public EndStateChangeEvent(
+            @NotNull EndState newState,
+            @Nullable EndState previousState,
+            @Nullable EndChangeCause cause,
+            @Nullable CommandSender sender,
+            @NotNull String announcementKey) {
+
+        this.newState = newState;
+        this.prevState = previousState;
+
+        if (cause == null) cause = EndChangeCause.OTHER;
+
+        this.cause = cause;
+        this.sender = sender;
+        this.announcementKey = announcementKey;
+    }
+
+    @NotNull
+    public EndState getNewState() {
+        return newState;
+    }
+
+    @Nullable
+    public EndState getPreviousState() {
+        return prevState;
+    }
+
+    /**
+     * Gets the cause of the End opening.
+     *
+     * @return the cause
+     */
+    @NotNull
+    public EndChangeCause getCause() {
+        return cause;
+    }
+
+    /**
+     * Gets the sender responsible for opening the End.
+     *
+     * @return the CommandSender, or null if not applicable
+     */
+    @Nullable
+    public CommandSender getCommandSender() {
+        return sender;
+    }
+
+    /**
+     * Gets the announcement key for the End opening message.
+     *
+     * @return the announcement key
+     */
+    @NotNull
+    public String getAnnouncementKey() {
+        return announcementKey;
+    }
+
+    /**
+     * Sets the announcement key for the End opening message.
+     *
+     * @param announcementKey the new announcement key
+     */
+    public void setAnnouncementKey(@NotNull String announcementKey) {
+        this.announcementKey = announcementKey;
+    }
+
+    /**
+     * Gets an unmodifiable view of the metadata map.
+     *
+     * @return the metadata map
+     */
+    @NotNull
+    public Map<String, Object> getMetadata() {
+        return Collections.unmodifiableMap(metadata);
+    }
+
+    /**
+     * Adds or updates a metadata entry.
+     *
+     * @param key   the metadata key
+     * @param value the metadata value
+     */
+    public void putMetadata(@NotNull String key, @NotNull Object value) {
+        metadata.put(key, value);
+    }
+
+    /**
+     * Removes a metadata entry.
+     *
+     * @param key the metadata key to remove
+     */
+    public void removeMetadata(@NotNull String key) {
+        metadata.remove(key);
+    }
+
+    /**
+     * Checks whether the event has been cancelled.
+     *
+     * @return true if cancelled, false otherwise
+     */
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    /**
+     * Sets whether the event is cancelled.
+     *
+     * @param cancelled true to cancel the event, false to allow it
+     */
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
+
+    @Override
+    public @NotNull HandlerList getHandlers() {
+        return HANDLERS;
+    }
+
+    /**
+     * Gets the static list of handlers for this event type.
+     * Required by Bukkit for event registration.
+     *
+     * @return the handler list
+     */
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
+}

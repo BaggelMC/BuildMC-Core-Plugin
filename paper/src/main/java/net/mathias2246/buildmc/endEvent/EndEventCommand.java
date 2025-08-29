@@ -4,7 +4,11 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
+import net.mathias2246.buildmc.api.endevent.EndChangeCause;
+import net.mathias2246.buildmc.api.endevent.EndState;
+import net.mathias2246.buildmc.api.event.endevent.EndStateChangeEvent;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.io.IOException;
@@ -31,6 +35,31 @@ public class EndEventCommand {
         var cmd = Commands.literal(name);
         cmd.executes(
                 (command) -> {
+
+                    CommandSender sender = command.getSource().getSender();
+
+                    String openAnnouncementKey = "messages.end-event.broadcast-opened";
+                    String closeAnnouncementKey = "messages.end-event.broadcast-closed";
+
+                    EndState newState = allowEnd ? EndState.OPEN : EndState.CLOSED;
+                    EndState prevState = EndListener.allowEnd ? EndState.OPEN : EndState.CLOSED;
+
+                    String messageKey = allowEnd ? openAnnouncementKey : closeAnnouncementKey;
+
+                    EndStateChangeEvent event = new EndStateChangeEvent(
+                            newState,
+                            prevState,
+                            EndChangeCause.COMMAND,
+                            sender,
+                            messageKey
+                    );
+
+                    Bukkit.getPluginManager().callEvent(event);
+
+                    if (event.isCancelled()) return 0;
+
+                    messageKey = event.getAnnouncementKey();
+
                     EndListener.allowEnd = allowEnd;
                     config.set("end-event.allow-end", allowEnd);
                     try {
@@ -42,7 +71,6 @@ public class EndEventCommand {
                     Component senderMessage = Component.translatable(senderMessageKey);
                     command.getSource().getSender().sendMessage(senderMessage);
 
-                    String messageKey = allowEnd ? "messages.end-event.broadcast-opened" : "messages.end-event.broadcast-closed";
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         Component msg = Component.translatable(messageKey);
                         player.sendMessage(msg);
@@ -50,7 +78,6 @@ public class EndEventCommand {
                     return 1;
                 }
         );
-        cmd.requires((command) -> command.getSender().hasPermission("buildmc.admin"));
         return cmd;
     }
 }

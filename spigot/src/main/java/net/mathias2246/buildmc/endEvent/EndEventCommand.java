@@ -3,8 +3,12 @@ package net.mathias2246.buildmc.endEvent;
 import dev.jorel.commandapi.CommandAPICommand;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.mathias2246.buildmc.api.endevent.EndChangeCause;
+import net.mathias2246.buildmc.api.endevent.EndState;
+import net.mathias2246.buildmc.api.event.endevent.EndStateChangeEvent;
 import net.mathias2246.buildmc.commands.CustomCommand;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.io.IOException;
@@ -31,6 +35,30 @@ public class EndEventCommand implements CustomCommand {
     private CommandAPICommand getSubCommand(String name, boolean allowEnd) {
         return new CommandAPICommand(name)
                 .executes((command) -> {
+                    CommandSender sender = command.sender();
+
+                    String openAnnouncementKey = "messages.end-event.broadcast-opened";
+                    String closeAnnouncementKey = "messages.end-event.broadcast-closed";
+
+                    EndState newState = allowEnd ? EndState.OPEN : EndState.CLOSED;
+                    EndState prevState = EndListener.allowEnd ? EndState.OPEN : EndState.CLOSED;
+
+                    String messageKey = allowEnd ? openAnnouncementKey : closeAnnouncementKey;
+
+                    EndStateChangeEvent event = new EndStateChangeEvent(
+                            newState,
+                            prevState,
+                            EndChangeCause.COMMAND,
+                            sender,
+                            messageKey
+                    );
+
+                    Bukkit.getPluginManager().callEvent(event);
+
+                    if (event.isCancelled()) return;
+
+                    messageKey = event.getAnnouncementKey();
+
                     EndListener.allowEnd = allowEnd;
                     config.set("end-event.allow-end", allowEnd);
                     try {
@@ -42,7 +70,6 @@ public class EndEventCommand implements CustomCommand {
                     Component senderMessage = Component.translatable(senderMessageKey);
                     audiences.sender(command.sender()).sendMessage(senderMessage);
 
-                    String messageKey = allowEnd ? "messages.end-event.broadcast-opened" : "messages.end-event.broadcast-closed";
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         Component msg = Component.translatable(messageKey);
                         audiences.player(player).sendMessage(msg);
