@@ -1,5 +1,8 @@
 package net.mathias2246.buildmc;
 
+import net.mathias2246.buildmc.api.BuildMcAPI;
+import net.mathias2246.buildmc.api.BuildMcAPIImpl;
+import net.mathias2246.buildmc.api.event.BuildMcInitializedEvent;
 import net.mathias2246.buildmc.claims.listeners.*;
 import net.mathias2246.buildmc.database.ClaimTable;
 import net.mathias2246.buildmc.database.DatabaseConfig;
@@ -10,8 +13,10 @@ import net.mathias2246.buildmc.util.SoundManager;
 import net.mathias2246.buildmc.util.config.ConfigHandler;
 import net.mathias2246.buildmc.util.config.ConfigurationValidationException;
 import net.mathias2246.buildmc.util.language.LanguageManager;
+import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.ServicePriority;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,8 +47,14 @@ public final class CoreMain {
     public static void initialize(@NotNull Plugin plugin) {
         CoreMain.plugin = plugin;
 
+        if (isInitialized) {
+            plugin.getLogger().warning("CoreMain has been initialized multiple times.");
+        }
+
         CoreMain.mainClass = (MainClass) plugin;
 
+        BuildMcAPI api = new BuildMcAPIImpl(plugin, mainClass);
+        plugin.getServer().getServicesManager().register(BuildMcAPI.class, api, plugin, ServicePriority.High);
 
         initializeConfigs();
 
@@ -85,7 +96,9 @@ public final class CoreMain {
             registerEvent(new ClaimArmorStandListener());
             registerEvent(new ClaimEntityTameListener());
         }
+
         isInitialized = true;
+        Bukkit.getPluginManager().callEvent(new BuildMcInitializedEvent(api));
     }
 
     public static void registerEvent(@NotNull Listener event) {
@@ -95,6 +108,8 @@ public final class CoreMain {
     @ApiStatus.Internal
     public static void stop() {
         if (plugin.getConfig().getBoolean("claims.enabled")) databaseManager.close();
+
+        plugin.getServer().getServicesManager().unregister(BuildMcAPI.class, plugin);
     }
 
     private static void initializeConfigs() {

@@ -10,6 +10,7 @@
     <name>BuildMC Parent</name>
 
     <modules>
+        <module>buildmc-api</module>
         <module>core</module>
         <module>spigot</module>
         <module>paper</module>

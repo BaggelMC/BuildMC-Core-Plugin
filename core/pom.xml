@@ -32,6 +32,11 @@
     <dependencies>
         <!-- Shared dependencies -->
         <dependency>
+            <groupId>net.mathias2246</groupId>
+            <artifactId>buildmc-api</artifactId>
+            <version>${project.buildVersion}</version>
+        </dependency>
+        <dependency>
             <groupId>com.mojang</groupId>
             <artifactId>brigadier</artifactId>
             <version>1.0.18</version>

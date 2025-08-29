@@ -4,6 +4,7 @@ import dev.jorel.commandapi.CommandAPI;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
+import net.mathias2246.buildmc.api.event.BuildMcConfigInitializedEvent;
 import net.mathias2246.buildmc.claims.ClaimCommand;
 import net.mathias2246.buildmc.claims.ClaimToolParticles;
 import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
@@ -83,6 +84,8 @@ public final class Main extends JavaPlugin implements MainClass {
 
         if (!configFile.exists()) this.saveResource("config.yml", false);
         config = this.getConfig();
+
+        Bukkit.getPluginManager().callEvent(new BuildMcConfigInitializedEvent(config));
 
         CoreMain.initialize(this);
 
