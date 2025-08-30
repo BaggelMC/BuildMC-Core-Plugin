@@ -1,6 +1,6 @@
 package net.mathias2246.buildmc.player;
 
-import net.mathias2246.buildmc.item.ItemMetaModifier;
+import net.mathias2246.buildmc.api.item.ItemMetaModifier;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.meta.ItemMeta;

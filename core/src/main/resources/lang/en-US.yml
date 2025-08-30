@@ -284,45 +284,22 @@ claims:
       name: "<green>Jukeboxes</green>"
       lore: "<gray>Prevents players from using jukeboxes.</gray>"
 
-    interaction-levers:
-      name: "<green>Levers</green>"
-      lore: "<gray>Prevents players from using levers.</gray>"
+    interaction-button-and-lever:
+      name: "<green>Buttons & Levers</green>"
+      lore: "<gray>Prevents players from using buttons and levers.</gray>"
 
-    interaction-buttons:
-      name: "<green>Buttons</green>"
-      lore: "<gray>Prevents players from using buttons.</gray>"
+    interaction-redstone-components:
+      name: "<green>Redstone Parts</green>"
+      lore: "<gray>Prevents players from changing repeaters, comparators and daylight-sensors.</gray>"
 
-    interaction-repeaters:
-      name: "<green>Repeaters</green>"
-      lore: "<gray>Prevents players from changing repeaters.</gray>"
-
-    interaction-comparators:
-      name: "<green>Comparators</green>"
-      lore: "<gray>Prevents players from changing comparators.</gray>"
-
-    interaction-daylight-sensors:
-      name: "<green>Daylight Sensors</green>"
-      lore: "<gray>Prevents players from changing daylight detectors.</gray>"
-
-    interaction-pressure-plates:
-      name: "<green>Pressure Plates</green>"
-      lore: "<gray>Prevents players from using pressure plates.</gray>"
-
-    interaction-tripwire:
-      name: "<green>Tripwires</green>"
-      lore: "<gray>Prevents players from triggering tripwires.</gray>"
-
-    interaction-trapdoors:
-      name: "<green>Trapdoors</green>"
-      lore: "<gray>Prevents players from using trapdoors.</gray>"
+    interaction-pressure-plates-and-tripwire:
+      name: "<green>Pressure Plates & Tripwires</green>"
+      lore: "<gray>Prevents players from interacting with pressure plates and tripwires.</gray>"
 
     interaction-doors:
       name: "<green>Doors</green>"
-      lore: "<gray>Prevents players from using doors.</gray>"
+      lore: "<gray>Prevents players from using doors, trapdoors, fence gates.</gray>"
 
-    interaction-fence-gates:
-      name: "<green>Fence Gates</green>"
-      lore: "<gray>Prevents players from using fence gates.</gray>"
 
     interaction-farmland:
       name: "<green>Farmland</green>"
@@ -356,7 +333,7 @@ claims:
       name: "<green>Light TNT</green>"
       lore: "<gray>Prevents players from lighting TNT with flint & steel or fire charges.</gray>"
 
-    interaction-hanging-entities:
+    hanging-entities:
       name: "<green>Hanging Entities</green>"
       lore: "<gray>Prevents placing, destroying, or changing item frames & paintings.</gray>"
 
@@ -400,17 +377,9 @@ claims:
       name: "<green>Explosion Entity Damage</green>"
       lore: "<gray>Prevents explosions from damaging entities.</gray>"
 
-    entity-modifications-wither:
-      name: "<green>Wither Modifications</green>"
-      lore: "<gray>Prevents the Wither from changing blocks.</gray>"
-
-    entity-modifications-enderman:
-      name: "<green>Enderman Modifications</green>"
-      lore: "<gray>Prevents Endermen from changing blocks.</gray>"
-
-    entity-modifications-ravager:
-      name: "<green>Ravager Modifications</green>"
-      lore: "<gray>Prevents Ravagers from changing blocks.</gray>"
+    entity-modifications:
+      name: "<green>Entity Modifications</green>"
+      lore: "<gray>Prevents endermen, withers and ravagers from destroying blocks.</gray>"
 
   whitelist-menu:
     title: "<gold>Whitelist for '%claim%'</gold>"

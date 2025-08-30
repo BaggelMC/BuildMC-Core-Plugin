@@ -5,7 +5,7 @@ import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.mathias2246.buildmc.CoreMain;
-import net.mathias2246.buildmc.item.abstractTypes.AbstractSelectionTool;
+import net.mathias2246.buildmc.api.item.abstractTypes.AbstractSelectionTool;
 import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.ParticleSpawner;
 import org.bukkit.Chunk;

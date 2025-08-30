@@ -2,7 +2,7 @@ package net.mathias2246.buildmc.ui;
 
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
-import net.mathias2246.buildmc.item.ItemUtil;
+import net.mathias2246.buildmc.api.item.ItemUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.inventory.InventoryClickEvent;

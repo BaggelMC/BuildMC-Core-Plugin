@@ -102,7 +102,7 @@ public class ClaimTable implements DatabaseTable {
                 """)) {
                         for (var flag : claim.getProtections()) {
                             flagPS.setLong(1, id);
-                            flagPS.setString(2, flag.toString());
+                            flagPS.setString(2, flag);
                             flagPS.addBatch();
                         }
                         flagPS.executeBatch();

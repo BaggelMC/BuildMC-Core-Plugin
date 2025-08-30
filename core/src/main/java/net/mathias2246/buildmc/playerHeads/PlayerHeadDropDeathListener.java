@@ -1,6 +1,6 @@
 package net.mathias2246.buildmc.playerHeads;
 
-import net.mathias2246.buildmc.item.ItemMetaModifier;
+import net.mathias2246.buildmc.api.item.ItemMetaModifier;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

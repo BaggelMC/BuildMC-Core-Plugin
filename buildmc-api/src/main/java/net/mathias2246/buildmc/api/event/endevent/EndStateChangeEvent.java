@@ -6,7 +6,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.checkerframework.checker.units.qual.N;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -110,7 +109,7 @@ public class EndStateChangeEvent extends Event implements Cancellable {
     }
 
     /**
-     * Gets the sender responsible for chaning the End state.
+     * Gets the sender responsible for changing the End state.
      *
      * @return the CommandSender, or null if not applicable
      */

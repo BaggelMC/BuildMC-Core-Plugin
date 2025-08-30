@@ -8,6 +8,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scoreboard.Team;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,6 +16,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 @SuppressWarnings({"unused", "BooleanMethodIsAlwaysInverted"})
+@ApiStatus.Internal
 public class ClaimManager {
 
     /** The namespaced key used to store the claim ID inside the chunks PersistentDataContainer */
@@ -215,8 +217,7 @@ public class ClaimManager {
 
     private static boolean hasAllProtectionKeys(Claim claim, Collection<NamespacedKey> keys) {
         for (var f : keys) {
-            if (claim.hasFlag(f)) continue;
-            else return false;
+            if (!claim.hasFlag(f)) return false;
         }
         return true;
     }

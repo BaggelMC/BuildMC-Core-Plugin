@@ -1,4 +1,4 @@
-package net.mathias2246.buildmc.claims.protections.blocks;
+package net.mathias2246.buildmc.claims.protections.misc;
 
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
@@ -13,11 +13,12 @@ import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,35 +26,17 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Objects;
 
-public class BoneMeal extends Protection {
-
-    public BoneMeal(@Nullable ConfigurationSection section) {
-        super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:bone_meal_interactions")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onBonemealUse(PlayerInteractEvent event) {
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
-        if (event.getClickedBlock() == null) return;
-        if (event.getItem() == null || event.getItem().getType() != Material.BONE_MEAL) return;
-
-        Player player = event.getPlayer();
-        if (!ClaimManager.isPlayerAllowed(player, getKey(), event.getClickedBlock().getLocation())) {
-            event.setCancelled(true);
-            CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.interact"));
-        }
-    }
-
-    @Override
-    public String getTranslationBaseKey() {
-        return "claims.flags.interaction-bonemeal";
+public class FrostWalker extends Protection {
+    public FrostWalker(@Nullable ConfigurationSection section) {
+        super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:frost_walker")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 
     @Override
     public @NotNull GuiItem getDisplay(@NotNull Player uiHolder, @NotNull Gui gui) {
+
         String t = getTranslationBaseKey();
 
-        ItemStack displayBase = new ItemStack(Material.BONE_MEAL);
+        ItemStack displayBase = new ItemStack(Material.FROSTED_ICE);
         ItemUtil.editMeta(displayBase, (meta) -> {
             meta.setItemName(LegacyComponentSerializer.legacySection().serialize(
                     Message.msg(uiHolder, t+".name")
@@ -65,5 +48,26 @@ public class BoneMeal extends Protection {
                 displayBase,
                 UIUtil.noInteract
         );
+    }
+
+    @Override
+    public String getTranslationBaseKey() {
+        return "claims.flags.frost-walker";
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onFrostWalkerUse(EntityBlockFormEvent event) {
+        if (!event.getNewState().getType().equals(Material.FROSTED_ICE)) return;
+
+        Entity entity = event.getEntity();
+        if (!(entity instanceof Player player)) return;
+
+        ItemStack boots = player.getInventory().getBoots();
+        if (boots == null || !boots.containsEnchantment(Enchantment.FROST_WALKER)) return;
+
+        if (!ClaimManager.isPlayerAllowed(player, getKey(), event.getBlock().getLocation())) {
+            event.setCancelled(true);
+            CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.frostwalker"));
+        }
     }
 }

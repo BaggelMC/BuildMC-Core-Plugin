@@ -1,7 +1,7 @@
 package net.mathias2246.buildmc.claims;
 
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.mathias2246.buildmc.item.ItemMetaModifier;
+import net.mathias2246.buildmc.api.item.ItemMetaModifier;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;

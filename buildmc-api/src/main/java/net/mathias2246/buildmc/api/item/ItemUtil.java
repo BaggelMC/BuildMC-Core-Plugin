@@ -1,4 +1,4 @@
-package net.mathias2246.buildmc.item;
+package net.mathias2246.buildmc.api.item;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;

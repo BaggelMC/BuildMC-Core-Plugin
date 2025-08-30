@@ -1,4 +1,4 @@
-package net.mathias2246.buildmc.item.abstractTypes;
+package net.mathias2246.buildmc.api.item.abstractTypes;
 
 import net.mathias2246.buildmc.util.LocationUtil;
 import org.bukkit.Location;

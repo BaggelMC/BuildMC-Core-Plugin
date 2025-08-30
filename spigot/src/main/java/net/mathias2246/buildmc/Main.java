@@ -4,14 +4,14 @@ import dev.jorel.commandapi.CommandAPI;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
+import net.mathias2246.buildmc.api.item.CustomItemListener;
+import net.mathias2246.buildmc.api.item.CustomItemRegistry;
 import net.mathias2246.buildmc.claims.ClaimCommand;
 import net.mathias2246.buildmc.claims.ClaimToolParticles;
 import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.commands.BuildMcCommand;
 import net.mathias2246.buildmc.commands.CommandRegister;
 import net.mathias2246.buildmc.endEvent.EndListener;
-import net.mathias2246.buildmc.item.CustomItemListener;
-import net.mathias2246.buildmc.item.CustomItemRegistry;
 import net.mathias2246.buildmc.platform.SoundManagerSpigotImpl;
 import net.mathias2246.buildmc.player.PlayerHeadDropModifier;
 import net.mathias2246.buildmc.playerHeads.PlayerHeadDropDeathListener;
@@ -46,6 +46,7 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 public final class Main extends PluginMain {
@@ -178,6 +179,11 @@ public final class Main extends PluginMain {
     @Override
     public @NotNull Plugin getPlugin() {
         return this;
+    }
+
+    @Override
+    public void editConfiguration(@NotNull Consumer<FileConfiguration> consumer) {
+        consumer.accept(config);
     }
 
     @Override

@@ -1,8 +1,9 @@
-package net.mathias2246.buildmc.claims.protections.misc;
+package net.mathias2246.buildmc.claims.protections.entities;
 
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.item.ItemUtil;
 import net.mathias2246.buildmc.claims.Claim;
@@ -13,10 +14,11 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,35 +27,10 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 
-import static net.mathias2246.buildmc.CoreMain.plugin;
+public class EntityBlockModifications extends Protection {
 
-public class EntityExplosionDamage extends Protection {
-    public EntityExplosionDamage(@Nullable ConfigurationSection section) {
-        super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:explosions")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
-    }
-
-    @Override
-    public String getTranslationBaseKey() {
-        return "claims.flags.explosion-entity-damage";
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onExplosionDamage (EntityDamageEvent event) {
-        Location location = event.getEntity().getLocation();
-
-        Claim claim = null;
-        try {
-            claim = ClaimManager.getClaim(location);
-        } catch (SQLException e) {
-            plugin.getLogger().severe("SQL error while getting claim: " + e);
-        }
-        if (claim == null) return;
-
-        if (claim.hasFlag(getKey())) {
-            if (event.getCause() == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION || event.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) {
-                event.setCancelled(true);
-            }
-        }
+    public EntityBlockModifications(@Nullable ConfigurationSection section) {
+        super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:entity_block_modifications")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 
     @Override
@@ -61,7 +38,7 @@ public class EntityExplosionDamage extends Protection {
 
         String t = getTranslationBaseKey();
 
-        ItemStack displayBase = new ItemStack(Material.GUNPOWDER);
+        ItemStack displayBase = new ItemStack(Material.WITHER_SKELETON_SKULL);
         ItemUtil.editMeta(displayBase, (meta) -> {
             meta.setItemName(LegacyComponentSerializer.legacySection().serialize(
                     Message.msg(uiHolder, t+".name")
@@ -73,5 +50,31 @@ public class EntityExplosionDamage extends Protection {
                 displayBase,
                 UIUtil.noInteract
         );
+    }
+
+    @Override
+    public String getTranslationBaseKey() {
+        return "claims.flags.entity-modifications";
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onEntityChangeBlock(EntityChangeBlockEvent event) {
+        EntityType entityType = event.getEntityType();
+
+        if (!(entityType.equals(EntityType.WITHER) || entityType.equals(EntityType.ENDERMAN) || entityType.equals(EntityType.RAVAGER))) return;
+
+        Location location = event.getBlock().getLocation();
+
+        Claim claim;
+        try {
+            claim = ClaimManager.getClaim(location);
+        } catch (SQLException e) {
+            CoreMain.plugin.getLogger().severe("SQL error while getting claim: " + e);
+            return;
+        }
+
+        if (claim == null) return;
+
+        if (claim.hasFlag(getKey())) event.setCancelled(true);
     }
 }

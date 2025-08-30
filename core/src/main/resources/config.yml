@@ -148,42 +148,31 @@ claims:
       default: true
       is-hidden: false
 
+    # Prevents placing, destroying and interacting with entities like item frames or signs
+    hanging-entities:
+      default: true
+      is-hidden: false
+
     # Interaction related protections
     interactions:
       jukebox:
         default: true
         is-hidden: false
 
-      levers:
-        default: true
+      buttons-and-levers:
+        default: false
         is-hidden: false
-      buttons:
-        default: true
-        is-hidden: false
-      repeaters:
-        default: true
-        is-hidden: false
-      comparators:
-        default: true
-        is-hidden: false
-      daylight-sensors:
+
+      # Includes Repeaters, Comparators, and daylight-sensors
+      redstone-components:
         default: true
         is-hidden: false
 
-      tripwire:
-        default: true
-        is-hidden: false
-      pressure-plates:
-        default: true
-        is-hidden: false
-      trapdoors:
-        default: true
+      pressure-plates-and-tripwire:
+        default: false
         is-hidden: false
       doors:
-        default: true
-        is-hidden: false
-      fence-gates:
-        default: true
+        default: false
         is-hidden: false
       farmland:
         default: true
@@ -207,13 +196,7 @@ claims:
       nametags:
         default: true
         is-hidden: false
-      item-frames:
-        default: true
-        is-hidden: false
       candle-extinguish:
-        default: true
-        is-hidden: false
-      hanging-entities:
         default: true
         is-hidden: false
       light-tnt:
@@ -259,14 +242,7 @@ claims:
 
     # Entities in entity-modifications cannot modify blocks
     entity-modifications:
-      wither:
         default: true
-        is-hidden: false
-      enderman:
-        default: false
-        is-hidden: false
-      ravager:
-        default: false
         is-hidden: false
 
 disable-commands: true

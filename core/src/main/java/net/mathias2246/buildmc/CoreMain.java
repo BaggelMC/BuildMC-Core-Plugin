@@ -4,14 +4,9 @@ import net.mathias2246.buildmc.api.BuildMcAPI;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.event.BuildMcFinishedLoadingEvent;
 import net.mathias2246.buildmc.api.event.BuildMcRegistryEvent;
-import net.mathias2246.buildmc.claims.protections.blocks.Beehive;
-import net.mathias2246.buildmc.claims.protections.blocks.BoneMeal;
-import net.mathias2246.buildmc.claims.protections.blocks.Break;
-import net.mathias2246.buildmc.claims.protections.entities.ArmorStand;
-import net.mathias2246.buildmc.claims.protections.misc.Buckets;
-import net.mathias2246.buildmc.claims.protections.misc.EntityExplosionDamage;
-import net.mathias2246.buildmc.claims.protections.misc.Explosion;
-import net.mathias2246.buildmc.claims.protections.misc.PlayerFriendlyFire;
+import net.mathias2246.buildmc.claims.protections.blocks.*;
+import net.mathias2246.buildmc.claims.protections.entities.*;
+import net.mathias2246.buildmc.claims.protections.misc.*;
 import net.mathias2246.buildmc.database.ClaimTable;
 import net.mathias2246.buildmc.database.DatabaseConfig;
 import net.mathias2246.buildmc.database.DatabaseManager;
@@ -84,8 +79,20 @@ public final class CoreMain {
                 new Beehive(config.getConfigurationSection("claims.protections.interactions.beehives")),
                 new BoneMeal(config.getConfigurationSection("claims.protections.interactions.bone-meal")),
                 new Break(config.getConfigurationSection("claims.protections.player-break")),
-                new Buckets(config.getConfigurationSection("claims.protections.bucket-usage"))
-        );
+                new Buckets(config.getConfigurationSection("claims.protections.bucket-usage")),
+                new Containers(config.getConfigurationSection("claims.protections.container")),
+                new EntityBlockModifications(config.getConfigurationSection("claims.protections.entity-modifications")),
+                new EntityLeash(config.getConfigurationSection("claims.protections.interactions.attach-leash")),
+                new EntityPlace(config.getConfigurationSection("claims.protections.player-place-entity")),
+                new EntityTame(config.getConfigurationSection("claims.protections.interactions.tame-entity")),
+                new Fishing(config.getConfigurationSection("claims.protections.fishing")),
+                new FrostWalker(config.getConfigurationSection("claims.protections.frostwalker")),
+                new HangingEntities(config.getConfigurationSection("claims.protections.hanging-entities")),
+                new DoorInteractions(config.getConfigurationSection("claims.protections.interactions.doors")),
+                new ButtonAndLever(config.getConfigurationSection("claims.protections.interactions.buttons-and-levers")),
+                new RedstoneComponents(config.getConfigurationSection("claims.protections.interactions.redstone-components")),
+                new LightTNT(config.getConfigurationSection("claims.protections.interactions.light-tnt"))
+                );
 
         Bukkit.getPluginManager().registerEvents(new Listener() {
             @EventHandler
@@ -95,6 +102,8 @@ public final class CoreMain {
             }
         }, plugin);
     }
+
+
 
     public static void finishLoading() {
         if (plugin.getConfig().getBoolean("claims.enabled")) {

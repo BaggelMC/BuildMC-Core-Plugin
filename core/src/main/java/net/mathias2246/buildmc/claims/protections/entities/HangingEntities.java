@@ -1,36 +1,34 @@
-package net.mathias2246.buildmc.claims.protections.misc;
+package net.mathias2246.buildmc.claims.protections.entities;
 
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.item.ItemUtil;
-import net.mathias2246.buildmc.claims.Claim;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.ui.UIUtil;
 import net.mathias2246.buildmc.util.Message;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.block.BlockExplodeEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
+import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 
-import static net.mathias2246.buildmc.CoreMain.plugin;
+public class HangingEntities extends Protection {
 
-public class Explosion extends Protection {
-    public Explosion(@Nullable ConfigurationSection section) {
-        super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:explosions")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
+    public HangingEntities(@Nullable ConfigurationSection section) {
+        super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:hanging_entities")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 
     @Override
@@ -38,7 +36,7 @@ public class Explosion extends Protection {
 
         String t = getTranslationBaseKey();
 
-        ItemStack displayBase = new ItemStack(Material.TNT);
+        ItemStack displayBase = new ItemStack(Material.PAINTING);
         ItemUtil.editMeta(displayBase, (meta) -> {
             meta.setItemName(LegacyComponentSerializer.legacySection().serialize(
                     Message.msg(uiHolder, t+".name")
@@ -52,46 +50,30 @@ public class Explosion extends Protection {
         );
     }
 
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPaintingBreak(HangingBreakByEntityEvent event) {
+        if (!(event.getRemover() instanceof Player player)) return;
+
+        if (!ClaimManager.isPlayerAllowed(player, getKey(), event.getEntity().getLocation())) {
+            event.setCancelled(true);
+            CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.entity-damage"));
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPaintingPlace(HangingPlaceEvent event) {
+        Player player = event.getPlayer();
+
+        if (player == null) return;
+
+        if (!ClaimManager.isPlayerAllowed(player, getKey(), event.getEntity().getLocation())) {
+            event.setCancelled(true);
+            CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.block-place"));
+        }
+    }
+
     @Override
     public String getTranslationBaseKey() {
-        return "claims.flags.explosion-block-damage";
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onExplosion(EntityExplodeEvent event) {
-        Location location = event.getLocation();
-
-
-        Claim claim;
-        try {
-            claim = ClaimManager.getClaim(location);
-        } catch (SQLException e) {
-            plugin.getLogger().severe("SQL error while getting claim: " + e);
-            return;
-        }
-        if (claim == null) return;
-
-        if (claim.hasFlag(getKey())) {
-            event.setCancelled(true);
-        }
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onExplosion(BlockExplodeEvent event) {
-        Location location = event.getBlock().getLocation();
-
-        Claim claim = null;
-        try {
-            claim = ClaimManager.getClaim(location);
-        } catch (SQLException e) {
-            plugin.getLogger().severe("SQL error while getting claim: " + e);
-        }
-        if (claim == null) {
-            return;
-        }
-
-        if (claim.hasFlag(getKey())) {
-            event.setCancelled(true);
-        }
+        return "claims.flags.hanging-entities";
     }
 }
