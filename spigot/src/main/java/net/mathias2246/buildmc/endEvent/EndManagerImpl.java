@@ -1,7 +1,8 @@
 package net.mathias2246.buildmc.endEvent;
 
 import net.kyori.adventure.text.Component;
-import net.mathias2246.buildmc.api.endevent.EndAPI;
+import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.api.endevent.EndManager;
 import net.mathias2246.buildmc.api.endevent.EndChangeCause;
 import net.mathias2246.buildmc.api.endevent.EndState;
 import net.mathias2246.buildmc.api.event.endevent.EndStateChangeEvent;
@@ -16,7 +17,7 @@ import java.io.IOException;
 import static net.mathias2246.buildmc.Main.config;
 import static net.mathias2246.buildmc.Main.configFile;
 
-public class EndAPIImpl implements EndAPI {
+public class EndManagerImpl implements EndManager {
 
     private static final String OPEN_ANNOUNCEMENT_KEY = "messages.end-event.broadcast-opened";
     private static final String CLOSE_ANNOUNCEMENT_KEY = "messages.end-event.broadcast-closed";
@@ -86,7 +87,7 @@ public class EndAPIImpl implements EndAPI {
 
         Component msg = Component.translatable(announcementKey);
         for (Player player : Bukkit.getOnlinePlayers()) {
-            player.sendMessage(msg);
+            CoreMain.mainClass.sendPlayerMessage(player, msg);
         }
     }
 }

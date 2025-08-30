@@ -1,6 +1,5 @@
-package net.mathias2246.buildmc.claims;
+package net.mathias2246.buildmc.api.claims;
 
-import net.mathias2246.buildmc.api.claims.Protection;
 import org.bukkit.Chunk;
 import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.ApiStatus;

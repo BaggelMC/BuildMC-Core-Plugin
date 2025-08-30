@@ -1,6 +1,9 @@
 package net.mathias2246.buildmc.api;
 
 import net.mathias2246.buildmc.MainClass;
+import net.mathias2246.buildmc.api.claims.ClaimManager;
+import net.mathias2246.buildmc.api.endevent.EndManager;
+import net.mathias2246.buildmc.api.spawneyltra.ElytraManager;
 import net.mathias2246.buildmc.util.RegistriesHolder;
 import net.mathias2246.buildmc.util.SoundManager;
 import org.bukkit.plugin.Plugin;
@@ -38,6 +41,27 @@ public interface BuildMcAPI {
      */
     @NotNull
     SoundManager getSoundManager();
+
+    /**
+     * Gets the ClaimManager
+     *
+     * @return the ClaimManager instance
+     */
+    ClaimManager getClaimManager();
+
+    /**
+     * Gets the EndManager
+     *
+     * @return the EndManager instance
+     */
+    EndManager getEndManager();
+
+    /**
+     * Gets the ElytraManager
+     *
+     * @return the ElytraManager instance
+     */
+    ElytraManager getElytraManager();
 
     @NotNull
     RegistriesHolder getRegistriesHolder();

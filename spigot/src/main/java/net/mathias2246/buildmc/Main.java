@@ -4,12 +4,18 @@ import dev.jorel.commandapi.CommandAPI;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
+import net.mathias2246.buildmc.api.claims.ClaimManager;
+import net.mathias2246.buildmc.api.endevent.EndManager;
+import net.mathias2246.buildmc.api.spawnelytra.ElytraManagerImpl;
+import net.mathias2246.buildmc.api.spawneyltra.ElytraManager;
 import net.mathias2246.buildmc.claims.ClaimCommand;
+import net.mathias2246.buildmc.claims.ClaimManagerImpl;
 import net.mathias2246.buildmc.claims.ClaimToolParticles;
 import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.commands.BuildMcCommand;
 import net.mathias2246.buildmc.commands.CommandRegister;
 import net.mathias2246.buildmc.endEvent.EndListener;
+import net.mathias2246.buildmc.endEvent.EndManagerImpl;
 import net.mathias2246.buildmc.item.CustomItemListener;
 import net.mathias2246.buildmc.item.CustomItemRegistry;
 import net.mathias2246.buildmc.platform.SoundManagerSpigotImpl;
@@ -68,6 +74,10 @@ public final class Main extends PluginMain {
 
     public static CustomItemRegistry customItems;
 
+    public static ClaimManager apiClaimManager;
+    public static EndManager apiEndManager;
+    private static ElytraManager apiElytraManager;
+
     @Override
     public void onEnable() {
         // Plugin startup logic
@@ -93,6 +103,10 @@ public final class Main extends PluginMain {
 
         SoundManagerSpigotImpl.setup();
         CoreMain.soundManager = new SoundManagerSpigotImpl();
+
+        apiClaimManager = new ClaimManagerImpl();
+        apiEndManager = new EndManagerImpl();
+        apiElytraManager = new ElytraManagerImpl(zoneManager);
     }
 
     @Override
@@ -188,6 +202,21 @@ public final class Main extends PluginMain {
     @Override
     public @NotNull SoundManager getSoundManager() {
         return CoreMain.soundManager;
+    }
+
+    @Override
+    public ClaimManager getClaimManager() {
+        return apiClaimManager;
+    }
+
+    @Override
+    public EndManager getEndManager() {
+        return apiEndManager;
+    }
+
+    @Override
+    public ElytraManager getElytraManager() {
+        return apiElytraManager;
     }
 
     private final RegistriesHolder registriesHolder = new RegistriesHolder.Builder().build();

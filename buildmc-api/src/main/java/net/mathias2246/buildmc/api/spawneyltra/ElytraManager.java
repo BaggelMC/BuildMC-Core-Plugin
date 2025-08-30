@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
  * even if they do not have an actual elytra equipped.
  * </p>
  */
-public interface ElytraAPI {
+public interface ElytraManager {
 
     /**
      * Checks whether the spawn-elytra feature is currently enabled

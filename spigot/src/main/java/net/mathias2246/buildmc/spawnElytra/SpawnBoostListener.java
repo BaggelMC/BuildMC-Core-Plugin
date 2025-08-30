@@ -1,5 +1,6 @@
 package net.mathias2246.buildmc.spawnElytra;
 
+import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -44,6 +45,18 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
      * @return True if, the player has the uses_spawn_elytra_boost metadata*/
     public static boolean isPlayerBoosted(@NotNull Player player) {
         return player.hasMetadata("uses_spawn_elytra_boost");
+    }
+
+    public static boolean isPlayerBoosted(@NotNull Entity entity) {
+        return entity.hasMetadata("uses_spawn_elytra_boost");
+    }
+
+    public static void resetBoost(@NotNull Player player) {
+        player.removeMetadata("uses_spawn_elytra_boost", Main.plugin);
+    }
+
+    public static void resetBoost(@NotNull Entity entity) {
+        entity.removeMetadata("uses_spawn_elytra_boost", Main.plugin);
     }
 
     /**Checks if the player is in survival or adventure mode.*/
@@ -159,8 +172,16 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
         if (!isUsingSpawnElytra(player) || isPlayerBoosted(player)) return;
 
         event.setCancelled(true);
-        player.setMetadata("uses_spawn_elytra_boost", new FixedMetadataValue(plugin, null));
-        player.setVelocity(player.getLocation().getDirection().multiply(multiplyValue).setY(1.2)); // vertical boost
+        applyBoost(player, multiplyValue, 1.2);
+    }
+
+    public static void applyBoost(@NotNull Player player, int multiplier, double verticalVelocity) {
+        player.setMetadata("uses_spawn_elytra_boost", new FixedMetadataValue(Main.plugin, null));
+        applyRawBoost(player, multiplier, verticalVelocity);
+    }
+
+    public static void applyRawBoost(@NotNull Player player, int multiplier, double verticalVelocity) {
+        player.setVelocity(player.getLocation().getDirection().multiply(multiplier).setY(verticalVelocity));
     }
 
     @EventHandler

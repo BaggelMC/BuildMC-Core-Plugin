@@ -1,4 +1,4 @@
-package net.mathias2246.buildmc.claims;
+package net.mathias2246.buildmc.api.claims;
 
 /**The type of owner of a claim*/
 public enum ClaimType {
