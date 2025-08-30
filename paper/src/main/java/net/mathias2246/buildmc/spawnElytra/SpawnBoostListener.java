@@ -23,7 +23,7 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
 
     private final FileConfiguration config;
     private final ElytraZoneManager zoneManager;
-    private final int multiplyValue;
+    public final int multiplyValue;
     private final boolean boostEnabled;
 
     /**Checks if the given Player uses the spawn elytra.
@@ -34,14 +34,28 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
 
     /**Checks if the given Player uses the spawn elytra.
      * @return True if, the player has the uses_spawn_elytra metadata*/
-    public static boolean isUsingSpawnElytra(@NotNull Entity player) {
-        return player.hasMetadata("uses_spawn_elytra");
+    public static boolean isUsingSpawnElytra(@NotNull Entity entity) {
+        return entity.hasMetadata("uses_spawn_elytra");
     }
 
     /**Checks if the given Player uses the spawn elytra boost.
      * @return True if, the player has the uses_spawn_elytra_boost metadata*/
     public static boolean isPlayerBoosted(@NotNull Player player) {
         return player.hasMetadata("uses_spawn_elytra_boost");
+    }
+
+    /**Checks if the given Player uses the spawn elytra boost.
+     * @return True if, the player has the uses_spawn_elytra_boost metadata*/
+    public static boolean isPlayerBoosted(@NotNull Entity entity) {
+        return entity.hasMetadata("uses_spawn_elytra_boost");
+    }
+
+    public static void resetBoost(@NotNull Player player) {
+        player.removeMetadata("uses_spawn_elytra_boost", plugin);
+    }
+
+    public static void resetBoost(@NotNull Entity entity) {
+        entity.removeMetadata("uses_spawn_elytra_boost", plugin);
     }
 
     /**Checks if the player is in survival or adventure mode.*/
@@ -155,8 +169,17 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
         if (!isUsingSpawnElytra(player) || isPlayerBoosted(player)) return;
 
         event.setCancelled(true);
+
+         applyBoost(player, multiplyValue, 1.2);
+    }
+
+    public static void applyBoost(@NotNull Player player, int multiplier, double verticalVelocity) {
         player.setMetadata("uses_spawn_elytra_boost", new FixedMetadataValue(plugin, null));
-        player.setVelocity(player.getLocation().getDirection().multiply(multiplyValue).setY(1.2)); // vertical boost
+        applyRawBoost(player, multiplier, verticalVelocity);
+    }
+
+    public static void applyRawBoost(@NotNull Player player, int multiplier, double verticalVelocity) {
+        player.setVelocity(player.getLocation().getDirection().multiply(multiplier).setY(verticalVelocity));
     }
 
     @EventHandler
@@ -189,5 +212,4 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
             if (entity instanceof Player player) stopFlying(player);
         }
     }
-
 }
