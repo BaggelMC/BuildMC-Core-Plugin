@@ -6,11 +6,9 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Fired when BuildMC has finished its initialization and is ready for
- * external plugins to interact with. This is the safe point to access
- * BuildMC's API, register claims, modify configs, or hook into extension points.
+ * Fired when BuildMC has finished loading and is up and running.
  */
-public class BuildMcInitializedEvent extends Event {
+public class BuildMcFinishedLoadingEvent extends Event {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
@@ -24,7 +22,7 @@ public class BuildMcInitializedEvent extends Event {
      *
      * @param api the usable BuildMC API instance
      */
-    public BuildMcInitializedEvent(@NotNull BuildMcAPI api) {
+    public BuildMcFinishedLoadingEvent(@NotNull BuildMcAPI api) {
         this.api = api;
     }
 

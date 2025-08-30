@@ -1,6 +1,9 @@
 package net.mathias2246.buildmc;
 
+import net.mathias2246.buildmc.api.BuildMcAPI;
 import net.mathias2246.buildmc.api.claims.Protection;
+import net.mathias2246.buildmc.api.event.BuildMcFinishedLoadingEvent;
+import net.mathias2246.buildmc.api.event.BuildMcRegistryEvent;
 import net.mathias2246.buildmc.claims.protections.blocks.Beehive;
 import net.mathias2246.buildmc.claims.protections.blocks.BoneMeal;
 import net.mathias2246.buildmc.claims.protections.blocks.Break;
@@ -18,7 +21,10 @@ import net.mathias2246.buildmc.util.SoundManager;
 import net.mathias2246.buildmc.util.config.ConfigHandler;
 import net.mathias2246.buildmc.util.config.ConfigurationValidationException;
 import net.mathias2246.buildmc.util.language.LanguageManager;
+import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -29,8 +35,9 @@ import java.sql.SQLException;
 public final class CoreMain {
 
     public static Plugin plugin;
-
     public static MainClass mainClass;
+    public static PluginMain pluginMain;
+    public static BuildMcAPI api;
 
     public static SoundManager soundManager;
 
@@ -47,14 +54,16 @@ public final class CoreMain {
 
 
     @ApiStatus.Internal
-    public static void initialize(@NotNull Plugin plugin) {
-        CoreMain.plugin = plugin;
-
+    public static void initialize(@NotNull PluginMain plugin) {
         if (isInitialized) {
             plugin.getLogger().warning("CoreMain has been initialized multiple times.");
         }
 
-        CoreMain.mainClass = (MainClass) plugin;
+        // Bruh
+        CoreMain.plugin = plugin;
+        CoreMain.mainClass = plugin;
+        CoreMain.pluginMain = plugin;
+        CoreMain.api = plugin;
 
         initializeConfigs();
 
@@ -64,19 +73,29 @@ public final class CoreMain {
 
         var config = plugin.getConfig();
 
+        Protection.protections.addEntrys(
+                new Explosion(config.getConfigurationSection("claims.protections.damage.explosion-block-damage")),
+                new EntityExplosionDamage(config.getConfigurationSection("claims.protections.damage.explosion-entity-damage")),
+                new PlayerFriendlyFire(config.getConfigurationSection("claims.protections.damage.player-friendly-fire")),
+                new ArmorStand(config.getConfigurationSection("claims.protections.interactions.armor-stands")),
+                new Beehive(config.getConfigurationSection("claims.protections.interactions.beehives")),
+                new BoneMeal(config.getConfigurationSection("claims.protections.interactions.bone-meal")),
+                new Break(config.getConfigurationSection("claims.protections.player-break")),
+                new Buckets(config.getConfigurationSection("claims.protections.bucket-usage"))
+        );
+
+        Bukkit.getPluginManager().registerEvents(new Listener() {
+            @EventHandler
+            public void onServerLoad(ServerLoadEvent event) {
+                Bukkit.getPluginManager().callEvent(new BuildMcRegistryEvent(api));
+                finishLoading();
+            }
+        }, plugin);
+    }
+
+    public static void finishLoading() {
         if (plugin.getConfig().getBoolean("claims.enabled")) {
             initializeDatabase();
-
-            Protection.protections.addEntrys(
-                    new Explosion(config.getConfigurationSection("claims.protections.damage.explosion-block-damage")),
-                    new EntityExplosionDamage(config.getConfigurationSection("claims.protections.damage.explosion-entity-damage")),
-                    new PlayerFriendlyFire(config.getConfigurationSection("claims.protections.damage.player-friendly-fire")),
-                    new ArmorStand(config.getConfigurationSection("claims.protections.interactions.armor-stands")),
-                    new Beehive(config.getConfigurationSection("claims.protections.interactions.beehives")),
-                    new BoneMeal(config.getConfigurationSection("claims.protections.interactions.bone-meal")),
-                    new Break(config.getConfigurationSection("claims.protections.player-break")),
-                    new Buckets(config.getConfigurationSection("claims.protections.bucket-usage"))
-            );
 
             Protection.protections.initialize();
             for (Protection protection : Protection.protections) {
@@ -87,7 +106,11 @@ public final class CoreMain {
             registerEvent(new PlayerEnterClaimListener());
         }
 
+        pluginMain.finishLoading();
+
         isInitialized = true;
+
+        Bukkit.getPluginManager().callEvent(new BuildMcFinishedLoadingEvent(api));
     }
 
     public static void registerEvent(@NotNull Listener event) {

@@ -5,13 +5,11 @@ import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.mathias2246.buildmc.api.claims.Protection;
-import net.mathias2246.buildmc.api.event.BuildMcConfigInitializedEvent;
 import net.mathias2246.buildmc.claims.ClaimCommand;
 import net.mathias2246.buildmc.claims.ClaimToolParticles;
 import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.commands.BuildMcCommand;
 import net.mathias2246.buildmc.commands.CommandRegister;
-import net.mathias2246.buildmc.endEvent.EndAPIImpl;
 import net.mathias2246.buildmc.endEvent.EndListener;
 import net.mathias2246.buildmc.item.CustomItemListener;
 import net.mathias2246.buildmc.item.CustomItemRegistry;
@@ -88,9 +86,7 @@ public final class Main extends PluginMain {
         if (!configFile.exists()) this.saveResource("config.yml", false);
         config = this.getConfig();
 
-        Bukkit.getPluginManager().callEvent(new BuildMcConfigInitializedEvent(config));
-
-        CoreMain.initialize(this, new EndAPIImpl());
+        CoreMain.initialize(this);
 
         LanguageManager.init();
 
@@ -98,60 +94,6 @@ public final class Main extends PluginMain {
 
         SoundManagerSpigotImpl.setup();
         CoreMain.soundManager = new SoundManagerSpigotImpl();
-        customItems = new CustomItemRegistry();
-        getServer().getPluginManager().registerEvents(new CustomItemListener(customItems), this);
-
-        try {
-            EndListener.loadFromConfig();
-        } catch (ConfigurationValidationException e) {
-            throw new RuntimeException(e);
-        }
-
-        CommandRegister.setupCommandAPI();
-        CommandRegister.register(new BuildMcCommand());
-
-        getServer().getPluginManager().registerEvents(new EndListener(), this);
-
-        if (config.getBoolean("spawn-elytra.enabled")) {
-            getServer().getPluginManager().registerEvents(new SpawnBoostListener(zoneManager), this);
-            if (config.getBoolean("spawn-elytra.disable-rockets")) getServer().getPluginManager().registerEvents(new DisableRocketListener(), this);
-            CommandRegister.register(new ElytraZoneCommand(zoneManager));
-            zoneManager.loadZoneFromConfig();
-        }
-
-        if (config.getBoolean("claims.enabled")) {
-            customItems.register(
-                    new ClaimSelectionTool(this,
-                            Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool")),
-                            new ClaimToolParticles.Builder()
-                    )
-            );
-
-            CommandRegister.register(new ClaimCommand());
-        }
-
-        if (config.getBoolean("status.enabled")) {
-            statusConfig = new StatusConfig(this);
-            CommandRegister.register(new SetStatusCommand(statusConfig));
-            getServer().getPluginManager().registerEvents(new PlayerStatus(), this);
-        }
-
-        if (config.getBoolean("disable-commands")) {
-            if (config.isList("disabled-commands")) {
-                for (String fullCommand : config.getStringList("disabled-commands")) {
-                    String[] parts = fullCommand.split(":", 2);
-                    if (parts.length == 2) {
-                        disableCommand(parts[0], parts[1]);
-                    } else {
-                        logger.warning("Invalid command format in 'disabled-commands': " + fullCommand);
-                    }
-                }
-            }
-        }
-
-        if (config.getBoolean("player-head.on-death")) {
-            getServer().getPluginManager().registerEvents(new PlayerHeadDropDeathListener(new PlayerHeadDropModifier()), this);
-        }
     }
 
     @Override
@@ -252,5 +194,63 @@ public final class Main extends PluginMain {
     @Override
     public @NotNull DeferredRegistry<Protection> getProtectionsRegistry() {
         return Protection.protections;
+    }
+
+    @Override
+    public void finishLoading() {
+        customItems = new CustomItemRegistry();
+        getServer().getPluginManager().registerEvents(new CustomItemListener(customItems), this);
+
+        try {
+            EndListener.loadFromConfig();
+        } catch (ConfigurationValidationException e) {
+            throw new RuntimeException(e);
+        }
+
+        CommandRegister.setupCommandAPI();
+        CommandRegister.register(new BuildMcCommand());
+
+        getServer().getPluginManager().registerEvents(new EndListener(), this);
+
+        if (config.getBoolean("spawn-elytra.enabled")) {
+            getServer().getPluginManager().registerEvents(new SpawnBoostListener(zoneManager), this);
+            if (config.getBoolean("spawn-elytra.disable-rockets")) getServer().getPluginManager().registerEvents(new DisableRocketListener(), this);
+            CommandRegister.register(new ElytraZoneCommand(zoneManager));
+            zoneManager.loadZoneFromConfig();
+        }
+
+        if (config.getBoolean("claims.enabled")) {
+            customItems.register(
+                    new ClaimSelectionTool(this,
+                            Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool")),
+                            new ClaimToolParticles.Builder()
+                    )
+            );
+
+            CommandRegister.register(new ClaimCommand());
+        }
+
+        if (config.getBoolean("status.enabled")) {
+            statusConfig = new StatusConfig(this);
+            CommandRegister.register(new SetStatusCommand(statusConfig));
+            getServer().getPluginManager().registerEvents(new PlayerStatus(), this);
+        }
+
+        if (config.getBoolean("disable-commands")) {
+            if (config.isList("disabled-commands")) {
+                for (String fullCommand : config.getStringList("disabled-commands")) {
+                    String[] parts = fullCommand.split(":", 2);
+                    if (parts.length == 2) {
+                        disableCommand(parts[0], parts[1]);
+                    } else {
+                        logger.warning("Invalid command format in 'disabled-commands': " + fullCommand);
+                    }
+                }
+            }
+        }
+
+        if (config.getBoolean("player-head.on-death")) {
+            getServer().getPluginManager().registerEvents(new PlayerHeadDropDeathListener(new PlayerHeadDropModifier()), this);
+        }
     }
 }

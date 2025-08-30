@@ -5,4 +5,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public abstract class PluginMain extends JavaPlugin implements BuildMcAPI, MainClass {
 
+    public abstract void finishLoading();
+
 }
