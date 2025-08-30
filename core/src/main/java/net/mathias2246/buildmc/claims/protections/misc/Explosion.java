@@ -4,9 +4,9 @@ import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.mathias2246.buildmc.api.claims.Protection;
-import net.mathias2246.buildmc.api.item.ItemUtil;
-import net.mathias2246.buildmc.claims.Claim;
+import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.claims.ClaimManager;
+import net.mathias2246.buildmc.item.ItemUtil;
 import net.mathias2246.buildmc.ui.UIUtil;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Location;
@@ -31,30 +31,6 @@ import static net.mathias2246.buildmc.CoreMain.plugin;
 public class Explosion extends Protection {
     public Explosion(@Nullable ConfigurationSection section) {
         super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:explosions")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
-    }
-
-    @Override
-    public @NotNull GuiItem getDisplay(@NotNull Player uiHolder, @NotNull Gui gui) {
-
-        String t = getTranslationBaseKey();
-
-        ItemStack displayBase = new ItemStack(Material.TNT);
-        ItemUtil.editMeta(displayBase, (meta) -> {
-            meta.setItemName(LegacyComponentSerializer.legacySection().serialize(
-                    Message.msg(uiHolder, t+".name")
-            ));
-            meta.setLore(List.of(LegacyComponentSerializer.legacySection().serialize(Message.msg(uiHolder, t + ".lore")).split("\n")));
-        });
-
-        return new GuiItem(
-                displayBase,
-                UIUtil.noInteract
-        );
-    }
-
-    @Override
-    public String getTranslationBaseKey() {
-        return "claims.flags.explosion-block-damage";
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -93,5 +69,30 @@ public class Explosion extends Protection {
         if (claim.hasFlag(getKey())) {
             event.setCancelled(true);
         }
+    }
+
+
+    @Override
+    public @NotNull GuiItem getDisplay(@NotNull Player uiHolder, @NotNull Gui gui) {
+
+        String t = getTranslationBaseKey();
+
+        ItemStack displayBase = new ItemStack(Material.TNT);
+        ItemUtil.editMeta(displayBase, (meta) -> {
+            meta.setItemName(LegacyComponentSerializer.legacySection().serialize(
+                    Message.msg(uiHolder, t+".name")
+            ));
+            meta.setLore(List.of(LegacyComponentSerializer.legacySection().serialize(Message.msg(uiHolder, t + ".lore")).split("\n")));
+        });
+
+        return new GuiItem(
+                displayBase,
+                UIUtil.noInteract
+        );
+    }
+
+    @Override
+    public String getTranslationBaseKey() {
+        return "claims.flags.explosion-block-damage";
     }
 }

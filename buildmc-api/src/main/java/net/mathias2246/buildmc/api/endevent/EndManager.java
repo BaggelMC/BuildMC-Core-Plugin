@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
  * Provides methods to open or close the End, either with a custom
  * announcement key or using the plugin's default keys.
  */
-public interface EndAPI {
+public interface EndManager {
 
     /**
      * Requests that the End be opened with a custom announcement key.

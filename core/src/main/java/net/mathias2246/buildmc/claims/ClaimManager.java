@@ -1,6 +1,8 @@
 package net.mathias2246.buildmc.claims;
 
 import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.api.claims.Claim;
+import net.mathias2246.buildmc.api.claims.ClaimType;
 import net.mathias2246.buildmc.api.claims.Protection;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -105,16 +107,16 @@ public class ClaimManager {
 
         switch (claim.getType()) {
             case SERVER:
-                return !hasAnyFlag(claim, protections);
+                return !hasAnyProtection(claim, protections);
 
             case PLAYER:
                 if (Objects.equals(claim.getOwnerId(), playerId)) return true;
-                return !hasAnyFlag(claim, protections);
+                return !hasAnyProtection(claim, protections);
 
             case TEAM:
                 Team playerTeam = getPlayerTeam(player);
                 if (playerTeam != null && Objects.equals(playerTeam.getName(), claim.getOwnerId())) return true;
-                return !hasAnyFlag(claim, protections);
+                return !hasAnyProtection(claim, protections);
 
             default:
                 return true;
@@ -140,16 +142,16 @@ public class ClaimManager {
 
         switch (claim.getType()) {
             case SERVER:
-                return !hasFlag(claim, protection);
+                return !hasProtection(claim, protection);
 
             case PLAYER:
                 if (Objects.equals(claim.getOwnerId(), playerId)) return true;
-                return !hasFlag(claim, protection);
+                return !hasProtection(claim, protection);
 
             case TEAM:
                 Team playerTeam = getPlayerTeam(player);
                 if (playerTeam != null && Objects.equals(playerTeam.getName(), claim.getOwnerId())) return true;
-                return !hasFlag(claim, protection);
+                return !hasProtection(claim, protection);
 
             default:
                 return true;
@@ -184,38 +186,38 @@ public class ClaimManager {
 
         switch (claim.getType()) {
             case SERVER:
-                return !hasFlag(claim, protection);
+                return !hasProtection(claim, protection);
 
             case PLAYER:
                 if (Objects.equals(claim.getOwnerId(), playerId)) return true;
-                return !hasFlag(claim, protection);
+                return !hasProtection(claim, protection);
 
             case TEAM:
                 Team playerTeam = getPlayerTeam(player);
                 if (playerTeam != null && Objects.equals(playerTeam.getName(), claim.getOwnerId())) return true;
-                return !hasFlag(claim, protection);
+                return !hasProtection(claim, protection);
 
             default:
                 return true;
         }
     }
 
-    private static boolean hasAnyFlag(Claim claim, Collection<NamespacedKey> protections) {
+    public static boolean hasAnyProtection(Claim claim, Collection<NamespacedKey> protections) {
         for (NamespacedKey key : protections) {
             if (claim.hasFlag(key)) return true;
         }
         return false;
     }
 
-    private static boolean hasFlag(Claim claim, NamespacedKey protection) {
+    public static boolean hasProtection(Claim claim, NamespacedKey protection) {
         return claim.hasFlag(protection);
     }
 
-    private static boolean hasAllProtections(Claim claim, Collection<String> flags) {
+    public static boolean hasAllProtections(Claim claim, Collection<String> flags) {
         return new HashSet<>(claim.getProtections()).containsAll(flags);
     }
 
-    private static boolean hasAllProtectionKeys(Claim claim, Collection<NamespacedKey> keys) {
+    public static boolean hasAllProtectionKeys(Claim claim, Collection<NamespacedKey> keys) {
         for (var f : keys) {
             if (!claim.hasFlag(f)) return false;
         }
@@ -229,7 +231,7 @@ public class ClaimManager {
 
     /**@return A list of claims in the given area. Is empty if not found.
      * @throws SQLException If an internal database error occurred.
-     * @throws IllegalArgumentException If any of the locations is null, or their not in the same world.*/
+     * @throws IllegalArgumentException If any of the locations are null, or they're not in the same world.*/
     public static List<Claim> getClaimsInArea(Location pos1, Location pos2) throws SQLException, IllegalArgumentException {
         if (pos1 == null || pos2 == null) {
             throw new IllegalArgumentException("Positions cannot be null.");
@@ -417,7 +419,6 @@ public class ClaimManager {
             throw new RuntimeException(e);
         }
     }
-
 
     public static void addProtection(long claimId, @NotNull NamespacedKey protection) {
         try {

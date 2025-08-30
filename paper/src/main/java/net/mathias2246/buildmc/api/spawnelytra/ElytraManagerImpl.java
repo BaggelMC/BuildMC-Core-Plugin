@@ -1,6 +1,6 @@
 package net.mathias2246.buildmc.api.spawnelytra;
 
-import net.mathias2246.buildmc.api.spawneyltra.ElytraAPI;
+import net.mathias2246.buildmc.api.spawneyltra.ElytraManager;
 import net.mathias2246.buildmc.spawnElytra.ElytraZoneManager;
 import net.mathias2246.buildmc.spawnElytra.SpawnBoostListener;
 import org.bukkit.Location;
@@ -11,11 +11,11 @@ import org.jetbrains.annotations.NotNull;
 
 import static net.mathias2246.buildmc.Main.plugin;
 
-public class ElytraAPIImpl implements ElytraAPI {
+public class ElytraManagerImpl implements ElytraManager {
 
     private final ElytraZoneManager zoneManager;
 
-    public ElytraAPIImpl(@NotNull ElytraZoneManager elytraZoneManager) {
+    public ElytraManagerImpl(@NotNull ElytraZoneManager elytraZoneManager) {
         this.zoneManager = elytraZoneManager;
     }
 
