@@ -17,6 +17,7 @@ import net.mathias2246.buildmc.database.DatabaseConfig;
 import net.mathias2246.buildmc.database.DatabaseManager;
 import net.mathias2246.buildmc.event.claims.PlayerEnterClaimListener;
 import net.mathias2246.buildmc.util.BStats;
+import net.mathias2246.buildmc.util.DefaultRegistries;
 import net.mathias2246.buildmc.util.SoundManager;
 import net.mathias2246.buildmc.util.config.ConfigHandler;
 import net.mathias2246.buildmc.util.config.ConfigurationValidationException;
@@ -73,7 +74,9 @@ public final class CoreMain {
 
         var config = plugin.getConfig();
 
-        Protection.protections.addEntrys(
+        pluginMain.getRegistriesHolder().addRegistry(DefaultRegistries.PROTECTIONS.toString(), Protection.protections);
+
+        Protection.protections.addEntries(
                 new Explosion(config.getConfigurationSection("claims.protections.damage.explosion-block-damage")),
                 new EntityExplosionDamage(config.getConfigurationSection("claims.protections.damage.explosion-entity-damage")),
                 new PlayerFriendlyFire(config.getConfigurationSection("claims.protections.damage.player-friendly-fire")),

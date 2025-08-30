@@ -18,7 +18,7 @@ public class DeferredRegistry<T extends Keyed> implements Registry<T> {
 
     private final Map<NamespacedKey, T> map = new HashMap<>();
 
-    public boolean isInitialized = false;
+    private boolean isInitialized = false;
 
     public boolean isInitialized() {
         return isInitialized;
@@ -34,8 +34,13 @@ public class DeferredRegistry<T extends Keyed> implements Registry<T> {
         map.putIfAbsent(entry.getKey(), entry);
     }
 
+    public void removeEntry(@NotNull NamespacedKey key) {
+        if (isInitialized) throw new IllegalArgumentException("A registry cannot be changed after being initialized!");
+        map.remove(key);
+    }
+
     @SafeVarargs
-    public final void addEntrys(@NotNull T... entry) {
+    public final void addEntries(@NotNull T... entry) {
         if (isInitialized) return;
         for (var e : entry) {
             map.putIfAbsent(e.getKey(), e);

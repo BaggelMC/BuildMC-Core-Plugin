@@ -2,7 +2,6 @@ package net.mathias2246.buildmc;
 
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.kyori.adventure.text.Component;
-import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.claims.ClaimCommand;
 import net.mathias2246.buildmc.claims.ClaimToolParticles;
 import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
@@ -19,8 +18,8 @@ import net.mathias2246.buildmc.spawnElytra.SpawnBoostListener;
 import net.mathias2246.buildmc.status.PlayerStatus;
 import net.mathias2246.buildmc.status.SetStatusCommand;
 import net.mathias2246.buildmc.status.StatusConfig;
-import net.mathias2246.buildmc.util.DeferredRegistry;
 import net.mathias2246.buildmc.util.Message;
+import net.mathias2246.buildmc.util.RegistriesHolder;
 import net.mathias2246.buildmc.util.SoundManager;
 import net.mathias2246.buildmc.util.config.ConfigurationValidationException;
 import org.bukkit.Bukkit;
@@ -179,9 +178,12 @@ public final class Main extends PluginMain {
         return CoreMain.soundManager;
     }
 
+
+    private final RegistriesHolder registriesHolder = new RegistriesHolder.Builder().build();
+
     @Override
-    public @NotNull DeferredRegistry<Protection> getProtectionsRegistry() {
-        return Protection.protections;
+    public @NotNull RegistriesHolder getRegistriesHolder() {
+        return registriesHolder;
     }
 
     @Override
