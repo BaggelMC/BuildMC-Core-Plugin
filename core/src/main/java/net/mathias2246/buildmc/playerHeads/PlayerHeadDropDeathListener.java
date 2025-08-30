@@ -37,7 +37,7 @@ public record PlayerHeadDropDeathListener(@Nullable ItemMetaModifier modifier) i
         meta.setOwningPlayer(Bukkit.getOfflinePlayer(player.getUniqueId()));
         playerHead.setItemMeta(meta);
 
-        PlayerHeadDropEvent headDropEvent = new PlayerHeadDropEvent(player, killerPlayer, playerHead);
+        PlayerHeadDropEvent headDropEvent = new PlayerHeadDropEvent(player, killerPlayer, playerHead, event);
 
         Bukkit.getPluginManager().callEvent(headDropEvent);
 

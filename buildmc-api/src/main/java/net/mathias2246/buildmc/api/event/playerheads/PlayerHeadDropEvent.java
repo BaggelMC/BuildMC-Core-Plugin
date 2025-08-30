@@ -4,6 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,6 +36,7 @@ public class PlayerHeadDropEvent extends Event implements Cancellable {
     private final Player victim;
     private final Player killer;
     private ItemStack playerHead;
+    private PlayerDeathEvent event;
 
     /**
      * Constructs a new {@code PlayerHeadDropEvent}.
@@ -43,10 +45,11 @@ public class PlayerHeadDropEvent extends Event implements Cancellable {
      * @param killer     the player who killed the victim, may be {@code null}
      * @param playerHead the {@link ItemStack} representing the victim's head
      */
-    public PlayerHeadDropEvent(Player victim, Player killer, ItemStack playerHead) {
+    public PlayerHeadDropEvent(Player victim, Player killer, ItemStack playerHead, PlayerDeathEvent event) {
         this.victim = victim;
         this.killer = killer;
         this.playerHead = playerHead;
+        this.event = event;
     }
 
     /**
@@ -83,6 +86,15 @@ public class PlayerHeadDropEvent extends Event implements Cancellable {
      */
     public void setPlayerHead(ItemStack playerHead) {
         this.playerHead = playerHead;
+    }
+
+    /**
+     * Gets the {@link PlayerDeathEvent} that caused the head to drop.
+     *
+     * @return the head item
+     */
+    public PlayerDeathEvent getEvent() {
+        return event;
     }
 
     /**
