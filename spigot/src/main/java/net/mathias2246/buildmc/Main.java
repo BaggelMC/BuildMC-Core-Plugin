@@ -18,8 +18,6 @@ import net.mathias2246.buildmc.commands.BuildMcCommand;
 import net.mathias2246.buildmc.commands.CommandRegister;
 import net.mathias2246.buildmc.endEvent.EndListener;
 import net.mathias2246.buildmc.endEvent.EndManagerImpl;
-import net.mathias2246.buildmc.item.CustomItemListener;
-import net.mathias2246.buildmc.item.CustomItemRegistry;
 import net.mathias2246.buildmc.platform.SoundManagerSpigotImpl;
 import net.mathias2246.buildmc.player.PlayerHeadDropModifier;
 import net.mathias2246.buildmc.playerHeads.PlayerHeadDropDeathListener;
