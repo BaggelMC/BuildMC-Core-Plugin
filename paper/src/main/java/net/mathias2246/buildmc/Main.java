@@ -3,11 +3,11 @@ package net.mathias2246.buildmc;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.api.event.BuildMcConfigInitializedEvent;
-import net.mathias2246.buildmc.api.event.BuildMcInitializedEvent;
 import net.mathias2246.buildmc.claims.ClaimCommand;
 import net.mathias2246.buildmc.claims.ClaimToolParticles;
 import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.commands.BuildMcCommand;
+import net.mathias2246.buildmc.endEvent.EndAPIImpl;
 import net.mathias2246.buildmc.endEvent.EndListener;
 import net.mathias2246.buildmc.item.CustomItemListener;
 import net.mathias2246.buildmc.item.CustomItemRegistry;
@@ -81,7 +81,7 @@ public final class Main extends JavaPlugin implements MainClass {
 
         Bukkit.getPluginManager().callEvent(new BuildMcConfigInitializedEvent(config));
 
-        CoreMain.initialize(this);
+        CoreMain.initialize(this, new EndAPIImpl());
 
         try {
             EndListener.loadFromConfig();

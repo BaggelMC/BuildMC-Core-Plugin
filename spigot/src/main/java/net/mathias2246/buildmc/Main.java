@@ -10,6 +10,7 @@ import net.mathias2246.buildmc.claims.ClaimToolParticles;
 import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.commands.BuildMcCommand;
 import net.mathias2246.buildmc.commands.CommandRegister;
+import net.mathias2246.buildmc.endEvent.EndAPIImpl;
 import net.mathias2246.buildmc.endEvent.EndListener;
 import net.mathias2246.buildmc.item.CustomItemListener;
 import net.mathias2246.buildmc.item.CustomItemRegistry;
@@ -87,7 +88,7 @@ public final class Main extends JavaPlugin implements MainClass {
 
         Bukkit.getPluginManager().callEvent(new BuildMcConfigInitializedEvent(config));
 
-        CoreMain.initialize(this);
+        CoreMain.initialize(this, new EndAPIImpl());
 
         LanguageManager.init();
 

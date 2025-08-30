@@ -1,6 +1,7 @@
 package net.mathias2246.buildmc.api;
 
 import net.mathias2246.buildmc.MainClass;
+import net.mathias2246.buildmc.api.endevent.EndAPI;
 import net.mathias2246.buildmc.util.SoundManager;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -37,4 +38,12 @@ public interface BuildMcAPI {
      */
     @NotNull
     SoundManager getSoundManager();
+
+    /**
+     * Gets the EndAPI instance of BuildMC.
+     *
+     * @return the EndAPI instance
+     */
+    @NotNull
+    EndAPI getEndAPI();
 }

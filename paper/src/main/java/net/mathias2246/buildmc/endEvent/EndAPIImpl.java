@@ -18,6 +18,9 @@ import static net.mathias2246.buildmc.Main.configFile;
 
 public class EndAPIImpl implements EndAPI {
 
+    private static final String OPEN_ANNOUNCEMENT_KEY = "messages.end-event.broadcast-opened";
+    private static final String CLOSE_ANNOUNCEMENT_KEY = "messages.end-event.broadcast-closed";
+
     @Override
     public boolean openEnd(@Nullable CommandSender sender, @NotNull EndChangeCause cause, @NotNull String announcementKey) {
         return changeEndState(EndState.OPEN, sender, cause, announcementKey);
@@ -26,6 +29,16 @@ public class EndAPIImpl implements EndAPI {
     @Override
     public boolean closeEnd(@Nullable CommandSender sender, @NotNull EndChangeCause cause, @NotNull String announcementKey) {
         return changeEndState(EndState.CLOSED, sender, cause, announcementKey);
+    }
+
+    @Override
+    public boolean openEnd(@Nullable CommandSender sender, @NotNull EndChangeCause cause) {
+        return openEnd(sender, cause, OPEN_ANNOUNCEMENT_KEY);
+    }
+
+    @Override
+    public boolean closeEnd(@Nullable CommandSender sender, @NotNull EndChangeCause cause) {
+        return closeEnd(sender, cause, CLOSE_ANNOUNCEMENT_KEY);
     }
 
     @Override

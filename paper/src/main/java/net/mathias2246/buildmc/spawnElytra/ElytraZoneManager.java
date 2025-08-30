@@ -47,11 +47,23 @@ public class ElytraZoneManager {
         player.sendMessage(Message.msg(player, "messages.spawn-elytra.success"));
     }
 
+    public void registerZone(@NotNull Location pos1, @NotNull Location pos2, @NotNull World world) {
+        this.pos1 = pos1;
+        this.pos2 = pos2;
+        this.world = world;
+
+        boundingBox = BoundingBox.of(pos1.toVector(), pos2.toVector());
+        saveZoneToConfig();
+    }
+
     public boolean isInZone(@NotNull Player player) {
+        return isInZone(player.getLocation());
+    }
+
+    public boolean isInZone(@NotNull Location location) {
         if (boundingBox == null || world == null) return false;
-        Location loc = player.getLocation();
-        return world.equals(loc.getWorld()) &&
-                boundingBox.contains(loc.toVector());
+        return world.equals(location.getWorld()) &&
+                boundingBox.contains(location.toVector());
     }
 
     private void saveZoneToConfig() {

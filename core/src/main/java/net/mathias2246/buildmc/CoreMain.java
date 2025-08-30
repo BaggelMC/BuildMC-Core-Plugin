@@ -2,6 +2,7 @@ package net.mathias2246.buildmc;
 
 import net.mathias2246.buildmc.api.BuildMcAPI;
 import net.mathias2246.buildmc.api.BuildMcAPIImpl;
+import net.mathias2246.buildmc.api.endevent.EndAPI;
 import net.mathias2246.buildmc.api.event.BuildMcInitializedEvent;
 import net.mathias2246.buildmc.claims.Protection;
 import net.mathias2246.buildmc.claims.protections.misc.ExplosionProtection;
@@ -45,7 +46,7 @@ public final class CoreMain {
 
 
     @ApiStatus.Internal
-    public static void initialize(@NotNull Plugin plugin) {
+    public static void initialize(@NotNull Plugin plugin, @NotNull EndAPI endAPI) {
         CoreMain.plugin = plugin;
 
         if (isInitialized) {
@@ -54,7 +55,7 @@ public final class CoreMain {
 
         CoreMain.mainClass = (MainClass) plugin;
 
-        BuildMcAPI api = new BuildMcAPIImpl(plugin, mainClass);
+        BuildMcAPI api = new BuildMcAPIImpl(plugin, mainClass, endAPI);
         plugin.getServer().getServicesManager().register(BuildMcAPI.class, api, plugin, ServicePriority.High);
 
         initializeConfigs();
