@@ -1,5 +1,6 @@
 package net.mathias2246.buildmc.event.claims;
 
+import net.mathias2246.buildmc.api.event.claims.PlayerEnterClaimEvent;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

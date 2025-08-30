@@ -1,4 +1,4 @@
-package net.mathias2246.buildmc.event.claims;
+package net.mathias2246.buildmc.api.event.claims;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
