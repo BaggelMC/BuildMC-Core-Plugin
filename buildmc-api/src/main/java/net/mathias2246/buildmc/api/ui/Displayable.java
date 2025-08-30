@@ -1,4 +1,4 @@
-package net.mathias2246.buildmc.ui;
+package net.mathias2246.buildmc.api.ui;
 
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;

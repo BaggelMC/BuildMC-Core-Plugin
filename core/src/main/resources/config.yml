@@ -85,95 +85,189 @@ claims:
   # What aspects are protected when claimed
   protections:
     # Players cannot break blocks
-    player-break: true
+    player-break:
+      default: true
+      is-hidden: false
     # Players cannot place blocks
-    player-place: true
+    player-place:
+      default: true
+      is-hidden: false
 
     # Players cannot place entities (armor stands, boats, minecarts, and end crystals.)
-    player-place-entity: true
+    player-place-entity:
+      default: true
+      is-hidden: false
 
     # Players cannot open containers (e.g. Chests, Barrels...)
-    containers: true
+    containers:
+      default: true
+      is-hidden: false
 
     # Players cannot pick up items
-    item-pickup: false
+    item-pickup:
+      default: false
+      is-hidden: false
 
     # Players cannot drop items
-    item-drop: false
+    item-drop:
+      default: false
+      is-hidden: false
 
     # Players cannot edit signs
-    sign-editing: true
+    sign-editing:
+      default: true
+      is-hidden: false
 
     # Players can't use splash potions
-    splash-potions: true
+    splash-potions:
+      default: true
+      is-hidden: false
 
     # Players can't enter vehicles
-    vehicle-enter: true
+    vehicle-enter:
+      default: false
+      is-hidden: false
 
     # Players can't use buckets
-    bucket-usage: true
+    bucket-usage:
+      default: true
+      is-hidden: false
 
     # Players can't use frost walker enchantment
-    frostwalker: true
+    frostwalker:
+      default: true
+      is-hidden: false
 
     # Players can't trigger sculk sensors
-    sculk-sensor: true
+    sculk-sensor:
+      default: true
+      is-hidden: false
 
     # Prevents pistons from moving into claims and pulling out of claims
-    piston-movement-across-claim-borders: true
+    piston-movement-across-claim-borders:
+      default: true
+      is-hidden: false
 
     # Interaction related protections
     interactions:
-      jukebox: true
+      jukebox:
+        default: true
+        is-hidden: false
 
-      levers: true
-      buttons: true
-      repeaters: true
-      comparators: true
-      daylight-sensors: true
+      levers:
+        default: true
+        is-hidden: false
+      buttons:
+        default: true
+        is-hidden: false
+      repeaters:
+        default: true
+        is-hidden: false
+      comparators:
+        default: true
+        is-hidden: false
+      daylight-sensors:
+        default: true
+        is-hidden: false
 
-      tripwire: true
-      pressure-plates: true
-      trapdoors: true
-      doors: true
-      fence-gates: true
-      farmland: true
+      tripwire:
+        default: true
+        is-hidden: false
+      pressure-plates:
+        default: true
+        is-hidden: false
+      trapdoors:
+        default: true
+        is-hidden: false
+      doors:
+        default: true
+        is-hidden: false
+      fence-gates:
+        default: true
+        is-hidden: false
+      farmland:
+        default: true
+        is-hidden: false
 
-      campfire: true
-      bells: true
-      attach-leash: true
-      bonemeal: true
-      beehives: true
-      nametags: true
-      item-frames: true
-      candle-extinguish: true
-      hanging-entities: true
-      light-tnt: true
-      armor-stand: true
-      tame-entity: true
-      shear-entity: true
+      campfire:
+        default: true
+        is-hidden: false
+      bells:
+        default: true
+        is-hidden: false
+      attach-leash:
+        default: true
+        is-hidden: false
+      bone-meal:
+        default: true
+        is-hidden: false
+      beehives:
+        default: true
+        is-hidden: false
+      nametags:
+        default: true
+        is-hidden: false
+      item-frames:
+        default: true
+        is-hidden: false
+      candle-extinguish:
+        default: true
+        is-hidden: false
+      hanging-entities:
+        default: true
+        is-hidden: false
+      light-tnt:
+        default: true
+        is-hidden: false
+      armor-stands:
+        default: true
+        is-hidden: false
+      tame-entity:
+        default: true
+        is-hidden: false
+      shear-entity:
+        default: true
+        is-hidden: false
 
-    projectile-interactions: true
+    projectile-interactions:
+      default: true
+      is-hidden: false
 
-    fishing: true
+    fishing:
+      default: true
+      is-hidden: false
 
     # Damage related protections
     damage:
       # Cancels all damage dealt by players to protected entities
-      entity-damage: true
+      entity-damage:
+        default: true
+        is-hidden: false
       # Allows players to be damaged by other players
-      exclude-players: true
+      player-friendly-fire:
+        default: true
+        is-hidden: false
 
       # Blocks cannot be destroyed from explosions
-      explosion-block-damage: true
+      explosion-block-damage:
+        default: true
+        is-hidden: false
       # Entities cannot get damage from explosions
-      explosion-entity-damage: true
+      explosion-entity-damage:
+        default: true
+        is-hidden: false
 
     # Entities in entity-modifications cannot modify blocks
     entity-modifications:
-      wither: true
-      enderman: false
-      ravager: false
+      wither:
+        default: true
+        is-hidden: false
+      enderman:
+        default: false
+        is-hidden: false
+      ravager:
+        default: false
+        is-hidden: false
 
 disable-commands: true
 disabled-commands:

@@ -1,6 +1,8 @@
 package net.mathias2246.buildmc.api;
 
 import net.mathias2246.buildmc.MainClass;
+import net.mathias2246.buildmc.api.claims.Protection;
+import net.mathias2246.buildmc.util.DeferredRegistry;
 import net.mathias2246.buildmc.util.SoundManager;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -37,4 +39,6 @@ public interface BuildMcAPI {
      */
     @NotNull
     SoundManager getSoundManager();
+
+    @NotNull DeferredRegistry<Protection> getProtectionsRegistry();
 }

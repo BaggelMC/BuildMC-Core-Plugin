@@ -7,9 +7,10 @@ import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.claims.Claim;
 import net.mathias2246.buildmc.claims.ClaimManager;
-import net.mathias2246.buildmc.claims.Protection;
+import net.mathias2246.buildmc.ui.UIUtil;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -20,12 +21,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class ProtectionsMenu {
 
     public static void open(Player player, Claim claim) {
-        List<Protection> allFlags = Protection.protections.stream().collect(Collectors.toList());
+        List<Protection> allFlags = Protection.protections.stream().toList();
         int flagsPerPage = 18; // Two sets of 9 per page
         int totalPages = Math.max(1, (int) Math.ceil((double) allFlags.size() / flagsPerPage));
 
@@ -49,6 +49,7 @@ public class ProtectionsMenu {
 
             for (int i = start; i < end; i++) {
                 Protection protection = allFlags.get(i);
+                if (protection.isHidden()) continue;
                 boolean enabled = claim.hasFlag(protection.getKey());
 
                 int x = index % 9;
@@ -94,7 +95,7 @@ public class ProtectionsMenu {
 
             // Spacer
             for (int x = 0; x < 9; x++) {
-                pane.addItem(new GuiItem(createGlassPane(Material.GRAY_STAINED_GLASS_PANE), e -> e.setCancelled(true)), x, 2);
+                pane.addItem(new GuiItem(createGlassPane(Material.GRAY_STAINED_GLASS_PANE), UIUtil.noInteract), x, 2);
             }
 
             pages.addPane(page, pane);

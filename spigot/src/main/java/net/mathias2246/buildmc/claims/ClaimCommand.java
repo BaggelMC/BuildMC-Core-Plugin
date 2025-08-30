@@ -6,6 +6,7 @@ import dev.jorel.commandapi.arguments.StringArgument;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.commands.CustomCommand;
 import net.mathias2246.buildmc.ui.claims.ClaimSelectMenu;
@@ -565,9 +566,12 @@ public class ClaimCommand implements CustomCommand {
                                                 }),
                                         new NamespacedKeyArgument("flag")
                                                 .replaceSuggestions((info, builder) -> {
-                                                    for (NamespacedKey flag : Protection.protections.keyStream().toList()) {
-                                                        builder.suggest(flag.toString());
-                                                        // TODO: Check if protection is registered
+                                                    String remaining = builder.getRemaining();
+                                                    for (Protection flag : Protection.protections) {
+                                                        String s = flag.getKey().toString();
+                                                        if (!flag.isHidden() && s.startsWith(remaining.toLowerCase())) {
+                                                            builder.suggest(s);
+                                                        }
                                                     }
                                                     return builder.buildFuture();
                                                 }),
@@ -583,11 +587,15 @@ public class ClaimCommand implements CustomCommand {
                                     String type = command.args().getByClass("type", String.class);
                                     String claimName = command.args().getByClass("claim", String.class);
                                     NamespacedKey flag = command.args().getByClass("flag", NamespacedKey.class);
-                                    // TODO: Check if protection is registered
                                     String value = command.args().getByClass("value", String.class);
 
                                     if (type == null || claimName == null || flag == null || value == null) {
                                         audiences.player(player).sendMessage(Component.translatable("messages.error.invalid-args"));
+                                        return 0;
+                                    }
+
+                                    if (Protection.isHiddenProtection(flag)) {
+                                        audiences.player(player).sendMessage(Component.translatable("messages.claims.protections.invalid-flag"));
                                         return 0;
                                     }
 

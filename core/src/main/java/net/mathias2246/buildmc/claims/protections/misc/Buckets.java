@@ -1,0 +1,98 @@
+package net.mathias2246.buildmc.claims.protections.misc;
+
+import com.github.stefvanschie.inventoryframework.gui.GuiItem;
+import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.api.claims.Protection;
+import net.mathias2246.buildmc.claims.ClaimManager;
+import net.mathias2246.buildmc.item.ItemUtil;
+import net.mathias2246.buildmc.ui.UIUtil;
+import net.mathias2246.buildmc.util.Message;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.block.Block;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.player.PlayerBucketEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.Objects;
+
+public class Buckets extends Protection {
+
+    public Buckets(@Nullable ConfigurationSection section) {
+        super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:bucket_usage")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onBucketUse(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        ItemStack item = event.getItem();
+
+        if (item == null) return;
+
+        Material type = item.getType();
+        Block block = event.getClickedBlock();
+
+        if (block == null) return;
+
+        boolean isBucketUse = switch (type) {
+            case WATER_BUCKET, LAVA_BUCKET, POWDER_SNOW_BUCKET, BUCKET,
+                 AXOLOTL_BUCKET, TADPOLE_BUCKET, PUFFERFISH_BUCKET,
+                 TROPICAL_FISH_BUCKET, SALMON_BUCKET, COD_BUCKET -> true;
+            default -> false;
+        };
+
+        if (!isBucketUse) return;
+
+        if (!ClaimManager.isPlayerAllowed(player, getKey(), block.getLocation())) {
+            CoreMain.mainClass.sendPlayerActionBar(player,
+                    Component.translatable("messages.claims.not-accessible.block-place"));
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onEntityPickup(PlayerBucketEntityEvent event) {
+        Player player = event.getPlayer();
+        Entity entity = event.getEntity();
+
+        if (!ClaimManager.isPlayerAllowed(player, getKey(), entity.getLocation())) {
+            CoreMain.mainClass.sendPlayerActionBar(player,
+                    Component.translatable("messages.claims.not-accessible.entity-bucket"));
+            event.setCancelled(true);
+        }
+    }
+
+    @Override
+    public String getTranslationBaseKey() {
+        return "claims.flags.bucket-usage";
+    }
+
+    @Override
+    public @NotNull GuiItem getDisplay(@NotNull Player uiHolder, @NotNull Gui gui) {
+        String t = getTranslationBaseKey();
+
+        ItemStack displayBase = new ItemStack(Material.BUCKET);
+        ItemUtil.editMeta(displayBase, (meta) -> {
+            meta.setItemName(LegacyComponentSerializer.legacySection().serialize(
+                    Message.msg(uiHolder, t+".name")
+            ));
+            meta.setLore(List.of(LegacyComponentSerializer.legacySection().serialize(Message.msg(uiHolder, t + ".lore")).split("\n")));
+        });
+
+        return new GuiItem(
+                displayBase,
+                UIUtil.noInteract
+        );
+    }
+}

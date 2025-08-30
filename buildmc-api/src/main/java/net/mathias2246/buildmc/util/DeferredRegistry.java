@@ -34,6 +34,14 @@ public class DeferredRegistry<T extends Keyed> implements Registry<T> {
         map.putIfAbsent(entry.getKey(), entry);
     }
 
+    @SafeVarargs
+    public final void addEntrys(@NotNull T... entry) {
+        if (isInitialized) return;
+        for (var e : entry) {
+            map.putIfAbsent(e.getKey(), e);
+        }
+    }
+
     public void addEntryOrThrow(@NotNull T entry) {
         if (isInitialized) throw new IllegalArgumentException("This Registry is already initialized! You can only change this registry before it is initialized!");
 

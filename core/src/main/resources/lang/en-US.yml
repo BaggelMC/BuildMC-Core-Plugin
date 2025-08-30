@@ -228,15 +228,15 @@ messages:
 
 claims:
   flags:
-    player_break:
+    player-break:
       name: "<green>Block Breaking</green>"
       lore: "<gray>Prevents players from breaking blocks.</gray>"
 
-    player_place:
+    player-place:
       name: "<green>Block Placing</green>"
       lore: "<gray>Prevents players from placing blocks.</gray>"
 
-    player_place_entity:
+    player-place-entity:
       name: "<green>Entity Placing</green>"
       lore: "<gray>Prevents placing entities such as: Armor Stands, Boats, Minecarts, End Crystals.</gray>"
 
@@ -244,145 +244,145 @@ claims:
       name: "<green>Containers</green>"
       lore: "<gray>Prevents players from using containers (Chests, Hoppers...).</gray>"
 
-    item_pickup:
+    item-pickup:
       name: "<green>Item Pickup</green>"
       lore: "<gray>Prevents players from picking up items.</gray>"
 
-    item_drop:
+    item-drop:
       name: "<green>Item Dropping</green>"
       lore: "<gray>Prevents players from dropping items.</gray>"
 
-    sign_editing:
+    sign-editing:
       name: "<green>Sign Editing</green>"
       lore: "<gray>Prevents players from editing signs.</gray>"
 
-    splash_potions:
+    splash-potions:
       name: "<green>Splash Potions</green>"
       lore: "<gray>Prevents players from using splash potions.</gray>"
 
-    vehicle_enter:
+    vehicle-enter:
       name: "<green>Vehicle Entry</green>"
       lore: "<gray>Prevents players from entering vehicles.</gray>"
 
-    bucket_usage:
+    bucket-usage:
       name: "<green>Bucket Usage</green>"
       lore: "<gray>Prevents players from using buckets.</gray>"
 
-    frost_walker:
+    frost-walker:
       name: "<green>Frost Walker</green>"
       lore: "<gray>Prevents players from using Frost Walker enchantment.</gray>"
 
-    sculk_sensor:
+    sculk-sensor:
       name: "<green>Sculk Sensors</green>"
       lore: "<gray>Prevents players from triggering sculk sensors.</gray>"
 
-    piston_movement_across_claim_borders:
+    piston-movement-across-claim-borders:
       name: "<green>Piston Movement</green>"
       lore: "<gray>Prevents pistons from moving blocks across claim borders.</gray>"
 
-    interaction_jukebox:
+    interaction-jukebox:
       name: "<green>Jukeboxes</green>"
       lore: "<gray>Prevents players from using jukeboxes.</gray>"
 
-    interaction_levers:
+    interaction-levers:
       name: "<green>Levers</green>"
       lore: "<gray>Prevents players from using levers.</gray>"
 
-    interaction_buttons:
+    interaction-buttons:
       name: "<green>Buttons</green>"
       lore: "<gray>Prevents players from using buttons.</gray>"
 
-    interaction_repeaters:
+    interaction-repeaters:
       name: "<green>Repeaters</green>"
       lore: "<gray>Prevents players from changing repeaters.</gray>"
 
-    interaction_comparators:
+    interaction-comparators:
       name: "<green>Comparators</green>"
       lore: "<gray>Prevents players from changing comparators.</gray>"
 
-    interaction_daylight_sensors:
+    interaction-daylight-sensors:
       name: "<green>Daylight Sensors</green>"
       lore: "<gray>Prevents players from changing daylight detectors.</gray>"
 
-    interaction_pressure_plates:
+    interaction-pressure-plates:
       name: "<green>Pressure Plates</green>"
       lore: "<gray>Prevents players from using pressure plates.</gray>"
 
-    interaction_tripwire:
+    interaction-tripwire:
       name: "<green>Tripwires</green>"
       lore: "<gray>Prevents players from triggering tripwires.</gray>"
 
-    interaction_trapdoors:
+    interaction-trapdoors:
       name: "<green>Trapdoors</green>"
       lore: "<gray>Prevents players from using trapdoors.</gray>"
 
-    interaction_doors:
+    interaction-doors:
       name: "<green>Doors</green>"
       lore: "<gray>Prevents players from using doors.</gray>"
 
-    interaction_fence_gates:
+    interaction-fence-gates:
       name: "<green>Fence Gates</green>"
       lore: "<gray>Prevents players from using fence gates.</gray>"
 
-    interaction_farmland:
+    interaction-farmland:
       name: "<green>Farmland</green>"
       lore: "<gray>Prevents players from trampling farmland.</gray>"
 
-    interaction_campfire:
+    interaction-campfire:
       name: "<green>Campfires</green>"
       lore: "<gray>Prevents players from using campfires.</gray>"
 
-    interaction_bells:
+    interaction-bells:
       name: "<green>Bells</green>"
       lore: "<gray>Prevents players from using bells.</gray>"
 
-    interaction_attach_leash:
+    interaction-attach-leash:
       name: "<green>Leashes</green>"
       lore: "<gray>Prevents players from leashing mobs.</gray>"
 
-    interaction_bonemeal:
+    interaction-bonemeal:
       name: "<green>Bonemeal</green>"
       lore: "<gray>Prevents players from using bonemeal.</gray>"
 
-    interaction_beehives:
+    interaction-beehives:
       name: "<green>Beehives</green>"
       lore: "<gray>Prevents players from using beehives.</gray>"
 
-    interaction_name_tags:
+    interaction-name-tags:
       name: "<green>Name Tags</green>"
       lore: "<gray>Prevents players from using name tags.</gray>"
 
-    interaction_light_tnt:
+    interaction-light-tnt:
       name: "<green>Light TNT</green>"
       lore: "<gray>Prevents players from lighting TNT with flint & steel or fire charges.</gray>"
 
-    interaction_hanging_entities:
+    interaction-hanging-entities:
       name: "<green>Hanging Entities</green>"
       lore: "<gray>Prevents placing, destroying, or changing item frames & paintings.</gray>"
 
-    interaction_armor_stand:
+    interaction-armor-stand:
       name: "<green>Armor Stands</green>"
       lore: "<gray>Prevents players from changing armor stand equipment.</gray>"
 
-    interaction_candles:
+    interaction-candles:
       name: "<green>Candles</green>"
       lore: "<gray>Prevents players from putting out candles.</gray>"
 
-    interaction_tame_entity:
+    interaction-tame-entity:
       name: "<green>Taming Mobs</green>"
       lore: "<gray>Prevents players from taming mobs.</gray>"
 
-    interaction_shear_entity:
+    interaction-shear-entity:
       name: "<green>Shearing Mobs</green>"
       lore: "<gray>Prevents players from shearing mobs.</gray>"
 
-    entity_damage:
+    entity-damage:
       name: "<green>Entity Damage</green>"
       lore: "<gray>Prevents players from damaging entities.</gray>"
 
-    exclude_players:
-      name: "<green>Exclude Players</green>"
-      lore: "<gray>Excludes players from protection against attacks.</gray>"
+    players-friendly-fire:
+      name: "<green>Attack Players</green>"
+      lore: "<gray>Blocks Players from attacking other players.</gray>"
 
     projectile_interactions:
       name: "<green>Projectile Interactions</green>"
@@ -392,23 +392,23 @@ claims:
       name: "<green>Fishing</green>"
       lore: "<gray>Prevents players from fishing.</gray>"
 
-    explosion_block_damage:
+    explosion-block-damage:
       name: "<green>Explosion Block Damage</green>"
       lore: "<gray>Prevents explosions from destroying blocks.</gray>"
 
-    explosion_entity_damage:
+    explosion-entity-damage:
       name: "<green>Explosion Entity Damage</green>"
       lore: "<gray>Prevents explosions from damaging entities.</gray>"
 
-    entity_modifications_wither:
+    entity-modifications-wither:
       name: "<green>Wither Modifications</green>"
       lore: "<gray>Prevents the Wither from changing blocks.</gray>"
 
-    entity_modifications_enderman:
+    entity-modifications-enderman:
       name: "<green>Enderman Modifications</green>"
       lore: "<gray>Prevents Endermen from changing blocks.</gray>"
 
-    entity_modifications_ravager:
+    entity-modifications-ravager:
       name: "<green>Ravager Modifications</green>"
       lore: "<gray>Prevents Ravagers from changing blocks.</gray>"
 

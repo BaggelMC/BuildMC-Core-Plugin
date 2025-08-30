@@ -8,6 +8,7 @@ import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.Main;
+import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.commands.CustomCommand;
 import net.mathias2246.buildmc.ui.claims.ClaimSelectMenu;
@@ -620,9 +621,10 @@ public class ClaimCommand implements CustomCommand {
                                         .then(Commands.argument("key", ArgumentTypes.namespacedKey())
                                                 .suggests((ctx, builder) -> {
                                                     String remaining = builder.getRemaining();
-                                                    for (NamespacedKey flag : Protection.protections.keyStream().toList()) {
-                                                        if (flag.toString().startsWith(remaining.toLowerCase())) {
-                                                            builder.suggest(flag.toString());
+                                                    for (Protection flag : Protection.protections) {
+                                                        String s = flag.getKey().toString();
+                                                        if (!flag.isHidden() && s.startsWith(remaining.toLowerCase())) {
+                                                            builder.suggest(s);
                                                         }
                                                     }
                                                     return builder.buildFuture();
@@ -633,7 +635,6 @@ public class ClaimCommand implements CustomCommand {
                                                             for (String b : bools) {
                                                                 if (b.startsWith(builder.getRemaining().toLowerCase())) {
                                                                     builder.suggest(b);
-                                                                    // TODO: Check if protection is registered
                                                                 }
                                                             }
                                                             return builder.buildFuture();
@@ -670,6 +671,11 @@ public class ClaimCommand implements CustomCommand {
                                                                 }
 
                                                             } catch (IllegalArgumentException e) {
+                                                                player.sendMessage(Component.translatable("messages.claims.protections.invalid-flag"));
+                                                                return 0;
+                                                            }
+
+                                                            if (Protection.isHiddenProtection(flag)) {
                                                                 player.sendMessage(Component.translatable("messages.claims.protections.invalid-flag"));
                                                                 return 0;
                                                             }

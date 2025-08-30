@@ -4,6 +4,7 @@ import dev.jorel.commandapi.CommandAPI;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
+import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.event.BuildMcConfigInitializedEvent;
 import net.mathias2246.buildmc.claims.ClaimCommand;
 import net.mathias2246.buildmc.claims.ClaimToolParticles;
@@ -23,7 +24,9 @@ import net.mathias2246.buildmc.spawnElytra.SpawnBoostListener;
 import net.mathias2246.buildmc.status.PlayerStatus;
 import net.mathias2246.buildmc.status.SetStatusCommand;
 import net.mathias2246.buildmc.status.StatusConfig;
+import net.mathias2246.buildmc.util.DeferredRegistry;
 import net.mathias2246.buildmc.util.Message;
+import net.mathias2246.buildmc.util.SoundManager;
 import net.mathias2246.buildmc.util.config.ConfigurationValidationException;
 import net.mathias2246.buildmc.util.language.LanguageManager;
 import net.md_5.bungee.api.ChatMessageType;
@@ -38,7 +41,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,11 +50,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Logger;
 
-public final class Main extends JavaPlugin implements MainClass {
+public final class Main extends PluginMain {
 
     public static Logger logger;
 
-    public static Plugin plugin;
+    public static PluginMain plugin;
 
     @Subst("")
     public static FileConfiguration config;
@@ -227,5 +229,27 @@ public final class Main extends JavaPlugin implements MainClass {
         // This is stupid, but you can't argue with the results
         BaseComponent[] components = BungeeComponentSerializer.get().serialize(message);
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, components);
+    }
+
+
+
+    @Override
+    public @NotNull Plugin getPlugin() {
+        return this;
+    }
+
+    @Override
+    public @NotNull MainClass getMainClass() {
+        return this;
+    }
+
+    @Override
+    public @NotNull SoundManager getSoundManager() {
+        return CoreMain.soundManager;
+    }
+
+    @Override
+    public @NotNull DeferredRegistry<Protection> getProtectionsRegistry() {
+        return Protection.protections;
     }
 }

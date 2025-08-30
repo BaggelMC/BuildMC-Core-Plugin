@@ -30,12 +30,6 @@
     </repositories>
 
     <dependencies>
-        <!-- Shared dependencies -->
-        <dependency>
-            <groupId>net.mathias2246</groupId>
-            <artifactId>buildmc-api</artifactId>
-            <version>${project.buildVersion}</version>
-        </dependency>
         <dependency>
             <groupId>com.mojang</groupId>
             <artifactId>brigadier</artifactId>
@@ -46,6 +40,12 @@
             <artifactId>spigot-api</artifactId>
             <version>1.21.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+        <!-- Shared dependencies -->
+        <dependency>
+            <groupId>net.mathias2246</groupId>
+            <artifactId>buildmc-api</artifactId>
+            <version>${project.buildVersion}</version>
         </dependency>
         <dependency>
             <groupId>net.kyori</groupId>
@@ -86,11 +86,7 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>com.github.stefvanschie.inventoryframework</groupId>
-            <artifactId>IF</artifactId>
-            <version>0.11.3</version>
-        </dependency>
+
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit</artifactId>
@@ -153,13 +149,13 @@
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <minimizeJar>false</minimizeJar>
-                            <artifactSet>
-                                <includes>
-                                    <include>net.mathias2246:buildmc-api</include>
-                                    <include>com.github.stefvanschie.inventoryframework:IF</include>
-                                    <include>org.bstats:bstats-bukkit</include>
-                                </includes>
-                            </artifactSet>
+<!--                            <artifactSet>-->
+<!--                                <includes>-->
+<!--                                    <include>net.mathias2246:buildmc-api</include>-->
+<!--                                    <include>com.github.stefvanschie.inventoryframework:IF</include>-->
+<!--                                    <include>org.bstats:bstats-bukkit</include>-->
+<!--                                </includes>-->
+<!--                            </artifactSet>-->
                             <relocations>
                                 <relocation>
                                     <pattern>com.github.stefvanschie.inventoryframework</pattern>

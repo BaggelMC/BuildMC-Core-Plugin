@@ -1,5 +1,6 @@
 package net.mathias2246.buildmc.claims;
 
+import net.mathias2246.buildmc.api.claims.Protection;
 import org.bukkit.Chunk;
 import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.ApiStatus;
@@ -40,8 +41,7 @@ public class Claim {
         this.whitelistedPlayers = whitelistedPlayers;
 
         if (protectionFlags.isEmpty()) {
-            this.protections = protectionFlags;
-            // TODO: Implement logic for default Protections
+            this.protections = Protection.defaultProtections.stream().toList();
         } else {
             this.protections = protectionFlags;
         }

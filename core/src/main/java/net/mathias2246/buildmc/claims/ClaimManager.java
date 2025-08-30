@@ -1,6 +1,7 @@
 package net.mathias2246.buildmc.claims;
 
 import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.api.claims.Protection;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -67,16 +68,16 @@ public class ClaimManager {
 
         switch (claim.getType()) {
             case SERVER:
-                return !hasAllFlags(claim, protections);
+                return !hasAllProtectionKeys(claim, protections);
 
             case PLAYER:
                 if (Objects.equals(claim.getOwnerId(), playerId)) return true;
-                return !hasAllFlags(claim, protections);
+                return !hasAllProtectionKeys(claim, protections);
 
             case TEAM:
                 Team playerTeam = getPlayerTeam(player);
                 if (playerTeam != null && Objects.equals(playerTeam.getName(), claim.getOwnerId())) return true;
-                return !hasAllFlags(claim, protections);
+                return !hasAllProtectionKeys(claim, protections);
 
             default:
                 return true;
@@ -208,8 +209,16 @@ public class ClaimManager {
         return claim.hasFlag(protection);
     }
 
-    private static boolean hasAllFlags(Claim claim, Collection<NamespacedKey> flags) {
+    private static boolean hasAllProtections(Claim claim, Collection<String> flags) {
         return new HashSet<>(claim.getProtections()).containsAll(flags);
+    }
+
+    private static boolean hasAllProtectionKeys(Claim claim, Collection<NamespacedKey> keys) {
+        for (var f : keys) {
+            if (claim.hasFlag(f)) continue;
+            else return false;
+        }
+        return true;
     }
 
     /** @return True if a claim is in the given area.*/
