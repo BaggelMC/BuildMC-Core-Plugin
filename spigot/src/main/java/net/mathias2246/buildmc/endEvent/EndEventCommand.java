@@ -1,10 +1,10 @@
 package net.mathias2246.buildmc.endEvent;
 
 import dev.jorel.commandapi.CommandAPICommand;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import net.mathias2246.buildmc.api.endevent.EndChangeCause;
-import net.mathias2246.buildmc.api.endevent.EndState;
+import net.kyori.adventure.text.Component;
+import net.mathias2246.buildmc.api.endEvent.EndChangeCause;
+import net.mathias2246.buildmc.api.endEvent.EndState;
 import net.mathias2246.buildmc.api.event.endevent.EndStateChangeEvent;
 import net.mathias2246.buildmc.commands.CustomCommand;
 import org.bukkit.Bukkit;

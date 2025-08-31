@@ -8,7 +8,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public class LocationUtil {
+/**A Utility class for Bukkit Locations.*/
+public final class LocationUtil {
 
     /**
      * Serialize a Location into a String.

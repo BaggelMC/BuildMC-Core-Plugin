@@ -20,6 +20,7 @@ public abstract class AbstractSelectionTool extends AbstractTool {
     /**The NamespacedKey used to identify the cooldown group of selection tools*/
     public static final @NotNull NamespacedKey SELECTION_TOOL_COOLDOWN_GROUP = Objects.requireNonNull(NamespacedKey.fromString("buildmc:selection_tool_cooldown"));
 
+    /**The default constructor for selection tools.*/
     public AbstractSelectionTool(@NotNull Plugin plugin, @NotNull NamespacedKey key) {
         super(plugin, key);
         firstSelectionKey = key + "_first_selection";
@@ -31,8 +32,18 @@ public abstract class AbstractSelectionTool extends AbstractTool {
     /**The metadata-key that is used to store the second selection.*/
     public final @NotNull String secondSelectionKey;
 
-    /**Checks is this custom item is usable.
-     * <p>Should check for things like e.g. cooldown, or other conditions</p>*/
+    /**
+     * Checks is this custom item is usable.
+     * <p>
+     *     Should check for things like e.g. cooldown, or other conditions
+     * </p>
+     *
+     * @param item The selection tool item that was used
+     *
+     * @param event The {@link PlayerInteractEvent} that was fired
+     *
+     * @return True if, the selection tool should be usable right now
+     * */
     public abstract boolean canUse(@NotNull ItemStack item, @NotNull PlayerInteractEvent event);
 
     @Override
@@ -52,6 +63,9 @@ public abstract class AbstractSelectionTool extends AbstractTool {
     }
 
     /**Tries reading the first selection position from the player's metadata.
+     *
+     * @param player The player that made the selection
+     *
      * @return The Location of the first selection or null if not found or invalid*/
     public @Nullable Location getFirstSelection(@NotNull Player player) {
         var l = player.getMetadata(firstSelectionKey);
@@ -60,12 +74,17 @@ public abstract class AbstractSelectionTool extends AbstractTool {
     }
 
     /**Tries reading the second selection position from the player's metadata.
+     *
+     * @param player The player that made the selection
+     *
      * @return The Location of the second selection or null if not found or invalid*/
     public @Nullable Location getSecondSelection(@NotNull Player player) {
         var l = player.getMetadata(secondSelectionKey);
         if (l.isEmpty()) return null;
         return LocationUtil.tryDeserialize(l.getFirst().asString());
     }
+
+
 
     @Override
     protected void onRightClick(@NotNull ItemStack item, @NotNull Location at, @NotNull PlayerInteractEvent event) {
@@ -83,12 +102,30 @@ public abstract class AbstractSelectionTool extends AbstractTool {
      * <p>If this returns false, onSuccessfulFirstSelection will not be called.</p>*/
     public abstract boolean allowFirstSelection(@NotNull ItemStack item, @NotNull Location at, @NotNull PlayerInteractEvent event);
     /**Checks if the player should be able to set the second selection position.
+     * <p>
+     *     If this returns false, onSuccessfulSecondSelection will not be called.
+     * </p>
      *
-     * <p>If this returns false, onSuccessfulSecondSelection will not be called.</p>*/
+     * @param item The selection tool item that was used
+     *
+     * @param at The {@link Location} the player clicked at
+     *
+     * @return True if, the second selection should be made.*/
     public abstract boolean allowSecondSelection(@NotNull ItemStack item, @NotNull Location at, @NotNull PlayerInteractEvent event);
 
-    /**Called when the first selection was successful.*/
+    /**
+     * Called when the first selection was successful.
+     *
+     * @param item The selection tool item that was used
+     *
+     * @param at The {@link Location} the player clicked at*/
     public abstract void onSuccessfulFirstSelection(@NotNull ItemStack item, @NotNull Location at, @NotNull PlayerInteractEvent event);
-    /**Called when the second selection was successful.*/
+    /**
+     * Called when the second selection was successful.
+     *
+     * @param item The selection tool item that was used
+     *
+     * @param at The {@link Location} the player clicked at
+     * */
     public abstract void onSuccessfulSecondSelection(@NotNull ItemStack item, @NotNull Location at, @NotNull PlayerInteractEvent event);
 }

@@ -1,6 +1,6 @@
 package net.mathias2246.buildmc.api.spawnelytra;
 
-import net.mathias2246.buildmc.api.spawneyltra.ElytraManager;
+import net.mathias2246.buildmc.api.spawnEyltra.ElytraManager;
 import net.mathias2246.buildmc.spawnElytra.ElytraZoneManager;
 import net.mathias2246.buildmc.spawnElytra.SpawnBoostListener;
 import org.bukkit.Location;

@@ -1,4 +1,4 @@
-package net.mathias2246.buildmc.api.endevent;
+package net.mathias2246.buildmc.api.endEvent;
 
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;

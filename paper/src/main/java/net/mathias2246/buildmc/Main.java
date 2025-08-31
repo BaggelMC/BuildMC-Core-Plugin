@@ -2,12 +2,12 @@ package net.mathias2246.buildmc;
 
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.kyori.adventure.text.Component;
+import net.mathias2246.buildmc.api.claims.ClaimManager;
+import net.mathias2246.buildmc.api.endEvent.EndManager;
 import net.mathias2246.buildmc.api.item.CustomItemListener;
 import net.mathias2246.buildmc.api.item.CustomItemRegistry;
-import net.mathias2246.buildmc.api.claims.ClaimManager;
-import net.mathias2246.buildmc.api.endevent.EndManager;
+import net.mathias2246.buildmc.api.spawnEyltra.ElytraManager;
 import net.mathias2246.buildmc.api.spawnelytra.ElytraManagerImpl;
-import net.mathias2246.buildmc.api.spawneyltra.ElytraManager;
 import net.mathias2246.buildmc.claims.ClaimCommand;
 import net.mathias2246.buildmc.claims.ClaimManagerImpl;
 import net.mathias2246.buildmc.claims.ClaimToolParticles;

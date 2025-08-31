@@ -2,8 +2,8 @@ package net.mathias2246.buildmc.api;
 
 import net.mathias2246.buildmc.MainClass;
 import net.mathias2246.buildmc.api.claims.ClaimManager;
-import net.mathias2246.buildmc.api.endevent.EndManager;
-import net.mathias2246.buildmc.api.spawneyltra.ElytraManager;
+import net.mathias2246.buildmc.api.endEvent.EndManager;
+import net.mathias2246.buildmc.api.spawnEyltra.ElytraManager;
 import net.mathias2246.buildmc.util.RegistriesHolder;
 import net.mathias2246.buildmc.util.SoundManager;
 import org.bukkit.configuration.file.FileConfiguration;

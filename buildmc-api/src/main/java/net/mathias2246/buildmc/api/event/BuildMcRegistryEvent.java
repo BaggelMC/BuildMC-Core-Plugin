@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
  * <p>
  * The {@code BuildMcRegistryEvent} is fired once during the plugin startup lifecycle
  * to give other plugins a chance to register or modify values in BuildMC’s
- * registries <em>before</em> they are finalised and made immutable.
+ * registries <em>before</em> they are finalized and made immutable.
  * </p>
  *
  * <h2>Why this event exists</h2>
@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
  * </ul>
  *
  * <p>
- * This event solves that ordering problem by deferring registry finalisation until
+ * This event solves that ordering problem by deferring registry finalization until
  * after <strong>all plugins have been enabled</strong>. Once the server signals that
  * plugin startup is complete, BuildMC fires this event, passing its API instance.
  * Extensions can then safely register or modify values before the registries are frozen.
@@ -49,7 +49,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * <h2>Lifecycle</h2>
  * <ol>
- *     <li>BuildMC loads and initialises its API with empty, mutable registries.</li>
+ *     <li>BuildMC loads and initializes its API with empty, mutable registries.</li>
  *     <li>Other plugins enable normally and register listeners for this event.</li>
  *     <li>After all plugins are enabled, BuildMC fires this event once.</li>
  *     <li>Extensions receive the API and make their registrations.</li>

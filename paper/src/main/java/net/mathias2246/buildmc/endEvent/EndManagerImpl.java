@@ -1,9 +1,9 @@
 package net.mathias2246.buildmc.endEvent;
 
 import net.kyori.adventure.text.Component;
-import net.mathias2246.buildmc.api.endevent.EndManager;
-import net.mathias2246.buildmc.api.endevent.EndChangeCause;
-import net.mathias2246.buildmc.api.endevent.EndState;
+import net.mathias2246.buildmc.api.endEvent.EndChangeCause;
+import net.mathias2246.buildmc.api.endEvent.EndManager;
+import net.mathias2246.buildmc.api.endEvent.EndState;
 import net.mathias2246.buildmc.api.event.endevent.EndStateChangeEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;

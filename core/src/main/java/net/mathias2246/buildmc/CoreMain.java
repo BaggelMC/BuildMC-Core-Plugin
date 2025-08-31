@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.sql.SQLException;
 
+@ApiStatus.Internal
 public final class CoreMain {
 
     public static Plugin plugin;
@@ -47,7 +48,6 @@ public final class CoreMain {
     public static boolean isInitialized() {
         return isInitialized;
     }
-
 
     @ApiStatus.Internal
     public static void initialize(@NotNull PluginMain plugin) {

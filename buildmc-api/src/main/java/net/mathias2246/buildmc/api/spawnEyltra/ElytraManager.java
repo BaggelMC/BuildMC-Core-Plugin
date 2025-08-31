@@ -1,4 +1,4 @@
-package net.mathias2246.buildmc.api.spawneyltra;
+package net.mathias2246.buildmc.api.spawnEyltra;
 
 import org.bukkit.Location;
 import org.bukkit.World;

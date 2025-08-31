@@ -1,4 +1,4 @@
-package net.mathias2246.buildmc.api.endevent;
+package net.mathias2246.buildmc.api.endEvent;
 
 /**
  * Represents the current state of the End dimension.

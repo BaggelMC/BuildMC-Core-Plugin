@@ -1,4 +1,4 @@
-package net.mathias2246.buildmc.api.endevent;
+package net.mathias2246.buildmc.api.endEvent;
 
 import net.mathias2246.buildmc.api.event.endevent.EndStateChangeEvent;
 

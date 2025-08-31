@@ -12,7 +12,7 @@ public abstract class ParticleSpawner extends BukkitRunnable {
     /**The builder used to create a certain type of ParticleSpawner.
      *
      * @implNote This should always be implemented in a subclass of your own custom ParticleSpawner,
-     * so that you can use your particle spawner is more dynamically usable.*/
+     * so that your particle spawner is more dynamically usable.*/
     @FunctionalInterface
     public interface Builder<T extends ParticleSpawner> {
         T build(@NotNull Player player);
@@ -33,7 +33,7 @@ public abstract class ParticleSpawner extends BukkitRunnable {
     public abstract void buildParticleSpawner();
 
     /**Contains conditions for when to exit the run loop early.
-     * <p>When this method returns true, the BukkitRunnable will be canceled.</p>*/
+     * <p>When this method returns true, the BukkitRunnable will stop.</p>*/
     protected abstract boolean shouldStop();
 
     /**Displays the actual particles.

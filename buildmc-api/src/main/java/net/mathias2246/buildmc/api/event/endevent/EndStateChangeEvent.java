@@ -1,7 +1,7 @@
 package net.mathias2246.buildmc.api.event.endevent;
 
-import net.mathias2246.buildmc.api.endevent.EndChangeCause;
-import net.mathias2246.buildmc.api.endevent.EndState;
+import net.mathias2246.buildmc.api.endEvent.EndChangeCause;
+import net.mathias2246.buildmc.api.endEvent.EndState;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
