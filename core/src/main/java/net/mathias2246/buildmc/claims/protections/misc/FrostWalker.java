@@ -36,7 +36,7 @@ public class FrostWalker extends Protection {
 
         String t = getTranslationBaseKey();
 
-        ItemStack displayBase = new ItemStack(Material.FROSTED_ICE);
+        ItemStack displayBase = new ItemStack(Material.ICE);
         ItemUtil.editMeta(displayBase, (meta) -> {
             meta.setItemName(LegacyComponentSerializer.legacySection().serialize(
                     Message.msg(uiHolder, t+".name")
