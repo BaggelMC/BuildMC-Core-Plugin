@@ -75,6 +75,6 @@ public class EntityBlockModifications extends Protection {
 
         if (claim == null) return;
 
-        if (claim.hasFlag(getKey())) event.setCancelled(true);
+        if (claim.hasProtection(getKey())) event.setCancelled(true);
     }
 }

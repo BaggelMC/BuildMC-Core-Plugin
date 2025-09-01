@@ -66,7 +66,7 @@ claims:
   save-on-world-save: true # Default: true
 
   # The amount of chunks each player can claim
-  player-max-chunk-claim-amount: 1024 # Default: 1024
+  player-max-chunk-claim-amount: 256 # Default: 256
   # The amount of chunks each team can claim
   team-max-chunk-claim-amount: 1024 # Default: 1024
 
@@ -80,7 +80,7 @@ claims:
 
     # Limits the maximum size in chunks of the selection
     # If smaller than 0, the limit will be disabled
-    limit-selection: 8 # Default: 8
+    limit-selection: 10 # Default: 10
 
   # What aspects are protected when claimed
   protections:

@@ -49,7 +49,7 @@ public class EntityExplosionDamage extends Protection {
         }
         if (claim == null) return;
 
-        if (claim.hasFlag(getKey())) {
+        if (claim.hasProtection(getKey())) {
             if (event.getCause() == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION || event.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) {
                 event.setCancelled(true);
             }

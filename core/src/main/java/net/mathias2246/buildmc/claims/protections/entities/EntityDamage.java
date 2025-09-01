@@ -60,7 +60,7 @@ public class EntityDamage extends Protection {
 
         NamespacedKey k = getKey();
 
-        if (claim.hasFlag(k) && !ClaimManager.isPlayerAllowed(attacker, k, claim)) {
+        if (claim.hasProtection(k) && !ClaimManager.isPlayerAllowed(attacker, k, claim)) {
             CoreMain.mainClass.sendPlayerActionBar(attacker, Component.translatable("messages.claims.not-accessible.entity-damage"));
             event.setCancelled(true);
         }

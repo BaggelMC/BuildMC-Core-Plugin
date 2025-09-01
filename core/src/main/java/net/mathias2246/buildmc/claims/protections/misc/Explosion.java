@@ -47,7 +47,7 @@ public class Explosion extends Protection {
         }
         if (claim == null) return;
 
-        if (claim.hasFlag(getKey())) {
+        if (claim.hasProtection(getKey())) {
             event.setCancelled(true);
         }
     }
@@ -66,7 +66,7 @@ public class Explosion extends Protection {
             return;
         }
 
-        if (claim.hasFlag(getKey())) {
+        if (claim.hasProtection(getKey())) {
             event.setCancelled(true);
         }
     }

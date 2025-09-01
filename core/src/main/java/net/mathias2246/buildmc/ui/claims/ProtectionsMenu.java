@@ -51,7 +51,7 @@ public class ProtectionsMenu {
             for (int i = start; i < end; i++) {
                 Protection protection = allFlags.get(i);
                 if (protection.isHidden()) continue;
-                boolean enabled = claim.hasFlag(protection.getKey());
+                boolean enabled = claim.hasProtection(protection.getKey());
 
                 int x = index % 9;
                 int y = (index < 9) ? 0 : 3; // First group or second group
@@ -68,7 +68,7 @@ public class ProtectionsMenu {
                     toggleFlag(claim, protection.getKey(), enabled);
 
                     // Update the new status immediately
-                    boolean newEnabled = claim.hasFlag(protection);
+                    boolean newEnabled = claim.hasProtection(protection);
                     ItemStack newStatus = createStatusPane(protection.getKey(), newEnabled, player);
 
                     // Replace this slot with updated status item
@@ -150,7 +150,7 @@ public class ProtectionsMenu {
     private static GuiItem makeStatusItem(ChestGui gui, StaticPane pane,
                                           Claim claim, Protection protection,
                                           int x, int y, @NotNull Player player) {
-        boolean enabled = claim.hasFlag(protection);
+        boolean enabled = claim.hasProtection(protection);
         ItemStack status = createStatusPane(protection.getKey(), enabled, player);
 
         return new GuiItem(status, e -> {

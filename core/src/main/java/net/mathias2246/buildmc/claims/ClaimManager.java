@@ -204,13 +204,13 @@ public class ClaimManager {
 
     public static boolean hasAnyProtection(Claim claim, Collection<NamespacedKey> protections) {
         for (NamespacedKey key : protections) {
-            if (claim.hasFlag(key)) return true;
+            if (claim.hasProtection(key)) return true;
         }
         return false;
     }
 
     public static boolean hasProtection(Claim claim, NamespacedKey protection) {
-        return claim.hasFlag(protection);
+        return claim.hasProtection(protection);
     }
 
     public static boolean hasAllProtections(Claim claim, Collection<String> flags) {
@@ -219,7 +219,7 @@ public class ClaimManager {
 
     public static boolean hasAllProtectionKeys(Claim claim, Collection<NamespacedKey> keys) {
         for (var f : keys) {
-            if (!claim.hasFlag(f)) return false;
+            if (!claim.hasProtection(f)) return false;
         }
         return true;
     }
