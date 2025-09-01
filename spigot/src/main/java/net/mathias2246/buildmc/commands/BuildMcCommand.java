@@ -29,7 +29,7 @@ public class BuildMcCommand implements CustomCommand {
                 }
         );
         debugSub.setRequirements(
-                        (c) -> c.hasPermission(new Permission("buildmc.operator"))
+                        (c) -> c.hasPermission(new Permission("buildmc.admin"))
                 );
 
         var statusSub = new CommandAPICommand("status");

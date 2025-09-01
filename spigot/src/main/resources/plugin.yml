@@ -12,11 +12,8 @@ permissions:
     default: true
     description: The default permission every player gets, no matter what.
 
-  buildmc.operator:
-    default: op
-    description: The default op permission for buildmc
   buildmc.admin:
-    default: false
+    default: op
     description: The BuildMC admin permission
 
   buildmc.bypass-claims:

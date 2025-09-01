@@ -16,7 +16,7 @@ public class ElytraZoneCommand {
     public LiteralArgumentBuilder<CommandSourceStack> getSubCommand() {
 
         var cmd = Commands.literal("elytrazone");
-        cmd.requires((command) -> command.getSender().hasPermission("buildmc.operator"));
+        cmd.requires((command) -> command.getSender().hasPermission("buildmc.admin"));
 
         var setup = Commands.literal("setup");
 
