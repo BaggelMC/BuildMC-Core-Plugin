@@ -57,7 +57,7 @@ public class PlayerFriendlyFire extends Protection {
 
         if (claim.getWhitelistedPlayers().contains(attacker.getUniqueId())) return;
 
-        if (claim.hasFlag(getKey()) && victim instanceof Player player) {
+        if (claim.hasProtection(getKey()) && victim instanceof Player player) {
             event.setCancelled(true);
             CoreMain.mainClass.sendPlayerActionBar(attacker, Component.translatable("messages.claims.not-accessible.entity-damage"));
         }

@@ -420,7 +420,7 @@ public class ClaimTable implements DatabaseTable {
 
         Claim cached = claimCache.getIfPresent(claimId);
         if (cached != null) {
-            cached.addProtectionFlag(protectionKey);
+            cached.addProtection(protectionKey);
             claimCache.put(claimId, cached);
         }
     }
@@ -437,7 +437,7 @@ public class ClaimTable implements DatabaseTable {
 
         Claim cached = claimCache.getIfPresent(claimId);
         if (cached != null) {
-            cached.removeProtectionFlag(protectionKey);
+            cached.removeProtection(protectionKey);
             claimCache.put(claimId, cached);
         }
     }

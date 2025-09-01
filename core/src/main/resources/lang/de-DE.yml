@@ -38,7 +38,7 @@ messages:
     tool:
       tool-name: "Claim-Ecken auswählen"
 
-      tool-tooltip-line1: "Benutze dieses Tool, um die Ecken deines Team-Claims festzulegen."
+      tool-tooltip-line1: "Benutze dieses Tool, um die Ecken deines Claims festzulegen."
       tool-tooltip-line2: "Benutze '/claim help' um hilfe zu erhalten."
       tool-tooltip-line3: ""
       tool-tooltip-line4: ""
@@ -55,14 +55,14 @@ messages:
       set-pos1: "<green>Position erfolgreich gesetzt 1!</green>"
       set-pos2: "<green>Position erfolgreich gesetzt 2!</green>"
 
-      both-positions-set: "<green>beide positionen gesetzt! Die Zone kann jetzt beansprucht werden.</green>"
+      both-positions-set: "<green>Beide Positionen gesetzt! Die Zone kann jetzt beansprucht werden.</green>"
 
       no-team-to-select: "<red>Du musst in einem Team sein, um einen Claim zu setzen!</red>"
 
       successfully-claimed-area: |-
         <gold>---------------------------------------</gold>
         <green>Gebiet erfolgreich geclaimt!</green>
-        <blue>du hast noch </blue>%chunks_left%<blue> Chunks zum Claim verfügbar</blue>
+        <blue>Du hast noch </blue>%chunks_left%<blue> Chunks zum Claim verfügbar</blue>
         <gold>---------------------------------------</gold>
 
       successfully-claimed-area-no-count: |-
@@ -84,16 +84,16 @@ messages:
 
       other-claim-in-selection: "\n<red>In deiner Auswahl befindet sich ein fremder Claim!</red>\n"
 
-      no-chunks-left: "<red>Du hast keine Chunks mehr zum Claim verfügbar!</red>"
+      no-chunks-left: "<red>Du hast keine Chunks zum Claimen mehr verfügbar!</red>"
 
     create:
       missing-positions: "<red>Du hast noch nicht beide Positionen gesetzt.</red>"
-      success: "<blue>------------------------</blue>\n<green>Gebiet erfolgreich geclaimt.\n</green>\n<green>Du hast <gold>%remaining_claims%</gold> chunks übrig.</green>\n<blue>------------------------</blue>"
+      success: "<blue>------------------------</blue>\n<green>Gebiet erfolgreich geclaimt.\n</green>\n<green>Du hast <gold>%remaining_claims%</gold> Chunks übrig.</green>\n<blue>------------------------</blue>"
       failed: "<red>Fehler: Gebiet konnte nicht geclaimt werden.</red>"
       invalid-type: "<red>Fehler: Argument 'type' muss entweder 'player' oder 'team' sein.</red>"
       different-worlds: "<red>Fehler: Beide Positionen müssen in der selben Welt sein.</red>"
       no-remaining-claims: "<red>Du hast nicht genug Chunks übrig\nÜbrige Chunks: %remaining_claims%</red>"
-      duplicate-name: "<red>Ein Claim mit diesem namen existiert bereits.</red>"
+      duplicate-name: "<red>Ein Claim mit diesem Namen existiert bereits.</red>"
 
       error-database: "<red>Ein Datenbank Fehler ist aufgetreten.</red>"
 
@@ -116,8 +116,8 @@ messages:
       added: "<green>Der Spieler wurde zu der Claim Whitelist hinzugefügt."
       removed: "<green>Der Spieler wurde von der Claim Whitelist entfernt."
       already: "<yellow>Dieser Spieler ist bereits auf der Whitelist."
-      error: "<red>Ein Fehler ist beim ändern der Whitelist aufgetreten."
-      invalid-action: "<red>Invalide aktion. Benutze 'add' oder 'remove'."
+      error: "<red>Ein Fehler ist beim Ändern der Whitelist aufgetreten."
+      invalid-action: "<red>Invalide Aktion. Benutze 'add' oder 'remove'."
       not-on-list: "<yellow>Dieser Spieler ist nicht auf der Whitelist."
       already-added: "<yellow>Dieser Spieler ist bereits auf der Whitelist."
       player-not-found: "<red>Der angegebene Spieler konnte nicht gefunden werden."
@@ -126,7 +126,7 @@ messages:
     protections:
       invalid-type: "<red>Invalider Claim typ. Benutze <yellow>player</yellow> oder <yellow>team</yellow>."
       invalid-flag: "<red>Dieser Schutz existiert nicht."
-      invalid-value: "<red>Invalider wert. Er kann entweder <yellow>true</yellow> oder <yellow>false</yellow> sein."
+      invalid-value: "<red>Invalider Wert. Er kann entweder <yellow>true</yellow> oder <yellow>false</yellow> sein."
       not-found: "<red>Keinen Claim mit diesem Namen gefunden."
       added: "<green>Schutz <yellow>%flag%</yellow> wurde für diesen Claim <green>aktiviert</green>."
       removed: "<green>Schutz <yellow>%flag%</yellow> wurde für diesen Claim <red>deaktiviert</red>."
@@ -193,7 +193,7 @@ messages:
         player-type: "<gray>Typ: Spieler Claim</gray>"
         team-type: "<gray>Typ: Team Claim</gray>"
         id: "<dark_gray>ID: %id%</dark_gray>"
-        empty: "<red>Du hast noch keine claims.</red>"
+        empty: "<red>Du hast noch keine Claims.</red>"
 
       edit-menu:
         title: "<gold>Claim bearbeiten: '%claim%'</gold>"
@@ -227,7 +227,7 @@ messages:
 
           player_place_entity:
             name: "<green>Entitäten Platzieren</green>"
-            lore: "<gray>Hinderter am Platzieren von Entitäten wie:</gray>\n<gray>Rüstungsständer, Boote, Loren, Enderkristalle.</gray>"
+            lore: "<gray>Hindert am Platzieren von Entitäten wie:</gray>\n<gray>Rüstungsständer, Boote, Loren, Enderkristalle.</gray>"
 
           container:
             name: "<green>Behälter</green>"
@@ -283,15 +283,15 @@ messages:
 
           interaction_repeaters:
             name: "<green>Verstärker</green>"
-            lore: "<gray>Hindert Spieler am Verädern von Verstärkern.</gray>"
+            lore: "<gray>Hindert Spieler am Verändern von Verstärkern.</gray>"
 
           interaction_comparators:
             name: "<green>Komparatoren</green>"
-            lore: "<gray>Hindert Spieler am Verädern von Komparatoren.</gray>"
+            lore: "<gray>Hindert Spieler am Verändern von Komparatoren.</gray>"
 
           interaction_daylight_sensors:
             name: "<green>Tageslichtsensoren</green>"
-            lore: "<gray>Hindert Spieler am Verädern von Tageslichtsensoren.</gray>"
+            lore: "<gray>Hindert Spieler am Verändern von Tageslichtsensoren.</gray>"
 
           interaction_pressure_plates:
             name: "<green>Druckplatten</green>"
@@ -362,7 +362,7 @@ messages:
             lore: "<gray>Hindert Spieler am Zähmen von Tieren.</gray>"
 
           interaction_shear_entity:
-            name: "<green>Tiere scheren</green>"
+            name: "<green>Tiere Scheren</green>"
             lore: "<gray>Hindert Spieler am Scheren von Tieren.</gray>"
 
           entity_damage:
@@ -375,7 +375,7 @@ messages:
 
           projectile_interactions:
             name: "<green>Projektil Interaktionen</green>"
-            lore: "<gray>Verhindert, dass Projektile mit Dingen interagieren.</gray>\n<dark_gray>Dies hat keinen effekt auf den Schaden.</dark_gray>"
+            lore: "<gray>Verhindert, dass Projektile mit Dingen interagieren.</gray>\n<dark_gray>Dies hat keinen Effekt auf den Schaden.</dark_gray>"
 
           fishing:
             name: "<green>Fischen</green>"
@@ -383,11 +383,11 @@ messages:
 
           explosion_block_damage:
             name: "<green>Explosion Block Schaden</green>"
-            lore: "<gray>Hindert explosionen am Zerstören von Entitäten.</gray>"
+            lore: "<gray>Hindert Explosionen am Zerstören von Entitäten.</gray>"
 
           explosion_entity_damage:
             name: "<green>Explosion Entitäten Schaden</green>"
-            lore: "<gray>Hindert explosionen am Schädigen von Entitäten.</gray>"
+            lore: "<gray>Hindert Explosionen am Schädigen von Entitäten.</gray>"
 
           entity_modifications_wither:
             name: "<green>Wither Modifikationen</green>"
