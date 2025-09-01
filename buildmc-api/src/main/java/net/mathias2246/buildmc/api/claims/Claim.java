@@ -115,57 +115,6 @@ public class Claim {
         return contains(chunk.getX(), chunk.getZ(), chunk.getWorld().getUID());
     }
 
-//    private String toConfigPath(ProtectionFlag flag) {
-//        return switch (flag) {
-//            case PLAYER_BREAK -> "claims.protections.player-break";
-//            case PLAYER_PLACE -> "claims.protections.player-place";
-//            case PLAYER_PLACE_ENTITY -> "claims.protections.player-place-entity";
-//            case CONTAINER -> "claims.protections.containers";
-//            case ITEM_PICKUP -> "claims.protections.item-pickup";
-//            case ITEM_DROP -> "claims.protections.item-drop";
-//            case SIGN_EDITING -> "claims.protections.sign-editing";
-//            case SPLASH_POTIONS -> "claims.protections.splash-potions";
-//            case VEHICLE_ENTER -> "claims.protections.vehicle-enter";
-//            case BUCKET_USAGE -> "claims.protections.bucket-usage";
-//            case FROST_WALKER -> "claims.protections.frostwalker";
-//            case SCULK_SENSOR -> "claims.protections.sculk-sensor";
-//            case PISTON_MOVEMENT_ACROSS_CLAIM_BORDERS -> "claims.protections.piston-movement-across-claim-borders";
-//            case INTERACTION_JUKEBOX -> "claims.protections.interactions.jukebox";
-//            case INTERACTION_LEVERS -> "claims.protections.interactions.levers";
-//            case INTERACTION_BUTTONS -> "claims.protections.interactions.buttons";
-//            case INTERACTION_REPEATERS -> "claims.protections.interactions.repeaters";
-//            case INTERACTION_COMPARATORS -> "claims.protections.interactions.comparators";
-//            case INTERACTION_DAYLIGHT_SENSORS -> "claims.protections.interactions.daylight-sensors";
-//            case INTERACTION_PRESSURE_PLATES -> "claims.protections.interactions.pressure-plates";
-//            case INTERACTION_TRIPWIRE -> "claims.protections.interactions.tripwire";
-//            case INTERACTION_TRAPDOORS -> "claims.protections.interactions.trapdoors";
-//            case INTERACTION_DOORS -> "claims.protections.interactions.doors";
-//            case INTERACTION_FENCE_GATES -> "claims.protections.interactions.fence-gates";
-//            case INTERACTION_FARMLAND -> "claims.protections.interactions.farmland";
-//            case INTERACTION_CAMPFIRE -> "claims.protections.interactions.campfire";
-//            case INTERACTION_BELLS -> "claims.protections.interactions.bells";
-//            case INTERACTION_ATTACH_LEASH -> "claims.protections.interactions.attach-leash";
-//            case INTERACTION_BONEMEAL -> "claims.protections.interactions.bonemeal";
-//            case INTERACTION_BEEHIVES -> "claims.protections.interactions.beehives";
-//            case INTERACTION_NAME_TAGS -> "claims.protections.interactions.nametags";
-//            case INTERACTION_CANDLES -> "claims.protections.interactions.candle-extinguish";
-//            case INTERACTION_HANGING_ENTITIES -> "claims.protections.interactions.hanging-entities";
-//            case INTERACTION_LIGHT_TNT -> "claims.protections.interactions.light-tnt";
-//            case INTERACTION_ARMOR_STAND -> "claims.protections.interactions.armor-stand";
-//            case INTERACTION_TAME_ENTITY -> "claims.protections.interactions.tame-entity";
-//            case INTERACTION_SHEAR_ENTITY -> "claims.protections.interactions.shear-entity";
-//            case ENTITY_DAMAGE -> "claims.protections.damage.entity-damage";
-//            case EXCLUDE_PLAYERS -> "claims.protections.damage.exclude-players";
-//            case PROJECTILE_INTERACTIONS -> "claims.protections.projectile-interactions";
-//            case FISHING -> "claims.protections.fishing";
-//            case EXPLOSION_BLOCK_DAMAGE -> "claims.protections.damage.explosion-block-damage";
-//            case EXPLOSION_ENTITY_DAMAGE -> "claims.protections.damage.explosion-entity-damage";
-//            case ENTITY_MODIFICATIONS_WITHER -> "claims.protections.entity-modifications.wither";
-//            case ENTITY_MODIFICATIONS_ENDERMAN -> "claims.protections.entity-modifications.enderman";
-//            case ENTITY_MODIFICATIONS_RAVAGER -> "claims.protections.entity-modifications.ravager";
-//        };
-//    }
-
     @Override
     public String toString() {
         return "Claim{" +
