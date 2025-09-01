@@ -48,13 +48,26 @@ public class RegistriesHolder {
         return registries.get(key);
     }
 
+    /**Retrieves a {@link DeferredRegistry} instance from this holder by its key.
+     *
+     * @return The {@link DeferredRegistry} instance stored under the given key, or null if not existing.*/
+    @SuppressWarnings("unchecked")
+    public @Nullable <T extends Keyed> DeferredRegistry<T> getAsType(@NotNull String key) {
+        try {
+            return (DeferredRegistry<T>) registries.get(key);
+        } catch (Exception ignored) {
+            return null;
+        }
+    }
+
     /**
      * Adds a {@link DeferredRegistry} to this holder under a certain key.
      */
-    public <T extends Keyed> void addRegistry(@NotNull String key, @NotNull DeferredRegistry<T> registry) {
-        if (registries.containsKey(key)) return;
+    public <T extends Keyed> DeferredRegistry<T> addRegistry(@NotNull String key, @NotNull DeferredRegistry<T> registry) {
+        if (registries.containsKey(key)) return registry;
 
         registries.put(key, registry);
+        return registry;
     }
 
     /**Optionally retrieves a {@link DeferredRegistry} instance from this holder by its key.

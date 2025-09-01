@@ -55,6 +55,8 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
+import static net.mathias2246.buildmc.CoreMain.registriesHolder;
+
 public final class Main extends PluginMain {
 
     public static Logger logger;
@@ -224,8 +226,6 @@ public final class Main extends PluginMain {
     public ElytraManager getElytraManager() {
         return apiElytraManager;
     }
-
-    private final RegistriesHolder registriesHolder = new RegistriesHolder.Builder().build();
 
     @Override
     public @NotNull RegistriesHolder getRegistriesHolder() {

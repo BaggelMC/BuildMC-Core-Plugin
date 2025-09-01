@@ -7,8 +7,9 @@ import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.mathias2246.buildmc.api.claims.Protection;
+import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
+import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.ui.UIUtil;
 import net.mathias2246.buildmc.util.Message;
@@ -25,7 +26,7 @@ import java.util.Map;
 public class ProtectionsMenu {
 
     public static void open(Player player, Claim claim) {
-        List<Protection> allFlags = Protection.protections.stream().toList();
+        List<Protection> allFlags = CoreMain.protectionsRegistry.stream().toList();
         int flagsPerPage = 18; // Two sets of 9 per page
         int totalPages = Math.max(1, (int) Math.ceil((double) allFlags.size() / flagsPerPage));
 

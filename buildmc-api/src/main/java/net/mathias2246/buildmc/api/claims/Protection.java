@@ -5,36 +5,52 @@ import net.mathias2246.buildmc.util.DeferredRegistry;
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.Listener;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class Protection implements Keyed, Displayable, Listener {
 
-    public static final @NotNull DeferredRegistry<Protection> protections = new DeferredRegistry<>();
 
-    // TODO: Needs to update when changing the protections registry
+    /**A {@link Collection} of all the default protection keys when creating a new claim.*/
+    @ApiStatus.Internal
     public static final @NotNull Collection<String> defaultProtections = new ArrayList<>();
 
-    public static boolean isHiddenProtection(@Nullable NamespacedKey key) {
+    public static boolean isHiddenProtection(@NotNull DeferredRegistry<Protection> registry, @Nullable NamespacedKey key) {
         if (key == null) return false;
 
-        return protections.stream()
-                .anyMatch(
-                        (p) -> p.isHidden
-                );
+        var o = registry.getOptional(key);
+
+        AtomicBoolean is = new AtomicBoolean(false);
+
+        o.ifPresent(
+                (v) -> is.set(true)
+        );
+
+        return is.get();
+
     }
 
     private final @NotNull NamespacedKey key;
 
     private boolean isHidden;
 
+    /**If this protection should be enabled by default when creating a new claim.
+     *
+     * @return True if, enabled by default in new claims.
+     * */
     public boolean isDefaultEnabled() {
         return isDefaultEnabled;
     }
 
+    /**Sets if this protection should be enabled by default in new claims.
+     *
+     * @param defaultEnabled The new default value
+     * */
     public void setDefaultEnabled(boolean defaultEnabled) {
         isDefaultEnabled = defaultEnabled;
     }

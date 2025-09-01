@@ -108,6 +108,8 @@ public class DeferredRegistry<T extends Keyed> implements Registry<T> {
     }
 
     /**
+     * Gets an entry from the deferred-registry
+     *
      * @param namespacedKey The {@link NamespacedKey} of the entry you are trying to retrieve
      *
      * @return The entry under the given {@link NamespacedKey} or null if not found.
@@ -118,6 +120,8 @@ public class DeferredRegistry<T extends Keyed> implements Registry<T> {
     }
 
     /**
+     *  Gets an entry from the deferred-registry, or throws an exception
+     *
      * @param namespacedKey The {@link NamespacedKey} of the entry you are trying to retrieve
      *
      * @throws IllegalArgumentException when no entry is registered under the given {@link NamespacedKey}

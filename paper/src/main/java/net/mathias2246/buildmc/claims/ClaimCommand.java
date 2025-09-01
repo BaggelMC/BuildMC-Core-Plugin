@@ -14,6 +14,7 @@ import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.commands.CustomCommand;
 import net.mathias2246.buildmc.ui.claims.ClaimSelectMenu;
+import net.mathias2246.buildmc.util.DeferredRegistry;
 import net.mathias2246.buildmc.util.LocationUtil;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Bukkit;
@@ -37,6 +38,9 @@ public class ClaimCommand implements CustomCommand {
 
     @Override
     public LiteralCommandNode<CommandSourceStack> getCommand() {
+
+        DeferredRegistry<Protection> protectionsReg = CoreMain.protectionsRegistry;
+
         claimTool = (ClaimSelectionTool) Main.customItems.get(Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool")).key());
 
         var cmd = Commands.literal("claim");
@@ -623,7 +627,7 @@ public class ClaimCommand implements CustomCommand {
                                         .then(Commands.argument("key", ArgumentTypes.namespacedKey())
                                                 .suggests((ctx, builder) -> {
                                                     String remaining = builder.getRemaining();
-                                                    for (Protection flag : Protection.protections) {
+                                                    for (Protection flag : protectionsReg) {
                                                         String s = flag.getKey().toString();
                                                         if (!flag.isHidden() && s.startsWith(remaining.toLowerCase())) {
                                                             builder.suggest(s);
@@ -677,7 +681,7 @@ public class ClaimCommand implements CustomCommand {
                                                                 return 0;
                                                             }
 
-                                                            if (Protection.isHiddenProtection(flag)) {
+                                                            if (Protection.isHiddenProtection(protectionsReg, flag)) {
                                                                 player.sendMessage(Component.translatable("messages.claims.protections.invalid-flag"));
                                                                 return 0;
                                                             }

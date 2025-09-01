@@ -11,9 +11,7 @@ import net.mathias2246.buildmc.database.ClaimTable;
 import net.mathias2246.buildmc.database.DatabaseConfig;
 import net.mathias2246.buildmc.database.DatabaseManager;
 import net.mathias2246.buildmc.event.claims.PlayerEnterClaimListener;
-import net.mathias2246.buildmc.util.BStats;
-import net.mathias2246.buildmc.util.DefaultRegistries;
-import net.mathias2246.buildmc.util.SoundManager;
+import net.mathias2246.buildmc.util.*;
 import net.mathias2246.buildmc.util.config.ConfigHandler;
 import net.mathias2246.buildmc.util.config.ConfigurationValidationException;
 import net.mathias2246.buildmc.util.language.LanguageManager;
@@ -45,6 +43,10 @@ public final class CoreMain {
 
     private static boolean isInitialized = false;
 
+    public static RegistriesHolder registriesHolder = new RegistriesHolder.Builder().build();
+
+    public static DeferredRegistry<Protection> protectionsRegistry;
+
     public static boolean isInitialized() {
         return isInitialized;
     }
@@ -69,9 +71,10 @@ public final class CoreMain {
 
         var config = plugin.getConfig();
 
-        pluginMain.getRegistriesHolder().addRegistry(DefaultRegistries.PROTECTIONS.toString(), Protection.protections);
+        protectionsRegistry = registriesHolder.addRegistry(DefaultRegistries.PROTECTIONS.toString(), new DeferredRegistry<>());
 
-        Protection.protections.addEntries(
+
+        protectionsRegistry.addEntries(
                 new Explosion(config.getConfigurationSection("claims.protections.damage.explosion-block-damage")),
                 new EntityExplosionDamage(config.getConfigurationSection("claims.protections.damage.explosion-entity-damage")),
                 new PlayerFriendlyFire(config.getConfigurationSection("claims.protections.damage.player-friendly-fire")),
@@ -109,8 +112,7 @@ public final class CoreMain {
         if (plugin.getConfig().getBoolean("claims.enabled")) {
             initializeDatabase();
 
-            Protection.protections.initialize();
-            for (Protection protection : Protection.protections) {
+            for (Protection protection : protectionsRegistry) {
                 if (protection.isDefaultEnabled()) Protection.defaultProtections.add(protection.getKey().toString());
                 registerEvent(protection);
             }

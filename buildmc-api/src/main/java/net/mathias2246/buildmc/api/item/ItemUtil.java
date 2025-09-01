@@ -13,6 +13,9 @@ public class ItemUtil {
     /**A helper method for editing {@link ItemMeta} using a {@link Consumer} that takes in an {@link ItemMeta} instance.
      * <p>The edited {@link ItemMeta} instance will be automatically be set on the {@link ItemStack} instance after editing.</p>
      * <p>If the meta returned by {@code itemStack.getItemMeta();} equals null, nothing will happen.</p>
+     *
+     * @param consumer The consumer used to edit the {@link ItemMeta}
+     * @param itemStack The {@link ItemStack} that should be edited
      */
     public static void editMeta(@NotNull ItemStack itemStack, @NotNull Consumer<@NotNull ItemMeta> consumer) {
         ItemMeta meta = itemStack.getItemMeta();

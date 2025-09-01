@@ -569,7 +569,7 @@ public class ClaimCommand implements CustomCommand {
                                         new NamespacedKeyArgument("flag")
                                                 .replaceSuggestions((info, builder) -> {
                                                     String remaining = builder.getRemaining();
-                                                    for (Protection flag : Protection.protections) {
+                                                    for (Protection flag : CoreMain.protectionsRegistry) {
                                                         String s = flag.getKey().toString();
                                                         if (!flag.isHidden() && s.startsWith(remaining.toLowerCase())) {
                                                             builder.suggest(s);
@@ -596,7 +596,7 @@ public class ClaimCommand implements CustomCommand {
                                         return 0;
                                     }
 
-                                    if (Protection.isHiddenProtection(flag)) {
+                                    if (Protection.isHiddenProtection(CoreMain.protectionsRegistry, flag)) {
                                         audiences.player(player).sendMessage(Component.translatable("messages.claims.protections.invalid-flag"));
                                         return 0;
                                     }
