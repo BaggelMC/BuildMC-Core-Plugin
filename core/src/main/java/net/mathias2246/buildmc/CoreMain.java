@@ -10,7 +10,7 @@ import net.mathias2246.buildmc.claims.protections.misc.*;
 import net.mathias2246.buildmc.database.ClaimTable;
 import net.mathias2246.buildmc.database.DatabaseConfig;
 import net.mathias2246.buildmc.database.DatabaseManager;
-import net.mathias2246.buildmc.event.claims.PlayerEnterClaimListener;
+import net.mathias2246.buildmc.event.claims.PlayerCrossClaimBoundariesListener;
 import net.mathias2246.buildmc.util.*;
 import net.mathias2246.buildmc.util.config.ConfigHandler;
 import net.mathias2246.buildmc.util.config.ConfigurationValidationException;
@@ -117,7 +117,7 @@ public final class CoreMain {
                 registerEvent(protection);
             }
 
-            registerEvent(new PlayerEnterClaimListener());
+            registerEvent(new PlayerCrossClaimBoundariesListener());
         }
 
         pluginMain.finishLoading();
