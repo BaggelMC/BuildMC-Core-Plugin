@@ -104,6 +104,7 @@ public abstract class AbstractCustomItem implements Keyed {
 
     /**Checks if the player can interact in any way with this custom item.
      * @implNote Should implement logic like, for example, cooldowns or location checks that should be applied.*/
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public abstract boolean canUse(@NotNull ItemStack item, @NotNull PlayerInteractEvent event);
 
     /**Called when a PlayerInteractEvent from the CustomItemListener was done with this custom item type*/
