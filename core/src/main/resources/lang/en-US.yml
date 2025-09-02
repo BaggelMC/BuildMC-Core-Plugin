@@ -90,6 +90,10 @@ messages:
       missing-positions: "<red>You have not set both positions yet.</red>"
       success: "<blue>------------------------</blue>\n<green>Successfully claimed area!\n</green>\n<green>You have <gold>%remaining_claims%</gold> chunks left.</green>\n<blue>------------------------</blue>"
       failed: "<red>Error: Failed to claim region.</red>"
+
+      success-server: "<blue>------------------------</blue>\n<green>Successfully claimed server area!</green>\n<blue>------------------------</blue>"
+      success-placeholder: "<blue>------------------------</blue>\n<green>Successfully claimed placeholder area!</green>\n<blue>------------------------</blue>"
+
       invalid-type: "<red>Error: Argument 'type' must be either 'player' or 'team'.</red>"
       different-worlds: "<red>Error: Both positions must be in the same world.</red>"
       no-remaining-claims: "<red>You do not have enough chunks left to claim.\nChunks left: %remaining_claims%</red>"

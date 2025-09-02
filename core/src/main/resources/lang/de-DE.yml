@@ -90,6 +90,11 @@ messages:
       missing-positions: "<red>Du hast noch nicht beide Positionen gesetzt.</red>"
       success: "<blue>------------------------</blue>\n<green>Gebiet erfolgreich geclaimt.\n</green>\n<green>Du hast <gold>%remaining_claims%</gold> Chunks übrig.</green>\n<blue>------------------------</blue>"
       failed: "<red>Fehler: Gebiet konnte nicht geclaimt werden.</red>"
+
+      success-server: "<blue>------------------------</blue>\n<green>Server Gebiet erfolgreich geclaimt!</green>\n<blue>------------------------</blue>"
+      success-placeholder: "<blue>------------------------</blue>\n<green>Platzhalter Gebiet erfolgreich geclaimt!</green>\n<blue>------------------------</blue>"
+
+
       invalid-type: "<red>Fehler: Argument 'type' muss entweder 'player' oder 'team' sein.</red>"
       different-worlds: "<red>Fehler: Beide Positionen müssen in der selben Welt sein.</red>"
       no-remaining-claims: "<red>Du hast nicht genug Chunks übrig\nÜbrige Chunks: %remaining_claims%</red>"

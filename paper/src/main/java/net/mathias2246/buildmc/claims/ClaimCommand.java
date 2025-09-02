@@ -26,10 +26,7 @@ import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class ClaimCommand implements CustomCommand {
 
@@ -146,11 +143,19 @@ public class ClaimCommand implements CustomCommand {
         cmd.then(
                 Commands.literal("create")
                         .then(
-                                Commands.argument("type", StringArgumentType.word()) // "player" or "team"
+                                Commands.argument("type", StringArgumentType.word())
                                         .suggests((context, builder) -> {
-                                            List<String> suggestions = List.of("player", "team");
+                                            List<String> suggestions = new ArrayList<>(List.of("player", "team"));
+
+                                            // Add admin-only options
+                                            if (context.getSource().getSender() instanceof Player player &&
+                                                    player.hasPermission("buildmc.admin")) {
+                                                suggestions.add("server");
+                                                suggestions.add("placeholder");
+                                            }
+
                                             for (String suggestion : suggestions) {
-                                                if (suggestion.startsWith(builder.getRemaining())) {
+                                                if (suggestion.startsWith(builder.getRemaining().toLowerCase())) {
                                                     builder.suggest(suggestion);
                                                 }
                                             }
@@ -272,6 +277,43 @@ public class ClaimCommand implements CustomCommand {
                                                                     boolean success = ClaimManager.tryClaimTeamArea(team, name, pos1, pos2);
                                                                     if (success) {
                                                                         player.sendMessage(Message.msg(player, "messages.claims.create.success", Map.of("remaining_claims", String.valueOf(currentClaimedChunks - newClaimChunks))));
+                                                                        player.removeMetadata(claimTool.firstSelectionKey, claimTool.getPlugin());
+                                                                        player.removeMetadata(claimTool.secondSelectionKey, claimTool.getPlugin());
+                                                                        return 1;
+                                                                    } else {
+                                                                        player.sendMessage(Component.translatable("messages.claims.create.failed"));
+                                                                        return 0;
+                                                                    }
+                                                                }
+
+                                                                case "server", "placeholder" -> {
+                                                                    if (!player.hasPermission("buildmc.admin")) {
+                                                                        player.sendMessage(Component.translatable("messages.error.no-permission"));
+                                                                        return 0;
+                                                                    }
+
+                                                                    try {
+                                                                        if (ClaimManager.doesOwnerHaveClaimWithName(type.toLowerCase(), name)) {
+                                                                            player.sendMessage(Component.translatable("messages.claims.create.duplicate-name"));
+                                                                            return 1;
+                                                                        }
+                                                                    } catch (SQLException e) {
+                                                                        CoreMain.plugin.getLogger().severe("SQL Error while trying to check claim name availability: " + e);
+                                                                        player.sendMessage(Component.translatable("messages.claims.create.error-database"));
+                                                                        return 0;
+                                                                    }
+
+                                                                    boolean success = switch (type.toLowerCase()) {
+                                                                        case "server" -> ClaimManager.tryClaimServerArea(name, pos1, pos2);
+                                                                        case "placeholder" -> ClaimManager.tryClaimPlaceholderArea(name, pos1, pos2);
+                                                                        default -> false;
+                                                                    };
+
+                                                                    if (success) {
+                                                                        player.sendMessage(Message.msg(player,
+                                                                                "messages.claims.create.success-" + type.toLowerCase(),
+                                                                                Map.of("claim_name", name)
+                                                                        ));
                                                                         player.removeMetadata(claimTool.firstSelectionKey, claimTool.getPlugin());
                                                                         player.removeMetadata(claimTool.secondSelectionKey, claimTool.getPlugin());
                                                                         return 1;

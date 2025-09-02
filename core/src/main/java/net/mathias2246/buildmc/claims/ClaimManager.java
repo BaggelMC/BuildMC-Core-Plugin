@@ -308,6 +308,14 @@ public class ClaimManager {
         return tryClaimArea(ClaimType.TEAM, team.getName(), claimName, pos1, pos2);
     }
 
+    public static boolean tryClaimServerArea(String claimName, Location pos1, Location pos2) {
+        return tryClaimArea(ClaimType.SERVER, "server", claimName, pos1, pos2);
+    }
+
+    public static boolean tryClaimPlaceholderArea(String claimName, Location pos1, Location pos2) {
+        return tryClaimArea(ClaimType.PLACEHOLDER, "server", claimName, pos1, pos2);
+    }
+
     private static boolean tryClaimArea(@NotNull ClaimType type, @NotNull String ownerId, @NotNull String claimName, @NotNull Location pos1, @NotNull Location pos2) {
         if (pos1.getWorld() == null || pos2.getWorld() == null) return false;
 
