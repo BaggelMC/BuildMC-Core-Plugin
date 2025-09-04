@@ -152,16 +152,6 @@ public class ClaimManagerImpl implements ClaimManager {
     }
 
     @Override
-    public void addProtection(@NotNull Claim claim, @NotNull Protection protection) {
-        net.mathias2246.buildmc.claims.ClaimManager.addProtection(claim, protection);
-    }
-
-    @Override
-    public void addProtection(@NotNull Claim claim, @NotNull NamespacedKey protection) {
-        net.mathias2246.buildmc.claims.ClaimManager.addProtection(claim, protection);
-    }
-
-    @Override
     public void removeProtection(long claimId, @NotNull Protection protection) {
         net.mathias2246.buildmc.claims.ClaimManager.removeProtection(claimId, protection);
     }
@@ -169,16 +159,6 @@ public class ClaimManagerImpl implements ClaimManager {
     @Override
     public void removeProtection(long claimId, @NotNull NamespacedKey protection) {
         net.mathias2246.buildmc.claims.ClaimManager.removeProtection(claimId, protection);
-    }
-
-    @Override
-    public void removeProtection(@NotNull Claim claim, @NotNull Protection protection) {
-        net.mathias2246.buildmc.claims.ClaimManager.removeProtection(claim, protection);
-    }
-
-    @Override
-    public void removeProtection(@NotNull Claim claim, @NotNull NamespacedKey protection) {
-        net.mathias2246.buildmc.claims.ClaimManager.removeProtection(claim, protection);
     }
 
     @Override

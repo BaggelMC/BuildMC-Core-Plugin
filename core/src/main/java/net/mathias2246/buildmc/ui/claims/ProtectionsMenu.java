@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -80,9 +81,14 @@ public class ProtectionsMenu {
 
                         // ItemStack nextStatus = createStatusPane(flag, nextEnabled, player);
 
-                        pane.addItem(makeStatusItem(gui, pane, claim, protection, x, statusRow, player), x, statusRow);
+                        GuiItem item = makeStatusItem(gui, pane, claim, protection, x, statusRow, player);
 
-                        gui.update();
+                        if (item != null) {
+                            pane.addItem(item, x, statusRow);
+
+                            gui.update();
+                        }
+
                     }), x, statusRow);
 
                     // Refresh UI without reopening
@@ -147,36 +153,46 @@ public class ProtectionsMenu {
         gui.show(player);
     }
 
+    @Nullable
     private static GuiItem makeStatusItem(ChestGui gui, StaticPane pane,
                                           Claim claim, Protection protection,
                                           int x, int y, @NotNull Player player) {
         boolean enabled = claim.hasProtection(protection);
         ItemStack status = createStatusPane(protection.getKey(), enabled, player);
 
+        Long claimId = claim.getId();
+
+        if (claimId == null) return null;
+
         return new GuiItem(status, e -> {
             e.setCancelled(true);
 
             // Toggle
             if (enabled) {
-                ClaimManager.removeProtection(claim, protection);
+                ClaimManager.removeProtection(claim.getId(), protection);
             } else {
-                ClaimManager.addProtection(claim, protection);
+                ClaimManager.addProtection(claim.getId(), protection);
             }
 
             // Replace this slot with a freshly built GuiItem (so it keeps toggling)
             GuiItem updated = makeStatusItem(gui, pane, claim, protection, x, y, player);
-            pane.addItem(updated, x, y);
 
-            gui.update();
+            if (updated != null) {
+                pane.addItem(updated, x, y);
+
+                gui.update();
+            }
         });
     }
 
 
     private static void toggleFlag(@NotNull Claim claim, @NotNull NamespacedKey protection, boolean currentlyEnabled) {
+        if (claim.getId() == null) return;
+
         if (currentlyEnabled) {
-            ClaimManager.removeProtection(claim, protection);
+            ClaimManager.removeProtection(claim.getId(), protection);
         } else {
-            ClaimManager.addProtection(claim, protection);
+            ClaimManager.addProtection(claim.getId(), protection);
         }
     }
 

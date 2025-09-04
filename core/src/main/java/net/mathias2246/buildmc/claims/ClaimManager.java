@@ -36,8 +36,11 @@ public class ClaimManager {
     /** Map of player UUIDs and the remaining claims */
     public static Map<String, Integer> playerRemainingClaims;
 
-    /** List of claim IDs the server owns */
-    public static List<Long> serverOwner;
+    /** List of claim IDs of server claims */
+    public static List<Long> serverClaims;
+
+    /** List of claim IDs of placeholder claims */
+    public static List<Long> placeholderClaims;
 
     /** Gets the player's team
      * @return the team the player is currently on, or null if they have no team */
@@ -373,6 +376,9 @@ public class ClaimManager {
                 playerOwner.computeIfAbsent(uuid, k -> new ArrayList<>()).add(claimId);
             }
             case TEAM -> teamOwner.computeIfAbsent(ownerId, k -> new ArrayList<>()).add(claimId);
+
+            case SERVER -> serverClaims.add(claimId);
+            case PLACEHOLDER -> placeholderClaims.add(claimId);
         }
 
         return true;
@@ -436,22 +442,6 @@ public class ClaimManager {
         }
     }
 
-    public static void addProtection(@NotNull Claim claim, @NotNull Protection protection) {
-        try {
-            CoreMain.claimTable.addProtectionFlag(CoreMain.databaseManager.getConnection(), claim.getId(), protection.getKey());
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static void addProtection(@NotNull Claim claim, @NotNull NamespacedKey protection) {
-        try {
-            CoreMain.claimTable.addProtectionFlag(CoreMain.databaseManager.getConnection(), claim.getId(), protection);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public static void removeProtection(long claimId, @NotNull Protection protection) {
         try {
             CoreMain.claimTable.removeProtectionFlag(CoreMain.databaseManager.getConnection(), claimId, protection.getKey());
@@ -463,22 +453,6 @@ public class ClaimManager {
     public static void removeProtection(long claimId, @NotNull NamespacedKey protection) {
         try {
             CoreMain.claimTable.removeProtectionFlag(CoreMain.databaseManager.getConnection(), claimId, protection);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static void removeProtection(@NotNull Claim claim, @NotNull Protection protection) {
-        try {
-            CoreMain.claimTable.removeProtectionFlag(CoreMain.databaseManager.getConnection(), claim.getId(), protection.getKey());
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static void removeProtection(@NotNull Claim claim, @NotNull NamespacedKey protection) {
-        try {
-            CoreMain.claimTable.removeProtectionFlag(CoreMain.databaseManager.getConnection(), claim.getId(), protection);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

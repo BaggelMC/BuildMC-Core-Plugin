@@ -139,6 +139,8 @@ public class WhitelistMenu {
     }
 
     private static void openDeleteConfirmationMenu(Player player, Claim claim, UUID uuid, String playerName) {
+        if (claim.getId() == null) return;
+
         ChestGui gui = new ChestGui(3,
                 ComponentHolder.of(Message.msg(player, "messages.claims.ui.whitelist-menu.delete-confirm-menu.title", Map.of("player", playerName))));
 

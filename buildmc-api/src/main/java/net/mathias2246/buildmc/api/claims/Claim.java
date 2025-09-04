@@ -46,11 +46,11 @@ public class Claim {
      * @param chunkZ2            The Z-coordinate of the opposite chunk corner.
      * @param name               The display name of this claim, or {@code null} if unnamed.
      * @param whitelistedPlayers The list of players who are whitelisted in this claim.
-     * @param protections        The list of protections (as string keys). If empty,
-     *                           the default protections will be applied.
+     * @param protections        The list of protections (as string keys).
+     *                           If empty and the Claim is not a placeholder, the default protections will be applied.
      */
     public Claim(@Nullable Long id, @NotNull ClaimType type, @NotNull String ownerId, @NotNull UUID worldId,
-                 int chunkX1, int chunkZ1, int chunkX2, int chunkZ2, String name,
+                 int chunkX1, int chunkZ1, int chunkX2, int chunkZ2, @NotNull String name,
                  @NotNull List<UUID> whitelistedPlayers, @NotNull List<String> protections) {
 
         this.id = id;
@@ -65,7 +65,7 @@ public class Claim {
 
         this.whitelistedPlayers = whitelistedPlayers;
 
-        if (protections.isEmpty()) {
+        if (protections.isEmpty() && type != ClaimType.PLACEHOLDER) {
             this.protections = Protection.defaultProtections.stream().toList();
         } else {
             this.protections = protections;
@@ -131,9 +131,9 @@ public class Claim {
     /**
      * Gets the display name of this claim.
      *
-     * @return The name, or {@code null} if not set.
+     * @return The name of the claim
      */
-    @Nullable public String getName() { return name; }
+    public String getName() { return name; }
 
     /**
      * Sets the database ID of this claim.

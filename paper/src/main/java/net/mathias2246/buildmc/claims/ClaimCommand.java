@@ -336,11 +336,19 @@ public class ClaimCommand implements CustomCommand {
         cmd.then(
                 Commands.literal("remove")
                         .then(Commands.argument("type", StringArgumentType.word())
-                                .suggests((ctx, builder) -> {
-                                    List<String> types = List.of("player", "team");
-                                    for (String type : types) {
-                                        if (type.startsWith(builder.getRemaining().toLowerCase())) {
-                                            builder.suggest(type);
+                                .suggests((context, builder) -> {
+                                    List<String> suggestions = new ArrayList<>(List.of("player", "team"));
+
+                                    // Add admin-only options
+                                    if (context.getSource().getSender() instanceof Player player &&
+                                            player.hasPermission("buildmc.admin")) {
+                                        suggestions.add("server");
+                                        suggestions.add("placeholder");
+                                    }
+
+                                    for (String suggestion : suggestions) {
+                                        if (suggestion.startsWith(builder.getRemaining().toLowerCase())) {
+                                            builder.suggest(suggestion);
                                         }
                                     }
                                     return builder.buildFuture();
@@ -369,6 +377,17 @@ public class ClaimCommand implements CustomCommand {
                                                         if (name != null && name.toLowerCase().startsWith(builder.getRemaining().toLowerCase())) {
                                                             builder.suggest(name);
                                                         }
+                                                    }
+                                                }
+                                            } else if ((type.equals("server") || type.equals("placeholder"))
+                                                    && player.hasPermission("buildmc.admin")) {
+                                                List<Long> claimIds = type.equals("server") ?
+                                                        ClaimManager.serverClaims : ClaimManager.placeholderClaims;
+
+                                                for (long id : claimIds) {
+                                                    String name = ClaimManager.getClaimNameById(id);
+                                                    if (name != null && name.toLowerCase().startsWith(builder.getRemaining().toLowerCase())) {
+                                                        builder.suggest(name);
                                                     }
                                                 }
                                             }
@@ -405,6 +424,21 @@ public class ClaimCommand implements CustomCommand {
                                                         return 0;
                                                     }
                                                     List<Long> ids = ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
+                                                    for (long id : ids) {
+                                                        String name = ClaimManager.getClaimNameById(id);
+                                                        if (name != null && name.equalsIgnoreCase(claimName)) {
+                                                            claimId = id;
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                                case "server", "placeholder" -> {
+                                                    if (!player.hasPermission("buildmc.admin")) {
+                                                        player.sendMessage(Component.translatable("messages.error.no-permission"));
+                                                        return 0;
+                                                    }
+                                                    List<Long> ids = type.equals("server") ?
+                                                            ClaimManager.serverClaims : ClaimManager.placeholderClaims;
                                                     for (long id : ids) {
                                                         String name = ClaimManager.getClaimNameById(id);
                                                         if (name != null && name.equalsIgnoreCase(claimName)) {
@@ -628,11 +662,18 @@ public class ClaimCommand implements CustomCommand {
         cmd.then(
                 Commands.literal("protections")
                         .then(Commands.argument("type", StringArgumentType.word())
-                                .suggests((ctx, builder) -> {
-                                    List<String> types = List.of("player", "team");
-                                    for (String type : types) {
-                                        if (type.toLowerCase().startsWith(builder.getRemaining().toLowerCase())) {
-                                            builder.suggest(type);
+                                .suggests((context, builder) -> {
+                                    List<String> suggestions = new ArrayList<>(List.of("player", "team"));
+
+                                    // Add admin-only options
+                                    if (context.getSource().getSender() instanceof Player player &&
+                                            player.hasPermission("buildmc.admin")) {
+                                        suggestions.add("server");
+                                    }
+
+                                    for (String suggestion : suggestions) {
+                                        if (suggestion.startsWith(builder.getRemaining().toLowerCase())) {
+                                            builder.suggest(suggestion);
                                         }
                                     }
                                     return builder.buildFuture();
@@ -655,6 +696,16 @@ public class ClaimCommand implements CustomCommand {
                                                 Team team = ClaimManager.getPlayerTeam(player);
                                                 if (team != null) {
                                                     List<Long> claimIds = ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
+                                                    for (long id : claimIds) {
+                                                        String name = ClaimManager.getClaimNameById(id);
+                                                        if (name != null && name.toLowerCase().startsWith(builder.getRemaining().toLowerCase())) {
+                                                            builder.suggest(name);
+                                                        }
+                                                    }
+                                                }
+                                            } else if (type.equalsIgnoreCase("server")) {
+                                                if (player.hasPermission("buildmc.admin")) {
+                                                    List<Long> claimIds = ClaimManager.serverClaims;
                                                     for (long id : claimIds) {
                                                         String name = ClaimManager.getClaimNameById(id);
                                                         if (name != null && name.toLowerCase().startsWith(builder.getRemaining().toLowerCase())) {
@@ -750,6 +801,19 @@ public class ClaimCommand implements CustomCommand {
                                                                     }
                                                                     List<Long> ids = ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
                                                                     for (long id : ids) {
+                                                                        if (claimName.equalsIgnoreCase(ClaimManager.getClaimNameById(id))) {
+                                                                            claim = ClaimManager.getClaimByID(id);
+                                                                            claimId = id;
+                                                                            break;
+                                                                        }
+                                                                    }
+                                                                }
+                                                                case "server" -> {
+                                                                    if (!player.hasPermission("buildmc.admin")) {
+                                                                        player.sendMessage(Component.translatable("messages.error.no-permission"));
+                                                                        return 0;
+                                                                    }
+                                                                    for (long id : ClaimManager.serverClaims) {
                                                                         if (claimName.equalsIgnoreCase(ClaimManager.getClaimNameById(id))) {
                                                                             claim = ClaimManager.getClaimByID(id);
                                                                             claimId = id;

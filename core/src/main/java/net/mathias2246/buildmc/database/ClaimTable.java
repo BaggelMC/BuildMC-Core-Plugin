@@ -165,8 +165,8 @@ public class ClaimTable implements DatabaseTable {
         }
 
         try (PreparedStatement ps = conn.prepareStatement("""
-                DELETE FROM claims WHERE id = ?
-            """)) {
+            DELETE FROM claims WHERE id = ?
+        """)) {
             ps.setLong(1, claimId);
             ps.executeUpdate();
         }
@@ -174,9 +174,35 @@ public class ClaimTable implements DatabaseTable {
         // Invalidate cache
         claimCache.invalidate(claimId);
 
-        // Update remaining claims
+        // Remove from ownership mappings
+        switch (claim.getType()) {
+            case PLAYER -> {
+                UUID uuid = UUID.fromString(claim.getOwnerId());
+                var claims = playerOwner.get(uuid);
+                if (claims != null) {
+                    claims.remove(claimId);
+                    if (claims.isEmpty()) {
+                        playerOwner.remove(uuid);
+                    }
+                }
+            }
+            case TEAM -> {
+                var claims = teamOwner.get(claim.getOwnerId());
+                if (claims != null) {
+                    claims.remove(claimId);
+                    if (claims.isEmpty()) {
+                        teamOwner.remove(claim.getOwnerId());
+                    }
+                }
+            }
+            case SERVER -> serverClaims.remove(claimId);
+            case PLACEHOLDER -> placeholderClaims.remove(claimId);
+        }
+
+        // Update remaining claims (cleanup chunks etc.)
         restoreRemainingClaims(claim);
     }
+
 
 
     private void restoreRemainingClaims(Claim claim) {
@@ -447,6 +473,7 @@ public class ClaimTable implements DatabaseTable {
         Map<String, List<Long>> teamMap = new HashMap<>();
         Map<UUID, List<Long>> playerMap = new HashMap<>();
         List<Long> serverList = new ArrayList<>();
+        List<Long> placeholderList = new ArrayList<>();
 
         try (PreparedStatement ps = conn.prepareStatement("""
         SELECT id, type, owner_id FROM claims
@@ -463,7 +490,8 @@ public class ClaimTable implements DatabaseTable {
                             UUID playerUuid = UUID.fromString(ownerId);
                             playerMap.computeIfAbsent(playerUuid, k -> new ArrayList<>()).add(id);
                         }
-                        case SERVER, PLACEHOLDER -> serverList.add(id);
+                        case SERVER -> serverList.add(id);
+                        case PLACEHOLDER -> placeholderList.add(id);
                     }
                 }
             }
@@ -472,7 +500,8 @@ public class ClaimTable implements DatabaseTable {
         // Set the fields
         teamOwner = teamMap;
         ClaimManager.playerOwner = playerMap;
-        ClaimManager.serverOwner = serverList;
+        ClaimManager.serverClaims = serverList;
+        ClaimManager.placeholderClaims = placeholderList;
     }
 
     @Nullable

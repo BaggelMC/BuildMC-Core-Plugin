@@ -234,22 +234,6 @@ public interface ClaimManager {
     void addProtection(long claimId, @NotNull NamespacedKey protection);
 
     /**
-     * Adds a protection to a claim.
-     *
-     * @param claim      the claim
-     * @param protection the protection
-     */
-    void addProtection(@NotNull Claim claim, @NotNull Protection protection);
-
-    /**
-     * Adds a protection to a claim.
-     *
-     * @param claim      the claim
-     * @param protection the protection key
-     */
-    void addProtection(@NotNull Claim claim, @NotNull NamespacedKey protection);
-
-    /**
      * Removes a protection from a claim by ID.
      *
      * @param claimId    the claim ID
@@ -264,22 +248,6 @@ public interface ClaimManager {
      * @param protection the protection key
      */
     void removeProtection(long claimId, @NotNull NamespacedKey protection);
-
-    /**
-     * Removes a protection from a claim.
-     *
-     * @param claim      the claim
-     * @param protection the protection
-     */
-    void removeProtection(@NotNull Claim claim, @NotNull Protection protection);
-
-    /**
-     * Removes a protection from a claim.
-     *
-     * @param claim      the claim
-     * @param protection the protection key
-     */
-    void removeProtection(@NotNull Claim claim, @NotNull NamespacedKey protection);
 
     /**
      * Gets the name of a claim by its ID.

@@ -70,6 +70,9 @@ public class ClaimEditMenu {
     }
 
     private static void openDeleteConfirmationMenu(Player player, Claim claim) {
+
+        if (claim.getId() == null) return;
+
         ChestGui gui = new ChestGui(3,
                 ComponentHolder.of(Message.msg(player, "messages.claims.ui.edit-menu.delete-confirm-menu.title", Map.of("claim", claim.getName()))));
 

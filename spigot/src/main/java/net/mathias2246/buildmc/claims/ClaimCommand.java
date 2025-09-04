@@ -694,13 +694,13 @@ public class ClaimCommand implements CustomCommand {
                                     }
 
                                     if (enable) {
-                                        ClaimManager.addProtection(claim, flag);
+                                        ClaimManager.addProtection(claimId, flag);
                                         audiences.player(player).sendMessage(
                                                 Message.msg(player, "messages.claims.protections.added")
                                                         .replaceText(TextReplacementConfig.builder().matchLiteral("%flag%").replacement(flag.toString()).build())
                                         );
                                     } else {
-                                        ClaimManager.removeProtection(claim, flag);
+                                        ClaimManager.removeProtection(claimId, flag);
                                         audiences.player(player).sendMessage(
                                                 Message.msg(player, "messages.claims.protections.removed")
                                                         .replaceText(TextReplacementConfig.builder().matchLiteral("%flag%").replacement(flag.toString()).build())
