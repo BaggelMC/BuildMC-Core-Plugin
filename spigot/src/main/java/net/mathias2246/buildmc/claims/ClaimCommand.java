@@ -12,6 +12,7 @@ import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.commands.CustomCommand;
 import net.mathias2246.buildmc.ui.claims.ClaimSelectMenu;
+import net.mathias2246.buildmc.util.CommandUtil;
 import net.mathias2246.buildmc.util.LocationUtil;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Bukkit;
@@ -41,10 +42,7 @@ public class ClaimCommand implements CustomCommand {
 
                 .executes(
                         (command) -> {
-                            if (!(command.sender() instanceof Player player)) {
-                                command.sender().sendMessage(Message.noPlayerErrorMsgStr(command.sender()));
-                                return;
-                            }
+                            if (!(CommandUtil.requiresPlayer(command) instanceof Player player)) return;
 
                             ClaimSelectMenu.open(player);
                         })
@@ -53,10 +51,7 @@ public class ClaimCommand implements CustomCommand {
                     new CommandAPICommand("claimtool")
                     .executes(
                             (command) -> {
-                                if (!(command.sender() instanceof Player player)) {
-                                    command.sender().sendMessage(Message.noPlayerErrorMsgStr(command.sender()));
-                                    return;
-                                }
+                                if (!(CommandUtil.requiresPlayer(command) instanceof Player player)) return;
 
                                 // Check if there is space left in the inventory
                                 if (player.getInventory().firstEmpty() == -1) {
@@ -74,10 +69,7 @@ public class ClaimCommand implements CustomCommand {
                         new CommandAPICommand("edit")
                                 .executes(
                                         (command) -> {
-                                            if (!(command.sender() instanceof Player player)) {
-                                                command.sender().sendMessage(Message.noPlayerErrorMsgStr(command.sender()));
-                                                return;
-                                            }
+                                            if (!(CommandUtil.requiresPlayer(command) instanceof Player player)) return;
 
                                             ClaimSelectMenu.open(player);
                                         })
@@ -86,10 +78,7 @@ public class ClaimCommand implements CustomCommand {
                         new CommandAPICommand("who")
                                 .executes(
                                         (command) -> {
-                                            if (!(command.sender() instanceof Player player)) {
-                                                audiences.sender(command.sender()).sendMessage(Component.translatable("messages.error.not-a-player"));
-                                                return 0;
-                                            }
+                                            if (!(CommandUtil.requiresPlayer(command) instanceof Player player)) return 0;
 
                                             Claim claim;
 
@@ -155,10 +144,7 @@ public class ClaimCommand implements CustomCommand {
                                 )
                                 .withArguments(new StringArgument("name"))
                                 .executes((command) -> {
-                                    if (!(command.sender() instanceof Player player)) {
-                                        audiences.sender(command.sender()).sendMessage(Component.translatable("messages.error.not-a-player"));
-                                        return 0;
-                                    }
+                                    if (!(CommandUtil.requiresPlayer(command) instanceof Player player)) return 0;
 
                                     String type = command.args().getByClass("type", String.class);
                                     String name = command.args().getByClass("name", String.class);
@@ -190,7 +176,7 @@ public class ClaimCommand implements CustomCommand {
                                     try {
                                         overlappingClaims = ClaimManager.getClaimsInArea(pos1, pos2);
                                     } catch (SQLException e) {
-                                        CoreMain.plugin.getLogger().severe("Error while checking claim overlaps: " + e.getMessage());
+                                        CoreMain.plugin.getLogger().severe("Error while checking claim overlaps: " + e);
                                         audiences.player(player).sendMessage(Component.translatable("messages.claims.create.error-database"));
                                         return 0;
                                     }
@@ -365,10 +351,7 @@ public class ClaimCommand implements CustomCommand {
                                                 })
                                 )
                                 .executes((command) -> {
-                                    if (!(command.sender() instanceof Player player)) {
-                                        audiences.sender(command.sender()).sendMessage(Component.translatable("messages.error.not-a-player"));
-                                        return 0;
-                                    }
+                                    if (!(CommandUtil.requiresPlayer(command) instanceof Player player)) return 0;
 
                                     String type = command.args().getByClass("type", String.class);
                                     String claimName = command.args().getByClass("claim", String.class);
@@ -431,10 +414,12 @@ public class ClaimCommand implements CustomCommand {
                                     }
 
                                     boolean success = ClaimManager.removeClaimById(claimId);
-                                    audiences.player(player).sendMessage(Component.translatable(
-                                            success ? "messages.claims.remove.success" : "messages.claims.remove.failed"
-                                    ));
-                                    return success ? 1 : 0;
+                                    if (success) {
+                                        audiences.player(player).sendMessage(Component.translatable("messages.claims.remove.success"));
+                                        return 1;
+                                    }
+                                    audiences.player(player).sendMessage(Component.translatable("messages.claims.remove.failed"));
+                                    return 0;
                                 })
                 )
 
@@ -530,10 +515,7 @@ public class ClaimCommand implements CustomCommand {
 
                                 )
                                 .executes((command) -> {
-                                    if (!(command.sender() instanceof Player player)) {
-                                        audiences.sender(command.sender()).sendMessage(Component.translatable("messages.error.not-a-player"));
-                                        return 0;
-                                    }
+                                    if (!(CommandUtil.requiresPlayer(command) instanceof Player player)) return 0;
 
                                     String action = command.args().getByClass("action", String.class);
                                     String type = command.args().getByClass("type", String.class);
@@ -670,10 +652,7 @@ public class ClaimCommand implements CustomCommand {
                                                 .replaceSuggestions((info, builder) -> builder.suggest("true").suggest("false").buildFuture())
                                 )
                                 .executes((command) -> {
-                                    if (!(command.sender() instanceof Player player)) {
-                                        audiences.sender(command.sender()).sendMessage(Component.translatable("messages.error.not-a-player"));
-                                        return 0;
-                                    }
+                                    if (!(CommandUtil.requiresPlayer(command) instanceof Player player)) return 0;
 
                                     String type = command.args().getByClass("type", String.class);
                                     String claimName = command.args().getByClass("claim", String.class);

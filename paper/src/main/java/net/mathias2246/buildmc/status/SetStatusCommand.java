@@ -4,8 +4,10 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
+import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.commands.CustomCommand;
 import net.mathias2246.buildmc.platform.SoundManagerPaperImpl;
+import net.mathias2246.buildmc.util.CommandUtil;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,14 +31,16 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
                 }
         );
 
+        cmd.requires(
+                (command) -> Main.config.getBoolean("status.enabled", true)
+        );
+
 
         var removeSub = Commands.literal("remove");
         removeSub.executes(
                 (command) -> {
-                    if (!(command.getSource().getSender() instanceof Player player)) {
-                        command.getSource().getSender().sendMessage(Component.translatable("messages.status.only-players"));
-                        return 0;
-                    }
+                    if (!(CommandUtil.requiresPlayer(command) instanceof Player player)) return 0;
+
                     PlayerStatus.removePlayerStatus(player);
                     player.sendMessage(Component.translatable( "messages.status.successfully-removed"));
                     soundManager.playSound(player, SoundManagerPaperImpl.success);
@@ -58,10 +62,8 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
         var setSubArg = Commands.argument("status_id", string())
                 .executes(
                         (command) -> {
-                            if (!(command.getSource().getSender() instanceof Player player)) {
-                                command.getSource().getSender().sendMessage(Component.translatable("messages.status.only-players"));
-                                return 0;
-                            }
+                            if (!(CommandUtil.requiresPlayer(command) instanceof Player player)) return 0;
+
                             PlayerStatus.setPlayerStatus(player, command.getArgument("status_id", String.class), false);
 
                             return 1;

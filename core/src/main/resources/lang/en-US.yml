@@ -238,7 +238,6 @@ messages:
           success: "<green>Player removed from whitelist!</green>"
 
   status:
-    only-players: "<red>Only players can have a status!</red>"
     successfully-removed: "<green>Successfully removed your status!</green>"
     join-doesn't-exist: "<red>Your status has been removed.</red>"
     not-found: "<red>Seems like this status doesn't exist.</red>"
