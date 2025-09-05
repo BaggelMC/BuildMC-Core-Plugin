@@ -24,7 +24,6 @@ public class ClaimEditMenu {
     public static void open(Player player, Claim claim) {
 
         boolean isPlaceholderClaim = claim.getType() == ClaimType.PLACEHOLDER;
-        boolean isServerClaim = claim.getType() == ClaimType.SERVER;
 
         ChestGui gui = new ChestGui(3,
                 ComponentHolder.of(Message.msg(player, "messages.claims.ui.edit-menu.title",
@@ -57,7 +56,7 @@ public class ClaimEditMenu {
 
 
         // Whitelist button
-        if (!isPlaceholderClaim || !isServerClaim) {
+        if (!isPlaceholderClaim) {
             pane.addItem(makeButton(Material.PLAYER_HEAD, Message.msg(player, "messages.claims.ui.edit-menu.whitelist"),
                     e -> {
                         e.setCancelled(true);

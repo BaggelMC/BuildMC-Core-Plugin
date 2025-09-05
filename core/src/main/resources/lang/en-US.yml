@@ -227,6 +227,16 @@ messages:
 
         toggle-hint: "<dark_gray>Click below to toggle</dark_gray>"
 
+      whitelist-menu:
+        title: "<gold>Whitelist for '%claim%'</gold>"
+
+        add: "<green>Add player</green>"
+        remove: "<red>Remove player</red>"
+
+        delete-confirm-menu:
+          title: "Remove %player%?"
+          success: "<green>Player removed from whitelist!</green>"
+
   status:
     only-players: "<red>Only players can have a status!</red>"
     successfully-removed: "<green>Successfully removed your status!</green>"
@@ -390,13 +400,3 @@ claims:
     entity-modifications:
       name: "<green>Entity Modifications</green>"
       lore: "<gray>Prevents endermen, withers and ravagers from destroying blocks.</gray>"
-
-  whitelist-menu:
-    title: "<gold>Whitelist for '%claim%'</gold>"
-
-    add: "<green>Add player</green>"
-    remove: "<red>Remove player</red>"
-
-  delete-confirm-menu:
-    title: "Remove %player%?"
-    success: "<green>Player removed from whitelist!</green>"
