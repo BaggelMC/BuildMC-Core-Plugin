@@ -424,7 +424,6 @@ messages:
 
 
   status:
-    only-players: "<red>Nur Spieler können einen Status haben.</red>"
     successfully-removed: "<green>Status erfolgreich entfernt.</green>"
     join-doesn't-exist: "<red>Dein Status wurde entfernt.</red>"
     not-found: "<red>Dieser Status existiert nicht.</red>"

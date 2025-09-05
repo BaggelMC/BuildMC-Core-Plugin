@@ -53,7 +53,7 @@ public abstract class Protection implements Keyed, Displayable, Listener {
         AtomicBoolean is = new AtomicBoolean(false);
 
         o.ifPresent(
-                (v) -> is.set(true)
+                (v) -> is.set(v.isHidden)
         );
 
         return is.get();

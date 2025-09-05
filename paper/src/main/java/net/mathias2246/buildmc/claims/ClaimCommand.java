@@ -14,6 +14,7 @@ import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.commands.CustomCommand;
 import net.mathias2246.buildmc.ui.claims.ClaimSelectMenu;
+import net.mathias2246.buildmc.util.CommandUtil;
 import net.mathias2246.buildmc.util.DeferredRegistry;
 import net.mathias2246.buildmc.util.LocationUtil;
 import net.mathias2246.buildmc.util.Message;
@@ -28,6 +29,8 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.SQLException;
 import java.util.*;
 
+import static net.mathias2246.buildmc.Main.config;
+
 public class ClaimCommand implements CustomCommand {
 
     private static final @NotNull ClaimToolItemMetaModifier claimToolNameAndTooltip = new ClaimToolItemMetaModifier();
@@ -38,15 +41,22 @@ public class ClaimCommand implements CustomCommand {
 
         DeferredRegistry<Protection> protectionsReg = CoreMain.protectionsRegistry;
 
-        claimTool = (ClaimSelectionTool) Main.customItems.get(Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool")).key());
+
+
 
         var cmd = Commands.literal("claim");
 
+        cmd.requires(
+                (command) -> {
+                    boolean t = config.getBoolean("claims.enabled", true);
+                    if (!t) claimTool = null;
+                    else claimTool = (ClaimSelectionTool) Main.customItems.get(Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool")).key());
+                    return t;
+                }
+       );
+
         cmd.executes((command) -> {
-            if (!(command.getSource().getExecutor() instanceof Player player)) {
-                command.getSource().getSender().sendMessage(Component.translatable("messages.error.not-a-player"));
-                return 0;
-            }
+            if (!(CommandUtil.requiresPlayer(command) instanceof Player player)) return 0;
 
             ClaimSelectMenu.open(player);
             return 1;
@@ -56,10 +66,7 @@ public class ClaimCommand implements CustomCommand {
                 Commands.literal("claimtool")
                 .executes(
                         (command) -> {
-                            if (!(command.getSource().getExecutor() instanceof Player player)) {
-                                command.getSource().getSender().sendMessage(Component.translatable("messages.error.not-a-player"));
-                                return 0;
-                            }
+                            if (!(CommandUtil.requiresPlayer(command) instanceof Player player)) return 0;
 
                             // Check if there is space left in the inventory
                             if (player.getInventory().firstEmpty() == -1) {
@@ -76,10 +83,7 @@ public class ClaimCommand implements CustomCommand {
                 Commands.literal("edit")
                         .executes(
                                 (command) -> {
-                                    if (!(command.getSource().getExecutor() instanceof Player player)) {
-                                        command.getSource().getSender().sendMessage(Component.translatable("messages.error.not-a-player"));
-                                        return 0;
-                                    }
+                                    if (!(CommandUtil.requiresPlayer(command) instanceof Player player)) return 0;
 
                                     ClaimSelectMenu.open(player);
                                     return 1;
@@ -89,10 +93,7 @@ public class ClaimCommand implements CustomCommand {
                 Commands.literal("who")
                         .executes(
                                 (command) -> {
-                                    if (!(command.getSource().getSender() instanceof Player player)) {
-                                        command.getSource().getSender().sendMessage(Component.translatable("messages.error.not-a-player"));
-                                        return 0;
-                                    }
+                                    if (!(CommandUtil.requiresPlayer(command) instanceof Player player)) return 0;
 
                                     Claim claim;
 
@@ -164,10 +165,7 @@ public class ClaimCommand implements CustomCommand {
                                         .then(
                                                 Commands.argument("name", StringArgumentType.word()) // name of claim
                                                         .executes(command -> {
-                                                            if (!(command.getSource().getSender() instanceof Player player)) {
-                                                                command.getSource().getSender().sendMessage(Component.translatable("messages.error.not-a-player"));
-                                                                return 0;
-                                                            }
+                                                            if (!(CommandUtil.requiresPlayer(command) instanceof Player player)) return 0;
 
                                                             String type = command.getArgument("type", String.class);
                                                             String name = command.getArgument("name", String.class);
@@ -394,15 +392,12 @@ public class ClaimCommand implements CustomCommand {
 
                                             return builder.buildFuture();
                                         })
-                                        .executes(ctx -> {
-                                            var sender = ctx.getSource().getSender();
-                                            if (!(sender instanceof Player player)) {
-                                                sender.sendMessage(Component.translatable("messages.error.not-a-player"));
-                                                return 0;
-                                            }
+                                        .executes(command -> {
+                                            var sender = command.getSource().getSender();
+                                            if (!(CommandUtil.requiresPlayer(command) instanceof Player player)) return 0;
 
-                                            String type = StringArgumentType.getString(ctx, "type").toLowerCase();
-                                            String claimName = StringArgumentType.getString(ctx, "claim");
+                                            String type = StringArgumentType.getString(command, "type").toLowerCase();
+                                            String claimName = StringArgumentType.getString(command, "claim");
 
                                             long claimId = -1;
 
@@ -574,17 +569,14 @@ public class ClaimCommand implements CustomCommand {
 
                                                             return builder.buildFuture();
                                                         })
-                                                        .executes(ctx -> {
-                                                            var sender = ctx.getSource().getSender();
-                                                            if (!(sender instanceof Player player)) {
-                                                                sender.sendMessage(Component.translatable("messages.error.not-a-player"));
-                                                                return 0;
-                                                            }
+                                                        .executes(command -> {
+                                                            var sender = command.getSource().getSender();
+                                                            if (!(CommandUtil.requiresPlayer(command) instanceof Player player)) return 0;
 
-                                                            String action = StringArgumentType.getString(ctx, "action").toLowerCase();
-                                                            String type = StringArgumentType.getString(ctx, "type").toLowerCase();
-                                                            String claimName = StringArgumentType.getString(ctx, "claim");
-                                                            String targetPlayerName = StringArgumentType.getString(ctx, "player");
+                                                            String action = StringArgumentType.getString(command, "action").toLowerCase();
+                                                            String type = StringArgumentType.getString(command, "type").toLowerCase();
+                                                            String claimName = StringArgumentType.getString(command, "claim");
+                                                            String targetPlayerName = StringArgumentType.getString(command, "player");
 
                                                             long claimId = -1;
                                                             Claim claim = null;
@@ -754,17 +746,14 @@ public class ClaimCommand implements CustomCommand {
                                                             }
                                                             return builder.buildFuture();
                                                         })
-                                                        .executes(ctx -> {
-                                                            var sender = ctx.getSource().getSender();
-                                                            if (!(sender instanceof Player player)) {
-                                                                sender.sendMessage(Component.translatable("messages.error.not-a-player"));
-                                                                return 0;
-                                                            }
+                                                        .executes(command -> {
+                                                            var sender = command.getSource().getSender();
+                                                            if (!(CommandUtil.requiresPlayer(command) instanceof Player player)) return 0;
 
-                                                            String type = StringArgumentType.getString(ctx, "type").toLowerCase();
-                                                            String claimName = StringArgumentType.getString(ctx, "claim");
-                                                            String flagName = StringArgumentType.getString(ctx, "key").toLowerCase();
-                                                            String valueStr = StringArgumentType.getString(ctx, "value").toLowerCase();
+                                                            String type = StringArgumentType.getString(command, "type").toLowerCase();
+                                                            String claimName = StringArgumentType.getString(command, "claim");
+                                                            String flagName = StringArgumentType.getString(command, "key").toLowerCase();
+                                                            String valueStr = StringArgumentType.getString(command, "value").toLowerCase();
 
                                                             boolean value;
                                                             if (valueStr.equals("true")) {

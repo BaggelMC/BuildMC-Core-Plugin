@@ -1,13 +1,9 @@
 package net.mathias2246.buildmc;
 
-import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
-import io.papermc.paper.plugin.lifecycle.event.LifecycleEventOwner;
-import io.papermc.paper.plugin.lifecycle.event.handler.configuration.PrioritizedLifecycleEventHandlerConfiguration;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.api.claims.ClaimManager;
 import net.mathias2246.buildmc.api.endEvent.EndManager;
-import net.mathias2246.buildmc.api.event.BuildMcRegistryEvent;
 import net.mathias2246.buildmc.api.item.CustomItemListener;
 import net.mathias2246.buildmc.api.item.CustomItemRegistry;
 import net.mathias2246.buildmc.api.spawnEyltra.ElytraManager;
@@ -96,6 +92,14 @@ public final class Main extends PluginMain {
         config = this.getConfig();
 
         CoreMain.initialize(this);
+
+        this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
+            commands.registrar().register(new BuildMcCommand().getCommand());
+
+            commands.registrar().register(new SetStatusCommand(statusConfig).getCommand());
+
+            commands.registrar().register(new ClaimCommand().getCommand());
+        });
 
         try {
             EndListener.loadFromConfig();
@@ -253,15 +257,6 @@ public final class Main extends PluginMain {
             statusConfig = new StatusConfig(this);
             getServer().getPluginManager().registerEvents(new PlayerStatus(), this);
         }
-
-        this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
-            commands.registrar().register(new BuildMcCommand().getCommand());
-
-            if (config.getBoolean("status.enabled")) commands.registrar().register(new SetStatusCommand(statusConfig).getCommand());
-
-            if (config.getBoolean("claims.enabled")) commands.registrar().register(new ClaimCommand().getCommand());
-        });
-
 
         if (config.getBoolean("disable-commands")) {
             if (config.isList("disabled-commands")) {
