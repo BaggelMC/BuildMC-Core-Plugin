@@ -36,7 +36,7 @@ public class PlayerHeadDropEvent extends Event implements Cancellable {
     private final Player victim;
     private final Player killer;
     private ItemStack playerHead;
-    private PlayerDeathEvent event;
+    private final PlayerDeathEvent event;
 
     /**
      * Constructs a new {@code PlayerHeadDropEvent}.

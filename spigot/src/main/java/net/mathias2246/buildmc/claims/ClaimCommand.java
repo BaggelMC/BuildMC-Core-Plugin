@@ -423,7 +423,16 @@ public class ClaimCommand implements CustomCommand {
                         new CommandAPICommand("whitelist")
                                 .withArguments(
                                         new StringArgument("action").replaceSuggestions((info, builder) -> builder.suggest("add").suggest("remove").buildFuture()),
-                                        new StringArgument("type").replaceSuggestions((info, builder) -> builder.suggest("player").suggest("team").buildFuture()),
+
+                                        new StringArgument("type")
+                                                .replaceSuggestions((info, builder) -> {
+                                                    builder.suggest("player").suggest("team");
+                                                    if (info.sender() instanceof Player player && player.hasPermission("buildmc.admin")) {
+                                                        builder.suggest("server").suggest("placeholder");
+                                                    }
+                                                    return builder.buildFuture();
+                                                }),
+
                                         new StringArgument("claim")
                                                 .replaceSuggestions((info, builder) -> {
                                                     if (!(info.sender() instanceof Player player)) {
@@ -439,6 +448,8 @@ public class ClaimCommand implements CustomCommand {
                                                             if (team == null) yield List.of();
                                                             yield ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
                                                         }
+                                                        case "server" -> player.hasPermission("buildmc.admin") ? ClaimManager.serverClaims : List.of();
+                                                        case "placeholder" -> player.hasPermission("buildmc.admin") ? ClaimManager.placeholderClaims : List.of();
                                                         default -> List.of();
                                                     };
 
@@ -472,6 +483,8 @@ public class ClaimCommand implements CustomCommand {
                                                             if (team == null) yield List.of();
                                                             yield ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
                                                         }
+                                                        case "server" -> player.hasPermission("buildmc.admin") ? ClaimManager.serverClaims : List.of();
+                                                        case "placeholder" -> player.hasPermission("buildmc.admin") ? ClaimManager.placeholderClaims : List.of();
                                                         default -> List.of();
                                                     };
 
@@ -525,6 +538,8 @@ public class ClaimCommand implements CustomCommand {
                                             }
                                             yield ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
                                         }
+                                        case "server" -> player.hasPermission("buildmc.admin") ? ClaimManager.serverClaims : List.of();
+                                        case "placeholder" -> player.hasPermission("buildmc.admin") ? ClaimManager.placeholderClaims : List.of();
                                         default -> {
                                             audiences.player(player).sendMessage(Component.translatable("messages.claims.create.invalid-type"));
                                             yield List.of();
@@ -584,7 +599,14 @@ public class ClaimCommand implements CustomCommand {
                         new CommandAPICommand("protections")
                                 .withArguments(
                                         new StringArgument("type")
-                                                .replaceSuggestions((info, builder) -> builder.suggest("player").suggest("team").buildFuture()),
+                                                .replaceSuggestions((info, builder) -> {
+                                                    builder.suggest("player").suggest("team");
+                                                    if (info.sender() instanceof Player player && player.hasPermission("buildmc.admin")) {
+                                                        builder.suggest("server");
+                                                        builder.suggest("placeholder"); // Add placeholder type if needed
+                                                    }
+                                                    return builder.buildFuture();
+                                                }),
                                         new StringArgument("claim")
                                                 .replaceSuggestions((info, builder) -> {
                                                     if (!(info.sender() instanceof Player player)) {
@@ -592,19 +614,27 @@ public class ClaimCommand implements CustomCommand {
                                                     }
 
                                                     String type = info.previousArgs().getOrDefault("type", "").toString().toLowerCase();
-                                                    List<Long> claimIds = switch (type) {
-                                                        case "player" -> ClaimManager.playerOwner.getOrDefault(player.getUniqueId(), List.of());
+                                                    List<Long> claimIds;
+
+                                                    switch (type) {
+                                                        case "player" -> claimIds = ClaimManager.playerOwner.getOrDefault(player.getUniqueId(), List.of());
                                                         case "team" -> {
                                                             Team team = ClaimManager.getPlayerTeam(player);
-                                                            if (team == null) yield List.of();
-                                                            yield ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
+                                                            if (team == null) return builder.buildFuture();
+                                                            claimIds = ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
                                                         }
-                                                        default -> List.of();
-                                                    };
+                                                        case "server" -> {
+                                                            if (!player.hasPermission("buildmc.admin")) return builder.buildFuture();
+                                                            claimIds = ClaimManager.serverClaims;
+                                                        }
+                                                        default -> claimIds = List.of();
+                                                    }
 
                                                     for (Long claimId : claimIds) {
                                                         String name = ClaimManager.getClaimNameById(claimId);
-                                                        if (name != null) builder.suggest(name);
+                                                        if (name != null && name.toLowerCase().startsWith(builder.getRemaining().toLowerCase())) {
+                                                            builder.suggest(name);
+                                                        }
                                                     }
 
                                                     return builder.buildFuture();
@@ -634,18 +664,22 @@ public class ClaimCommand implements CustomCommand {
                                     NamespacedKey flag = command.args().getByClass("flag", NamespacedKey.class);
                                     String value = command.args().getByClass("value", String.class);
 
+                                    // Null checks
                                     if (type == null || claimName == null || flag == null || value == null) {
                                         audiences.player(player).sendMessage(Component.translatable("messages.error.invalid-args"));
                                         return 0;
                                     }
+
+                                    type = type.toLowerCase();
+                                    value = value.toLowerCase();
 
                                     if (Protection.isHiddenProtection(CoreMain.protectionsRegistry, flag)) {
                                         audiences.player(player).sendMessage(Component.translatable("messages.claims.protections.invalid-flag"));
                                         return 0;
                                     }
 
-                                    // --- Check type ---
-                                    List<Long> claimIds = switch (type.toLowerCase()) {
+                                    // Determine claim IDs based on type
+                                    List<Long> claimIds = switch (type) {
                                         case "player" -> ClaimManager.playerOwner.getOrDefault(player.getUniqueId(), List.of());
                                         case "team" -> {
                                             Team team = ClaimManager.getPlayerTeam(player);
@@ -655,18 +689,27 @@ public class ClaimCommand implements CustomCommand {
                                             }
                                             yield ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
                                         }
+                                        case "server" -> {
+                                            if (!player.hasPermission("buildmc.admin")) {
+                                                audiences.player(player).sendMessage(Component.translatable("messages.error.no-permission"));
+                                                yield List.of();
+                                            }
+                                            yield ClaimManager.serverClaims;
+                                        }
                                         default -> {
                                             audiences.player(player).sendMessage(Component.translatable("messages.claims.protections.invalid-type"));
                                             yield List.of();
                                         }
                                     };
 
-                                    if (claimIds.isEmpty()) {
-                                        return 0;
-                                    }
+                                    if (claimIds.isEmpty()) return 0;
 
+                                    // Find claim ID by name (null-safe)
                                     Long claimId = claimIds.stream()
-                                            .filter(id -> claimName.equalsIgnoreCase(ClaimManager.getClaimNameById(id)))
+                                            .filter(id -> {
+                                                String name = ClaimManager.getClaimNameById(id);
+                                                return name != null && name.equalsIgnoreCase(claimName);
+                                            })
                                             .findFirst()
                                             .orElse(null);
 
@@ -675,12 +718,11 @@ public class ClaimCommand implements CustomCommand {
                                         return 0;
                                     }
 
-
-                                    // --- Check value ---
+                                    // Parse value safely
                                     boolean enable;
-                                    if (value.equalsIgnoreCase("true")) {
+                                    if (value.equals("true")) {
                                         enable = true;
-                                    } else if (value.equalsIgnoreCase("false")) {
+                                    } else if (value.equals("false")) {
                                         enable = false;
                                     } else {
                                         audiences.player(player).sendMessage(Component.translatable("messages.claims.protections.invalid-value"));
