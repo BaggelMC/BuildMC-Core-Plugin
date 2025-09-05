@@ -210,6 +210,7 @@ messages:
         protections: "<green>Schutz</green>"
         no-protections-available: "<red>Dieser Claim Typ ermöglicht keinen Schutz.</red>"
         whitelist: "<aqua>Whitelist</aqua>"
+        no-whitelist-available: "<red>Dieser Claim Typ ermöglicht keine Whitelist.</red>"
         delete: "<red>Claim Löschen</red>"
 
         delete-confirm-menu:

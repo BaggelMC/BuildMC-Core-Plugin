@@ -427,9 +427,6 @@ public class ClaimCommand implements CustomCommand {
                                         new StringArgument("type")
                                                 .replaceSuggestions((info, builder) -> {
                                                     builder.suggest("player").suggest("team");
-                                                    if (info.sender() instanceof Player player && player.hasPermission("buildmc.admin")) {
-                                                        builder.suggest("server").suggest("placeholder");
-                                                    }
                                                     return builder.buildFuture();
                                                 }),
 
@@ -448,8 +445,6 @@ public class ClaimCommand implements CustomCommand {
                                                             if (team == null) yield List.of();
                                                             yield ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
                                                         }
-                                                        case "server" -> player.hasPermission("buildmc.admin") ? ClaimManager.serverClaims : List.of();
-                                                        case "placeholder" -> player.hasPermission("buildmc.admin") ? ClaimManager.placeholderClaims : List.of();
                                                         default -> List.of();
                                                     };
 
@@ -483,8 +478,6 @@ public class ClaimCommand implements CustomCommand {
                                                             if (team == null) yield List.of();
                                                             yield ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
                                                         }
-                                                        case "server" -> player.hasPermission("buildmc.admin") ? ClaimManager.serverClaims : List.of();
-                                                        case "placeholder" -> player.hasPermission("buildmc.admin") ? ClaimManager.placeholderClaims : List.of();
                                                         default -> List.of();
                                                     };
 
@@ -538,8 +531,6 @@ public class ClaimCommand implements CustomCommand {
                                             }
                                             yield ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
                                         }
-                                        case "server" -> player.hasPermission("buildmc.admin") ? ClaimManager.serverClaims : List.of();
-                                        case "placeholder" -> player.hasPermission("buildmc.admin") ? ClaimManager.placeholderClaims : List.of();
                                         default -> {
                                             audiences.player(player).sendMessage(Component.translatable("messages.claims.create.invalid-type"));
                                             yield List.of();
