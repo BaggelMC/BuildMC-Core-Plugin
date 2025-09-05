@@ -197,6 +197,10 @@ messages:
 
         player-type: "<gray>Type: Player Claim</gray>"
         team-type: "<gray>Type: Team Claim</gray>"
+        server-type: "<gray>Type: Server Claim</gray>"
+        placeholder-type: "<gray>Type: Placeholder Claim</gray>"
+        unknown-type: "<gray>Type: Unknown</gray>"
+
         id: "<dark_gray>ID: %id%</dark_gray>"
         empty: "<red>You have not claimed anything yet.</red>"
 
@@ -204,6 +208,7 @@ messages:
         title: "<gold>Edit Claim: '%claim%'</gold>"
 
         protections: "<green>Protections</green>"
+        no-protections-available: "<red>This claim type does not allow for protections.</red>"
         whitelist: "<aqua>Whitelist</aqua>"
         delete: "<red>Delete Claim</red>"
 

@@ -46,6 +46,18 @@ public class ClaimSelectMenu {
             if (c != null) claims.add(c);
         }
 
+        if (player.hasPermission("buildmc.admin")) {
+            for (long id : ClaimManager.serverClaims) {
+                Claim c = ClaimManager.getClaimByID(id);
+                if (c != null) claims.add(c);
+            }
+
+            for (long id : ClaimManager.placeholderClaims) {
+                Claim c = ClaimManager.getClaimByID(id);
+                if (c != null) claims.add(c);
+            }
+        }
+
         ChestGui gui = new ChestGui(6, ComponentHolder.of(Component.translatable("messages.claims.ui.select-menu.title")));
 
         StaticPane background = new StaticPane(0, 0, 9, 5);
@@ -127,9 +139,16 @@ public class ClaimSelectMenu {
             meta.setDisplayName(LEGACY.serialize(Component.text(claim.getName(), NamedTextColor.GREEN)));
 
             List<String> lore = new ArrayList<>();
-            lore.add(LEGACY.serialize(playerClaimIds.contains(claim.getId())
-                    ? Message.msg(player, "messages.claims.ui.select-menu.player-type")
-                    : Message.msg(player, "messages.claims.ui.select-menu.team-type")));
+            String typeMessage;
+            switch (claim.getType()) {
+                case PLAYER -> typeMessage = LEGACY.serialize(Message.msg(player, "messages.claims.ui.select-menu.player-type"));
+                case TEAM -> typeMessage = LEGACY.serialize(Message.msg(player, "messages.claims.ui.select-menu.team-type"));
+                case SERVER -> typeMessage = LEGACY.serialize(Message.msg(player, "messages.claims.ui.select-menu.server-type"));
+                case PLACEHOLDER -> typeMessage = LEGACY.serialize(Message.msg(player, "messages.claims.ui.select-menu.placeholder-type"));
+                default -> typeMessage = LEGACY.serialize(Message.msg(player, "messages.claims.ui.select-menu.unknown-type"));
+            }
+
+            lore.add(typeMessage);
 
             lore.add(LEGACY.serialize(Message.msg(player,
                     "messages.claims.ui.select-menu.id",

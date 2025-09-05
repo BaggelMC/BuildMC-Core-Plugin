@@ -197,6 +197,10 @@ messages:
 
         player-type: "<gray>Typ: Spieler Claim</gray>"
         team-type: "<gray>Typ: Team Claim</gray>"
+        server-type: "<gray>Typ: Server Claim</gray>"
+        placeholder-type: "<gray>Typ: Platzhalter Claim</gray>"
+        unknown-type: "<gray>Typ: Unbekannt</gray>"
+
         id: "<dark_gray>ID: %id%</dark_gray>"
         empty: "<red>Du hast noch keine Claims.</red>"
 
@@ -204,6 +208,7 @@ messages:
         title: "<gold>Claim bearbeiten: '%claim%'</gold>"
 
         protections: "<green>Schutz</green>"
+        no-protections-available: "<red>Dieser Claim Typ ermöglicht keinen Schutz.</red>"
         whitelist: "<aqua>Whitelist</aqua>"
         delete: "<red>Claim Löschen</red>"
 

@@ -8,6 +8,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
+import net.mathias2246.buildmc.api.claims.ClaimType;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Material;
@@ -21,6 +22,9 @@ import java.util.function.Consumer;
 public class ClaimEditMenu {
 
     public static void open(Player player, Claim claim) {
+
+        boolean isPlaceholderClaim = claim.getType() == ClaimType.PLACEHOLDER;
+
         ChestGui gui = new ChestGui(3,
                 ComponentHolder.of(Message.msg(player, "messages.claims.ui.edit-menu.title",
                         Map.of("claim", claim.getName()))));
@@ -37,11 +41,19 @@ public class ClaimEditMenu {
         }
 
         // Protections button
-        pane.addItem(makeButton(Material.SHIELD, Message.msg(player, "messages.claims.ui.edit-menu.protections"),
-                e -> {
-                    e.setCancelled(true);
-                    ProtectionsMenu.open(player, claim);
-                }), 2, 1);
+        if (!isPlaceholderClaim) {
+            pane.addItem(makeButton(Material.SHIELD, Message.msg(player, "messages.claims.ui.edit-menu.protections"),
+                    e -> {
+                        e.setCancelled(true);
+                        ProtectionsMenu.open(player, claim);
+                    }), 2, 1);
+        } else {
+            pane.addItem(makeButton(Material.RED_STAINED_GLASS_PANE, Message.msg(player, "messages.claims.ui.edit-menu.no-protections-available"),
+                    e -> {
+                        e.setCancelled(true);
+                    }), 2, 1);
+        }
+
 
         // Whitelist button
         pane.addItem(makeButton(Material.PLAYER_HEAD, Message.msg(player, "messages.claims.ui.edit-menu.whitelist"),

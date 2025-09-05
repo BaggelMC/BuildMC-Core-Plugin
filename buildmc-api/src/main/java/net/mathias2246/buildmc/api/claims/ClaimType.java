@@ -23,18 +23,32 @@ public enum ClaimType {
      * A claim owned by a team.
      * <p>
      * The {@code ownerId} of the claim should correspond to a team name.
-     * Teams are the vanilla scoreboard team system.
+     * Teams are represented using the vanilla scoreboard team system.
      * </p>
      */
     TEAM,
 
     /**
-     * Unused
+     * A claim owned by the server.
+     * <p>
+     * The {@code ownerId} is always set to "server". Functionally, this type
+     * behaves like a normal claim: it has protections, and users with
+     * {@code buildmc.admin} permission can modify it.
+     * There is no limit to the claim amount.
+     * This type is used to designate areas as being under server control.
+     * </p>
      */
     SERVER,
 
     /**
-     * Unused
+     * A placeholder claim that does not provide any protections.
+     * <p>
+     * The {@code ownerId} is also set to "server". Unlike normal claims,
+     * this type does not restrict player actions. Its sole purpose is to
+     * reserve an area so that it cannot be claimed by players. This is useful
+     * for preventing conflicts in specific regions without modifying their
+     * existing properties or gameplay.
+     * </p>
      */
     PLACEHOLDER
 }
