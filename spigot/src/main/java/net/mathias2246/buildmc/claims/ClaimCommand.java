@@ -329,6 +329,10 @@ public class ClaimCommand implements CustomCommand {
                                         new StringArgument("type")
                                                 .replaceSuggestions((info, builder) -> {
                                                     builder.suggest("player").suggest("team");
+
+                                                    if (info.sender() instanceof Player player && player.hasPermission("buildmc.admin")) {
+                                                        builder.suggest("server").suggest("placeholder");
+                                                    }
                                                     return builder.buildFuture();
                                                 }),
                                         new StringArgument("claim")
@@ -345,12 +349,16 @@ public class ClaimCommand implements CustomCommand {
                                                             if (team == null) yield List.of();
                                                             yield ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
                                                         }
+                                                        case "server" -> player.hasPermission("buildmc.admin") ? ClaimManager.serverClaims : List.of();
+                                                        case "placeholder" -> player.hasPermission("buildmc.admin") ? ClaimManager.placeholderClaims : List.of();
                                                         default -> List.of();
                                                     };
 
                                                     for (Long id : claimIds) {
                                                         String name = ClaimManager.getClaimNameById(id);
-                                                        if (name != null) builder.suggest(name);
+                                                        if (name != null && name.toLowerCase().startsWith(builder.getRemaining().toLowerCase())) {
+                                                            builder.suggest(name);
+                                                        }
                                                     }
 
                                                     return builder.buildFuture();
@@ -397,6 +405,20 @@ public class ClaimCommand implements CustomCommand {
                                                 }
                                             }
                                         }
+                                        case "server", "placeholder" -> {
+                                            if (!player.hasPermission("buildmc.admin")) {
+                                                audiences.player(player).sendMessage(Component.translatable("messages.error.no-permission"));
+                                                return 0;
+                                            }
+                                            List<Long> ids = type.equals("server") ? ClaimManager.serverClaims : ClaimManager.placeholderClaims;
+                                            for (long id : ids) {
+                                                String name = ClaimManager.getClaimNameById(id);
+                                                if (name != null && name.equalsIgnoreCase(claimName)) {
+                                                    claimId = id;
+                                                    break;
+                                                }
+                                            }
+                                        }
                                         default -> {
                                             audiences.player(player).sendMessage(Component.translatable("messages.claims.remove.invalid-type"));
                                             return 0;
@@ -409,13 +431,10 @@ public class ClaimCommand implements CustomCommand {
                                     }
 
                                     boolean success = ClaimManager.removeClaimById(claimId);
-                                    if (success) {
-                                        audiences.player(player).sendMessage(Component.translatable("messages.claims.remove.success"));
-                                        return 1;
-                                    } else {
-                                        audiences.player(player).sendMessage(Component.translatable("messages.claims.remove.failed"));
-                                        return 0;
-                                    }
+                                    audiences.player(player).sendMessage(Component.translatable(
+                                            success ? "messages.claims.remove.success" : "messages.claims.remove.failed"
+                                    ));
+                                    return success ? 1 : 0;
                                 })
                 )
 
@@ -495,7 +514,7 @@ public class ClaimCommand implements CustomCommand {
                                                                 Team team = ClaimManager.getPlayerTeam(player);
 
                                                                 Bukkit.getOnlinePlayers().stream()
-                                                                        .filter(p -> !p.getUniqueId().equals(player.getUniqueId()))
+                                                                        .filter(p -> claim.getType().equals(ClaimType.SERVER) || !p.getUniqueId().equals(player.getUniqueId()))
                                                                         .filter(p -> team == null || !team.hasEntry(p.getName()))
                                                                         .filter(p -> !whitelisted.contains(p.getUniqueId()))
                                                                         .map(Player::getName)

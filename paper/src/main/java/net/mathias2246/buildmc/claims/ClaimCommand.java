@@ -559,9 +559,11 @@ public class ClaimCommand implements CustomCommand {
                                                             if (claim == null) return builder.buildFuture();
 
                                                             List<UUID> whitelist = claim.getWhitelistedPlayers();
+                                                            boolean isServer = claim.getType() == ClaimType.SERVER;
+
                                                             for (OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()) {
                                                                 if (offlinePlayer.getName() == null) continue;
-                                                                if (offlinePlayer.getUniqueId().equals(player.getUniqueId())) continue;
+                                                                if (!isServer && offlinePlayer.getUniqueId().equals(player.getUniqueId())) continue;
                                                                 if (whitelist.contains(offlinePlayer.getUniqueId())) continue;
                                                                 if (type.equalsIgnoreCase("team")) {
                                                                     Team team = ClaimManager.getPlayerTeam(player);
