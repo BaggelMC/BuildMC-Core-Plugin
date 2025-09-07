@@ -601,7 +601,6 @@ public class ClaimCommand implements CustomCommand {
                                                     builder.suggest("player").suggest("team");
                                                     if (info.sender() instanceof Player player && player.hasPermission("buildmc.admin")) {
                                                         builder.suggest("server");
-                                                        builder.suggest("placeholder"); // Add placeholder type if needed
                                                     }
                                                     return builder.buildFuture();
                                                 }),
