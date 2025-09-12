@@ -132,6 +132,40 @@ public class ClaimManagerImpl implements ClaimManager {
     }
 
     @Override
+    public boolean tryClaimServerArea(String claimName, Location pos1, Location pos2) throws IllegalArgumentException {
+        if (pos1 == null || pos2 == null) {
+            throw new IllegalArgumentException("Positions cannot be null.");
+        }
+
+        if (pos1.getWorld() == null || pos2.getWorld() == null) {
+            throw new IllegalArgumentException("Both locations must have a world.");
+        }
+
+        if (!pos1.getWorld().equals(pos2.getWorld())) {
+            throw new IllegalArgumentException("Locations must be in the same world.");
+        }
+
+        return net.mathias2246.buildmc.claims.ClaimManager.tryClaimServerArea(claimName, pos1, pos2);
+    }
+
+    @Override
+    public boolean tryClaimPlaceholderArea(String claimName, Location pos1, Location pos2) throws IllegalArgumentException {
+        if (pos1 == null || pos2 == null) {
+            throw new IllegalArgumentException("Positions cannot be null.");
+        }
+
+        if (pos1.getWorld() == null || pos2.getWorld() == null) {
+            throw new IllegalArgumentException("Both locations must have a world.");
+        }
+
+        if (!pos1.getWorld().equals(pos2.getWorld())) {
+            throw new IllegalArgumentException("Locations must be in the same world.");
+        }
+
+        return net.mathias2246.buildmc.claims.ClaimManager.tryClaimPlaceholderArea(claimName, pos1, pos2);
+    }
+
+    @Override
     public void addPlayerToWhitelist(long claimID, UUID playerID) {
         net.mathias2246.buildmc.claims.ClaimManager.addPlayerToWhitelist(claimID, playerID);
     }

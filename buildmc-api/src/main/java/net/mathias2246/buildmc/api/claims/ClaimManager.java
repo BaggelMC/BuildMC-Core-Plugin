@@ -202,6 +202,32 @@ public interface ClaimManager {
     boolean tryClaimTeamArea(@NotNull Team team, String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
 
     /**
+     * Attempts to create a claim owned by the server between two positions.
+     *
+     * @param claimName the claim name
+     * @param pos1      first corner location
+     * @param pos2      opposite corner location
+     * @return {@code true} if the claim was created successfully
+     * @throws IllegalArgumentException if any of the locations are null, or they're not in the same world
+     */
+    boolean tryClaimServerArea(String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
+
+    /**
+     * Attempts to create a placeholder claim between two positions.
+     * <p>
+     * A placeholder claim may be used to reserve an area temporarily
+     * without assigning it to a player, team, or the server.
+     * </p>
+     *
+     * @param claimName the claim name
+     * @param pos1      first corner location
+     * @param pos2      opposite corner location
+     * @return {@code true} if the claim was created successfully
+     * @throws IllegalArgumentException if any of the locations are null, or they're not in the same world
+     */
+    boolean tryClaimPlaceholderArea(String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
+
+    /**
      * Adds a player to a claim's whitelist.
      *
      * @param claimID  the claim ID
