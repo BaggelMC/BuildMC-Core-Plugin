@@ -319,7 +319,6 @@ claims:
       name: "<green>Doors</green>"
       lore: "<gray>Prevents players from using doors, trapdoors, fence gates.</gray>"
 
-
     interaction-farmland:
       name: "<green>Farmland</green>"
       lore: "<gray>Prevents players from trampling farmland.</gray>"
@@ -356,6 +355,10 @@ claims:
       name: "<green>Hanging Entities</green>"
       lore: "<gray>Prevents placing, destroying, or changing item frames & paintings.</gray>"
 
+    interaction-item-frame:
+      name: "<green>Item Frame Interaction</green>"
+      lore: "<gray>Prevents interactions with item frames.</gray>"
+
     interaction-armor-stand:
       name: "<green>Armor Stands</green>"
       lore: "<gray>Prevents players from changing armor stand equipment.</gray>"
@@ -380,7 +383,7 @@ claims:
       name: "<green>Attack Players</green>"
       lore: "<gray>Blocks Players from attacking other players.</gray>"
 
-    projectile_interactions:
+    projectile-interactions:
       name: "<green>Projectile Interactions</green>"
       lore: "<gray>Prevents projectiles from interacting with blocks or objects.</gray>\n<dark_gray>Does not affect projectile damage.</dark_gray>"
 

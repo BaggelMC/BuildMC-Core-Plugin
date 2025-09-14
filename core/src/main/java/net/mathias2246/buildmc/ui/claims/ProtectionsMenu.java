@@ -38,10 +38,9 @@ public class ProtectionsMenu {
             StaticPane pane = new StaticPane(0, 0, 9, 5);
 
             // Fill background
-            GuiItem fillerItem = new GuiItem(createGlassPane(Material.LIGHT_GRAY_STAINED_GLASS_PANE), e -> e.setCancelled(true));
             for (int y = 0; y < 5; y++) {
                 for (int x = 0; x < 9; x++) {
-                    pane.addItem(fillerItem, x, y);
+                    pane.addItem(UIUtil.INVISIBLE_PANE, x, y);
                 }
             }
 

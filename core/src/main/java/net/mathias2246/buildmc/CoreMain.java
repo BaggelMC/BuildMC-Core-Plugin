@@ -94,8 +94,15 @@ public final class CoreMain {
                 new DoorInteractions(config.getConfigurationSection("claims.protections.interactions.doors")),
                 new ButtonAndLever(config.getConfigurationSection("claims.protections.interactions.buttons-and-levers")),
                 new RedstoneComponents(config.getConfigurationSection("claims.protections.interactions.redstone-components")),
-                new LightTNT(config.getConfigurationSection("claims.protections.interactions.light-tnt"))
-                );
+                new LightTNT(config.getConfigurationSection("claims.protections.interactions.light-tnt")),
+                new PressurePlatesAndTripwires(config.getConfigurationSection("claims.protections.interactions.pressure-plates-and-tripwire")),
+                new Candles(config.getConfigurationSection("claims.protections.interactions.candles")),
+                new Farmland(config.getConfigurationSection("claims.protections.interactions.farmland")),
+                new Jukebox(config.getConfigurationSection("claims.protections.interactions.jukebox")),
+                new Campfire(config.getConfigurationSection("claims.protections.interactions.campfire")),
+                new Bells(config.getConfigurationSection("claims.protections.interactions.bells")),
+                new ItemFrameInteractions(config.getConfigurationSection("claims.protections.interactions.item-frame"))
+        );
 
         Bukkit.getPluginManager().registerEvents(new Listener() {
             @EventHandler

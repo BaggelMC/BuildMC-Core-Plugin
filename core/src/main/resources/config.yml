@@ -148,7 +148,7 @@ claims:
       default: true
       is-hidden: false
 
-    # Prevents placing, destroying and interacting with entities like item frames or signs
+    # Prevents placing and destroying entities like item frames or paintings
     hanging-entities:
       default: true
       is-hidden: false
@@ -171,13 +171,20 @@ claims:
       pressure-plates-and-tripwire:
         default: false
         is-hidden: false
+
+      # Includes Fence Gates, Trapdoors and doors
       doors:
         default: false
         is-hidden: false
+
+      # Disables jumping on farmland
       farmland:
         default: true
         is-hidden: false
 
+      item-frame:
+        default: true
+        is-hidden: false
       campfire:
         default: true
         is-hidden: false
@@ -196,7 +203,7 @@ claims:
       nametags:
         default: true
         is-hidden: false
-      candle-extinguish:
+      candles:
         default: true
         is-hidden: false
       light-tnt:
