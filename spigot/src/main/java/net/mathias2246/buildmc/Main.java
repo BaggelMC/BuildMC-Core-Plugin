@@ -6,7 +6,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.mathias2246.buildmc.api.claims.ClaimManager;
 import net.mathias2246.buildmc.api.endEvent.EndManager;
-import net.mathias2246.buildmc.api.event.BuildMcRegistryEvent;
 import net.mathias2246.buildmc.api.item.CustomItemListener;
 import net.mathias2246.buildmc.api.item.CustomItemRegistry;
 import net.mathias2246.buildmc.api.spawnEyltra.ElytraManager;
@@ -20,8 +19,9 @@ import net.mathias2246.buildmc.commands.CommandRegister;
 import net.mathias2246.buildmc.endEvent.EndListener;
 import net.mathias2246.buildmc.endEvent.EndManagerImpl;
 import net.mathias2246.buildmc.platform.SoundManagerSpigotImpl;
+import net.mathias2246.buildmc.player.PlayerHeadDropDeathListener;
 import net.mathias2246.buildmc.player.PlayerHeadDropModifier;
-import net.mathias2246.buildmc.playerHeads.PlayerHeadDropDeathListener;
+import net.mathias2246.buildmc.player.PlayerSpawnTeleportCommand;
 import net.mathias2246.buildmc.spawnElytra.DisableRocketListener;
 import net.mathias2246.buildmc.spawnElytra.ElytraZoneCommand;
 import net.mathias2246.buildmc.spawnElytra.ElytraZoneManager;
@@ -44,9 +44,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.plugin.Plugin;
 import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.NotNull;
@@ -267,6 +265,10 @@ public final class Main extends PluginMain {
             );
 
             CommandRegister.register(new ClaimCommand());
+        }
+
+        if (config.getBoolean("spawn-teleport.enabled", true)) {
+            CommandRegister.register(new PlayerSpawnTeleportCommand());
         }
 
         if (config.getBoolean("status.enabled")) {

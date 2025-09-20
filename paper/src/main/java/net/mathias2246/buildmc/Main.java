@@ -16,8 +16,9 @@ import net.mathias2246.buildmc.commands.BuildMcCommand;
 import net.mathias2246.buildmc.endEvent.EndListener;
 import net.mathias2246.buildmc.endEvent.EndManagerImpl;
 import net.mathias2246.buildmc.platform.SoundManagerPaperImpl;
+import net.mathias2246.buildmc.player.PlayerHeadDropDeathListener;
 import net.mathias2246.buildmc.player.PlayerHeadDropModifier;
-import net.mathias2246.buildmc.playerHeads.PlayerHeadDropDeathListener;
+import net.mathias2246.buildmc.player.PlayerSpawnTeleportCommand;
 import net.mathias2246.buildmc.spawnElytra.DisableBoostListener;
 import net.mathias2246.buildmc.spawnElytra.ElytraZoneManager;
 import net.mathias2246.buildmc.spawnElytra.SpawnBoostListener;
@@ -99,6 +100,8 @@ public final class Main extends PluginMain {
             commands.registrar().register(new SetStatusCommand(statusConfig).getCommand());
 
             commands.registrar().register(new ClaimCommand().getCommand());
+
+            commands.registrar().register(new PlayerSpawnTeleportCommand().getCommand());
         });
 
         try {

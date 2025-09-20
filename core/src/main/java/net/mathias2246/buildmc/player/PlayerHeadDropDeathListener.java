@@ -1,6 +1,6 @@
-package net.mathias2246.buildmc.playerHeads;
+package net.mathias2246.buildmc.player;
 
-import net.mathias2246.buildmc.api.event.playerheads.PlayerHeadDropEvent;
+import net.mathias2246.buildmc.api.event.player.PlayerHeadDropEvent;
 import net.mathias2246.buildmc.api.item.ItemMetaModifier;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

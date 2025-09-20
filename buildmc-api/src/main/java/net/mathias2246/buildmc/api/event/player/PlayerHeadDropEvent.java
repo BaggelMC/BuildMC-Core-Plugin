@@ -1,4 +1,4 @@
-package net.mathias2246.buildmc.api.event.playerheads;
+package net.mathias2246.buildmc.api.event.player;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;

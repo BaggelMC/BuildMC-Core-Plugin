@@ -52,6 +52,18 @@ sounds:
   notification: "minecraft:entity.item.pickup" # Default: "minecraft:entity.item.pickup"
 
 
+# World spawn teleport command
+# Players require the default permission 'buildmc.allow-spawn-teleport' to use this command!
+spawn-teleport:
+  # If true, players can use the '/spawn' command to teleport to the world spawn of the current dimension.
+  # Players have to stand still for a certain number of seconds defined in 'wait-for'.
+  enabled: true # Default: true
+
+  # The amount of seconds the player has to stand still to get teleported.
+  # Set to 0 or smaller to disable.
+  wait-for: 8 # Default: 8
+
+
 # Here are all settings related to team claims.
 # A team can use the claim-tool or the '/buildmc claim ...' command to create or remove their claims.
 # On Claims, things like any explosion, withers, block breaking or opening containers don't work.

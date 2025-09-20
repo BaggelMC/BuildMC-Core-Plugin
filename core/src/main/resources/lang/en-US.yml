@@ -1,5 +1,4 @@
 messages:
-
   spawn-elytra:
     boost-hint: "Press <key:key.swapOffhand> to boost!"
     firework-disabled-hint: "<red>Firework boost is disabled for spawn elytra.</red>"
@@ -33,6 +32,12 @@ messages:
     command-disabled: "<red>This command has been disabled.</red>"
 
     sql: "<red>An SQL error occurred.</red>"
+
+  teleport:
+    not-working: "<red>You cannot use '/spawn' right now!</red>"
+    cancelled: "<red>The teleport was cancelled!</red>"
+    successful: "<green>Successfully teleported you!</green>"
+    counter: "<white>Don't move for %seconds% seconds...</white>"
 
   claims:
     tool:
