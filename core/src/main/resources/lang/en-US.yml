@@ -285,7 +285,7 @@ claims:
       lore: "<gray>Prevents players from using splash potions.</gray>"
 
     vehicle-enter:
-      name: "<green>Vehicle Entry</green>"
+      name: "<green>Enter Vehicles</green>"
       lore: "<gray>Prevents players from entering vehicles.</gray>"
 
     bucket-usage:

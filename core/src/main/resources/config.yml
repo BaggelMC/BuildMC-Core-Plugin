@@ -212,7 +212,7 @@ claims:
       beehives:
         default: true
         is-hidden: false
-      nametags:
+      name-tag:
         default: true
         is-hidden: false
       candles:
