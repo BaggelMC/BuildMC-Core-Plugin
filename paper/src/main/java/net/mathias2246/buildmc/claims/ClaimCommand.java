@@ -36,6 +36,7 @@ public class ClaimCommand implements CustomCommand {
     private static final @NotNull ClaimToolItemMetaModifier claimToolNameAndTooltip = new ClaimToolItemMetaModifier();
     private static ClaimSelectionTool claimTool;
 
+    @SuppressWarnings("ExtractMethodRecommender")
     @Override
     public LiteralCommandNode<CommandSourceStack> getCommand() {
 

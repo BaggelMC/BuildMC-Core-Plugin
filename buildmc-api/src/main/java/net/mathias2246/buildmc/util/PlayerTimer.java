@@ -9,9 +9,9 @@ public abstract class PlayerTimer extends BukkitRunnable {
 
     public int currentStep;
 
-    public int steps;
+    public final int steps;
 
-    public int ticks;
+    public final int ticks;
 
     public final @NotNull Player player;
 

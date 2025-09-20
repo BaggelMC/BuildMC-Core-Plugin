@@ -43,7 +43,7 @@ public final class CoreMain {
 
     private static boolean isInitialized = false;
 
-    public static RegistriesHolder registriesHolder = new RegistriesHolder.Builder().build();
+    public static final RegistriesHolder registriesHolder = new RegistriesHolder.Builder().build();
 
     public static DeferredRegistry<Protection> protectionsRegistry;
 

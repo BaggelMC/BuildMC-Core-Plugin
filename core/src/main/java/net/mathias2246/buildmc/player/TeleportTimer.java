@@ -14,9 +14,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class TeleportTimer extends PlayerTimer {
 
-    static Sound notification;
-    static Sound mistake;
-    static Sound success;
+    static final Sound notification;
+    static final Sound mistake;
+    static final Sound success;
 
 
     static {
@@ -43,7 +43,7 @@ public class TeleportTimer extends PlayerTimer {
         );
     }
 
-        public static int seconds = CoreMain.plugin.getConfig().getInt("spawn-teleport.wait-for");
+        public static final int seconds = CoreMain.plugin.getConfig().getInt("spawn-teleport.wait-for");
 
         private Vector previousPosition;
 
