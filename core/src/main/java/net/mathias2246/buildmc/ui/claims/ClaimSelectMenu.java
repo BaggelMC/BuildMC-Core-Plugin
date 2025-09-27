@@ -17,6 +17,7 @@ import net.mathias2246.buildmc.ui.UIUtil;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -129,12 +130,26 @@ public class ClaimSelectMenu {
         List<GuiItem> items = new ArrayList<>();
 
         for (Claim claim : claims) {
-            ItemStack item = new ItemStack(Material.PAPER);
+            Material material;
+            switch (claim.getType()) {
+                case PLAYER -> material = Material.PLAYER_HEAD;
+                case TEAM -> material = Material.IRON_SWORD;
+                case SERVER -> material = Material.COMMAND_BLOCK;
+                case PLACEHOLDER -> material = Material.STRUCTURE_VOID;
+                default -> material = Material.PAPER;
+            }
+
+            ItemStack item = new ItemStack(material);
             ItemMeta meta = item.getItemMeta();
             if (meta == null) {
                 CoreMain.mainClass.sendPlayerMessage(player, Component.translatable("messages.claims.ui.errors.no-item-meta"));
                 continue;
             }
+
+            meta.addItemFlags(
+                    ItemFlag.HIDE_ATTRIBUTES,
+                    ItemFlag.HIDE_ADDITIONAL_TOOLTIP
+            );
 
             meta.setDisplayName(LEGACY.serialize(Component.text(claim.getName(), NamedTextColor.GREEN)));
 
