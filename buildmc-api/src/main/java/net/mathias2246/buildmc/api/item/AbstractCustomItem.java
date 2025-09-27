@@ -5,7 +5,9 @@ import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
@@ -110,6 +112,8 @@ public abstract class AbstractCustomItem implements Keyed {
     /**Called when a PlayerInteractEvent from the CustomItemListener was done with this custom item type*/
     @ApiStatus.Internal
     public void onInteractEvent(@NotNull ItemStack item, @NotNull PlayerInteractEvent event) {
+        if (event.getHand() != EquipmentSlot.HAND) return;
+
         onInteract(item, event);
         var a = event.getAction();
 

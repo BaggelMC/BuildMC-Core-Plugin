@@ -634,9 +634,13 @@ public class ClaimCommand implements CustomCommand {
                                                                 return 0;
                                                             }
 
-                                                            OfflinePlayer target = Bukkit.getOfflinePlayer(targetPlayerName);
-                                                            UUID targetUUID = target.getUniqueId();
+                                                            OfflinePlayer target = Bukkit.getPlayer(targetPlayerName);
+                                                            if (target == null) {
+                                                                player.sendMessage(Component.translatable("messages.claims.whitelist.player-not-found"));
+                                                                return 0;
+                                                            }
 
+                                                            UUID targetUUID = target.getUniqueId();
                                                             List<UUID> whitelist = claim.getWhitelistedPlayers();
 
                                                             switch (action) {
