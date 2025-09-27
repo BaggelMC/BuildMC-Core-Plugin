@@ -11,11 +11,12 @@ permissions:
   buildmc.player:
     default: true
     description: The default permission every player gets, no matter what.
-
   buildmc.admin:
     default: op
     description: The BuildMC admin permission
-
+  allow-spawn-teleport:
+    default: true
+    description: Allows the player to use the '/spawn' command
   buildmc.bypass-claims:
     default: false
     description: With this permission you can bypass claim protection.

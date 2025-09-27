@@ -43,7 +43,7 @@ public final class CoreMain {
 
     private static boolean isInitialized = false;
 
-    public static RegistriesHolder registriesHolder = new RegistriesHolder.Builder().build();
+    public static final RegistriesHolder registriesHolder = new RegistriesHolder.Builder().build();
 
     public static DeferredRegistry<Protection> protectionsRegistry;
 
@@ -54,7 +54,7 @@ public final class CoreMain {
     @ApiStatus.Internal
     public static void initialize(@NotNull PluginMain plugin) {
         if (isInitialized) {
-            plugin.getLogger().warning("CoreMain has been initialized multiple times.");
+            plugin.getLogger().warning("CoreMain has been initialized multiple times!");
         }
 
         // Bruh
@@ -101,8 +101,18 @@ public final class CoreMain {
                 new Jukebox(config.getConfigurationSection("claims.protections.interactions.jukebox")),
                 new Campfire(config.getConfigurationSection("claims.protections.interactions.campfire")),
                 new Bells(config.getConfigurationSection("claims.protections.interactions.bells")),
-                new ItemFrameInteractions(config.getConfigurationSection("claims.protections.interactions.item-frame"))
-        );
+                new ItemFrameInteractions(config.getConfigurationSection("claims.protections.interactions.item-frame")),
+                new ItemDrop(config.getConfigurationSection("claims.protections.item-drop")),
+                new ItemPickup(config.getConfigurationSection("claims.protections.item-pickup")),
+                new EntityNameTag(config.getConfigurationSection("claims.protections.interactions.name-tag")),
+                new Place(config.getConfigurationSection("claims.protections.player-place")),
+                new PotionSplash(config.getConfigurationSection("claims.protections.splash-potions")),
+                new SculkSensors(config.getConfigurationSection("claims.protections.sculk-sensor")),
+                new EntityShear(config.getConfigurationSection("claims.protections.interactions.shear-entity")),
+                new SignEdit(config.getConfigurationSection("claims.protections.sign-editing")),
+                new VehicleEnter(config.getConfigurationSection("claims.protections.vehicle-enter")),
+                new PistonMovement(config.getConfigurationSection("claims.protections.piston-movement-across-claim-borders"))
+                );
 
         Bukkit.getPluginManager().registerEvents(new Listener() {
             @EventHandler
@@ -116,11 +126,16 @@ public final class CoreMain {
 
 
     public static void finishLoading() {
-        if (plugin.getConfig().getBoolean("claims.enabled")) {
+        if (plugin.getConfig().getBoolean("claims.enabled", true)) {
             initializeDatabase();
 
             for (Protection protection : protectionsRegistry) {
-                if (protection.isDefaultEnabled()) Protection.defaultProtections.add(protection.getKey().toString());
+                var def = protection.isDefaultEnabled();
+
+                // Don't register protection events if, they are disabled and cannot be changed
+                if (!def && CoreMain.plugin.getConfig().getBoolean("claims.hide-all-protections")) continue;
+
+                if (def) Protection.defaultProtections.add(protection.getKey().toString());
                 registerEvent(protection);
             }
 
@@ -140,7 +155,7 @@ public final class CoreMain {
 
     @ApiStatus.Internal
     public static void stop() {
-        if (plugin.getConfig().getBoolean("claims.enabled")) databaseManager.close();
+        if (plugin.getConfig().getBoolean("claims.enabled", true)) databaseManager.close();
 
 
     }

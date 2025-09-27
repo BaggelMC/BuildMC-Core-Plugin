@@ -21,6 +21,7 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
     // This command has two sub commands
     //  - 'remove': Removes your current status
     //  - 'set': Sets your current status
+    @SuppressWarnings("ExtractMethodRecommender")
     @Override
     public LiteralCommandNode<CommandSourceStack> getCommand() {
         var cmd = Commands.literal("status");
@@ -36,7 +37,9 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
         );
 
 
+
         var removeSub = Commands.literal("remove");
+
         removeSub.executes(
                 (command) -> {
                     if (!(CommandUtil.requiresPlayer(command) instanceof Player player)) return 0;

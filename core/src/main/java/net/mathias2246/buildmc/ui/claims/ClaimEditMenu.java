@@ -41,7 +41,7 @@ public class ClaimEditMenu {
         }
 
         // Protections button
-        if (!isPlaceholderClaim) {
+        if (!CoreMain.plugin.getConfig().getBoolean("claims.hide-all-protections") && !isPlaceholderClaim) {
             pane.addItem(makeButton(Material.SHIELD, Message.msg(player, "messages.claims.ui.edit-menu.protections"),
                     e -> {
                         e.setCancelled(true);
@@ -49,9 +49,7 @@ public class ClaimEditMenu {
                     }), 2, 1);
         } else {
             pane.addItem(makeButton(Material.RED_STAINED_GLASS_PANE, Message.msg(player, "messages.claims.ui.edit-menu.no-protections-available"),
-                    e -> {
-                        e.setCancelled(true);
-                    }), 2, 1);
+                    e -> e.setCancelled(true)), 2, 1);
         }
 
 
@@ -64,9 +62,7 @@ public class ClaimEditMenu {
                     }), 4, 1);
         } else {
             pane.addItem(makeButton(Material.RED_STAINED_GLASS_PANE, Message.msg(player, "messages.claims.ui.edit-menu.no-whitelist-available"),
-                    e -> {
-                        e.setCancelled(true);
-                    }), 4, 1);
+                    e -> e.setCancelled(true)), 4, 1);
         }
 
         // Delete button → opens confirmation menu

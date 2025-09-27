@@ -16,8 +16,9 @@ import net.mathias2246.buildmc.commands.BuildMcCommand;
 import net.mathias2246.buildmc.endEvent.EndListener;
 import net.mathias2246.buildmc.endEvent.EndManagerImpl;
 import net.mathias2246.buildmc.platform.SoundManagerPaperImpl;
+import net.mathias2246.buildmc.player.PlayerHeadDropDeathListener;
 import net.mathias2246.buildmc.player.PlayerHeadDropModifier;
-import net.mathias2246.buildmc.playerHeads.PlayerHeadDropDeathListener;
+import net.mathias2246.buildmc.player.PlayerSpawnTeleportCommand;
 import net.mathias2246.buildmc.spawnElytra.DisableBoostListener;
 import net.mathias2246.buildmc.spawnElytra.ElytraZoneManager;
 import net.mathias2246.buildmc.spawnElytra.SpawnBoostListener;
@@ -93,12 +94,25 @@ public final class Main extends PluginMain {
 
         CoreMain.initialize(this);
 
+        customItems = new CustomItemRegistry();
+
+        if (config.getBoolean("claims.enabled", true)) {
+            customItems.register(
+                    new ClaimSelectionTool(this,
+                            Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool")),
+                            new ClaimToolParticles.Builder()
+                    )
+            );
+        }
+
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
             commands.registrar().register(new BuildMcCommand().getCommand());
 
             commands.registrar().register(new SetStatusCommand(statusConfig).getCommand());
 
             commands.registrar().register(new ClaimCommand().getCommand());
+
+            commands.registrar().register(new PlayerSpawnTeleportCommand().getCommand());
         });
 
         try {
@@ -230,7 +244,7 @@ public final class Main extends PluginMain {
 
     @Override
     public void finishLoading() {
-        customItems = new CustomItemRegistry();
+
 
 
         getServer().getPluginManager().registerEvents(new CustomItemListener(customItems), this);
@@ -241,16 +255,6 @@ public final class Main extends PluginMain {
             if (config.getBoolean("spawn-elytra.disable-rockets")) getServer().getPluginManager().registerEvents(new DisableBoostListener(), this);
 
             zoneManager.loadZoneFromConfig();
-        }
-
-        if (config.getBoolean("claims.enabled")) {
-
-            customItems.register(
-                    new ClaimSelectionTool(this,
-                            Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool")),
-                            new ClaimToolParticles.Builder()
-                    )
-            );
         }
 
         if (config.getBoolean("status.enabled")) {
@@ -272,7 +276,6 @@ public final class Main extends PluginMain {
         }
 
         if (config.getBoolean("player-head.on-death")) {
-
             getServer().getPluginManager().registerEvents(new PlayerHeadDropDeathListener(new PlayerHeadDropModifier()), this);
         }
     }

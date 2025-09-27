@@ -101,7 +101,7 @@ public class ProtectionsMenu {
 
             // Spacer
             for (int x = 0; x < 9; x++) {
-                pane.addItem(new GuiItem(createGlassPane(Material.GRAY_STAINED_GLASS_PANE), UIUtil.noInteract), x, 2);
+                pane.addItem(new GuiItem(createGlassPane(), UIUtil.noInteract), x, 2);
             }
 
             pages.addPane(page, pane);
@@ -112,7 +112,7 @@ public class ProtectionsMenu {
 
         // Nav bar
         StaticPane controls = new StaticPane(0, 5, 9, 1);
-        GuiItem grayItem = new GuiItem(createGlassPane(Material.GRAY_STAINED_GLASS_PANE), e -> e.setCancelled(true));
+        GuiItem grayItem = new GuiItem(createGlassPane(), e -> e.setCancelled(true));
         for (int i = 0; i < 9; i++) {
             controls.addItem(grayItem, i, 0);
         }
@@ -207,8 +207,8 @@ public class ProtectionsMenu {
         return item;
     }
 
-    private static ItemStack createGlassPane(Material material) {
-        ItemStack pane = new ItemStack(material);
+    private static ItemStack createGlassPane() {
+        ItemStack pane = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
         ItemMeta meta = pane.getItemMeta();
         if (meta != null) {
             meta.setHideTooltip(true);

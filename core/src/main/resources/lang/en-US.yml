@@ -1,5 +1,4 @@
 messages:
-
   spawn-elytra:
     boost-hint: "Press <key:key.swapOffhand> to boost!"
     firework-disabled-hint: "<red>Firework boost is disabled for spawn elytra.</red>"
@@ -33,6 +32,12 @@ messages:
     command-disabled: "<red>This command has been disabled.</red>"
 
     sql: "<red>An SQL error occurred.</red>"
+
+  teleport:
+    not-working: "<red>You cannot use '/spawn' right now!</red>"
+    cancelled: "<red>The teleport was cancelled!</red>"
+    successful: "<green>Successfully teleported you!</green>"
+    counter: "<white>Don't move for %seconds% seconds...</white>"
 
   claims:
     tool:
@@ -208,7 +213,7 @@ messages:
         title: "<gold>Edit Claim: '%claim%'</gold>"
 
         protections: "<green>Protections</green>"
-        no-protections-available: "<red>This claim type does not allow for protections.</red>"
+        no-protections-available: "<red>No available protections.</red>"
         whitelist: "<aqua>Whitelist</aqua>"
         no-whitelist-available: "<red>This claim type does not allow for whitelisting.</red>"
         delete: "<red>Delete Claim</red>"
@@ -280,7 +285,7 @@ claims:
       lore: "<gray>Prevents players from using splash potions.</gray>"
 
     vehicle-enter:
-      name: "<green>Vehicle Entry</green>"
+      name: "<green>Enter Vehicles</green>"
       lore: "<gray>Prevents players from entering vehicles.</gray>"
 
     bucket-usage:
