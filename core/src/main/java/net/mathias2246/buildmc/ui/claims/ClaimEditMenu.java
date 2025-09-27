@@ -41,7 +41,7 @@ public class ClaimEditMenu {
         }
 
         // Protections button
-        if (!isPlaceholderClaim) {
+        if (!CoreMain.plugin.getConfig().getBoolean("claims.hide-all-protections") && !isPlaceholderClaim) {
             pane.addItem(makeButton(Material.SHIELD, Message.msg(player, "messages.claims.ui.edit-menu.protections"),
                     e -> {
                         e.setCancelled(true);

@@ -213,7 +213,7 @@ messages:
         title: "<gold>Edit Claim: '%claim%'</gold>"
 
         protections: "<green>Protections</green>"
-        no-protections-available: "<red>This claim type does not allow for protections.</red>"
+        no-protections-available: "<red>No available protections.</red>"
         whitelist: "<aqua>Whitelist</aqua>"
         no-whitelist-available: "<red>This claim type does not allow for whitelisting.</red>"
         delete: "<red>Delete Claim</red>"

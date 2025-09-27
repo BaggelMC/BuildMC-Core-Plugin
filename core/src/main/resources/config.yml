@@ -94,6 +94,10 @@ claims:
     # If smaller than 0, the limit will be disabled
     limit-selection: 10 # Default: 10
 
+  # Hides all protections from all players.
+  # Can be used if players should only be able to use the default protections.
+  hide-all-protections: false # Default: false
+
   # What aspects are protected when claimed
   protections:
     # Players cannot break blocks

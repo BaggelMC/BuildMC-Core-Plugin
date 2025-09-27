@@ -126,11 +126,16 @@ public final class CoreMain {
 
 
     public static void finishLoading() {
-        if (plugin.getConfig().getBoolean("claims.enabled")) {
+        if (plugin.getConfig().getBoolean("claims.enabled", true)) {
             initializeDatabase();
 
             for (Protection protection : protectionsRegistry) {
-                if (protection.isDefaultEnabled()) Protection.defaultProtections.add(protection.getKey().toString());
+                var def = protection.isDefaultEnabled();
+
+                // Don't register protection events if, they are disabled and cannot be changed
+                if (!def && CoreMain.plugin.getConfig().getBoolean("claims.hide-all-protections")) continue;
+
+                if (def) Protection.defaultProtections.add(protection.getKey().toString());
                 registerEvent(protection);
             }
 
@@ -150,7 +155,7 @@ public final class CoreMain {
 
     @ApiStatus.Internal
     public static void stop() {
-        if (plugin.getConfig().getBoolean("claims.enabled")) databaseManager.close();
+        if (plugin.getConfig().getBoolean("claims.enabled", true)) databaseManager.close();
 
 
     }

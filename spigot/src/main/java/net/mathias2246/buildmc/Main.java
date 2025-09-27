@@ -101,6 +101,17 @@ public final class Main extends PluginMain {
 
         CoreMain.initialize(this);
 
+        customItems = new CustomItemRegistry();
+
+        if (config.getBoolean("claims.enabled", true)) {
+            customItems.register(
+                    new ClaimSelectionTool(this,
+                            Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool")),
+                            new ClaimToolParticles.Builder()
+                    )
+            );
+        }
+
         LanguageManager.init();
 
         audiences = BukkitAudiences.create(plugin);
@@ -235,7 +246,7 @@ public final class Main extends PluginMain {
 
     @Override
     public void finishLoading() {
-        customItems = new CustomItemRegistry();
+
         getServer().getPluginManager().registerEvents(new CustomItemListener(customItems), this);
 
         try {
@@ -256,14 +267,7 @@ public final class Main extends PluginMain {
             zoneManager.loadZoneFromConfig();
         }
 
-        if (config.getBoolean("claims.enabled")) {
-            customItems.register(
-                    new ClaimSelectionTool(this,
-                            Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool")),
-                            new ClaimToolParticles.Builder()
-                    )
-            );
-
+        if (config.getBoolean("claims.enabled", true)) {
             CommandRegister.register(new ClaimCommand());
         }
 
