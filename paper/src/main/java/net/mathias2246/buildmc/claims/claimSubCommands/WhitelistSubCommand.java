@@ -172,7 +172,7 @@ public class WhitelistSubCommand {
                                                         return 0;
                                                     }
 
-                                                    OfflinePlayer target = Bukkit.getPlayer(targetPlayerName);
+                                                    OfflinePlayer target = Bukkit.getPlayerExact(targetPlayerName);
                                                     if (target == null) {
                                                         player.sendMessage(Component.translatable("messages.claims.whitelist.player-not-found"));
                                                         return 0;
