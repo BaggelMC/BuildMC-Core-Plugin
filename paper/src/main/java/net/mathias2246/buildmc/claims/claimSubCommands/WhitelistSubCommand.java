@@ -15,6 +15,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,7 +33,23 @@ public class WhitelistSubCommand {
                             return builder.buildFuture();
                         })
                         .then(Commands.argument("type", StringArgumentType.word())
-                                .suggests(ClaimCommand::claimTypesSuggestions)
+                                .suggests((ctx, builder) -> {
+                                            List<String> suggestions = new ArrayList<>(List.of("player", "team"));
+
+                                            // Add admin-only options
+                                            if (ctx.getSource().getSender() instanceof Player player &&
+                                                    player.hasPermission("buildmc.admin")) {
+                                                suggestions.add("server");
+                                            }
+
+                                            for (String suggestion : suggestions) {
+                                                if (suggestion.startsWith(builder.getRemaining().toLowerCase())) {
+                                                    builder.suggest(suggestion);
+                                                }
+                                            }
+                                            return builder.buildFuture();
+                                        }
+                                )
                                 .then(Commands.argument("claim", StringArgumentType.word())
                                         .suggests((ctx, builder) -> {
                                             var sender = ctx.getSource().getSender();

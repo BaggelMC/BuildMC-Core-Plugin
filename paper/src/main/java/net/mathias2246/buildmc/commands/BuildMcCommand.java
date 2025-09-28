@@ -29,12 +29,12 @@ public class BuildMcCommand implements CustomCommand {
                 }
         );
         debugSub.requires(
-                        (c) -> c.getSender().hasPermission(new Permission("buildmc.admin"))
+                        (c) -> c.getSender().hasPermission("buildmc.admin")
                 );
 
         var statusSub =
                 Commands.literal("status")
-                        .requires((command) -> command.getSender().isOp())
+                        .requires((command) -> command.getSender().hasPermission("buildmc.admin"))
                         .then(
                                 Commands.literal("reload")
                                         .executes(
