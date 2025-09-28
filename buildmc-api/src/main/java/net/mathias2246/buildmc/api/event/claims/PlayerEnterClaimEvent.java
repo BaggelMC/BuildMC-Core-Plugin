@@ -1,5 +1,6 @@
 package net.mathias2246.buildmc.api.event.claims;
 
+import net.mathias2246.buildmc.api.event.EventMetadata;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
@@ -24,7 +25,7 @@ import java.util.Map;
  * <br><br>
  * Plugins can attach optional metadata to this event via {@link #putMetadata(String, Object)}.
  */
-public class PlayerEnterClaimEvent extends PlayerEvent {
+public class PlayerEnterClaimEvent extends PlayerEvent implements EventMetadata {
 
     private static final @NotNull HandlerList HANDLERS = new HandlerList();
 
@@ -67,34 +68,15 @@ public class PlayerEnterClaimEvent extends PlayerEvent {
         return toClaim;
     }
 
-    /**
-     * Gets an unmodifiable view of the metadata map associated with this event.
-     * <p>
-     * Metadata can be used by plugins to share additional context between event
-     * listeners without subclassing this event.
-     *
-     * @return an unmodifiable map of metadata (never {@code null})
-     */
     @NotNull
     public Map<String, Object> getMetadata() {
         return Collections.unmodifiableMap(metadata);
     }
 
-    /**
-     * Adds or updates a metadata entry.
-     *
-     * @param key   the metadata key (never {@code null})
-     * @param value the metadata value (never {@code null})
-     */
     public void putMetadata(@NotNull String key, @NotNull Object value) {
         metadata.put(key, value);
     }
 
-    /**
-     * Removes a metadata entry.
-     *
-     * @param key the metadata key to remove (never {@code null})
-     */
     public void removeMetadata(@NotNull String key) {
         metadata.remove(key);
     }

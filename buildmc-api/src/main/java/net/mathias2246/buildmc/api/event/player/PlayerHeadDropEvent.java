@@ -1,5 +1,6 @@
 package net.mathias2246.buildmc.api.event.player;
 
+import net.mathias2246.buildmc.api.event.EventMetadata;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -23,7 +24,7 @@ import java.util.Map;
  * </ul>
  * This event is {@link Cancellable}.
  */
-public class PlayerHeadDropEvent extends Event implements Cancellable {
+public class PlayerHeadDropEvent extends Event implements Cancellable, EventMetadata {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
@@ -97,31 +98,15 @@ public class PlayerHeadDropEvent extends Event implements Cancellable {
         return event;
     }
 
-    /**
-     * Gets an unmodifiable view of the metadata map.
-     *
-     * @return the metadata map
-     */
     @NotNull
     public Map<String, Object> getMetadata() {
         return Collections.unmodifiableMap(metadata);
     }
 
-    /**
-     * Adds or updates a metadata entry.
-     *
-     * @param key   the metadata key
-     * @param value the metadata value
-     */
     public void putMetadata(@NotNull String key, @NotNull Object value) {
         metadata.put(key, value);
     }
 
-    /**
-     * Removes a metadata entry.
-     *
-     * @param key the metadata key to remove
-     */
     public void removeMetadata(@NotNull String key) {
         metadata.remove(key);
     }
