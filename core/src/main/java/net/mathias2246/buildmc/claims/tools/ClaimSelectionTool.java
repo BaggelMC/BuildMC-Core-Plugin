@@ -38,7 +38,6 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
                 1f
         );
         mistakeSound = Sound.sound(
-
                 Key.key(CoreMain.plugin.getConfig().getString("sounds.mistake", "minecraft:block.note_block.snare")),
                 Sound.Source.MASTER,
                 1f,

@@ -4,6 +4,9 @@ import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.ClaimType;
 import net.mathias2246.buildmc.api.claims.Protection;
+import net.mathias2246.buildmc.api.event.claims.ClaimCreateEvent;
+import net.mathias2246.buildmc.api.event.claims.ClaimRemoveEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -369,6 +372,12 @@ public class ClaimManager {
             }
         }
 
+        ClaimCreateEvent e = new ClaimCreateEvent(
+                claim
+        );
+        Bukkit.getPluginManager().callEvent(e);
+        if (e.isCancelled()) return false;
+
         // Update ownership mapping
         switch (type) {
             case PLAYER -> {
@@ -474,6 +483,8 @@ public class ClaimManager {
     /**Removes a claim by its claimID.
      * @return True, if successfully removed claim.*/
     public static boolean removeClaimById(long claimId) {
+        ClaimRemoveEvent event = new ClaimRemoveEvent(Objects.requireNonNull(getClaimByID(claimId)));
+        Bukkit.getPluginManager().callEvent(event);
         try {
             CoreMain.claimTable.deleteClaimById(CoreMain.databaseManager.getConnection(), claimId);
         } catch (SQLException e) {
