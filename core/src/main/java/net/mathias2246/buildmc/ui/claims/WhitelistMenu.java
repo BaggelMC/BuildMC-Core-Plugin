@@ -52,8 +52,31 @@ public class WhitelistMenu {
 
             // Separator row (row 3)
             for (int x = 0; x < 9; x++) {
-                pane.addItem(new GuiItem(createGlassPane(Material.GRAY_STAINED_GLASS_PANE), e -> e.setCancelled(true)), x, 2);
+                if (x == 4) {
+                    // Green "Add" info button in the middle
+                    ItemStack addButton = createNamedItem(Material.LIME_STAINED_GLASS_PANE,
+                            Message.msg(player, "messages.claims.ui.whitelist-menu.add-button.name")); // e.g. "&aAdd Player")
+                    ItemMeta addMeta = addButton.getItemMeta();
+                    if (addMeta != null) {
+                        addMeta.setLore(List.of(
+                                LegacyComponentSerializer.legacySection().serialize(
+                                        Message.msg(player, "messages.claims.ui.whitelist-menu.add-button.lore-line1")), // e.g. "&7Use /claim whitelist add <player>"
+                                LegacyComponentSerializer.legacySection().serialize(
+                                        Message.msg(player, "messages.claims.ui.whitelist-menu.add-button.lore-line2"))  // e.g. "&7to whitelist someone."
+                        ));
+                        addButton.setItemMeta(addMeta);
+                    }
+                    pane.addItem(new GuiItem(addButton, e -> {
+                        e.setCancelled(true);
+                        CoreMain.mainClass.sendPlayerMessage(player,
+                                Message.msg(player, "messages.claims.ui.whitelist-menu.add-button.click-info"));
+                    }), x, 2);
+                } else {
+                    // Default gray separator
+                    pane.addItem(new GuiItem(createGlassPane(Material.GRAY_STAINED_GLASS_PANE), e -> e.setCancelled(true)), x, 2);
+                }
             }
+
 
             int start = page * playersPerPage;
             int end = Math.min(start + playersPerPage, whitelist.size());
