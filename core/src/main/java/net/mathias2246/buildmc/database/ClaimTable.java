@@ -17,9 +17,10 @@ import java.util.concurrent.TimeUnit;
 
 import static net.mathias2246.buildmc.claims.ClaimManager.*;
 
+@SuppressWarnings({"unused"})
 public class ClaimTable implements DatabaseTable {
 
-    private final Cache<Long, Claim> claimCache = CacheBuilder.newBuilder()
+    private final Cache<@NotNull Long, @NotNull Claim> claimCache = CacheBuilder.newBuilder()
             .maximumSize(1000)
             .expireAfterAccess(10, TimeUnit.MINUTES)
             .build();
@@ -58,6 +59,34 @@ public class ClaimTable implements DatabaseTable {
                 FOREIGN KEY (claim_id) REFERENCES claims(id) ON DELETE CASCADE
             );
         """);
+
+            stmt.execute("""
+            CREATE INDEX IF NOT EXISTS idx_claims_owner_id\s
+            ON claims(owner_id);
+       \s""");
+
+            stmt.execute("""
+            CREATE INDEX IF NOT EXISTS idx_claims_world_id\s
+            ON claims(world_id);
+       \s""");
+
+            stmt.execute("""
+            CREATE INDEX IF NOT EXISTS idx_claims_chunks\s
+            ON claims(world_id, chunk_x1, chunk_z1, chunk_x2, chunk_z2);
+       \s""");
+            stmt.execute("""
+            CREATE INDEX IF NOT EXISTS idx_whitelisted_claim_id\s
+            ON claim_whitelisted_players(claim_id);
+       \s""");
+            // Index for reverse lookups by player (optional, but useful if you search claims by player)
+            stmt.execute("""
+            CREATE INDEX IF NOT EXISTS idx_whitelisted_player_uuid\s
+            ON claim_whitelisted_players(player_uuid);
+       \s""");
+            stmt.execute("""
+            CREATE INDEX IF NOT EXISTS idx_flags_claim_id\s
+            ON claim_protection_flags(claim_id);
+       \s""");
         }
     }
 

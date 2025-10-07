@@ -133,10 +133,11 @@ public class ClaimManager {
      * <p>This means that the player is allowed to do anything on the given claim.</p>
      * @return True if, the player is the owner or whitelisted and the ProtectionFlags are set on the given claim.*/
     public static boolean isPlayerAllowed(@NotNull Player player, @NotNull NamespacedKey protection, @Nullable Claim claim) {
-        if (player.hasPermission("buildmc.bypass-claims")) return true;
-
         // Allow if no claim found
         if (claim == null) return true;
+
+        // Bypass all Protections
+        if (player.hasPermission("buildmc.bypass-claims")) return true;
 
         // Allow if claim is a placeholder
         if (claim.getType() == ClaimType.PLACEHOLDER) return true;

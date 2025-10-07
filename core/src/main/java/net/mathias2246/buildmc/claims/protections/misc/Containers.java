@@ -80,16 +80,17 @@ public class Containers extends Protection {
 
         if (claim.getWhitelistedPlayers().contains(player.getUniqueId())) return;
 
+        var invType = event.getInventory().getType();
         // Exceptions
         if (event.getInventory().getHolder() instanceof Lectern) return;
-        if (event.getView().getType().equals(InventoryType.ENDER_CHEST)) return;
-        if (event.getView().getType().equals(InventoryType.WORKBENCH)) return;
-        if (event.getView().getType().equals(InventoryType.ENCHANTING)) return;
-        if (event.getView().getType().equals(InventoryType.SMITHING)) return;
-        if (event.getView().getType().equals(InventoryType.LOOM)) return;
-        if (event.getView().getType().equals(InventoryType.CARTOGRAPHY)) return;
-        if (event.getView().getType().equals(InventoryType.GRINDSTONE)) return;
-        if (event.getView().getType().equals(InventoryType.STONECUTTER)) return;
+        if (invType.equals(InventoryType.ENDER_CHEST)) return;
+        if (invType.equals(InventoryType.WORKBENCH)) return;
+        if (invType.equals(InventoryType.ENCHANTING)) return;
+        if (invType.equals(InventoryType.SMITHING)) return;
+        if (invType.equals(InventoryType.LOOM)) return;
+        if (invType.equals(InventoryType.CARTOGRAPHY)) return;
+        if (invType.equals(InventoryType.GRINDSTONE)) return;
+        if (invType.equals(InventoryType.STONECUTTER)) return;
 
         if (event.getInventory().getHolder() instanceof BlockState block) {
 
@@ -119,7 +120,7 @@ public class Containers extends Protection {
         var block = event.getLectern();
         var player = event.getPlayer();
 
-        Claim claim ;
+        Claim claim;
         try {
             claim = ClaimManager.getClaim(block.getLocation());
         } catch (SQLException e) {
