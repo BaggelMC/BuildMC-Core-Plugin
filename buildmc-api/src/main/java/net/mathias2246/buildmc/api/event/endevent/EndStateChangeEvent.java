@@ -2,16 +2,12 @@ package net.mathias2246.buildmc.api.event.endevent;
 
 import net.mathias2246.buildmc.api.endEvent.EndChangeCause;
 import net.mathias2246.buildmc.api.endEvent.EndState;
+import net.mathias2246.buildmc.api.event.CustomEvent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Fired when the End state is about to change.
@@ -21,7 +17,7 @@ import java.util.Map;
  * attach arbitrary metadata to share information across other listeners.
  * </p>
  */
-public class EndStateChangeEvent extends Event implements Cancellable {
+public class EndStateChangeEvent extends CustomEvent implements Cancellable {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
@@ -48,9 +44,6 @@ public class EndStateChangeEvent extends Event implements Cancellable {
 
     /** The translatable key used for the announcement message */
     private String announcementKey;
-
-    /** Optional metadata map for plugins to store additional info */
-    private final Map<String, Object> metadata = new HashMap<>();
 
     /**
      * Constructs a new EndStateChangeEvent.
@@ -135,35 +128,6 @@ public class EndStateChangeEvent extends Event implements Cancellable {
      */
     public void setAnnouncementKey(@NotNull String announcementKey) {
         this.announcementKey = announcementKey;
-    }
-
-    /**
-     * Gets an unmodifiable view of the metadata map.
-     *
-     * @return the metadata map
-     */
-    @NotNull
-    public Map<String, Object> getMetadata() {
-        return Collections.unmodifiableMap(metadata);
-    }
-
-    /**
-     * Adds or updates a metadata entry.
-     *
-     * @param key   the metadata key
-     * @param value the metadata value
-     */
-    public void putMetadata(@NotNull String key, @NotNull Object value) {
-        metadata.put(key, value);
-    }
-
-    /**
-     * Removes a metadata entry.
-     *
-     * @param key the metadata key to remove
-     */
-    public void removeMetadata(@NotNull String key) {
-        metadata.remove(key);
     }
 
     /**

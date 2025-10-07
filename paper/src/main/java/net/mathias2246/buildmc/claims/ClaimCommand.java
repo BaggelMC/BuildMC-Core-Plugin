@@ -141,6 +141,7 @@ public class ClaimCommand implements CustomCommand {
                                             boolean success = ClaimManager.removeClaimById(claimId);
                                             if (success) {
                                                 player.sendMessage(Component.translatable("messages.claims.remove.success"));
+                                                ClaimLogger.logClaimDeleted(player, claimName);
                                             } else {
                                                 player.sendMessage(Component.translatable("messages.claims.remove.failed"));
                                             }
@@ -256,9 +257,11 @@ public class ClaimCommand implements CustomCommand {
                                                             if (value) {
                                                                 ClaimManager.addProtection(claimId, flag);
                                                                 player.sendMessage(Message.msg(player, "messages.claims.protections.added", Map.of("flag", flag.toString())));
+                                                                ClaimLogger.logProtectionChanged(player, claimName, flag.toString(), "enabled");
                                                             } else {
                                                                 ClaimManager.removeProtection(claimId, flag);
                                                                 player.sendMessage(Message.msg(player, "messages.claims.protections.removed", Map.of("flag", flag.toString())));
+                                                                ClaimLogger.logProtectionChanged(player, claimName, flag.toString(), "disabled");
                                                             }
 
                                                             return 1;

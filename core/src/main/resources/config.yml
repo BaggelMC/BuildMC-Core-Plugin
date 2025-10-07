@@ -25,7 +25,6 @@ spawn-elytra:
       z:
 
 
-#
 status:
   # If players should be able to use the '/status' command
   enabled: true # Default: true
@@ -267,6 +266,14 @@ claims:
     entity-modifications:
         default: true
         is-hidden: false
+
+  # Settings for claim logs
+  logs:
+    enabled: true
+    rotation-time: "00:00" # When to rotate logs (24h format)
+    retention-days: 14 # How many days of logs to keep (set to -1 to disable limit)
+    mirror-to-console: false # If the events should be printed into the console
+
 
 disable-commands: true
 disabled-commands:

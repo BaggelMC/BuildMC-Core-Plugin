@@ -8,6 +8,7 @@ import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.ClaimType;
 import net.mathias2246.buildmc.claims.ClaimCommand;
+import net.mathias2246.buildmc.claims.ClaimLogger;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.util.CommandUtil;
 import net.mathias2246.buildmc.util.LocationUtil;
@@ -106,6 +107,7 @@ public final class CreateClaimSubCommand {
                                                             if (success) {
                                                                 player.sendMessage(Message.msg(player, "messages.claims.create.success", Map.of("remaining_claims", String.valueOf(currentClaimedChunks - newClaimChunks))));
                                                                 removeSelectionData(player);
+                                                                ClaimLogger.logClaimCreated(player, name);
                                                                 return 1;
                                                             } else {
                                                                 player.sendMessage(Component.translatable("messages.claims.create.failed"));
@@ -143,6 +145,7 @@ public final class CreateClaimSubCommand {
                                                             if (success) {
                                                                 player.sendMessage(Message.msg(player, "messages.claims.create.success", Map.of("remaining_claims", String.valueOf(currentClaimedChunks - newClaimChunks))));
                                                                 removeSelectionData(player);
+                                                                ClaimLogger.logClaimCreated(player, name);
                                                                 return 1;
                                                             } else {
                                                                 player.sendMessage(Component.translatable("messages.claims.create.failed"));
@@ -179,6 +182,7 @@ public final class CreateClaimSubCommand {
                                                                         Map.of("claim_name", name)
                                                                 ));
                                                                 removeSelectionData(player);
+                                                                ClaimLogger.logClaimCreated(player, name);
                                                                 return 1;
                                                             } else {
                                                                 player.sendMessage(Component.translatable("messages.claims.create.failed"));

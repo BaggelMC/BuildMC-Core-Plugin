@@ -8,6 +8,7 @@ import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.ClaimType;
 import net.mathias2246.buildmc.claims.ClaimCommand;
+import net.mathias2246.buildmc.claims.ClaimLogger;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.util.CommandUtil;
 import org.bukkit.Bukkit;
@@ -207,6 +208,7 @@ public class WhitelistSubCommand {
                                                                 ClaimManager.addPlayerToWhitelist(claimId, targetUUID);
                                                                 player.sendMessage(Component.translatable("messages.claims.whitelist.added"));
                                                             }
+                                                            ClaimLogger.logWhitelistAdded(player, claimName, targetPlayerName, targetUUID.toString());
                                                         }
                                                         case "remove" -> {
                                                             if (!whitelist.contains(targetUUID)) {
@@ -215,6 +217,7 @@ public class WhitelistSubCommand {
                                                                 ClaimManager.removePlayerFromWhitelist(claimId, targetUUID);
                                                                 player.sendMessage(Component.translatable("messages.claims.whitelist.removed"));
                                                             }
+                                                            ClaimLogger.logWhitelistRemoved(player, claimName, targetPlayerName, targetUUID.toString());
                                                         }
                                                         default -> {
                                                             player.sendMessage(Component.translatable("messages.claims.whitelist.invalid-action"));

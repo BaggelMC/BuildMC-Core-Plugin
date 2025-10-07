@@ -1,17 +1,12 @@
 package net.mathias2246.buildmc.api.event.player;
 
-import net.mathias2246.buildmc.api.event.EventMetadata;
+import net.mathias2246.buildmc.api.event.CustomEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Called when a {@link Player}'s head is about to be dropped after death.
@@ -24,15 +19,12 @@ import java.util.Map;
  * </ul>
  * This event is {@link Cancellable}.
  */
-public class PlayerHeadDropEvent extends Event implements Cancellable, EventMetadata {
+public class PlayerHeadDropEvent extends CustomEvent implements Cancellable {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
     /** Whether the event has been cancelled */
     private boolean cancelled = false;
-
-    /** Optional metadata map for plugins to store additional info */
-    private final Map<String, Object> metadata = new HashMap<>();
 
     private final Player victim;
     private final Player killer;
@@ -96,19 +88,6 @@ public class PlayerHeadDropEvent extends Event implements Cancellable, EventMeta
      */
     public PlayerDeathEvent getEvent() {
         return event;
-    }
-
-    @NotNull
-    public Map<String, Object> getMetadata() {
-        return Collections.unmodifiableMap(metadata);
-    }
-
-    public void putMetadata(@NotNull String key, @NotNull Object value) {
-        metadata.put(key, value);
-    }
-
-    public void removeMetadata(@NotNull String key) {
-        metadata.remove(key);
     }
 
     /**

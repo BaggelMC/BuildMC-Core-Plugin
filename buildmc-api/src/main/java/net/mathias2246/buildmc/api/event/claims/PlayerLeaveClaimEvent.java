@@ -1,15 +1,10 @@
 package net.mathias2246.buildmc.api.event.claims;
 
-import net.mathias2246.buildmc.api.event.EventMetadata;
+import net.mathias2246.buildmc.api.event.CustomPlayerEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Called when a {@link Player} leaves a claim and enters another area.
@@ -25,15 +20,12 @@ import java.util.Map;
  * <br><br>
  * Plugins can attach optional metadata to this event via {@link #putMetadata(String, Object)}.
  */
-public class PlayerLeaveClaimEvent extends PlayerEvent implements EventMetadata {
+public class PlayerLeaveClaimEvent extends CustomPlayerEvent {
 
     private static final @NotNull HandlerList HANDLERS = new HandlerList();
 
     private final @Nullable Long fromClaim;
     private final @Nullable Long toClaim;
-
-    /** Optional metadata map for plugins to store additional information. */
-    private final Map<String, Object> metadata = new HashMap<>();
 
     /**
      * Constructs a new {@link PlayerLeaveClaimEvent}.
@@ -66,19 +58,6 @@ public class PlayerLeaveClaimEvent extends PlayerEvent implements EventMetadata 
      */
     public @Nullable Long getToClaim() {
         return toClaim;
-    }
-
-    @NotNull
-    public Map<String, Object> getMetadata() {
-        return Collections.unmodifiableMap(metadata);
-    }
-
-    public void putMetadata(@NotNull String key, @NotNull Object value) {
-        metadata.put(key, value);
-    }
-
-    public void removeMetadata(@NotNull String key) {
-        metadata.remove(key);
     }
 
     @Override

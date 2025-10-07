@@ -10,6 +10,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
+import net.mathias2246.buildmc.claims.ClaimLogger;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Bukkit;
@@ -165,6 +166,7 @@ public class WhitelistMenu {
             e.setCancelled(true);
             ClaimManager.removePlayerFromWhitelist(claim.getId(), uuid);
             CoreMain.mainClass.sendPlayerMessage(player, Component.translatable("messages.claims.ui.whitelist-menu.delete-confirm-menu.success"));
+            ClaimLogger.logWhitelistRemoved(player, claim.getName(), playerName, uuid.toString());
             open(player, claim);
         }), 5, 1);
 

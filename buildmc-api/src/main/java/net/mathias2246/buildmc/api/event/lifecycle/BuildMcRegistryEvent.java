@@ -1,7 +1,7 @@
-package net.mathias2246.buildmc.api.event;
+package net.mathias2246.buildmc.api.event.lifecycle;
 
 import net.mathias2246.buildmc.api.BuildMcAPI;
-import org.bukkit.event.Event;
+import net.mathias2246.buildmc.api.event.CustomEvent;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
@@ -58,7 +58,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @see BuildMcAPI
  */
-public class BuildMcRegistryEvent extends Event {
+public class BuildMcRegistryEvent extends CustomEvent {
     private static final HandlerList HANDLERS = new HandlerList();
 
     private final BuildMcAPI api;
