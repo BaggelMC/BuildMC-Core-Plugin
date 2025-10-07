@@ -118,30 +118,7 @@ public class ProtectionsMenu {
             controls.addItem(grayItem, i, 0);
         }
 
-        // Prev button
-        controls.addItem(new GuiItem(createNamedItem(Material.ARROW, Message.msg(player,"messages.claims.ui.general.previous")), e -> {
-            e.setCancelled(true);
-            if (pages.getPage() > 0) {
-                int newPage = pages.getPage() - 1;
-                pages.setPage(newPage);
-                updatePageIndicator(player, controls, newPage + 1, totalPages);
-                gui.update();
-            }
-        }), 2, 0);
-
-        // Page indicator
-        updatePageIndicator(player, controls, pages.getPage() + 1, totalPages);
-
-        // Next button
-        controls.addItem(new GuiItem(createNamedItem(Material.ARROW, Message.msg(player,"messages.claims.ui.general.next")), e -> {
-            e.setCancelled(true);
-            if (pages.getPage() < totalPages - 1) {
-                int newPage = pages.getPage() + 1;
-                pages.setPage(newPage);
-                updatePageIndicator(player, controls, newPage + 1, totalPages);
-                gui.update();
-            }
-        }), 6, 0);
+        updatePageIndicator(player, controls, pages.getPage() + 1, totalPages, pages, gui);
 
         // Back button
         controls.addItem(new GuiItem(createNamedItem(Material.BARRIER, Message.msg(player,"messages.claims.ui.general.back")), e -> {
@@ -231,15 +208,61 @@ public class ProtectionsMenu {
         return item;
     }
 
-    private static void updatePageIndicator(Player player, StaticPane controls, int current, int total) {
+    private static void updatePageIndicator(Player player,
+                                            StaticPane controls,
+                                            int current,
+                                            int total,
+                                            PaginatedPane pages,
+                                            ChestGui gui) {
+        controls.removeItem(2, 0);
         controls.removeItem(4, 0);
+        controls.removeItem(6, 0);
+
+        // Page indicator
         ItemStack pageIndicator = new ItemStack(Material.PAPER);
         ItemMeta meta = pageIndicator.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(LegacyComponentSerializer.legacySection().serialize(Message.msg(player, "messages.claims.ui.general.page-indicator", Map.of("current", String.valueOf(current), "total", String.valueOf(total)))));
+            meta.setDisplayName(LegacyComponentSerializer.legacySection().serialize(
+                    Message.msg(player, "messages.claims.ui.general.page-indicator",
+                            Map.of("current", String.valueOf(current), "total", String.valueOf(total)))
+            ));
             pageIndicator.setItemMeta(meta);
         }
         controls.addItem(new GuiItem(pageIndicator, e -> e.setCancelled(true)), 4, 0);
+
+        // Previous button (only if not on first page)
+        if (current > 1) {
+            controls.addItem(new GuiItem(
+                    createNamedItem(Material.ARROW, Message.msg(player, "messages.claims.ui.general.previous")),
+                    e -> {
+                        e.setCancelled(true);
+                        if (pages.getPage() > 0) {
+                            int newPage = pages.getPage() - 1;
+                            pages.setPage(newPage);
+                            updatePageIndicator(player, controls, newPage + 1, total, pages, gui);
+                            gui.update();
+                        }
+                    }), 2, 0);
+        } else {
+            controls.addItem(new GuiItem(createGlassPane(), UIUtil.noInteract), 2, 0);
+        }
+
+        // Next button (only if not on last page)
+        if (current < total) {
+            controls.addItem(new GuiItem(
+                    createNamedItem(Material.ARROW, Message.msg(player, "messages.claims.ui.general.next")),
+                    e -> {
+                        e.setCancelled(true);
+                        if (pages.getPage() < total - 1) {
+                            int newPage = pages.getPage() + 1;
+                            pages.setPage(newPage);
+                            updatePageIndicator(player, controls, newPage + 1, total, pages, gui);
+                            gui.update();
+                        }
+                    }), 6, 0);
+        } else {
+            controls.addItem(new GuiItem(createGlassPane(), UIUtil.noInteract), 6, 0);
+        }
     }
 
 }

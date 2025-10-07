@@ -97,30 +97,7 @@ public class ClaimSelectMenu {
         StaticPane controls = UIUtil.BOTTOM_BAR.copy();
         controls.setPriority(Pane.Priority.HIGHEST);
 
-        // Prev button
-        ItemStack prevItem = createNavItem(player, "messages.claims.ui.general.previous");
-        controls.addItem(new GuiItem(prevItem, event -> {
-            event.setCancelled(true);
-            if (pages.getPage() > 0) {
-                pages.setPage(pages.getPage() - 1);
-                updatePageIndicator(player, controls, pages.getPage(), Math.max(1, pages.getPages()));
-                gui.update();
-            }
-        }), 2, 0);
-
-        // Page indicator
-        updatePageIndicator(player, controls, 0, Math.max(1, pages.getPages()));
-
-        // Next button
-        ItemStack nextItem = createNavItem(player, "messages.claims.ui.general.next");
-        controls.addItem(new GuiItem(nextItem, event -> {
-            event.setCancelled(true);
-            if (pages.getPage() < pages.getPages() - 1) {
-                pages.setPage(pages.getPage() + 1);
-                updatePageIndicator(player, controls, pages.getPage(), Math.max(1, pages.getPages()));
-                gui.update();
-            }
-        }), 6, 0);
+        updatePageIndicator(player, controls, 0, Math.max(1, pages.getPages()), pages, gui);
 
         gui.addPane(controls);
         gui.show(player);
@@ -181,10 +158,64 @@ public class ClaimSelectMenu {
         return items;
     }
 
-    private static void updatePageIndicator(Player player, StaticPane controls, int currentPage, int totalPages) {
+    private static void updatePageIndicator(Player player,
+                                            StaticPane controls,
+                                            int currentPage,
+                                            int totalPages,
+                                            PaginatedPane pages,
+                                            ChestGui gui) {
+        // Clear old navigation items
+        controls.removeItem(2, 0);
         controls.removeItem(4, 0);
-        controls.addItem(new GuiItem(makePageIndicator(player, currentPage + 1, totalPages), e -> e.setCancelled(true)), 4, 0);
+        controls.removeItem(6, 0);
+
+        // --- Page indicator (middle) ---
+        ItemStack indicator = makePageIndicator(player, currentPage + 1, totalPages);
+        controls.addItem(new GuiItem(indicator, e -> e.setCancelled(true)), 4, 0);
+
+        // --- Previous Button ---
+        if (currentPage > 0) {
+            ItemStack prev = createNavItem(player, "messages.claims.ui.general.previous");
+            controls.addItem(new GuiItem(prev, e -> {
+                e.setCancelled(true);
+                if (pages.getPage() > 0) {
+                    pages.setPage(pages.getPage() - 1);
+                    updatePageIndicator(player, controls, pages.getPage(), totalPages, pages, gui);
+                    gui.update();
+                }
+            }), 2, 0);
+        } else {
+            // Replace with gray filler
+            controls.addItem(new GuiItem(createDisabledNavItem(player), UIUtil.noInteract), 2, 0);
+        }
+
+        // --- Next Button ---
+        if (currentPage < totalPages - 1) {
+            ItemStack next = createNavItem(player, "messages.claims.ui.general.next");
+            controls.addItem(new GuiItem(next, e -> {
+                e.setCancelled(true);
+                if (pages.getPage() < pages.getPages() - 1) {
+                    pages.setPage(pages.getPage() + 1);
+                    updatePageIndicator(player, controls, pages.getPage(), totalPages, pages, gui);
+                    gui.update();
+                }
+            }), 6, 0);
+        } else {
+            // Replace with gray filler
+            controls.addItem(new GuiItem(createDisabledNavItem(player), UIUtil.noInteract), 6, 0);
+        }
     }
+
+    private static ItemStack createDisabledNavItem(Player player) {
+        ItemStack item = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(LEGACY.serialize(Message.msg(player, "messages.claims.ui.general.unavailable")));
+            item.setItemMeta(meta);
+        }
+        return item;
+    }
+
 
     private static ItemStack makeInfoPaper(Player player, Component line) {
         ItemStack item = new ItemStack(Material.PAPER);
