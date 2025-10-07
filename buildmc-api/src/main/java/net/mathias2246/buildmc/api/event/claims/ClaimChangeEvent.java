@@ -1,21 +1,16 @@
 package net.mathias2246.buildmc.api.event.claims;
 
 import net.mathias2246.buildmc.api.claims.Claim;
-import net.mathias2246.buildmc.api.event.EventMetadata;
-import org.bukkit.event.Event;
+import net.mathias2246.buildmc.api.event.CustomEvent;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Called when a claim setting was changed.
  * This event is fired synchronously on the main server thread.
  * Plugins can attach optional metadata to this event via {@link #putMetadata(String, Object)}.
  */
-public class ClaimChangeEvent extends Event implements EventMetadata {
+public class ClaimChangeEvent extends CustomEvent {
 
     public enum ClaimSetting {
         WHITELIST,
@@ -27,9 +22,6 @@ public class ClaimChangeEvent extends Event implements EventMetadata {
     private final @NotNull Claim claim;
 
     private final @NotNull ClaimSetting setting;
-
-    /** Optional metadata map for plugins to store additional information. */
-    private final Map<String, Object> metadata = new HashMap<>();
 
     /**
      * Constructs a new {@link ClaimChangeEvent}.
@@ -53,19 +45,6 @@ public class ClaimChangeEvent extends Event implements EventMetadata {
 
     public @NotNull ClaimSetting getSetting() {
         return setting;
-    }
-
-    @NotNull
-    public Map<String, Object> getMetadata() {
-        return Collections.unmodifiableMap(metadata);
-    }
-
-    public void putMetadata(@NotNull String key, @NotNull Object value) {
-        metadata.put(key, value);
-    }
-
-    public void removeMetadata(@NotNull String key) {
-        metadata.remove(key);
     }
 
     @Override

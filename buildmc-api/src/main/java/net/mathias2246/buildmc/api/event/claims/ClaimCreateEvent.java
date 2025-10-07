@@ -1,29 +1,21 @@
 package net.mathias2246.buildmc.api.event.claims;
 
 import net.mathias2246.buildmc.api.claims.Claim;
-import net.mathias2246.buildmc.api.event.EventMetadata;
+import net.mathias2246.buildmc.api.event.CustomEvent;
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Called when a claim was created.
  * This event is fired synchronously on the main server thread.
  * Plugins can attach optional metadata to this event via {@link #putMetadata(String, Object)}.
  */
-public class ClaimCreateEvent extends Event implements Cancellable, EventMetadata {
+public class ClaimCreateEvent extends CustomEvent implements Cancellable {
 
     private static final @NotNull HandlerList HANDLERS = new HandlerList();
 
     private final @NotNull Claim claim;
-
-    /** Optional metadata map for plugins to store additional information. */
-    private final Map<String, Object> metadata = new HashMap<>();
 
     /**
      * Constructs a new {@link ClaimCreateEvent}.
@@ -41,19 +33,6 @@ public class ClaimCreateEvent extends Event implements Cancellable, EventMetadat
      */
     public @NotNull Claim getClaim() {
         return claim;
-    }
-
-    @NotNull
-    public Map<String, Object> getMetadata() {
-        return Collections.unmodifiableMap(metadata);
-    }
-
-    public void putMetadata(@NotNull String key, @NotNull Object value) {
-        metadata.put(key, value);
-    }
-
-    public void removeMetadata(@NotNull String key) {
-        metadata.remove(key);
     }
 
     @Override

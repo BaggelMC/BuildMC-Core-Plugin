@@ -2,8 +2,8 @@ package net.mathias2246.buildmc;
 
 import net.mathias2246.buildmc.api.BuildMcAPI;
 import net.mathias2246.buildmc.api.claims.Protection;
-import net.mathias2246.buildmc.api.event.BuildMcFinishedLoadingEvent;
-import net.mathias2246.buildmc.api.event.BuildMcRegistryEvent;
+import net.mathias2246.buildmc.api.event.lifecycle.BuildMcFinishedLoadingEvent;
+import net.mathias2246.buildmc.api.event.lifecycle.BuildMcRegistryEvent;
 import net.mathias2246.buildmc.claims.protections.blocks.*;
 import net.mathias2246.buildmc.claims.protections.entities.*;
 import net.mathias2246.buildmc.claims.protections.misc.*;

@@ -1,14 +1,14 @@
-package net.mathias2246.buildmc.api.event;
+package net.mathias2246.buildmc.api.event.lifecycle;
 
 import net.mathias2246.buildmc.api.BuildMcAPI;
-import org.bukkit.event.Event;
+import net.mathias2246.buildmc.api.event.CustomEvent;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Fired when BuildMC has finished loading and is up and running.
  */
-public class BuildMcFinishedLoadingEvent extends Event {
+public class BuildMcFinishedLoadingEvent extends CustomEvent {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
