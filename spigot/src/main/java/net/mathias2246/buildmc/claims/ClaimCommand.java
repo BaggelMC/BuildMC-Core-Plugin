@@ -220,6 +220,7 @@ public class ClaimCommand implements CustomCommand {
                                                 audiences.player(player).sendMessage(Message.msg(player, "messages.claims.create.success", Map.of("remaining_claims", String.valueOf(currentClaimedChunks - newClaimChunks))));
                                                 player.removeMetadata(claimTool.firstSelectionKey, claimTool.getPlugin());
                                                 player.removeMetadata(claimTool.secondSelectionKey, claimTool.getPlugin());
+                                                ClaimLogger.logClaimCreated(player, name);
                                                 return 1;
                                             } else {
                                                 audiences.player(player).sendMessage(Component.translatable("messages.claims.create.failed"));
@@ -257,6 +258,7 @@ public class ClaimCommand implements CustomCommand {
                                                 audiences.player(player).sendMessage(Message.msg(player, "messages.claims.create.success", Map.of("remaining_claims", String.valueOf(currentClaimedChunks - newClaimChunks))));
                                                 player.removeMetadata(claimTool.firstSelectionKey, claimTool.getPlugin());
                                                 player.removeMetadata(claimTool.secondSelectionKey, claimTool.getPlugin());
+                                                ClaimLogger.logClaimCreated(player, name);
                                                 return 1;
                                             } else {
                                                 audiences.player(player).sendMessage(Component.translatable("messages.claims.create.failed"));
@@ -294,6 +296,7 @@ public class ClaimCommand implements CustomCommand {
                                                 ));
                                                 player.removeMetadata(claimTool.firstSelectionKey, claimTool.getPlugin());
                                                 player.removeMetadata(claimTool.secondSelectionKey, claimTool.getPlugin());
+                                                ClaimLogger.logClaimCreated(player, name);
                                                 return 1;
                                             } else {
                                                 audiences.player(player).sendMessage(Component.translatable("messages.claims.create.failed"));
@@ -416,6 +419,7 @@ public class ClaimCommand implements CustomCommand {
                                     boolean success = ClaimManager.removeClaimById(claimId);
                                     if (success) {
                                         audiences.player(player).sendMessage(Component.translatable("messages.claims.remove.success"));
+                                        ClaimLogger.logClaimDeleted(player, claimName);
                                         return 1;
                                     }
                                     audiences.player(player).sendMessage(Component.translatable("messages.claims.remove.failed"));
@@ -575,6 +579,7 @@ public class ClaimCommand implements CustomCommand {
                                             }
                                             ClaimManager.addPlayerToWhitelist(claimId, targetUUID);
                                             audiences.player(player).sendMessage(Component.translatable("messages.claims.whitelist.added"));
+                                            ClaimLogger.logWhitelistAdded(player, claimName, targetPlayerName, targetUUID.toString());
                                             return 1;
                                         }
                                         case "remove" -> {
@@ -584,6 +589,7 @@ public class ClaimCommand implements CustomCommand {
                                             }
                                             ClaimManager.removePlayerFromWhitelist(claimId, targetUUID);
                                             audiences.player(player).sendMessage(Component.translatable("messages.claims.whitelist.removed"));
+                                            ClaimLogger.logWhitelistRemoved(player, claimName, targetPlayerName, targetUUID.toString());
                                             return 1;
                                         }
                                         default -> {
@@ -735,12 +741,14 @@ public class ClaimCommand implements CustomCommand {
                                                 Message.msg(player, "messages.claims.protections.added")
                                                         .replaceText(TextReplacementConfig.builder().matchLiteral("%flag%").replacement(flag.toString()).build())
                                         );
+                                        ClaimLogger.logProtectionChanged(player, claimName, flag.toString(), "enabled");
                                     } else {
                                         ClaimManager.removeProtection(claimId, flag);
                                         audiences.player(player).sendMessage(
                                                 Message.msg(player, "messages.claims.protections.removed")
                                                         .replaceText(TextReplacementConfig.builder().matchLiteral("%flag%").replacement(flag.toString()).build())
                                         );
+                                        ClaimLogger.logProtectionChanged(player, claimName, flag.toString(), "disabled");
                                     }
 
                                     return 1;

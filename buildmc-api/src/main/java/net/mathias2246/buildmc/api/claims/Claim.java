@@ -64,7 +64,7 @@ public class Claim {
         this.chunkZ2 = chunkZ2;
         this.name = name;
 
-        this.whitelistedPlayers = whitelistedPlayers;
+        this.whitelistedPlayers = new ArrayList<>(whitelistedPlayers); // Ensure it's mutable
 
         if (protections.isEmpty() && type != ClaimType.PLACEHOLDER) {
             this.protections = new ArrayList<>(Protection.defaultProtections);

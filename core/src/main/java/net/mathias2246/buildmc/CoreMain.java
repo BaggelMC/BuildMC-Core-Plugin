@@ -4,6 +4,7 @@ import net.mathias2246.buildmc.api.BuildMcAPI;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.event.lifecycle.BuildMcFinishedLoadingEvent;
 import net.mathias2246.buildmc.api.event.lifecycle.BuildMcRegistryEvent;
+import net.mathias2246.buildmc.claims.ClaimLogger;
 import net.mathias2246.buildmc.claims.protections.blocks.*;
 import net.mathias2246.buildmc.claims.protections.entities.*;
 import net.mathias2246.buildmc.claims.protections.misc.*;
@@ -20,6 +21,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -140,6 +142,8 @@ public final class CoreMain {
             }
 
             registerEvent(new PlayerCrossClaimBoundariesListener());
+
+            ClaimLogger.init(plugin);
         }
 
         pluginMain.finishLoading();

@@ -10,6 +10,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.Protection;
+import net.mathias2246.buildmc.claims.ClaimLogger;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.ui.UIUtil;
 import net.mathias2246.buildmc.util.Message;
@@ -169,8 +170,10 @@ public class ProtectionsMenu {
             // Toggle
             if (enabled) {
                 ClaimManager.removeProtection(claim.getId(), protection);
+                ClaimLogger.logProtectionChanged(player, claim.getName(), protection, "enabled");
             } else {
                 ClaimManager.addProtection(claim.getId(), protection);
+                ClaimLogger.logProtectionChanged(player, claim.getName(), protection, "disabled");
             }
 
             // Replace this slot with a freshly built GuiItem (so it keeps toggling)
