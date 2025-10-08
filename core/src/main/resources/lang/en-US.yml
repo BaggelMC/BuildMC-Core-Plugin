@@ -241,7 +241,7 @@ messages:
           name: "<green>Add Player</green>"
           lore-line1: "<gray>Use the <gold>/claim whitelist add</gold> command</gray>"
           lore-line2: "<gray>to whitelist someone.</gray>"
-          click-info: "<gray>Use the <gold>/claim whitelist add</gold> command to whitelist someone.</gray>"
+          click-info: "<gray>Shift-click <gold><insert:/claim whitelist add>this</insert></gold> to insert the whitelist command.</gray>"
 
         delete-confirm-menu:
           title: "Remove %player%?"
