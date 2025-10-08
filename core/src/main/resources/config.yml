@@ -264,8 +264,8 @@ claims:
 
     # Entities in entity-modifications cannot modify blocks
     entity-modifications:
-        default: true
-        is-hidden: false
+        default: false
+        is-hidden: true
 
   # Settings for claim logs
   logs:

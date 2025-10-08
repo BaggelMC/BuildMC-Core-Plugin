@@ -21,6 +21,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,12 +33,12 @@ import java.util.Objects;
 public class EntityDamage extends Protection {
 
     public EntityDamage(@Nullable ConfigurationSection section) {
-        super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:player_friendly_fire")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
+        super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:entity_damage")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 
     @Override
     public String getTranslationBaseKey() {
-        return "claims.flags.entity_damage";
+        return "claims.flags.entity-damage";
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -83,12 +84,17 @@ public class EntityDamage extends Protection {
     public @NotNull GuiItem getDisplay(@NotNull Player uiHolder, @NotNull Gui gui) {
         String t = getTranslationBaseKey();
 
-        ItemStack displayBase = new ItemStack(Material.PLAYER_HEAD);
+        ItemStack displayBase = new ItemStack(Material.IRON_SWORD);
         ItemUtil.editMeta(displayBase, (meta) -> {
             meta.setItemName(LegacyComponentSerializer.legacySection().serialize(
                     Message.msg(uiHolder, t+".name")
             ));
             meta.setLore(List.of(LegacyComponentSerializer.legacySection().serialize(Message.msg(uiHolder, t + ".lore")).split("\n")));
+            meta.setAttributeModifiers(null);
+            meta.addItemFlags(
+                    ItemFlag.HIDE_ADDITIONAL_TOOLTIP,
+                    ItemFlag.HIDE_ATTRIBUTES)
+            ;
         });
 
         return new GuiItem(
