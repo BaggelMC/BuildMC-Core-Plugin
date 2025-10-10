@@ -4,6 +4,7 @@ import net.mathias2246.buildmc.api.BuildMcAPI;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.event.lifecycle.BuildMcFinishedLoadingEvent;
 import net.mathias2246.buildmc.api.event.lifecycle.BuildMcRegistryEvent;
+import net.mathias2246.buildmc.api.item.ItemDropTracker;
 import net.mathias2246.buildmc.claims.ClaimLogger;
 import net.mathias2246.buildmc.claims.protections.blocks.*;
 import net.mathias2246.buildmc.claims.protections.entities.*;
@@ -147,6 +148,8 @@ public final class CoreMain {
 
             ClaimLogger.init(plugin);
         }
+
+        new ItemDropTracker(plugin);
 
         pluginMain.finishLoading();
 

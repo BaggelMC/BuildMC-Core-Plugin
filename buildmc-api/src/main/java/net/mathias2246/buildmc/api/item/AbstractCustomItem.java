@@ -1,5 +1,7 @@
 package net.mathias2246.buildmc.api.item;
 
+import net.mathias2246.buildmc.util.TaskUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -109,21 +111,33 @@ public abstract class AbstractCustomItem implements Keyed {
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public abstract boolean canUse(@NotNull ItemStack item, @NotNull PlayerInteractEvent event);
 
-    /**Called when a PlayerInteractEvent from the CustomItemListener was done with this custom item type*/
+    /** Called when a PlayerInteractEvent from the CustomItemListener was done with this custom item type */
     @ApiStatus.Internal
     public void onInteractEvent(@NotNull ItemStack item, @NotNull PlayerInteractEvent event) {
         if (event.getHand() != EquipmentSlot.HAND) return;
 
-        onInteract(item, event);
-        var a = event.getAction();
+        // Delay 1 tick
+        TaskUtil.defer(plugin, () -> {
+            Player player = event.getPlayer();
 
-        Location at;
-        if (event.getClickedBlock() == null) at = event.getPlayer().getLocation();
-        else at = event.getClickedBlock().getLocation();
+            // Ignore interaction if the player dropped an item very recently
+            if (ItemDropTracker.droppedRecently(player)) return;
 
-        if (a.equals(Action.LEFT_CLICK_AIR) || a.equals(Action.LEFT_CLICK_BLOCK)) onLeftClick(item, at, event);
-        else if (a.equals(Action.RIGHT_CLICK_AIR) || a.equals(Action.RIGHT_CLICK_BLOCK)) onRightClick(item, at, event);
+            onInteract(item, event);
+
+            Action action = event.getAction();
+            Location at = event.getClickedBlock() != null
+                    ? event.getClickedBlock().getLocation()
+                    : player.getLocation();
+
+            if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
+                onLeftClick(item, at, event);
+            } else if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
+                onRightClick(item, at, event);
+            }
+        });
     }
+
 
     /**Executed when a player left- or right-clicks with this custom-item type in his hand.*/
     protected abstract void onInteract(@NotNull ItemStack item, @NotNull PlayerInteractEvent event);
