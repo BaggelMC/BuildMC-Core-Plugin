@@ -210,7 +210,8 @@ public class ClaimSelectMenu {
         ItemStack item = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(LEGACY.serialize(Message.msg(player, "messages.claims.ui.general.unavailable")));
+            meta.setItemName(null);
+            meta.setHideTooltip(true);
             item.setItemMeta(meta);
         }
         return item;
