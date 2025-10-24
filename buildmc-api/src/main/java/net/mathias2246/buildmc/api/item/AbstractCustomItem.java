@@ -116,14 +116,14 @@ public abstract class AbstractCustomItem implements Keyed {
     public void onInteractEvent(@NotNull ItemStack item, @NotNull PlayerInteractEvent event) {
         if (event.getHand() != EquipmentSlot.HAND) return;
 
+        onInteract(item, event);
+
         // Delay 1 tick
         TaskUtil.defer(plugin, () -> {
             Player player = event.getPlayer();
 
             // Ignore interaction if the player dropped an item very recently
             if (ItemDropTracker.droppedRecently(player)) return;
-
-            onInteract(item, event);
 
             Action action = event.getAction();
             Location at = event.getClickedBlock() != null

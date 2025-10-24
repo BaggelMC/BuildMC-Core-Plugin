@@ -62,7 +62,6 @@ public class ItemDrop extends Protection {
     public void onItemDrop(PlayerDropItemEvent event) {
         Player player = event.getPlayer();
 
-        Object ProtectionFlag;
         if (!ClaimManager.isPlayerAllowed(player, getKey(), player.getLocation())) {
             CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.item-drop"));
             event.setCancelled(true);
