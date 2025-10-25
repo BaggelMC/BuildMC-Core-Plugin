@@ -11,6 +11,7 @@
 
     <properties>
         <java.version>21</java.version>
+        <minecraft.supportedVersions>1.21.4-1.21.8</minecraft.supportedVersions>
     </properties>
 
     <repositories>
@@ -42,7 +43,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.21.10-R0.1-SNAPSHOT</version>
+            <version>1.21.8-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -69,7 +70,7 @@
 
     <build>
 
-        <finalName>BuildMC-Core-Spigot-${project.buildVersion}-${minecraft.supportedVersions}</finalName>
+        <finalName>BuildMC-Core-Spigot-${project.buildVersion}_${minecraft.supportedVersions}</finalName>
 
         <resources>
             <resource>

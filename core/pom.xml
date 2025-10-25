@@ -97,7 +97,7 @@
 
     <build>
 
-        <finalName>BuildMC-Core-${project.buildVersion}-${minecraft.supportedVersions}</finalName>
+        <finalName>BuildMC-Core-${project.buildVersion}_${minecraft.supportedVersions}</finalName>
 
         <plugins>
             <plugin>

@@ -53,7 +53,7 @@
 
     <build>
 
-        <finalName>BuildMC-API-${project.buildVersion}-${minecraft.supportedVersions}</finalName>
+        <finalName>BuildMC-API-${project.buildVersion}_${minecraft.supportedVersions}</finalName>
 
         <plugins>
 

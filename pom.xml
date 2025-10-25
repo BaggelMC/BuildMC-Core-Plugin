@@ -22,7 +22,7 @@
 
         <project.buildVersion>1.1.0</project.buildVersion>
 
-        <minecraft.supportedVersions>1.21.4+</minecraft.supportedVersions>
+        <minecraft.supportedVersions>1.21.4-1.21.10</minecraft.supportedVersions>
         <minecraft.bukkitApiVersion>1.21</minecraft.bukkitApiVersion>
     </properties>
 
