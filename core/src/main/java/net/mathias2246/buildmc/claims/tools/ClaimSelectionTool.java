@@ -138,6 +138,9 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
         CoreMain.mainClass.sendPlayerMessage(player, Component.translatable("messages.claims.tool.set-pos1"));
 
         CoreMain.soundManager.playSound(player, successSound);
+
+        player.setCooldown(item, 60);
+
         if (!player.hasMetadata("claim_selection_particles")) {
             player.setMetadata("claim_selection_particles", new FixedMetadataValue(getPlugin(), null));
             var p = particles.build(player);
