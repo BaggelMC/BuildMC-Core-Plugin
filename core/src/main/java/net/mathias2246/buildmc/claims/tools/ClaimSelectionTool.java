@@ -20,6 +20,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings({"PatternValidation", "UnstableApiUsage"})
@@ -29,6 +30,7 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
     public final @NotNull Sound mistakeSound;
     public final @NotNull ParticleSpawner.Builder<?> particles;
 
+    @ApiStatus.Internal
     public ClaimSelectionTool(@NotNull Plugin plugin, @NotNull NamespacedKey key, @NotNull ParticleSpawner.Builder<?> particles) {
         super(plugin, key);
         successSound = net.kyori.adventure.sound.Sound.sound(
