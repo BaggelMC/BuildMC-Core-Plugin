@@ -177,7 +177,6 @@ public final class Main extends PluginMain {
         } catch (NoSuchFieldException | IllegalAccessException e) {
             logger.warning("Failed to fully disable command '" + commandName + "': " + e.getMessage());
         }
-
     }
 
 
