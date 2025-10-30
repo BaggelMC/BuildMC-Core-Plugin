@@ -51,7 +51,6 @@ import java.util.logging.Logger;
 
 import static net.mathias2246.buildmc.CoreMain.registriesHolder;
 
-@SuppressWarnings("UnstableApiUsage")
 public final class Main extends PluginMain {
 
     public static Logger logger;

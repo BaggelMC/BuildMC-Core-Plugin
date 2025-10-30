@@ -24,7 +24,7 @@ public interface ConfigHandler {
     <T> T get(String key);
 
     /**
-     * Reads a value from the configuration with a default value if key is missing.
+     * Reads a value from the configuration with a default value if the key is missing.
      * @param key The key to retrieve the value for.
      * @param defaultValue The value to return if the key is missing.
      * @param <T> The type of the value.

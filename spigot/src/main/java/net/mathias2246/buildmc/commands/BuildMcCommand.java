@@ -3,9 +3,7 @@ package net.mathias2246.buildmc.commands;
 import dev.jorel.commandapi.CommandAPICommand;
 import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.endEvent.EndEventCommand;
-import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.ServerOperator;
 
 import static net.mathias2246.buildmc.Main.audiences;
 

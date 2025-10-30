@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import static com.mojang.brigadier.arguments.StringArgumentType.string;
 import static net.mathias2246.buildmc.CoreMain.soundManager;
 
-@SuppressWarnings("UnstableApiUsage")
 public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCommand {
 
     // The '/status' command

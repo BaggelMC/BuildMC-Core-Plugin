@@ -8,7 +8,7 @@ This system provides additional functionality for metadata management and simpli
 ## 📚 Overview
 
 Custom events in the BuildMC API are designed to allow plugin developers to **hook into BuildMC’s behavior** without directly modifying its source code.  
-Developers can listen for these events to **observe, modify, or cancel** plugin operations such as claim creation, removal, player entry, and more.
+Developers can listen to these events to **observe, modify, or cancel** plugin operations such as claim creation, removal, player entry, and more.
 
 ---
 
