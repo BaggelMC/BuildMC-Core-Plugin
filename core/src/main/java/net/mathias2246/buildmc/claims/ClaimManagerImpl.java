@@ -209,4 +209,34 @@ public class ClaimManagerImpl implements ClaimManager {
     public boolean doesOwnerHaveClaimWithName(String ownerId, String claimName) throws SQLException {
         return net.mathias2246.buildmc.claims.ClaimManager.doesOwnerHaveClaimWithName(ownerId, claimName);
     }
+
+    @Override
+    public @Nullable Integer getRemainingTeamClaims(String teamName) {
+        return net.mathias2246.buildmc.claims.ClaimManager.getRemainingTeamClaims(teamName);
+    }
+
+    @Override
+    public @Nullable Integer getRemainingPlayerClaims(String playerUUID) {
+        return net.mathias2246.buildmc.claims.ClaimManager.getRemainingPlayerClaims(playerUUID);
+    }
+
+    @Override
+    public @Nullable Integer getRemainingPlayerClaims(UUID playerUUID) {
+        return net.mathias2246.buildmc.claims.ClaimManager.getRemainingPlayerClaims(playerUUID);
+    }
+
+    @Override
+    public void setRemainingTeamClaims(String teamName, @Nullable Integer remainingClaims) {
+        net.mathias2246.buildmc.claims.ClaimManager.setRemainingTeamClaims(teamName, remainingClaims);
+    }
+
+    @Override
+    public void setRemainingPlayerClaims(String playerUUID, @Nullable Integer remainingClaims) {
+        net.mathias2246.buildmc.claims.ClaimManager.setRemainingPlayerClaims(playerUUID, remainingClaims);
+    }
+
+    @Override
+    public void setRemainingPlayerClaims(UUID playerUUID, @Nullable Integer remainingClaims) {
+        net.mathias2246.buildmc.claims.ClaimManager.setRemainingPlayerClaims(playerUUID, remainingClaims);
+    }
 }

@@ -498,4 +498,37 @@ public class ClaimManager {
     public static boolean doesOwnerHaveClaimWithName(String ownerId, String claimName) throws SQLException {
         return CoreMain.claimTable.doesOwnerHaveClaimWithName(CoreMain.databaseManager.getConnection(), ownerId, claimName);
     }
+
+    public static @Nullable Integer getRemainingTeamClaims(String teamName) {
+        return teamRemainingClaims.get(teamName);
+    }
+
+    public static @Nullable Integer getRemainingPlayerClaims(String playerUUID) {
+        return playerRemainingClaims.get(playerUUID);
+    }
+
+    public static @Nullable Integer getRemainingPlayerClaims(UUID playerUUID) {
+        return playerRemainingClaims.get(playerUUID.toString());
+    }
+
+    public static void setRemainingTeamClaims(String teamName, @Nullable Integer remainingClaims) {
+        if (remainingClaims == null) {
+            teamRemainingClaims.remove(teamName);
+        } else {
+            teamRemainingClaims.put(teamName, remainingClaims);
+        }
+    }
+
+    public static void setRemainingPlayerClaims(String playerUUID, @Nullable Integer remainingClaims) {
+        if (remainingClaims == null) {
+            playerRemainingClaims.remove(playerUUID);
+        } else {
+            playerRemainingClaims.put(playerUUID, remainingClaims);
+        }
+    }
+
+    public static void setRemainingPlayerClaims(UUID playerUUID, @Nullable Integer remainingClaims) {
+        setRemainingPlayerClaims(playerUUID.toString(), remainingClaims);
+    }
+
 }
