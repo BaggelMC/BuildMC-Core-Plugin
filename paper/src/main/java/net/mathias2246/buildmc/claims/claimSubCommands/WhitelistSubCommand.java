@@ -7,6 +7,7 @@ import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.ClaimType;
+import net.mathias2246.buildmc.api.event.claims.ClaimWhitelistChangeEvent;
 import net.mathias2246.buildmc.claims.ClaimLogger;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.util.CommandUtil;
@@ -189,7 +190,7 @@ public class WhitelistSubCommand {
                                                         return 0;
                                                     }
 
-                                                    OfflinePlayer target = Bukkit.getPlayerExact(targetPlayerName);
+                                                    Player target = Bukkit.getPlayerExact(targetPlayerName);
                                                     if (target == null) {
                                                         player.sendMessage(Component.translatable("messages.claims.whitelist.player-not-found"));
                                                         return 0;
@@ -204,19 +205,39 @@ public class WhitelistSubCommand {
                                                             if (whitelist.contains(targetUUID)) {
                                                                 player.sendMessage(Component.translatable("messages.claims.whitelist.already"));
                                                             } else {
+                                                                ClaimWhitelistChangeEvent event = new ClaimWhitelistChangeEvent(
+                                                                        claim,
+                                                                        target,
+                                                                        sender,
+                                                                        ClaimWhitelistChangeEvent.ChangeAction.ADDED
+                                                                );
+                                                                Bukkit.getPluginManager().callEvent(event);
+                                                                if (event.isCancelled()) return 0;
+
                                                                 ClaimManager.addPlayerToWhitelist(claimId, targetUUID);
                                                                 player.sendMessage(Component.translatable("messages.claims.whitelist.added"));
+
+                                                                ClaimLogger.logWhitelistAdded(player, claimName, targetPlayerName, targetUUID.toString());
                                                             }
-                                                            ClaimLogger.logWhitelistAdded(player, claimName, targetPlayerName, targetUUID.toString());
                                                         }
                                                         case "remove" -> {
                                                             if (!whitelist.contains(targetUUID)) {
                                                                 player.sendMessage(Component.translatable("messages.claims.whitelist.player-not-found"));
                                                             } else {
+                                                                ClaimWhitelistChangeEvent event = new ClaimWhitelistChangeEvent(
+                                                                        claim,
+                                                                        target,
+                                                                        sender,
+                                                                        ClaimWhitelistChangeEvent.ChangeAction.REMOVED
+                                                                );
+                                                                Bukkit.getPluginManager().callEvent(event);
+                                                                if (event.isCancelled()) return 0;
+
                                                                 ClaimManager.removePlayerFromWhitelist(claimId, targetUUID);
                                                                 player.sendMessage(Component.translatable("messages.claims.whitelist.removed"));
+
+                                                                ClaimLogger.logWhitelistRemoved(player, claimName, targetPlayerName, targetUUID.toString());
                                                             }
-                                                            ClaimLogger.logWhitelistRemoved(player, claimName, targetPlayerName, targetUUID.toString());
                                                         }
                                                         default -> {
                                                             player.sendMessage(Component.translatable("messages.claims.whitelist.invalid-action"));

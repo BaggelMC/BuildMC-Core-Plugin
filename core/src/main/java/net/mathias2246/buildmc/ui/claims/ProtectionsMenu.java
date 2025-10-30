@@ -10,6 +10,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.Protection;
+import net.mathias2246.buildmc.api.event.claims.ClaimProtectionChangeEvent;
 import net.mathias2246.buildmc.claims.ClaimLogger;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.ui.UIUtil;
@@ -146,9 +147,25 @@ public class ProtectionsMenu {
 
             // Toggle
             if (enabled) {
+                ClaimProtectionChangeEvent event = new ClaimProtectionChangeEvent(
+                        claim,
+                        protection,
+                        ClaimProtectionChangeEvent.ActiveState.DISABLED,
+                        player
+                );
+                if (event.isCancelled()) return;
+
                 ClaimManager.removeProtection(claim.getId(), protection);
                 ClaimLogger.logProtectionChanged(player, claim.getName(), protection, "enabled");
             } else {
+                ClaimProtectionChangeEvent event = new ClaimProtectionChangeEvent(
+                        claim,
+                        protection,
+                        ClaimProtectionChangeEvent.ActiveState.ENABLED,
+                        player
+                );
+                if (event.isCancelled()) return;
+
                 ClaimManager.addProtection(claim.getId(), protection);
                 ClaimLogger.logProtectionChanged(player, claim.getName(), protection, "disabled");
             }
