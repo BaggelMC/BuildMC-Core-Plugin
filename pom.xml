@@ -10,11 +10,12 @@
     <name>BuildMC Parent</name>
 
     <modules>
-        <module>buildmc-api</module>
         <module>core</module>
         <module>spigot</module>
         <module>paper</module>
+        <module>buildmc-api</module>
     </modules>
+
 
     <properties>
         <java.version>21</java.version>
@@ -26,9 +27,23 @@
         <minecraft.bukkitApiVersion>1.21</minecraft.bukkitApiVersion>
     </properties>
 
+    <url>https://github.com/BaggelMC/BuildMC-Core-Plugin/</url>
+
+    <developers>
+        <developer>
+            <id>mathias2246</id>
+            <name>Mathias2246</name>
+        </developer>
+        <developer>
+            <id>darkylt</id>
+            <name>Darkylt</name>
+        </developer>
+    </developers>
+
     <build>
         <defaultGoal>clean package</defaultGoal>
         <plugins>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

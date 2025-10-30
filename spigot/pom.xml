@@ -24,13 +24,13 @@
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
         <repository>
+            <id>central</id>
+            <url>https://repo1.maven.org/maven2/</url>
+        </repository>
+        <repository>
             <id>minecraft-libraries</id>
             <name>Minecraft Libraries</name>
             <url>https://libraries.minecraft.net</url>
-        </repository>
-        <repository>
-            <id>central</id>
-            <url>https://repo1.maven.org/maven2/</url>
         </repository>
     </repositories>
 
@@ -39,6 +39,11 @@
             <groupId>net.mathias2246</groupId>
             <artifactId>core</artifactId>
             <version>${project.buildVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mojang</groupId>
+            <artifactId>brigadier</artifactId>
+            <version>1.0.18</version>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>

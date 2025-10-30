@@ -1,24 +1,62 @@
-<project>
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>net.mathias2246</groupId>
-        <artifactId>BuildMC-Parent</artifactId>
-        <version>1.1.0</version>
-    </parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
+    <modelVersion>4.0.0</modelVersion>
+
+    <properties>
+        <java.version>21</java.version>
+    </properties>
+
+    <groupId>net.mathias2246</groupId>
     <artifactId>buildmc-api</artifactId>
-    <name>BuildMC-API</name>
+    <name>net.mathias2246:buildmc</name>
+    <description>The BuildMC-Core API module for Minecraft plugin development.</description>
+    <url>https://github.com/BaggelMC/BuildMC-Core-Plugin</url>
+
+    <version>1.1.0-SNAPSHOT</version>
+
+    <developers>
+        <developer>
+            <id>mathias2246</id>
+            <name>Mathias2246</name>
+        </developer>
+        <developer>
+            <id>darkylt</id>
+            <name>Darkylt</name>
+        </developer>
+    </developers>
+
+    <licenses>
+        <license>
+            <name>Apache-2.0 license</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git://github.com/baggelmc/buildmc-core-plugin.git</connection>
+        <developerConnection>scm:git:ssh://github.com:baggelmc/buildmc-core-plugin.git</developerConnection>
+        <url>https://github.com/baggelmc/buildmc-core-plugin/tree/master</url>
+    </scm>
+
 
     <repositories>
         <repository>
-            <id>spigotmc-repo</id>
+            <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
         <repository>
             <id>central</id>
             <url>https://repo1.maven.org/maven2/</url>
         </repository>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/BaggelMC/BuildMC-Core-Plugin</url>
+        </repository>
     </repositories>
+
 
     <dependencies>
         <dependency>
@@ -39,11 +77,13 @@
             <artifactId>adventure-api</artifactId>
             <version>4.25.0</version>
         </dependency>
+
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-text-minimessage</artifactId>
             <version>4.25.0</version>
         </dependency>
+
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-text-serializer-legacy</artifactId>
@@ -51,36 +91,10 @@
         </dependency>
     </dependencies>
 
+
     <build>
-
-        <finalName>BuildMC-API-${project.buildVersion}_${minecraft.supportedVersions}</finalName>
-
         <plugins>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.5.3</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <minimizeJar>false</minimizeJar>
-                            <relocations>
-                                <relocation>
-                                    <pattern>com.github.stefvanschie.inventoryframework</pattern>
-                                    <shadedPattern>com.github.stefvanschie.inventoryframework</shadedPattern>
-                                </relocation>
-                            </relocations>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
+            <!-- Compile using Java 21 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -90,20 +104,44 @@
                     <target>${java.version}</target>
                 </configuration>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-javadoc-plugin</artifactId>-->
-<!--                <version>3.11.3</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <phase>package</phase>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
 
+            <!-- Generate sources and javadoc jars -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals><goal>jar</goal></goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.6.3</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals><goal>jar</goal></goals>
+
+                    </execution>
+                </executions>
+                <configuration>
+                    <additionalJOption>-Xdoclint:none</additionalJOption>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
-    <properties>
-        <java.version>21</java.version>
-    </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>github BuildMC-Core-API Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/BaggelMC/BuildMC-Core-Plugin</url>
+        </repository>
+    </distributionManagement>
+
 </project>

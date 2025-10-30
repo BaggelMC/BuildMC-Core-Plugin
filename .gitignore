@@ -8,6 +8,8 @@
 # IntelliJ
 out/
 
+.m2/
+
 # Compiled class file
 *.class
 
@@ -25,6 +27,8 @@ out/
 *.zip
 *.tar.gz
 *.rar
+
+buildmc-api/.m2
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
