@@ -20,6 +20,7 @@ public class DatabaseConfig implements ConfigHandler {
 
     private static final String USE_SERVER_MODE = "database.useServerMode";
     private static final String SERVER_URL = "database.serverUrl";
+    private static final String SERVER_PORT = "database.serverPort";
 
     public DatabaseConfig() {
         this.configFile = new File(CoreMain.plugin.getDataFolder(), "database.yml");
@@ -94,6 +95,10 @@ public class DatabaseConfig implements ConfigHandler {
             throw new ConfigurationValidationException("Invalid value type for key: " + SERVER_URL + ". Expected String.");
         }
 
+        if (!(config.get(SERVER_PORT) instanceof  Integer)) {
+            throw new ConfigurationValidationException("Invalid value type for key: " + SERVER_PORT + ". Expected Integer.");
+        }
+
         String serverUrl = config.getString(SERVER_URL);
         if (serverUrl == null || serverUrl.isEmpty()) {
             throw new ConfigurationValidationException("Invalid value for key: " + SERVER_URL + ". URL cannot be null or empty.");
@@ -118,6 +123,10 @@ public class DatabaseConfig implements ConfigHandler {
     }
 
     public String getServerUrl() {
-        return get(SERVER_URL, "jdbc:h2:tcp://localhost/~/buildmc");
+        return get(SERVER_URL, "jdbc:h2:tcp://localhost/./database");
+    }
+
+    public int getServerPort() {
+        return config.getInt(SERVER_PORT, 9092);
     }
 }
