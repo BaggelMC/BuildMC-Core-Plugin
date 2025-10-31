@@ -53,55 +53,21 @@ public class ProtectionsMenu {
             for (int i = start; i < end; i++) {
                 Protection protection = allFlags.get(i);
                 if (protection.isHidden()) continue;
-                boolean enabled = claim.hasProtection(protection.getKey());
 
                 int x = index % 9;
                 int y = (index < 9) ? 0 : 3; // First group or second group
                 int statusRow = (index < 9) ? 1 : 4;
 
+                // Display item
                 pane.addItem(protection.getDisplay(player, gui), x, y);
 
-                // Status glass
-                ItemStack status = createStatusPane(protection.getKey(), enabled, player);
-                GuiItem statusItem = new GuiItem(status, event -> {
-                    event.setCancelled(true);
-
-                    // Toggle the flag
-                    toggleFlag(claim, protection.getKey(), enabled);
-
-                    // Update the new status immediately
-                    boolean newEnabled = claim.hasProtection(protection);
-                    ItemStack newStatus = createStatusPane(protection.getKey(), newEnabled, player);
-
-                    // Replace this slot with updated status item
-                    pane.addItem(new GuiItem(newStatus, e2 -> {
-                        e2.setCancelled(true);
-                        // recursively handle further toggles
-                        toggleFlag(claim, protection.getKey(), newEnabled);
-                        // refresh this one slot again
-
-                        // ItemStack nextStatus = createStatusPane(flag, nextEnabled, player);
-
-                        GuiItem item = makeStatusItem(gui, pane, claim, protection, x, statusRow, player);
-
-                        if (item != null) {
-                            pane.addItem(item, x, statusRow);
-
-                            gui.update();
-                        }
-
-                    }), x, statusRow);
-
-                    // Refresh UI without reopening
-                    gui.update();
-                });
-
-                pane.addItem(statusItem, x, statusRow);
+                GuiItem statusItem = makeStatusItem(gui, pane, claim, protection, x, statusRow, player);
+                if (statusItem != null) pane.addItem(statusItem, x, statusRow);
 
                 index++;
             }
 
-            // Spacer
+            // Spacer row
             for (int x = 0; x < 9; x++) {
                 pane.addItem(new GuiItem(createGlassPane(), UIUtil.noInteract), x, 2);
             }
@@ -124,7 +90,7 @@ public class ProtectionsMenu {
         // Back button
         controls.addItem(new GuiItem(createNamedItem(Material.BARRIER, Message.msg(player,"messages.claims.ui.general.back")), e -> {
             e.setCancelled(true);
-            ClaimEditMenu.open(player, claim); // Navigate back to Claim Edit Menu
+            ClaimEditMenu.open(player, claim);
         }), 8, 0);
 
         gui.addPane(controls);
@@ -135,70 +101,49 @@ public class ProtectionsMenu {
     private static GuiItem makeStatusItem(ChestGui gui, StaticPane pane,
                                           Claim claim, Protection protection,
                                           int x, int y, @NotNull Player player) {
+
         boolean enabled = claim.hasProtection(protection);
         ItemStack status = createStatusPane(protection.getKey(), enabled, player);
 
         Long claimId = claim.getId();
-
         if (claimId == null) return null;
 
-        return new GuiItem(status, e -> {
-            e.setCancelled(true);
+        return new GuiItem(status, event -> {
+            event.setCancelled(true);
 
-            // Toggle
-            if (enabled) {
-                ClaimProtectionChangeEvent event = new ClaimProtectionChangeEvent(
-                        claim,
-                        protection,
-                        ClaimProtectionChangeEvent.ActiveState.DISABLED,
-                        player
-                );
-                if (event.isCancelled()) return;
+            boolean currentlyEnabled = claim.hasProtection(protection);
 
-                ClaimManager.removeProtection(claim.getId(), protection);
-                ClaimLogger.logProtectionChanged(player, claim.getName(), protection, "enabled");
-            } else {
-                ClaimProtectionChangeEvent event = new ClaimProtectionChangeEvent(
-                        claim,
-                        protection,
-                        ClaimProtectionChangeEvent.ActiveState.ENABLED,
-                        player
-                );
-                if (event.isCancelled()) return;
+            // Trigger ClaimProtectionChangeEvent
+            ClaimProtectionChangeEvent.ActiveState newState = currentlyEnabled ? ClaimProtectionChangeEvent.ActiveState.DISABLED : ClaimProtectionChangeEvent.ActiveState.ENABLED;
+            ClaimProtectionChangeEvent changeEvent = new ClaimProtectionChangeEvent(claim, protection, newState, player);
+            if (changeEvent.isCancelled()) return;
 
-                ClaimManager.addProtection(claim.getId(), protection);
+            // Update claim + log
+            if (currentlyEnabled) {
+                ClaimManager.removeProtection(claimId, protection);
                 ClaimLogger.logProtectionChanged(player, claim.getName(), protection, "disabled");
+            } else {
+                ClaimManager.addProtection(claimId, protection);
+                ClaimLogger.logProtectionChanged(player, claim.getName(), protection, "enabled");
             }
 
-            // Replace this slot with a freshly built GuiItem (so it keeps toggling)
+            // Refresh status pane
             GuiItem updated = makeStatusItem(gui, pane, claim, protection, x, y, player);
-
             if (updated != null) {
                 pane.addItem(updated, x, y);
-
                 gui.update();
             }
         });
     }
-
-
-    private static void toggleFlag(@NotNull Claim claim, @NotNull NamespacedKey protection, boolean currentlyEnabled) {
-        if (claim.getId() == null) return;
-
-        if (currentlyEnabled) {
-            ClaimManager.removeProtection(claim.getId(), protection);
-        } else {
-            ClaimManager.addProtection(claim.getId(), protection);
-        }
-    }
-
 
     private static ItemStack createStatusPane(NamespacedKey protection, boolean enabled, @NotNull Player player) {
         Material color = enabled ? Material.GREEN_STAINED_GLASS_PANE : Material.RED_STAINED_GLASS_PANE;
         ItemStack item = new ItemStack(color);
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(LegacyComponentSerializer.legacySection().serialize(Message.msg(player, enabled ? "messages.claims.ui.protections-menu.enabled" : "messages.claims.ui.protections-menu.disabled")));
+            meta.setDisplayName(LegacyComponentSerializer.legacySection().serialize(
+                    Message.msg(player, enabled ? "messages.claims.ui.protections-menu.enabled" : "messages.claims.ui.protections-menu.disabled")
+            ));
             item.setItemMeta(meta);
         }
         return item;
@@ -214,7 +159,6 @@ public class ProtectionsMenu {
         return pane;
     }
 
-    @SuppressWarnings("SameParameterValue")
     private static ItemStack createNamedItem(Material material, Component name) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
@@ -231,6 +175,7 @@ public class ProtectionsMenu {
                                             int total,
                                             PaginatedPane pages,
                                             ChestGui gui) {
+
         controls.removeItem(2, 0);
         controls.removeItem(4, 0);
         controls.removeItem(6, 0);
@@ -247,35 +192,31 @@ public class ProtectionsMenu {
         }
         controls.addItem(new GuiItem(pageIndicator, e -> e.setCancelled(true)), 4, 0);
 
-        // Previous button (only if not on first page)
+        // Previous button
         if (current > 1) {
             controls.addItem(new GuiItem(
                     createNamedItem(Material.ARROW, Message.msg(player, "messages.claims.ui.general.previous")),
                     e -> {
                         e.setCancelled(true);
-                        if (pages.getPage() > 0) {
-                            int newPage = pages.getPage() - 1;
-                            pages.setPage(newPage);
-                            updatePageIndicator(player, controls, newPage + 1, total, pages, gui);
-                            gui.update();
-                        }
+                        int newPage = pages.getPage() - 1;
+                        pages.setPage(newPage);
+                        updatePageIndicator(player, controls, newPage + 1, total, pages, gui);
+                        gui.update();
                     }), 2, 0);
         } else {
             controls.addItem(new GuiItem(createGlassPane(), UIUtil.noInteract), 2, 0);
         }
 
-        // Next button (only if not on last page)
+        // Next button
         if (current < total) {
             controls.addItem(new GuiItem(
                     createNamedItem(Material.ARROW, Message.msg(player, "messages.claims.ui.general.next")),
                     e -> {
                         e.setCancelled(true);
-                        if (pages.getPage() < total - 1) {
-                            int newPage = pages.getPage() + 1;
-                            pages.setPage(newPage);
-                            updatePageIndicator(player, controls, newPage + 1, total, pages, gui);
-                            gui.update();
-                        }
+                        int newPage = pages.getPage() + 1;
+                        pages.setPage(newPage);
+                        updatePageIndicator(player, controls, newPage + 1, total, pages, gui);
+                        gui.update();
                     }), 6, 0);
         } else {
             controls.addItem(new GuiItem(createGlassPane(), UIUtil.noInteract), 6, 0);
