@@ -66,24 +66,33 @@ messages:
 
       successfully-claimed-area: |-
         <gold>---------------------------------------</gold>
+        
         <green>Successfully claimed area!</green>
+        
         <blue>You have </blue>%chunks_left%<blue> chunks left to claim</blue>
+        
         <gold>---------------------------------------</gold>
 
       successfully-claimed-area-no-count: |-
         <gold>---------------------------------------</gold>
+        
         <green>Successfully claimed area!</green>
+        
         <gold>---------------------------------------</gold>
 
       successfully-removed-area: |-
         <gold>---------------------------------------</gold>
+        
         <green>Successfully removed area!</green>
         <blue>You now have </blue>%chunks_left%<blue> chunks left to claim</blue>
+        
         <gold>---------------------------------------</gold>
 
       successfully-removed-area-no-count: |-
         <gold>---------------------------------------</gold>
+        
         <green>Successfully removed area!</green>
+        
         <gold>---------------------------------------</gold>
       
 
