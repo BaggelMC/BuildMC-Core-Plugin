@@ -9,6 +9,8 @@ import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.ClaimType;
 import net.mathias2246.buildmc.api.claims.Protection;
+import net.mathias2246.buildmc.api.event.claims.ClaimProtectionChangeEvent;
+import net.mathias2246.buildmc.api.event.claims.ClaimWhitelistChangeEvent;
 import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.commands.CustomCommand;
 import net.mathias2246.buildmc.ui.claims.ClaimSelectMenu;
@@ -558,7 +560,7 @@ public class ClaimCommand implements CustomCommand {
                                         return 0;
                                     }
 
-                                    OfflinePlayer target = Bukkit.getPlayerExact(targetPlayerName);
+                                    Player target = Bukkit.getPlayerExact(targetPlayerName);
                                     if (target == null) {
                                         audiences.player(player).sendMessage(Component.translatable("messages.claims.whitelist.player-not-found"));
                                         return 0;
@@ -577,6 +579,17 @@ public class ClaimCommand implements CustomCommand {
                                                 audiences.player(player).sendMessage(Component.translatable("messages.claims.whitelist.already-added"));
                                                 return 0;
                                             }
+
+                                            ClaimWhitelistChangeEvent event = new ClaimWhitelistChangeEvent(
+                                                    claim,
+                                                    target,
+                                                    command.sender(),
+                                                    ClaimWhitelistChangeEvent.ChangeAction.ADDED
+                                            );
+                                            Bukkit.getPluginManager().callEvent(event);
+                                            if (event.isCancelled()) return 0;
+
+
                                             ClaimManager.addPlayerToWhitelist(claimId, targetUUID);
                                             audiences.player(player).sendMessage(Component.translatable("messages.claims.whitelist.added"));
                                             ClaimLogger.logWhitelistAdded(player, claimName, targetPlayerName, targetUUID.toString());
@@ -587,6 +600,16 @@ public class ClaimCommand implements CustomCommand {
                                                 audiences.player(player).sendMessage(Component.translatable("messages.claims.whitelist.not-on-list"));
                                                 return 0;
                                             }
+
+                                            ClaimWhitelistChangeEvent event = new ClaimWhitelistChangeEvent(
+                                                    claim,
+                                                    target,
+                                                    command.sender(),
+                                                    ClaimWhitelistChangeEvent.ChangeAction.REMOVED
+                                            );
+                                            Bukkit.getPluginManager().callEvent(event);
+                                            if (event.isCancelled()) return 0;
+
                                             ClaimManager.removePlayerFromWhitelist(claimId, targetUUID);
                                             audiences.player(player).sendMessage(Component.translatable("messages.claims.whitelist.removed"));
                                             ClaimLogger.logWhitelistRemoved(player, claimName, targetPlayerName, targetUUID.toString());
@@ -735,7 +758,17 @@ public class ClaimCommand implements CustomCommand {
                                         return 0;
                                     }
 
+                                    Protection protection = CoreMain.protectionLookup.get(flag);
+
                                     if (enable) {
+                                        ClaimProtectionChangeEvent event = new ClaimProtectionChangeEvent(
+                                                claim,
+                                                protection,
+                                                ClaimProtectionChangeEvent.ActiveState.ENABLED,
+                                                command.sender()
+                                        );
+                                        if (event.isCancelled()) return 0;
+
                                         ClaimManager.addProtection(claimId, flag);
                                         audiences.player(player).sendMessage(
                                                 Message.msg(player, "messages.claims.protections.added")
@@ -743,6 +776,14 @@ public class ClaimCommand implements CustomCommand {
                                         );
                                         ClaimLogger.logProtectionChanged(player, claimName, flag.toString(), "enabled");
                                     } else {
+                                        ClaimProtectionChangeEvent event = new ClaimProtectionChangeEvent(
+                                                claim,
+                                                protection,
+                                                ClaimProtectionChangeEvent.ActiveState.DISABLED,
+                                                command.sender()
+                                        );
+                                        if (event.isCancelled()) return 0;
+
                                         ClaimManager.removeProtection(claimId, flag);
                                         audiences.player(player).sendMessage(
                                                 Message.msg(player, "messages.claims.protections.removed")

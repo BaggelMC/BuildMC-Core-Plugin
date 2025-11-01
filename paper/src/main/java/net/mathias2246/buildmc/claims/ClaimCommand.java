@@ -13,6 +13,7 @@ import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.ClaimType;
 import net.mathias2246.buildmc.api.claims.Protection;
+import net.mathias2246.buildmc.api.event.claims.ClaimProtectionChangeEvent;
 import net.mathias2246.buildmc.claims.claimSubCommands.CreateClaimSubCommand;
 import net.mathias2246.buildmc.claims.claimSubCommands.WhitelistSubCommand;
 import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
@@ -254,11 +255,31 @@ public class ClaimCommand implements CustomCommand {
                                                                 return 0;
                                                             }
 
+                                                            Protection protection = CoreMain.protectionLookup.get(flag);
+
                                                             if (value) {
+
+                                                                ClaimProtectionChangeEvent event = new ClaimProtectionChangeEvent(
+                                                                        claim,
+                                                                        protection,
+                                                                        ClaimProtectionChangeEvent.ActiveState.ENABLED,
+                                                                        sender
+                                                                );
+                                                                if (event.isCancelled()) return 0;
+
                                                                 ClaimManager.addProtection(claimId, flag);
                                                                 player.sendMessage(Message.msg(player, "messages.claims.protections.added", Map.of("flag", flag.toString())));
                                                                 ClaimLogger.logProtectionChanged(player, claimName, flag.toString(), "enabled");
                                                             } else {
+
+                                                                ClaimProtectionChangeEvent event = new ClaimProtectionChangeEvent(
+                                                                        claim,
+                                                                        protection,
+                                                                        ClaimProtectionChangeEvent.ActiveState.DISABLED,
+                                                                        sender
+                                                                );
+                                                                if (event.isCancelled()) return 0;
+
                                                                 ClaimManager.removeProtection(claimId, flag);
                                                                 player.sendMessage(Message.msg(player, "messages.claims.protections.removed", Map.of("flag", flag.toString())));
                                                                 ClaimLogger.logProtectionChanged(player, claimName, flag.toString(), "disabled");

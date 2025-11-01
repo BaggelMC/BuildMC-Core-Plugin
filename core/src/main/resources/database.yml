@@ -1,3 +1,4 @@
 database:
-  useServerMode: false  # Set to true to improve plugin performance on larger servers (may use more resources)
-  serverUrl: "jdbc:h2:tcp://localhost/~/buildmc-core"  # DO NOT TOUCH IF YOU DON'T KNOW WHAT YOU'RE DOING! JDBC URL for H2 server mode.
+  useServerMode: false # Set to true to improve plugin performance on larger servers (may use more resources)
+  serverUrl: "jdbc:h2:tcp://localhost/./database" # DO NOT TOUCH IF YOU DON'T KNOW WHAT YOU'RE DOING! JDBC URL for H2 server mode.
+  serverPort: 9092 # Make sure the port is free to use

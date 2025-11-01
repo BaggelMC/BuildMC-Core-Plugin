@@ -300,4 +300,71 @@ public interface ClaimManager {
      * @throws SQLException if a database error occurs
      */
     boolean doesOwnerHaveClaimWithName(String ownerId, String claimName) throws SQLException;
+
+    /**
+     * Gets how many claimable chunks a team has left.
+     *
+     * @param teamName the team name
+     * @return the number of remaining claims available to the team,
+     *         or {@code null} if no data is available
+     */
+    @Nullable Integer getRemainingTeamClaims(String teamName);
+
+    /**
+     * Gets how many claimable chunks a player has left.
+     *
+     * @param playerUUID the player's UUID as a string
+     * @return the number of remaining claims available to the player,
+     *         or {@code null} if no data is available
+     */
+    @Nullable Integer getRemainingPlayerClaims(String playerUUID);
+
+    /**
+     * Gets how many claimable chunks a player has left.
+     *
+     * @param playerUUID the player's UUID
+     * @return the number of remaining claims available to the player,
+     *         or {@code null} if no data is available
+     */
+    @Nullable Integer getRemainingPlayerClaims(UUID playerUUID);
+
+    /**
+     * Sets the number of claimable chunks a team has left.
+     * <p>
+     * If {@code remainingClaims} is {@code null}, the team's remaining claim
+     * record is removed.
+     * </p>
+     *
+     * @param teamName        the team name
+     * @param remainingClaims the new number of remaining claims,
+     *                        or {@code null} to remove the record
+     */
+    void setRemainingTeamClaims(String teamName, @Nullable Integer remainingClaims);
+
+    /**
+     * Sets the number of claimable chunks a player has left.
+     * <p>
+     * If {@code remainingClaims} is {@code null}, the player's remaining claim
+     * record is removed.
+     * </p>
+     *
+     * @param playerUUID      the player's UUID as a string
+     * @param remainingClaims the new number of remaining claims,
+     *                        or {@code null} to remove the record
+     */
+    void setRemainingPlayerClaims(String playerUUID, @Nullable Integer remainingClaims);
+
+    /**
+     * Sets the number of claimable chunks a player has left.
+     * <p>
+     * If {@code remainingClaims} is {@code null}, the player's remaining claim
+     * record is removed.
+     * </p>
+     *
+     * @param playerUUID      the player's UUID
+     * @param remainingClaims the new number of remaining claims,
+     *                        or {@code null} to remove the record
+     */
+    void setRemainingPlayerClaims(UUID playerUUID, @Nullable Integer remainingClaims);
+
 }

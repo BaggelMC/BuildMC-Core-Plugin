@@ -4,6 +4,7 @@ import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.database.migrations.Migration;
 import net.mathias2246.buildmc.database.migrations.MigrationV1;
 import org.bukkit.plugin.Plugin;
+import org.h2.tools.Server;
 
 import java.io.File;
 import java.sql.Connection;
@@ -20,15 +21,14 @@ public class DatabaseManager {
     private final Logger logger;
     private final File databaseFolder;
     private final List<DatabaseTable> registeredTables = new ArrayList<>();
+    private final List<Migration> migrations = List.of(new MigrationV1());
 
-    private final List<Migration> migrations = List.of(
-            new MigrationV1()
-    );
+    private Server tcpServer;
 
     public DatabaseManager(Plugin plugin) {
         this.config = CoreMain.databaseConfig;
         this.logger = plugin.getLogger();
-        this.databaseFolder = new File(plugin.getDataFolder(), "Data"); // Use /Data folder
+        this.databaseFolder = new File(plugin.getDataFolder(), "Data");
 
         if (!databaseFolder.exists()) {
             if (databaseFolder.mkdirs()) {
@@ -38,10 +38,11 @@ public class DatabaseManager {
             }
         }
 
-        config.reloadConfig(); // Ensure the latest config is loaded
+        config.reloadConfig(); // Ensure latest config is loaded
     }
 
     public void connect() {
+        // Close old connection if it exists
         try {
             if (connection != null && !connection.isClosed()) {
                 connection.close();
@@ -50,8 +51,31 @@ public class DatabaseManager {
             logger.warning("Error closing old database connection: " + e);
         }
 
+        // Start TCP server automatically if in server mode
+        if (config.isServerMode()) {
+            try {
+                if (tcpServer == null || !tcpServer.isRunning(true)) {
+                    logger.info("Starting internal H2 TCP server...");
+                    tcpServer = Server.createTcpServer(
+                            "-tcp",
+                            "-tcpAllowOthers",
+                            "-tcpPort", String.valueOf(config.getServerPort()),
+                            "-baseDir", databaseFolder.getAbsolutePath()
+                    ).start();
+                    logger.info("H2 TCP server started at: " + tcpServer.getURL());
+                } else {
+                    logger.info("H2 TCP server is already running.");
+                }
+            } catch (SQLException e) {
+                logger.severe("Failed to start H2 TCP server: " + e);
+                return;
+            }
+        }
+
         String databaseFilePath = new File(databaseFolder, "database").getAbsolutePath();
-        String url = config.isServerMode() ? config.getServerUrl() : "jdbc:h2:file:" + databaseFilePath;
+        String url = config.isServerMode()
+                ? config.getServerUrl()
+                : "jdbc:h2:file:" + databaseFilePath;
 
         try {
             Class.forName("org.h2.Driver");
@@ -77,7 +101,7 @@ public class DatabaseManager {
     public void runMigrations() {
         try {
             SchemaVersionTable versionTable = new SchemaVersionTable();
-            versionTable.createTable(getConnection()); // Ensure version table exists
+            versionTable.createTable(getConnection());
 
             int currentVersion = versionTable.getCurrentVersion(getConnection());
 
@@ -110,6 +134,7 @@ public class DatabaseManager {
     }
 
     public void close() {
+        // Close connection
         if (connection != null) {
             try {
                 connection.close();
@@ -117,6 +142,14 @@ public class DatabaseManager {
             } catch (SQLException e) {
                 logger.severe("Error closing database connection: " + e);
             }
+        }
+
+        // Stop H2 TCP server if it was started
+        if (tcpServer != null && tcpServer.isRunning(true)) {
+            logger.info("Stopping internal H2 TCP server...");
+            tcpServer.stop();
+            tcpServer = null;
+            logger.info("H2 TCP server stopped.");
         }
     }
 }
