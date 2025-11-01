@@ -63,30 +63,32 @@ spawn-teleport:
   wait-for: 8 # Default: 8
 
 
-# Here are all settings related to team claims.
-# A team can use the claim-tool or the '/buildmc claim ...' command to create or remove their claims.
-# On Claims, things like any explosion, withers, block breaking or opening containers don't work.
-# Team players can give other players access to their claims using '/buildmc claim allow <player name>'.
+# Here are all settings related to claims.
+# A player can use the claim-tool to select an area to claim.
+# There are 4 types of claims:
+#   - Player: A claim by a single person.
+#   - Team: A claim by an entire team that anyone in that team can manage.
+#   - Server: A claim made by an admin that only players that are admin can manage.
+#             Players can also be whitelisted to bypass the protections.
+#   - Placeholder: A claim made by admins that has no features.
+#                  A Placeholder claim is used to make a certain area unclaimable by others (e.g. public areas).
+# Players can use the '/claim ...' command to create, remove and manage claims.
+# On Claims, players who aren't whitelisted or the owner of the claim, can't do anything the claim owner blocked.
 claims:
   # If true, players can manage their team claims using '/claim ...'.
-  # Admins can also set certain regions as server-claims that no one can do anything in
   enabled: true # Default: true
-
-  # If true, all claim data will be writen to disk when the server saves the overworld.
-  # Only change this to false if you really need to
-  save-on-world-save: true # Default: true
 
   # The amount of chunks each player can claim
   player-max-chunk-claim-amount: 256 # Default: 256
   # The amount of chunks each team can claim
   team-max-chunk-claim-amount: 1024 # Default: 1024
 
-  # Settings related to the claim-tool. The claim-tool (if enabled) can be obtained using '/buildmc claimtool'
+  # Settings related to the claim-tool. The claim-tool (if enabled) can be obtained using '/claim claimtool'
   tool:
     # The item used for the claim-tool
     tool-item: "carrot_on_a_stick" # Default: "carrot_on_a_stick"
 
-    # If true, players even without permissions can get the claim-tool using '/buildmc claimtool'
+    # If true, players even with permissions can't get the claim-tool using '/claim claimtool'
     enable-give-command: true # Default: true
 
     # Limits the maximum size in chunks of the selection

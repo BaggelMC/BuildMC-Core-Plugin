@@ -31,14 +31,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-import static net.mathias2246.buildmc.Main.audiences;
-import static net.mathias2246.buildmc.Main.customItems;
+import static net.mathias2246.buildmc.Main.*;
 
 public class ClaimCommand implements CustomCommand {
     @Override
     public CommandAPICommand getCommand() {
         ClaimToolItemMetaModifier modifier = new ClaimToolItemMetaModifier();
         ClaimSelectionTool claimTool = (ClaimSelectionTool) Objects.requireNonNull(customItems.get(NamespacedKey.fromString("buildmc:claim_tool")));
+        boolean isClaimtoolGiveEnabled =  config.getBoolean("claims.tool.enable-give-command", true);
 
         return new CommandAPICommand("claim")
 
@@ -51,6 +51,9 @@ public class ClaimCommand implements CustomCommand {
 
                 .withSubcommand(
                     new CommandAPICommand("claimtool")
+                            .withRequirement(
+                                    (cmd) -> isClaimtoolGiveEnabled
+                            )
                     .executes(
                             (command) -> {
                                 if (!(CommandUtil.requiresPlayer(command) instanceof Player player)) return;

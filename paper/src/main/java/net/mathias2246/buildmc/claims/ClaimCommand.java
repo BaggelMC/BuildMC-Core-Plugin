@@ -56,7 +56,9 @@ public class ClaimCommand implements CustomCommand {
 
         cmd.executes(ClaimCommand::handleEdit);
         cmd.then(
-                Commands.literal("claimtool").executes(ClaimCommand::handleGetClaimTool)
+                Commands.literal("claimtool")
+                        .requires((command) -> config.getBoolean("claims.tool.enable-give-command", true))
+                        .executes(ClaimCommand::handleGetClaimTool)
             );
         cmd.then(
                 Commands.literal("edit").executes(ClaimCommand::handleEdit)
