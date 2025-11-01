@@ -131,6 +131,9 @@
                 </executions>
                 <configuration>
                     <additionalJOption>-Xdoclint:none</additionalJOption>
+                    <doctitle>BuildMC-Core API Documentation</doctitle>
+                    <windowtitle>BuildMC-Core API</windowtitle>
+                    <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
         </plugins>
