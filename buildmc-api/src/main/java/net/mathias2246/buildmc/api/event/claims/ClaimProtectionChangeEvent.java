@@ -48,7 +48,7 @@ public class ClaimProtectionChangeEvent extends CustomEvent implements Cancellab
         return newState;
     }
 
-    private final @NotNull CommandSender getActor() {
+    private @NotNull CommandSender getActor() {
         return actor;
     }
 
