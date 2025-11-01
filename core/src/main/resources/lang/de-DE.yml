@@ -147,7 +147,7 @@ messages:
       added: <green>Schutz <yellow>%flag%</yellow> wurde für diesen Claim <green>aktiviert</green>.
       removed: <green>Schutz <yellow>%flag%</yellow> wurde für diesen Claim <red>deaktiviert</red>.
     help-message: "<gold>------------- <green>Claims Help</green> -------------</gold>\
-      \ \n<aqua>Drücke <green><click:open_url:'https://github.com/BaggelMC/BuildMC-Core-Plugin/blob/master/docs/usage/claim_system.md'>hier</click></green>\
+      \ \n<aqua>Drücke <green><click:open_url:'https://baggel.de/plugins/de/core/docs/1.1.0/user/claims'>hier</click></green>\
       \ um die vollständigen Docs zu öffnen.</aqua>\n<gray>- Benutze '<gold>/claim\
       \ claimtool</gold>' um das Claim Werkzeug zu erhalten.</gray>\n<gray>- Links-Klick\
       \ um den ersten Chunk auszuwählen.</gray>\n<gray>- Rechts-Klick um den zweiten\
