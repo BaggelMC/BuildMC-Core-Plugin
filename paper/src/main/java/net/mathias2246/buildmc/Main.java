@@ -20,8 +20,8 @@ import net.mathias2246.buildmc.player.PlayerHeadDropDeathListener;
 import net.mathias2246.buildmc.player.PlayerHeadDropModifier;
 import net.mathias2246.buildmc.player.PlayerSpawnTeleportCommand;
 import net.mathias2246.buildmc.spawnElytra.DisableBoostListener;
+import net.mathias2246.buildmc.spawnElytra.ElytraListeners;
 import net.mathias2246.buildmc.spawnElytra.ElytraZoneManager;
-import net.mathias2246.buildmc.spawnElytra.SpawnBoostListener;
 import net.mathias2246.buildmc.status.PlayerStatus;
 import net.mathias2246.buildmc.status.SetStatusCommand;
 import net.mathias2246.buildmc.status.StatusConfig;
@@ -243,13 +243,11 @@ public final class Main extends PluginMain {
     @Override
     public void finishLoading() {
 
-
-
         getServer().getPluginManager().registerEvents(new CustomItemListener(customItems), this);
 
         getServer().getPluginManager().registerEvents(new EndListener(), this);
         if (config.getBoolean("spawn-elytra.enabled")) {
-            getServer().getPluginManager().registerEvents(new SpawnBoostListener(zoneManager), this);
+            getServer().getPluginManager().registerEvents(new ElytraListeners(config.getBoolean("spawn-elytra.enabled", true), config.getDouble("spawn-elytra.strength", 2)), this);
             if (config.getBoolean("spawn-elytra.disable-rockets")) getServer().getPluginManager().registerEvents(new DisableBoostListener(), this);
 
             zoneManager.loadZoneFromConfig();
