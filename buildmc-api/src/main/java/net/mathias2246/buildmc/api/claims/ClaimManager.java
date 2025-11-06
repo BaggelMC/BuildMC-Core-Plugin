@@ -178,6 +178,18 @@ public interface ClaimManager {
     @Nullable Claim getClaim(Location location) throws SQLException;
 
     /**
+     * Retrieves all {@link Claim} entries stored in the database.
+     *
+     * <p><b>Note:</b> This method may be resource-intensive if a large number of claims exist.
+     * Consider using it primarily during startup, data synchronization, or administrative tasks.
+     * </p>
+     *
+     * @return a list containing all {@link Claim} objects found in the database.
+     * @throws SQLException if a database access error occurs while retrieving claims.
+     */
+    List<Claim> getAllClaims() throws SQLException;
+
+    /**
      * Attempts to create a claim for a player between two positions.
      *
      * @param player    the player

@@ -303,6 +303,10 @@ public class ClaimManager {
         return getClaim(chunk);
     }
 
+    public static List<Claim> getAllClaims() throws SQLException {
+        return CoreMain.claimTable.getAllClaims(CoreMain.databaseManager.getConnection());
+    }
+
     /**Tries to claim the given area for the given player.
      * @return True, if successfully claimed the area.*/
     public static boolean tryClaimPlayerArea(@NotNull Player player, String claimName, Location pos1, Location pos2) {

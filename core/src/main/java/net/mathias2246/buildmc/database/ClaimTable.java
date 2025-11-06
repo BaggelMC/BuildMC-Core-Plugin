@@ -340,6 +340,53 @@ public class ClaimTable implements DatabaseTable {
         }
     }
 
+    public List<Claim> getAllClaims(Connection conn) throws SQLException {
+        List<Claim> allClaims = new ArrayList<>();
+
+        try (PreparedStatement ps = conn.prepareStatement("""
+        SELECT id, type, owner_id, world_id, chunk_x1, chunk_z1, chunk_x2, chunk_z2, name
+        FROM claims
+    """)) {
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    long id = rs.getLong("id");
+
+                    // Use cache if present
+                    Claim cached = claimCache.getIfPresent(id);
+                    if (cached != null) {
+                        allClaims.add(cached);
+                        continue;
+                    }
+
+                    // Otherwise, load relations and build the claim
+                    List<UUID> whitelistedPlayers = new ArrayList<>();
+                    List<String> protections = new ArrayList<>();
+                    loadClaimRelations(conn, id, whitelistedPlayers, protections);
+
+                    Claim claim = new Claim(
+                            id,
+                            ClaimType.valueOf(rs.getString("type")),
+                            rs.getString("owner_id"),
+                            (UUID) rs.getObject("world_id"),
+                            rs.getInt("chunk_x1"),
+                            rs.getInt("chunk_z1"),
+                            rs.getInt("chunk_x2"),
+                            rs.getInt("chunk_z2"),
+                            rs.getString("name"),
+                            whitelistedPlayers,
+                            protections
+                    );
+
+                    claimCache.put(id, claim);
+                    allClaims.add(claim);
+                }
+            }
+        }
+
+        return allClaims;
+    }
+
+
     public void invalidateClaim(long id) {
         claimCache.invalidate(id);
     }
