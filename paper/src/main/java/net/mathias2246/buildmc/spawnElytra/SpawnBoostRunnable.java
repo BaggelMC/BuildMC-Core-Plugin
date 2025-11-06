@@ -1,58 +1,56 @@
 package net.mathias2246.buildmc.spawnElytra;
 
-import net.mathias2246.buildmc.Main;
-import net.mathias2246.buildmc.util.Message;
 import org.bukkit.GameMode;
-import org.bukkit.block.BlockFace;
-import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.*;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-import static net.mathias2246.buildmc.Main.*;
+import java.util.Objects;
+
+import static net.mathias2246.buildmc.Main.config;
 
 public class SpawnBoostRunnable {
 
     public final int multiplyValue;
-    private final boolean boostEnabled;
 
     public final Player player;
+
+    public static final @NotNull NamespacedKey USES_SPAWN_ELYTRA_KEY = Objects.requireNonNull(NamespacedKey.fromString("buildmc:uses_spawn_elytra"));
+    public static final @NotNull NamespacedKey USES_SPAWN_ELYTRA_BOOST_KEY = Objects.requireNonNull(NamespacedKey.fromString("buildmc:uses_spawn_elytra_boost"));
+
 
     /**Checks if the given Player uses the spawn elytra.
      * @return True if, the player has the uses_spawn_elytra metadata*/
     public static boolean isUsingSpawnElytra(@NotNull Player player) {
-        return player.hasMetadata("uses_spawn_elytra");
+        return player.getPersistentDataContainer().has(USES_SPAWN_ELYTRA_KEY);
     }
 
     /**Checks if the given Player uses the spawn elytra.
      * @return True if, the player has the uses_spawn_elytra metadata*/
     public static boolean isUsingSpawnElytra(@NotNull Entity entity) {
-        return entity.hasMetadata("uses_spawn_elytra");
+        return entity.getPersistentDataContainer().has(USES_SPAWN_ELYTRA_KEY);
     }
 
     /**Checks if the given Player uses the spawn elytra boost.
      * @return True if, the player has the uses_spawn_elytra_boost metadata*/
     public static boolean isPlayerBoosted(@NotNull Player player) {
-        return player.hasMetadata("uses_spawn_elytra_boost");
+        return player.getPersistentDataContainer().has(USES_SPAWN_ELYTRA_BOOST_KEY);
     }
 
     /**Checks if the given Player uses the spawn elytra boost.
      * @return True if, the player has the uses_spawn_elytra_boost metadata*/
     public static boolean isPlayerBoosted(@NotNull Entity entity) {
-        return entity.hasMetadata("uses_spawn_elytra_boost");
+        return entity.getPersistentDataContainer().has(USES_SPAWN_ELYTRA_BOOST_KEY);
     }
 
     public static void resetBoost(@NotNull Player player) {
-        player.removeMetadata("uses_spawn_elytra_boost", plugin);
+        player.getPersistentDataContainer().remove(USES_SPAWN_ELYTRA_BOOST_KEY);
     }
 
     public static void resetBoost(@NotNull Entity entity) {
-        entity.removeMetadata("uses_spawn_elytra_boost", plugin);
+        entity.getPersistentDataContainer().remove(USES_SPAWN_ELYTRA_BOOST_KEY);
     }
 
     /**Checks if the player is in survival or adventure mode.*/
@@ -68,8 +66,8 @@ public class SpawnBoostRunnable {
     /**Stops the player from flying.
      * Removes all spawn-elytra related metadata and resets all flight related attributes.*/
     public static void stopFlying(@NotNull Player player) {
-        player.removeMetadata("uses_spawn_elytra_boost", plugin);
-        player.removeMetadata("uses_spawn_elytra", plugin);
+        player.getPersistentDataContainer().remove(USES_SPAWN_ELYTRA_BOOST_KEY);
+        player.getPersistentDataContainer().remove(USES_SPAWN_ELYTRA_KEY);
         player.setFallDistance(0);
         if (isSurvival(player)) player.setAllowFlight(false);
         player.setFlying(false);
@@ -85,18 +83,18 @@ public class SpawnBoostRunnable {
         player.setAllowFlight(false);
         player.setFlying(false);
 
-        player.setMetadata("uses_spawn_elytra", new FixedMetadataValue(plugin, null));
+        player.getPersistentDataContainer().set(USES_SPAWN_ELYTRA_KEY, PersistentDataType.BOOLEAN, true);
     }
 
     public SpawnBoostRunnable(Player player) {
         this.player = player;
 
         this.multiplyValue = config.getInt("spawn-elytra.strength", 2);
-        this.boostEnabled = config.getBoolean("spawn-elytra.enabled", true);
+        boolean boostEnabled = config.getBoolean("spawn-elytra.enabled", true);
     }
 
     public static void applyBoost(@NotNull Player player, double multiplier, double verticalVelocity) {
-        player.setMetadata("uses_spawn_elytra_boost", new FixedMetadataValue(plugin, null));
+        player.getPersistentDataContainer().set(USES_SPAWN_ELYTRA_BOOST_KEY, PersistentDataType.BOOLEAN, true);
         applyRawBoost(player, multiplier, verticalVelocity);
     }
 

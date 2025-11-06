@@ -6,5 +6,6 @@ import java.sql.Connection;
  * <p>Used, for example, when adding new features to something that is stored inside a database.</p>*/
 public interface Migration {
     int getTargetVersion();
+    @SuppressWarnings("EmptyMethod")
     void migrate(Connection connection);
 }

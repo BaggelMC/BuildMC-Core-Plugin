@@ -80,6 +80,7 @@ public abstract class YamlConfigurationManager {
     }
 
     /**Executed before writing to disk*/
+    @SuppressWarnings("EmptyMethod")
     protected abstract void preSave();
 
     /**Saves the default config from the plugins resources if the file doesn't exist*/

@@ -30,6 +30,7 @@ public abstract class ParticleSpawner extends BukkitRunnable {
         buildParticleSpawner();
     }
 
+    @SuppressWarnings("EmptyMethod")
     public abstract void buildParticleSpawner();
 
     /**Contains conditions for when to exit the run loop early.
