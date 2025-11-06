@@ -98,6 +98,11 @@ public class ClaimManagerImpl implements ClaimManager {
     }
 
     @Override
+    public List<Claim> getAllClaims() throws SQLException {
+        return net.mathias2246.buildmc.claims.ClaimManager.getAllClaims();
+    }
+
+    @Override
     public boolean tryClaimPlayerArea(@NotNull Player player, String claimName, Location pos1, Location pos2) throws IllegalArgumentException {
         if (pos1 == null || pos2 == null) {
             throw new IllegalArgumentException("Positions cannot be null.");
