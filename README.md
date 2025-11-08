@@ -4,6 +4,18 @@
 
 ---
 
+## Using our API
+
+As Maven dependency:
+```xml
+  <dependency>
+    <groupId>net.mathias2246</groupId>
+    <artifactId>buildmc-api</artifactId>
+    <version>1.1.0-SNAPSHOT</version>
+  </dependency>
+```
+
+
 ## ✨ Features
 
 BuildMC-Core provides a solid foundation for any Minecraft project. Designed for the **BuildMC SMP**, it bundles essential features every project might need:
