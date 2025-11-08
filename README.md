@@ -7,6 +7,15 @@
 ## Using our API
 
 As Maven dependency:
+Repo
+```xml
+  <dependency>
+    <groupId>net.mathias2246</groupId>
+    <artifactId>buildmc-api</artifactId>
+    <version>1.1.0-SNAPSHOT</version>
+  </dependency>
+```
+Dependency
 ```xml
   <dependency>
     <groupId>net.mathias2246</groupId>
