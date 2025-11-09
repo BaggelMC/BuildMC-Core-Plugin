@@ -152,12 +152,7 @@
                             <!-- Filters to exclude duplicates that cause warnings -->
                             <filters>
                                 <!-- Exclude classes that are already in BuildMC-Core -->
-                                <filter>
-                                    <artifact>net.mathias2246:buildmc-api</artifact>
-                                    <excludes>
-                                        <exclude>**</exclude>
-                                    </excludes>
-                                </filter>
+
 
                                 <!-- Exclude redundant META-INF and module-info -->
                                 <filter>
