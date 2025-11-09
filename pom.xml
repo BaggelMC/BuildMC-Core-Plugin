@@ -5,7 +5,7 @@
 
     <groupId>net.mathias2246</groupId>
     <artifactId>BuildMC-Parent</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.0-beta</version>
     <packaging>pom</packaging>
     <name>BuildMC Parent</name>
 
@@ -21,7 +21,7 @@
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <project.buildVersion>1.1.0</project.buildVersion>
+        <project.buildVersion>1.1.0-beta</project.buildVersion>
 
         <minecraft.supportedVersions>1.21.4-1.21.10</minecraft.supportedVersions>
         <minecraft.bukkitApiVersion>1.21</minecraft.bukkitApiVersion>

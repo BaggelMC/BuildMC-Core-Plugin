@@ -3,7 +3,7 @@
     <parent>
         <groupId>net.mathias2246</groupId>
         <artifactId>BuildMC-Parent</artifactId>
-        <version>1.1.0</version>
+        <version>1.1.0-beta</version>
     </parent>
 
     <artifactId>BuildMC-Core-Spigot</artifactId>
@@ -131,6 +131,30 @@
                             <shadedPattern>net.mathias2246</shadedPattern>
                         </relocation>
                     </relocations>
+                    <!-- Filters to exclude duplicates that cause warnings -->
+                    <filters>
+                        <!-- Exclude classes that are already in BuildMC-Core -->
+                        <filter>
+                            <artifact>net.mathias2246:core</artifact>
+                            <excludes>
+                                <exclude>**</exclude>
+                            </excludes>
+                        </filter>
+
+                        <!-- Exclude redundant META-INF and module-info -->
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/*.MF</exclude>
+                                <exclude>META-INF/LICENSE*</exclude>
+                                <exclude>META-INF/NOTICE*</exclude>
+                                <exclude>META-INF/services/**</exclude>
+                                <exclude>META-INF/versions/**</exclude>
+                                <exclude>module-info.class</exclude>
+                                <exclude>**/module-info.class</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
                 </configuration>
             </plugin>
 
