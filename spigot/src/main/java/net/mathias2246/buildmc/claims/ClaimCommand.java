@@ -203,9 +203,9 @@ public class ClaimCommand implements CustomCommand {
                                     switch (type.toLowerCase()) {
                                         case "player" -> {
                                             int maxChunksAllowed = CoreMain.plugin.getConfig().getInt("claims.player-max-chunk-claim-amount");
-                                            int currentClaimedChunks = ClaimManager.playerRemainingClaims.getOrDefault(player.getUniqueId().toString(), maxChunksAllowed);
-                                            if ((currentClaimedChunks - newClaimChunks) <= 0) {
-                                                audiences.player(player).sendMessage(Message.msg(player, "messages.claims.create.no-remaining-claims", Map.of("no-remaining-claims", String.valueOf(currentClaimedChunks))));
+                                            int remainingChunks = ClaimManager.playerRemainingClaims.getOrDefault(player.getUniqueId().toString(), maxChunksAllowed);
+                                            if ((remainingChunks - newClaimChunks) < 0) {
+                                                audiences.player(player).sendMessage(Message.msg(player, "messages.claims.create.no-remaining-claims", Map.of("no-remaining-claims", String.valueOf(remainingChunks))));
                                                 return 0;
                                             }
 
@@ -222,7 +222,7 @@ public class ClaimCommand implements CustomCommand {
 
                                             boolean success = ClaimManager.tryClaimPlayerArea(player, name, pos1, pos2);
                                             if (success) {
-                                                audiences.player(player).sendMessage(Message.msg(player, "messages.claims.create.success", Map.of("remaining_claims", String.valueOf(currentClaimedChunks - newClaimChunks))));
+                                                audiences.player(player).sendMessage(Message.msg(player, "messages.claims.create.success", Map.of("remaining_claims", String.valueOf(remainingChunks - newClaimChunks))));
                                                 player.removeMetadata(claimTool.firstSelectionKey, claimTool.getPlugin());
                                                 player.removeMetadata(claimTool.secondSelectionKey, claimTool.getPlugin());
                                                 ClaimLogger.logClaimCreated(player, name);
@@ -241,9 +241,9 @@ public class ClaimCommand implements CustomCommand {
                                             }
 
                                             int maxChunksAllowed = CoreMain.plugin.getConfig().getInt("claims.team-max-chunk-claim-amount");
-                                            int currentClaimedChunks = ClaimManager.teamRemainingClaims.getOrDefault(team.getName(), maxChunksAllowed);
-                                            if ((currentClaimedChunks - newClaimChunks) <= 0) {
-                                                audiences.player(player).sendMessage(Message.msg(player, "messages.claims.create.no-remaining-claims", Map.of("remaining_claims", String.valueOf(currentClaimedChunks))));
+                                            int remainingChunks = ClaimManager.teamRemainingClaims.getOrDefault(team.getName(), maxChunksAllowed);
+                                            if ((remainingChunks - newClaimChunks) < 0) {
+                                                audiences.player(player).sendMessage(Message.msg(player, "messages.claims.create.no-remaining-claims", Map.of("remaining_claims", String.valueOf(remainingChunks))));
                                                 return 0;
                                             }
 
@@ -260,7 +260,7 @@ public class ClaimCommand implements CustomCommand {
 
                                             boolean success = ClaimManager.tryClaimTeamArea(team, name, pos1, pos2);
                                             if (success) {
-                                                audiences.player(player).sendMessage(Message.msg(player, "messages.claims.create.success", Map.of("remaining_claims", String.valueOf(currentClaimedChunks - newClaimChunks))));
+                                                audiences.player(player).sendMessage(Message.msg(player, "messages.claims.create.success", Map.of("remaining_claims", String.valueOf(remainingChunks - newClaimChunks))));
                                                 player.removeMetadata(claimTool.firstSelectionKey, claimTool.getPlugin());
                                                 player.removeMetadata(claimTool.secondSelectionKey, claimTool.getPlugin());
                                                 ClaimLogger.logClaimCreated(player, name);
