@@ -1,4 +1,4 @@
-package net.mathias2246.buildmc.status;
+package net.mathias2246.buildmc.player.status;
 
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -7,12 +7,13 @@ import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.commands.CustomCommand;
 import net.mathias2246.buildmc.platform.SoundManagerPaperImpl;
-import net.mathias2246.buildmc.util.CommandUtil;
+import net.mathias2246.buildmc.status.StatusConfig;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.string;
 import static net.mathias2246.buildmc.CoreMain.soundManager;
+import static net.mathias2246.buildmc.commands.CommandUtil.requiresPlayer;
 
 public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCommand {
 
@@ -36,12 +37,11 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
         );
 
 
-
         var removeSub = Commands.literal("remove");
 
         removeSub.executes(
                 (command) -> {
-                    if (!(CommandUtil.requiresPlayer(command) instanceof Player player)) return 0;
+                    if (!(requiresPlayer(command.getSource().getSender()) instanceof Player player)) return 0;
 
                     PlayerStatus.removePlayerStatus(player);
                     player.sendMessage(Component.translatable( "messages.status.successfully-removed"));
@@ -64,7 +64,7 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
         var setSubArg = Commands.argument("status_id", string())
                 .executes(
                         (command) -> {
-                            if (!(CommandUtil.requiresPlayer(command) instanceof Player player)) return 0;
+                            if (!(requiresPlayer(command.getSource().getSender()) instanceof Player player)) return 0;
 
                             PlayerStatus.setPlayerStatus(player, command.getArgument("status_id", String.class), false);
 

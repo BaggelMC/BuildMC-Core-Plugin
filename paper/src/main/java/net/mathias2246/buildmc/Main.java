@@ -10,7 +10,7 @@ import net.mathias2246.buildmc.api.spawnEyltra.ElytraManager;
 import net.mathias2246.buildmc.api.spawnelytra.ElytraManagerImpl;
 import net.mathias2246.buildmc.claims.ClaimCommand;
 import net.mathias2246.buildmc.claims.ClaimManagerImpl;
-import net.mathias2246.buildmc.claims.ClaimToolParticles;
+import net.mathias2246.buildmc.claims.tool.ClaimToolParticles;
 import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.commands.BuildMcCommand;
 import net.mathias2246.buildmc.endEvent.EndListener;
@@ -19,16 +19,17 @@ import net.mathias2246.buildmc.platform.SoundManagerPaperImpl;
 import net.mathias2246.buildmc.player.PlayerHeadDropDeathListener;
 import net.mathias2246.buildmc.player.PlayerHeadDropModifier;
 import net.mathias2246.buildmc.player.PlayerSpawnTeleportCommand;
+import net.mathias2246.buildmc.player.status.PlayerStatus;
+import net.mathias2246.buildmc.player.status.SetStatusCommand;
 import net.mathias2246.buildmc.spawnElytra.DisableBoostListener;
 import net.mathias2246.buildmc.spawnElytra.ElytraListeners;
 import net.mathias2246.buildmc.spawnElytra.ElytraZoneManager;
-import net.mathias2246.buildmc.status.PlayerStatus;
-import net.mathias2246.buildmc.status.SetStatusCommand;
 import net.mathias2246.buildmc.status.StatusConfig;
 import net.mathias2246.buildmc.util.RegistriesHolder;
 import net.mathias2246.buildmc.util.SoundManager;
 import net.mathias2246.buildmc.util.config.ConfigurationValidationException;
 import org.bukkit.NamespacedKey;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -42,7 +43,7 @@ import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 import static net.mathias2246.buildmc.CoreMain.registriesHolder;
-import static net.mathias2246.buildmc.commands.DisableCommands.disableCommand;
+import static net.mathias2246.buildmc.commands.disabledCommands.DisableCommands.disableCommand;
 
 public final class Main extends PluginMain {
 
@@ -133,8 +134,8 @@ public final class Main extends PluginMain {
     }
 
     @Override
-    public void sendPlayerMessage(Player player, Component message) {
-        player.sendMessage(message);
+    public void sendMessage(CommandSender sender, Component message) {
+        sender.sendMessage(message);
     }
 
     @Override

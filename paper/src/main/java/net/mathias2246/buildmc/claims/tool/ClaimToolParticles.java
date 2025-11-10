@@ -1,4 +1,4 @@
-package net.mathias2246.buildmc.claims;
+package net.mathias2246.buildmc.claims.tool;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import net.mathias2246.buildmc.Main;

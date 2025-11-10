@@ -1,6 +1,7 @@
 package net.mathias2246.buildmc;
 
 import net.kyori.adventure.text.Component;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
@@ -24,7 +25,7 @@ public interface MainClass {
      * @param player  the player to send the message to
      * @param message the message to send, as a {@link Component}
      */
-    void sendPlayerMessage(Player player, Component message);
+    void sendMessage(CommandSender player, Component message);
 
     /**
      * Sends an action bar message to a player.

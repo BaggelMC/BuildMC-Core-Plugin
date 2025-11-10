@@ -19,6 +19,7 @@ import net.mathias2246.buildmc.util.config.ConfigurationValidationException;
 import net.mathias2246.buildmc.util.language.LanguageManager;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerLoadEvent;
@@ -38,6 +39,7 @@ public final class CoreMain {
     public static MainClass mainClass;
     public static PluginMain pluginMain;
     public static BuildMcAPI api;
+    public static FileConfiguration config;
 
     public static SoundManager soundManager;
 
@@ -88,7 +90,7 @@ public final class CoreMain {
 
         LanguageManager.init();
 
-        var config = plugin.getConfig();
+        config = plugin.getConfig();
 
         protectionsRegistry = registriesHolder.addRegistry(DefaultRegistries.PROTECTIONS.toString(), new DeferredRegistry<>());
 
@@ -159,7 +161,7 @@ public final class CoreMain {
                 //FIXME: This is not how hiding is supposed to work. They should still be active - Darkyl
                 if (!def && CoreMain.plugin.getConfig().getBoolean("claims.hide-all-protections")) continue;
 
-                // Add to default protection list if applicable
+                // Add to the default protection list if applicable
                 if (def) Protection.defaultProtections.add(protection.getKey().toString());
 
                 // Register the protection's event listener

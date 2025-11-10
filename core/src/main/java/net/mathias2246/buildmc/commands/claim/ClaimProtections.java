@@ -1,0 +1,114 @@
+package net.mathias2246.buildmc.commands.claim;
+
+import net.kyori.adventure.text.Component;
+import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.api.claims.Claim;
+import net.mathias2246.buildmc.api.claims.Protection;
+import net.mathias2246.buildmc.api.event.claims.ClaimProtectionChangeEvent;
+import net.mathias2246.buildmc.claims.ClaimLogger;
+import net.mathias2246.buildmc.claims.ClaimManager;
+import net.mathias2246.buildmc.util.Message;
+import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Team;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+import java.util.Map;
+
+public class ClaimProtections {
+    
+    public static int changeClaimProtections(@NotNull Player player, @NotNull NamespacedKey flag, boolean value, String type, String name) {
+
+        if (Protection.isHiddenProtection(CoreMain.protectionsRegistry, flag)) {
+            CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.protections.invalid-flag"));
+            return 0;
+        }
+
+        Claim claim = null;
+        long claimId = -1;
+
+        switch (type) {
+            case "player" -> {
+                List<Long> ids = ClaimManager.playerOwner.getOrDefault(player.getUniqueId(), List.of());
+                for (long id : ids) {
+                    if (name.equalsIgnoreCase(ClaimManager.getClaimNameById(id))) {
+                        claim = ClaimManager.getClaimByID(id);
+                        claimId = id;
+                        break;
+                    }
+                }
+            }
+            case "team" -> {
+                Team team = ClaimManager.getPlayerTeam(player);
+                if (team == null) {
+                    CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.error.not-in-a-team"));
+                    return 0;
+                }
+                List<Long> ids = ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
+                for (long id : ids) {
+                    if (name.equalsIgnoreCase(ClaimManager.getClaimNameById(id))) {
+                        claim = ClaimManager.getClaimByID(id);
+                        claimId = id;
+                        break;
+                    }
+                }
+            }
+            case "server" -> {
+                if (!player.hasPermission("buildmc.admin")) {
+                    CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.error.no-permission"));
+                    return 0;
+                }
+                for (long id : ClaimManager.serverClaims) {
+                    if (name.equalsIgnoreCase(ClaimManager.getClaimNameById(id))) {
+                        claim = ClaimManager.getClaimByID(id);
+                        claimId = id;
+                        break;
+                    }
+                }
+            }
+            default -> {
+                CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.protections.invalid-type"));
+                return 0;
+            }
+        }
+
+        if (claim == null || claimId == -1) {
+            CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.remove.not-found"));
+            return 0;
+        }
+
+        Protection protection = CoreMain.protectionLookup.get(flag);
+
+        if (value) {
+
+            ClaimProtectionChangeEvent event = new ClaimProtectionChangeEvent(
+                    claim,
+                    protection,
+                    ClaimProtectionChangeEvent.ActiveState.ENABLED,
+                    player
+            );
+            if (event.isCancelled()) return 0;
+
+            ClaimManager.addProtection(claimId, flag);
+            CoreMain.pluginMain.sendMessage(player, Message.msg(player, "messages.claims.protections.added", Map.of("flag", flag.toString())));
+            ClaimLogger.logProtectionChanged(player, name, flag.toString(), "enabled");
+        } else {
+
+            ClaimProtectionChangeEvent event = new ClaimProtectionChangeEvent(
+                    claim,
+                    protection,
+                    ClaimProtectionChangeEvent.ActiveState.DISABLED,
+                    player
+            );
+            if (event.isCancelled()) return 0;
+
+            ClaimManager.removeProtection(claimId, flag);
+            CoreMain.pluginMain.sendMessage(player, Message.msg(player, "messages.claims.protections.removed", Map.of("flag", flag.toString())));
+            ClaimLogger.logProtectionChanged(player, name, flag.toString(), "disabled");
+        }
+
+        return 1;
+    }
+    
+}

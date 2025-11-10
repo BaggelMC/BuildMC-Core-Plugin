@@ -1,5 +1,7 @@
-package net.mathias2246.buildmc.commands;
+package net.mathias2246.buildmc.commands.disabledCommands;
 
+import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.util.CommandUtils;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -12,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Field;
 import java.util.Map;
 
-import static net.mathias2246.buildmc.Main.logger;
+import static net.mathias2246.buildmc.CoreMain.plugin;
 
 public class DisableCommands {
 
@@ -21,10 +23,10 @@ public class DisableCommands {
         try {
             Field commandMapField = Bukkit.getServer().getClass().getDeclaredField("commandMap");
             commandMapField.setAccessible(true);
-            CommandMap commandMap = (CommandMap) commandMapField.get(Bukkit.getServer());
+            CommandMap commandMap = CommandUtils.getCommandMap();
 
             if (!(commandMap instanceof SimpleCommandMap)) {
-                logger.warning("Unsupported CommandMap implementation. Cannot disable command: " + commandName);
+                plugin.getLogger().warning("Unsupported CommandMap implementation. Cannot disable command: " + commandName);
                 return;
             }
 
@@ -43,8 +45,8 @@ public class DisableCommands {
             // Register dummy override
             Command blockedCommand = new Command(commandName) {
                 @Override
-                public boolean execute(@NotNull CommandSender sender, @NotNull String label, String @NotNull [] args) {
-                    sender.sendMessage(Message.msg(sender, "messages.error.command-disabled"));
+                public boolean execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
+                    CoreMain.mainClass.sendMessage(sender, Message.msg(sender, "messages.error.command-disabled"));
                     return true;
                 }
             };
@@ -52,19 +54,7 @@ public class DisableCommands {
             commandMap.register(namespace, blockedCommand);
 
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            logger.warning("Failed to fully disable command '" + commandName + "': " + e.getMessage());
-        }
-    }
-
-
-    private CommandMap getCommandMap() {
-        try {
-            Field commandMapField = Bukkit.getServer().getClass().getDeclaredField("commandMap");
-            commandMapField.setAccessible(true);
-            return (CommandMap) commandMapField.get(Bukkit.getServer());
-        } catch (Exception e) {
-            logger.warning("Failed to retrieve the command map.");
-            return null;
+            plugin.getLogger().warning("Failed to fully disable command '" + commandName + "': " + e.getMessage());
         }
     }
 

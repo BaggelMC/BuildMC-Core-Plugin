@@ -1,4 +1,4 @@
-package net.mathias2246.buildmc.status;
+package net.mathias2246.buildmc.player.status;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.help.HelpTopic;

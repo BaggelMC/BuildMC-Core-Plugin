@@ -119,7 +119,7 @@ public class ClaimSelectMenu {
             ItemStack item = new ItemStack(material);
             ItemMeta meta = item.getItemMeta();
             if (meta == null) {
-                CoreMain.mainClass.sendPlayerMessage(player, Component.translatable("messages.claims.ui.errors.no-item-meta"));
+                CoreMain.mainClass.sendMessage(player, Component.translatable("messages.claims.ui.errors.no-item-meta"));
                 continue;
             }
 
@@ -222,7 +222,7 @@ public class ClaimSelectMenu {
         ItemStack item = new ItemStack(Material.PAPER);
         ItemMeta meta = item.getItemMeta();
         if (meta == null) {
-            CoreMain.mainClass.sendPlayerMessage(player, Component.translatable("messages.claims.ui.errors.no-item-meta"));
+            CoreMain.mainClass.sendMessage(player, Component.translatable("messages.claims.ui.errors.no-item-meta"));
             return item;
         }
         meta.setDisplayName(LEGACY.serialize(line));
@@ -234,7 +234,7 @@ public class ClaimSelectMenu {
         ItemStack filler = new ItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE);
         ItemMeta meta = filler.getItemMeta();
         if (meta == null) {
-            CoreMain.mainClass.sendPlayerMessage(player, Component.translatable("messages.claims.ui.errors.no-item-meta"));
+            CoreMain.mainClass.sendMessage(player, Component.translatable("messages.claims.ui.errors.no-item-meta"));
             return filler;
         }
         meta.setHideTooltip(true);
@@ -246,7 +246,7 @@ public class ClaimSelectMenu {
         ItemStack item = new ItemStack(Material.ARROW);
         ItemMeta meta = item.getItemMeta();
         if (meta == null) {
-            CoreMain.mainClass.sendPlayerMessage(player, Component.translatable("messages.claims.ui.errors.no-item-meta"));
+            CoreMain.mainClass.sendMessage(player, Component.translatable("messages.claims.ui.errors.no-item-meta"));
             return item;
         }
         meta.setDisplayName(LEGACY.serialize(Message.msg(player, messageKey)));
@@ -258,7 +258,7 @@ public class ClaimSelectMenu {
         ItemStack item = new ItemStack(Material.PAPER);
         ItemMeta meta = item.getItemMeta();
         if (meta == null) {
-            CoreMain.mainClass.sendPlayerMessage(player, Component.translatable("messages.claims.ui.errors.no-item-meta"));
+            CoreMain.mainClass.sendMessage(player, Component.translatable("messages.claims.ui.errors.no-item-meta"));
             return item;
         }
         meta.setDisplayName(LEGACY.serialize(

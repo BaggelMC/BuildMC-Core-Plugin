@@ -12,30 +12,30 @@ import io.papermc.paper.command.brigadier.argument.resolvers.BlockPositionResolv
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.Main;
-import net.mathias2246.buildmc.api.claims.Claim;
-import net.mathias2246.buildmc.api.claims.ClaimType;
 import net.mathias2246.buildmc.api.claims.Protection;
-import net.mathias2246.buildmc.api.event.claims.ClaimProtectionChangeEvent;
 import net.mathias2246.buildmc.claims.claimSubCommands.CreateClaimSubCommand;
 import net.mathias2246.buildmc.claims.claimSubCommands.WhitelistSubCommand;
+import net.mathias2246.buildmc.claims.tool.ClaimToolItemMetaModifier;
 import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.commands.CustomCommand;
+import net.mathias2246.buildmc.commands.claim.ClaimProtections;
+import net.mathias2246.buildmc.commands.claim.ClaimRemove;
+import net.mathias2246.buildmc.commands.claim.ClaimWho;
 import net.mathias2246.buildmc.ui.claims.ClaimSelectMenu;
 import net.mathias2246.buildmc.util.CommandUtil;
-import net.mathias2246.buildmc.util.Message;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 import static net.mathias2246.buildmc.Main.config;
+import static net.mathias2246.buildmc.commands.CommandUtil.requiresPlayer;
 
 public class ClaimCommand implements CustomCommand {
 
@@ -92,74 +92,12 @@ public class ClaimCommand implements CustomCommand {
                                         .suggests(ClaimCommand::claimIdsSuggestions)
                                         .executes(command -> {
                                             var sender = command.getSource().getSender();
-                                            if (!(CommandUtil.requiresPlayer(command) instanceof Player player)) return 0;
+                                            if (!(requiresPlayer(sender) instanceof Player player)) return 0;
 
                                             String type = StringArgumentType.getString(command, "type").toLowerCase();
                                             String claimName = StringArgumentType.getString(command, "claim");
 
-                                            long claimId = -1;
-
-                                            switch (type) {
-                                                case "player" -> {
-                                                    List<Long> ids = ClaimManager.playerOwner.getOrDefault(player.getUniqueId(), List.of());
-                                                    for (long id : ids) {
-                                                        String name = ClaimManager.getClaimNameById(id);
-                                                        if (name != null && name.equalsIgnoreCase(claimName)) {
-                                                            claimId = id;
-                                                            break;
-                                                        }
-                                                    }
-                                                }
-                                                case "team" -> {
-                                                    Team team = ClaimManager.getPlayerTeam(player);
-                                                    if (team == null) {
-                                                        player.sendMessage(Component.translatable("messages.error.not-in-a-team"));
-                                                        return 0;
-                                                    }
-                                                    List<Long> ids = ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
-                                                    for (long id : ids) {
-                                                        String name = ClaimManager.getClaimNameById(id);
-                                                        if (name != null && name.equalsIgnoreCase(claimName)) {
-                                                            claimId = id;
-                                                            break;
-                                                        }
-                                                    }
-                                                }
-                                                case "server", "placeholder" -> {
-                                                    if (!player.hasPermission("buildmc.admin")) {
-                                                        player.sendMessage(Component.translatable("messages.error.no-permission"));
-                                                        return 0;
-                                                    }
-                                                    List<Long> ids = type.equals("server") ?
-                                                            ClaimManager.serverClaims : ClaimManager.placeholderClaims;
-                                                    for (long id : ids) {
-                                                        String name = ClaimManager.getClaimNameById(id);
-                                                        if (name != null && name.equalsIgnoreCase(claimName)) {
-                                                            claimId = id;
-                                                            break;
-                                                        }
-                                                    }
-                                                }
-                                                default -> {
-                                                    player.sendMessage(Component.translatable("messages.claims.remove.invalid-type"));
-                                                    return 0;
-                                                }
-                                            }
-
-                                            if (claimId == -1) {
-                                                player.sendMessage(Component.translatable("messages.claims.remove.not-found"));
-                                                return 0;
-                                            }
-
-                                            boolean success = ClaimManager.removeClaimById(claimId);
-                                            if (success) {
-                                                player.sendMessage(Component.translatable("messages.claims.remove.success"));
-                                                ClaimLogger.logClaimDeleted(player, claimName);
-                                            } else {
-                                                player.sendMessage(Component.translatable("messages.claims.remove.failed"));
-                                            }
-
-                                            return success ? 1 : 0;
+                                            return ClaimRemove.removeClaimCommand(player, type, claimName);
                                         })
                                 )
                         )
@@ -190,7 +128,7 @@ public class ClaimCommand implements CustomCommand {
                                                         .suggests(CommandUtil::booleanSuggestion)
                                                         .executes(command -> {
                                                             var sender = command.getSource().getSender();
-                                                            if (!(CommandUtil.requiresPlayer(command) instanceof Player player)) return 0;
+                                                            if (!(requiresPlayer(sender) instanceof Player player)) return 0;
 
                                                             NamespacedKey flag;
 
@@ -214,90 +152,7 @@ public class ClaimCommand implements CustomCommand {
                                                                 return 0;
                                                             }
 
-                                                            Claim claim = null;
-                                                            long claimId = -1;
-
-                                                            switch (type) {
-                                                                case "player" -> {
-                                                                    List<Long> ids = ClaimManager.playerOwner.getOrDefault(player.getUniqueId(), List.of());
-                                                                    for (long id : ids) {
-                                                                        if (claimName.equalsIgnoreCase(ClaimManager.getClaimNameById(id))) {
-                                                                            claim = ClaimManager.getClaimByID(id);
-                                                                            claimId = id;
-                                                                            break;
-                                                                        }
-                                                                    }
-                                                                }
-                                                                case "team" -> {
-                                                                    Team team = ClaimManager.getPlayerTeam(player);
-                                                                    if (team == null) {
-                                                                        player.sendMessage(Component.translatable("messages.error.not-in-a-team"));
-                                                                        return 0;
-                                                                    }
-                                                                    List<Long> ids = ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
-                                                                    for (long id : ids) {
-                                                                        if (claimName.equalsIgnoreCase(ClaimManager.getClaimNameById(id))) {
-                                                                            claim = ClaimManager.getClaimByID(id);
-                                                                            claimId = id;
-                                                                            break;
-                                                                        }
-                                                                    }
-                                                                }
-                                                                case "server" -> {
-                                                                    if (!player.hasPermission("buildmc.admin")) {
-                                                                        player.sendMessage(Component.translatable("messages.error.no-permission"));
-                                                                        return 0;
-                                                                    }
-                                                                    for (long id : ClaimManager.serverClaims) {
-                                                                        if (claimName.equalsIgnoreCase(ClaimManager.getClaimNameById(id))) {
-                                                                            claim = ClaimManager.getClaimByID(id);
-                                                                            claimId = id;
-                                                                            break;
-                                                                        }
-                                                                    }
-                                                                }
-                                                                default -> {
-                                                                    player.sendMessage(Component.translatable("messages.claims.protections.invalid-type"));
-                                                                    return 0;
-                                                                }
-                                                            }
-
-                                                            if (claim == null || claimId == -1) {
-                                                                player.sendMessage(Component.translatable("messages.claims.remove.not-found"));
-                                                                return 0;
-                                                            }
-
-                                                            Protection protection = CoreMain.protectionLookup.get(flag);
-
-                                                            if (value) {
-
-                                                                ClaimProtectionChangeEvent event = new ClaimProtectionChangeEvent(
-                                                                        claim,
-                                                                        protection,
-                                                                        ClaimProtectionChangeEvent.ActiveState.ENABLED,
-                                                                        sender
-                                                                );
-                                                                if (event.isCancelled()) return 0;
-
-                                                                ClaimManager.addProtection(claimId, flag);
-                                                                player.sendMessage(Message.msg(player, "messages.claims.protections.added", Map.of("flag", flag.toString())));
-                                                                ClaimLogger.logProtectionChanged(player, claimName, flag.toString(), "enabled");
-                                                            } else {
-
-                                                                ClaimProtectionChangeEvent event = new ClaimProtectionChangeEvent(
-                                                                        claim,
-                                                                        protection,
-                                                                        ClaimProtectionChangeEvent.ActiveState.DISABLED,
-                                                                        sender
-                                                                );
-                                                                if (event.isCancelled()) return 0;
-
-                                                                ClaimManager.removeProtection(claimId, flag);
-                                                                player.sendMessage(Message.msg(player, "messages.claims.protections.removed", Map.of("flag", flag.toString())));
-                                                                ClaimLogger.logProtectionChanged(player, claimName, flag.toString(), "disabled");
-                                                            }
-
-                                                            return 1;
+                                                            return ClaimProtections.changeClaimProtections(player, flag, value, type, claimName);
                                                         })
                                                 )
                                         )
@@ -309,14 +164,14 @@ public class ClaimCommand implements CustomCommand {
     }
 
     protected static int handleEdit(CommandContext<CommandSourceStack> command) {
-        if (!(CommandUtil.requiresPlayer(command) instanceof Player player)) return 0;
+        if (!(requiresPlayer(command.getSource().getSender()) instanceof Player player)) return 0;
 
         ClaimSelectMenu.open(player);
         return 1;
     }
     
     protected static int handleGetClaimTool(CommandContext<CommandSourceStack> command) {
-        if (!(CommandUtil.requiresPlayer(command) instanceof Player player)) return 0;
+        if (!(requiresPlayer(command.getSource().getSender()) instanceof Player player)) return 0;
 
         // Check if there is space left in the inventory
         if (player.getInventory().firstEmpty() == -1) {
@@ -330,51 +185,14 @@ public class ClaimCommand implements CustomCommand {
     }
     
     protected static int handleWho(CommandContext<CommandSourceStack> command) {
-        if (!(CommandUtil.requiresPlayer(command) instanceof Player player)) return 0;
-
-        Claim claim;
-
-        try {
-            claim = ClaimManager.getClaim(player.getLocation());
-        } catch (SQLException e) {
-            CoreMain.plugin.getLogger().severe("An error occurred while getting a claim from the database: " + e.getMessage());
-            player.sendMessage(Component.translatable("messages.error.sql"));
-            return 0;
-        }
-
-        if (claim == null) {
-            command.getSource().getSender().sendMessage(Component.translatable("messages.claims.who.unclaimed"));
-            return 1;
-        }
-
-        ClaimType claimType = claim.getType();
-
-        if (claimType == ClaimType.TEAM) {
-            player.sendMessage(Message.msg(player, "messages.claims.who.team-message", Map.of("owner", claim.getOwnerId())));
-        } else if (claimType == ClaimType.PLAYER) {
-            UUID ownerId = UUID.fromString(claim.getOwnerId());
-            OfflinePlayer owner = Bukkit.getOfflinePlayer(ownerId);
-            String ownerName = owner.getName();
-
-            if (ownerName == null) {
-                ownerName = "Unknown";
-            }
-
-            player.sendMessage(Message.msg(player, "messages.claims.who.player-message", Map.of("owner", ownerName)));
-        } else if (claimType == ClaimType.SERVER || claimType == ClaimType.PLACEHOLDER) {
-            player.sendMessage(Message.msg(player, "messages.claims.who.server-message"));
-        }
-
-        return 1;
+        if (!(requiresPlayer(command.getSource().getSender()) instanceof Player player)) return 0;
+        return ClaimWho.whoClaimCommand(player, player.getLocation());
     }
 
     protected static int handleWhoAt(CommandContext<CommandSourceStack> command) {
-        if (!(CommandUtil.requiresPlayer(command) instanceof Player player)) return 0;
+        if (!(requiresPlayer(command.getSource().getSender()) instanceof Player player)) return 0;
 
-        Claim claim;
-
-
-        Location l = null;
+        Location l;
         try {
             l = command.getArgument("position", BlockPositionResolver.class).resolve(command.getSource()).toLocation(player.getWorld());
         } catch (CommandSyntaxException e) {
@@ -382,38 +200,7 @@ public class ClaimCommand implements CustomCommand {
             return 0;
         }
 
-        try {
-            claim = ClaimManager.getClaim(l);
-        } catch (SQLException e) {
-            CoreMain.plugin.getLogger().severe("An error occurred while getting a claim from the database: " + e.getMessage());
-            player.sendMessage(Component.translatable("messages.error.sql"));
-            return 0;
-        }
-
-        if (claim == null) {
-            command.getSource().getSender().sendMessage(Component.translatable("messages.claims.who.unclaimed"));
-            return 1;
-        }
-
-        ClaimType claimType = claim.getType();
-
-        if (claimType == ClaimType.TEAM) {
-            player.sendMessage(Message.msg(player, "messages.claims.who.team-message", Map.of("owner", claim.getOwnerId())));
-        } else if (claimType == ClaimType.PLAYER) {
-            UUID ownerId = UUID.fromString(claim.getOwnerId());
-            OfflinePlayer owner = Bukkit.getOfflinePlayer(ownerId);
-            String ownerName = owner.getName();
-
-            if (ownerName == null) {
-                ownerName = "Unknown";
-            }
-
-            player.sendMessage(Message.msg(player, "messages.claims.who.player-message", Map.of("owner", ownerName)));
-        } else if (claimType == ClaimType.SERVER || claimType == ClaimType.PLACEHOLDER) {
-            player.sendMessage(Message.msg(player, "messages.claims.who.server-message"));
-        }
-
-        return 1;
+        return ClaimWho.whoClaimCommand(player, l);
     }
     
     protected static int handleHelp(CommandContext<CommandSourceStack> command) {
