@@ -94,7 +94,6 @@ public final class CoreMain {
 
         protectionsRegistry = registriesHolder.addRegistry(DefaultRegistries.PROTECTIONS.toString(), new DeferredRegistry<>());
 
-
         protectionsRegistry.addEntries(
                 new Explosion(config.getConfigurationSection("claims.protections.damage.explosion-block-damage")),
                 new EntityExplosionDamage(config.getConfigurationSection("claims.protections.damage.explosion-entity-damage")),
@@ -154,18 +153,20 @@ public final class CoreMain {
 
             protectionLookup.clear();
 
+            var hideAllProtections = CoreMain.plugin.getConfig().getBoolean("claims.hide-all-protections");
             for (Protection protection : protectionsRegistry) {
                 var def = protection.isDefaultEnabled();
 
+                // Register the protection's event listener
+                registerEvent(protection);
+
                 // Don't register protection events if, they are disabled and cannot be changed
-                //FIXME: This is not how hiding is supposed to work. They should still be active - Darkyl
-                if (!def && CoreMain.plugin.getConfig().getBoolean("claims.hide-all-protections")) continue;
+                if (hideAllProtections) {
+                    protection.setHidden(true);
+                }
 
                 // Add to the default protection list if applicable
                 if (def) Protection.defaultProtections.add(protection.getKey().toString());
-
-                // Register the protection's event listener
-                registerEvent(protection);
 
                 // Populate fast lookup map
                 protectionLookup.put(protection.getKey(), protection);
