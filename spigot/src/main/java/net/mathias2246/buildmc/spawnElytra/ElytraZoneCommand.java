@@ -6,13 +6,7 @@ import dev.jorel.commandapi.arguments.LocationType;
 import net.mathias2246.buildmc.commands.CustomCommand;
 import org.bukkit.Location;
 
-public class ElytraZoneCommand implements CustomCommand {
-
-    private final ElytraZoneManager zoneManager;
-
-    public ElytraZoneCommand(ElytraZoneManager zoneManager) {
-        this.zoneManager = zoneManager;
-    }
+public record ElytraZoneCommand(ElytraZoneManager zoneManager) implements CustomCommand {
 
     @Override
     public CommandAPICommand getCommand() {

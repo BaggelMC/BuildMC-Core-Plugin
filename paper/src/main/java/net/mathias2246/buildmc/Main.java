@@ -25,16 +25,10 @@ import net.mathias2246.buildmc.spawnElytra.ElytraZoneManager;
 import net.mathias2246.buildmc.status.PlayerStatus;
 import net.mathias2246.buildmc.status.SetStatusCommand;
 import net.mathias2246.buildmc.status.StatusConfig;
-import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.RegistriesHolder;
 import net.mathias2246.buildmc.util.SoundManager;
 import net.mathias2246.buildmc.util.config.ConfigurationValidationException;
-import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandMap;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -43,13 +37,12 @@ import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.lang.reflect.Field;
-import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 import static net.mathias2246.buildmc.CoreMain.registriesHolder;
+import static net.mathias2246.buildmc.commands.DisableCommands.disableCommand;
 
 public final class Main extends PluginMain {
 
@@ -137,57 +130,6 @@ public final class Main extends PluginMain {
 
     private void registerEvent(@NotNull Listener listener) {
         getServer().getPluginManager().registerEvents(listener, this);
-    }
-
-    private void disableCommand(String namespace, String commandName) {
-        try {
-            Field commandMapField = Bukkit.getServer().getClass().getDeclaredField("commandMap");
-            commandMapField.setAccessible(true);
-            CommandMap commandMap = (CommandMap) commandMapField.get(Bukkit.getServer());
-
-            if (!(commandMap instanceof SimpleCommandMap)) {
-                logger.warning("Unsupported CommandMap implementation. Cannot disable command: " + commandName);
-                return;
-            }
-
-            // Cast to access knownCommands
-            Field knownCommandsField = SimpleCommandMap.class.getDeclaredField("knownCommands");
-            knownCommandsField.setAccessible(true);
-            @SuppressWarnings("unchecked")
-            Map<String, Command> knownCommands = (Map<String, Command>) knownCommandsField.get(commandMap);
-
-            // Remove all relevant keys
-            knownCommands.keySet().removeIf(key ->
-                    key.equalsIgnoreCase(commandName) ||
-                            key.equalsIgnoreCase(namespace + ":" + commandName) ||
-                            key.endsWith(":" + commandName));
-
-            // Register dummy override
-            Command blockedCommand = new Command(commandName) {
-                @Override
-                public boolean execute(@NotNull CommandSender sender, @NotNull String label, String @NotNull [] args) {
-                    sender.sendMessage(Message.msg(sender, "messages.error.command-disabled"));
-                    return true;
-                }
-            };
-
-            commandMap.register(namespace, blockedCommand);
-
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            logger.warning("Failed to fully disable command '" + commandName + "': " + e.getMessage());
-        }
-    }
-
-
-    private CommandMap getCommandMap() {
-        try {
-            Field commandMapField = Bukkit.getServer().getClass().getDeclaredField("commandMap");
-            commandMapField.setAccessible(true);
-            return (CommandMap) commandMapField.get(Bukkit.getServer());
-        } catch (Exception e) {
-            logger.warning("Failed to retrieve the command map.");
-            return null;
-        }
     }
 
     @Override

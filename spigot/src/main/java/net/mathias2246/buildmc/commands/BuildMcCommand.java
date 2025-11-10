@@ -5,8 +5,6 @@ import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.endEvent.EndEventCommand;
 import org.bukkit.permissions.Permission;
 
-import static net.mathias2246.buildmc.Main.audiences;
-
 public class BuildMcCommand implements CustomCommand {
 
     @Override
@@ -45,7 +43,7 @@ public class BuildMcCommand implements CustomCommand {
         );
         cmd.withSubcommand(statusSub);
 
-        var endSub = new EndEventCommand(audiences).getCommand();
+        var endSub = new EndEventCommand().getCommand();
         cmd.withSubcommand(endSub);
 
         // Register /buildmc sub-commands

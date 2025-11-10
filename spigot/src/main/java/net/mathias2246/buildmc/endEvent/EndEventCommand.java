@@ -1,7 +1,6 @@
 package net.mathias2246.buildmc.endEvent;
 
 import dev.jorel.commandapi.CommandAPICommand;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.api.endEvent.EndChangeCause;
 import net.mathias2246.buildmc.api.endEvent.EndState;
@@ -13,16 +12,9 @@ import org.bukkit.entity.Player;
 
 import java.io.IOException;
 
-import static net.mathias2246.buildmc.Main.config;
-import static net.mathias2246.buildmc.Main.configFile;
+import static net.mathias2246.buildmc.Main.*;
 
 public class EndEventCommand implements CustomCommand {
-
-    private final BukkitAudiences audiences;
-
-    public EndEventCommand(BukkitAudiences audiences) {
-        this.audiences = audiences;
-    }
 
     @Override
     public CommandAPICommand getCommand() {

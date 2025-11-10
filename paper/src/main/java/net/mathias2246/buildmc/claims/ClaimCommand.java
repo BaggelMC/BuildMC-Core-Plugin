@@ -2,11 +2,13 @@ package net.mathias2246.buildmc.claims;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
+import io.papermc.paper.command.brigadier.argument.resolvers.BlockPositionResolver;
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.Main;
@@ -22,6 +24,7 @@ import net.mathias2246.buildmc.ui.claims.ClaimSelectMenu;
 import net.mathias2246.buildmc.util.CommandUtil;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -64,8 +67,15 @@ public class ClaimCommand implements CustomCommand {
                 Commands.literal("edit").executes(ClaimCommand::handleEdit)
         );
         cmd.then(
-                Commands.literal("who").executes(ClaimCommand::handleWho)
+                Commands.literal("who")
+                        .executes(ClaimCommand::handleWho)
+                        .then(
+                                Commands.argument("position", ArgumentTypes.blockPosition())
+                                        .executes(ClaimCommand::handleWhoAt)
+                        )
+
         );
+
         cmd.then(
                 Commands.literal("help").executes(ClaimCommand::handleHelp)
         );
@@ -326,6 +336,54 @@ public class ClaimCommand implements CustomCommand {
 
         try {
             claim = ClaimManager.getClaim(player.getLocation());
+        } catch (SQLException e) {
+            CoreMain.plugin.getLogger().severe("An error occurred while getting a claim from the database: " + e.getMessage());
+            player.sendMessage(Component.translatable("messages.error.sql"));
+            return 0;
+        }
+
+        if (claim == null) {
+            command.getSource().getSender().sendMessage(Component.translatable("messages.claims.who.unclaimed"));
+            return 1;
+        }
+
+        ClaimType claimType = claim.getType();
+
+        if (claimType == ClaimType.TEAM) {
+            player.sendMessage(Message.msg(player, "messages.claims.who.team-message", Map.of("owner", claim.getOwnerId())));
+        } else if (claimType == ClaimType.PLAYER) {
+            UUID ownerId = UUID.fromString(claim.getOwnerId());
+            OfflinePlayer owner = Bukkit.getOfflinePlayer(ownerId);
+            String ownerName = owner.getName();
+
+            if (ownerName == null) {
+                ownerName = "Unknown";
+            }
+
+            player.sendMessage(Message.msg(player, "messages.claims.who.player-message", Map.of("owner", ownerName)));
+        } else if (claimType == ClaimType.SERVER || claimType == ClaimType.PLACEHOLDER) {
+            player.sendMessage(Message.msg(player, "messages.claims.who.server-message"));
+        }
+
+        return 1;
+    }
+
+    protected static int handleWhoAt(CommandContext<CommandSourceStack> command) {
+        if (!(CommandUtil.requiresPlayer(command) instanceof Player player)) return 0;
+
+        Claim claim;
+
+
+        Location l = null;
+        try {
+            l = command.getArgument("position", BlockPositionResolver.class).resolve(command.getSource()).toLocation(player.getWorld());
+        } catch (CommandSyntaxException e) {
+            player.sendMessage(Component.translatable("messages.error.general"));
+            return 0;
+        }
+
+        try {
+            claim = ClaimManager.getClaim(l);
         } catch (SQLException e) {
             CoreMain.plugin.getLogger().severe("An error occurred while getting a claim from the database: " + e.getMessage());
             player.sendMessage(Component.translatable("messages.error.sql"));

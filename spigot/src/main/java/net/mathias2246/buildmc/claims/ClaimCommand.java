@@ -1,6 +1,7 @@
 package net.mathias2246.buildmc.claims;
 
 import dev.jorel.commandapi.CommandAPICommand;
+import dev.jorel.commandapi.arguments.LocationArgument;
 import dev.jorel.commandapi.arguments.NamespacedKeyArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
 import net.kyori.adventure.text.Component;
@@ -120,6 +121,55 @@ public class ClaimCommand implements CustomCommand {
 
                                             return 1;
                                         }
+                                )
+                                .withArguments(
+                                        new LocationArgument("loc")
+                                                .executes(
+                                                        (command) -> {
+                                                            if (!(CommandUtil.requiresPlayer(command) instanceof Player player)) return 0;
+
+                                                            Claim claim;
+
+                                                            Location l = command.args().getByClass("loc", Location.class);
+                                                            if (l == null) {
+                                                                CoreMain.mainClass.sendPlayerMessage(player, Component.translatable("messages.error.general"));
+                                                                return 0;
+                                                            }
+
+                                                            try {
+                                                                claim = ClaimManager.getClaim(l);
+                                                            } catch (SQLException e) {
+                                                                CoreMain.plugin.getLogger().severe("An error occurred while getting a claim from the database: " + e.getMessage());
+                                                                audiences.player(player).sendMessage(Component.translatable("messages.error.sql"));
+                                                                return 0;
+                                                            }
+
+                                                            if (claim == null) {
+                                                                audiences.sender(command.sender()).sendMessage(Component.translatable("messages.claims.who.unclaimed"));
+                                                                return 1;
+                                                            }
+
+                                                            ClaimType claimType = claim.getType();
+
+                                                            if (claimType == ClaimType.TEAM) {
+                                                                audiences.player(player).sendMessage(Message.msg(player, "messages.claims.who.team-message", Map.of("owner", claim.getOwnerId())));
+                                                            } else if (claimType == ClaimType.PLAYER) {
+                                                                UUID ownerId = UUID.fromString(claim.getOwnerId());
+                                                                OfflinePlayer owner = Bukkit.getOfflinePlayer(ownerId);
+                                                                String ownerName = owner.getName();
+
+                                                                if (ownerName == null) {
+                                                                    ownerName = "Unknown";
+                                                                }
+
+                                                                audiences.player(player).sendMessage(Message.msg(player, "messages.claims.who.player-message", Map.of("owner", ownerName)));
+                                                            } else if (claimType == ClaimType.SERVER || claimType == ClaimType.PLACEHOLDER) {
+                                                                audiences.player(player).sendMessage(Message.msg(player, "messages.claims.who.server-message"));
+                                                            }
+
+                                                            return 1;
+                                                        }
+                                                )
                                 )
                 )
 

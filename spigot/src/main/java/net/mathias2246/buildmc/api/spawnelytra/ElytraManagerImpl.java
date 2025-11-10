@@ -11,12 +11,10 @@ import org.jetbrains.annotations.NotNull;
 
 import static net.mathias2246.buildmc.Main.plugin;
 
-public class ElytraManagerImpl implements ElytraManager {
+public record ElytraManagerImpl(ElytraZoneManager zoneManager) implements ElytraManager {
 
-    private final ElytraZoneManager zoneManager;
-
-    public ElytraManagerImpl(@NotNull ElytraZoneManager elytraZoneManager) {
-        this.zoneManager = elytraZoneManager;
+    public ElytraManagerImpl(@NotNull ElytraZoneManager zoneManager) {
+        this.zoneManager = zoneManager;
     }
 
     @Override
