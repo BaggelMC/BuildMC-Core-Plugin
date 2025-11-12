@@ -120,6 +120,8 @@ public final class Main extends PluginMain {
         apiClaimManager = new ClaimManagerImpl();
         apiEndManager = new EndManagerImpl();
         apiElytraManager = new ElytraManagerImpl(zoneManager);
+
+
     }
 
     @Override
