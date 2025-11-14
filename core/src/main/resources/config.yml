@@ -86,7 +86,16 @@ claims:
   # Settings related to the claim-tool. The claim-tool (if enabled) can be obtained using '/claim claimtool'
   tool:
     # The item used for the claim-tool
-    tool-item: "carrot_on_a_stick" # Default: "carrot_on_a_stick"
+    # You are able to define custom item components inside the metadata of the item.
+    tool-item:
+      DataVersion: 4556
+      id: minecraft:carrot_on_a_stick
+      count: 1
+      schema_version: 1
+
+    # Custom Serialized data that is applied to the claim tool.
+    # Should
+    tool-item-data: null # Default: null
 
     # If true, players even with permissions can't get the claim-tool using '/claim claimtool'
     enable-give-command: true # Default: true
