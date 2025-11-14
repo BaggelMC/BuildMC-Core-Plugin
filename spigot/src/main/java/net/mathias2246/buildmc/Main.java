@@ -14,6 +14,7 @@ import net.mathias2246.buildmc.claims.ClaimCommand;
 import net.mathias2246.buildmc.claims.ClaimManagerImpl;
 import net.mathias2246.buildmc.claims.tool.ClaimToolParticles;
 import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
+import net.mathias2246.buildmc.commands.BroadcastCommandPlatform;
 import net.mathias2246.buildmc.commands.BuildMcCommand;
 import net.mathias2246.buildmc.commands.CommandRegister;
 import net.mathias2246.buildmc.endEvent.EndListener;
@@ -198,6 +199,7 @@ public final class Main extends PluginMain {
 
         CommandRegister.setupCommandAPI();
         CommandRegister.register(new BuildMcCommand());
+        CommandRegister.register(new BroadcastCommandPlatform());
 
         getServer().getPluginManager().registerEvents(new EndListener(), this);
 
