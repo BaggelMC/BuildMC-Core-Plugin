@@ -71,7 +71,10 @@ public class WhitelistMenu {
                     pane.addItem(new GuiItem(addButton, e -> {
                         e.setCancelled(true);
                         CoreMain.mainClass.sendMessage(player,
-                                Message.msg(player, "messages.claims.ui.whitelist-menu.add-button.click-info"));
+                                Component.translatable("messages.claims.ui.whitelist-menu.add-button.click-info").insertion(
+                                        "/claim whitelist add "+claim.getType()+" "+claim.getName()+" "
+                                )
+                        );
                     }), x, 2);
                 } else {
                     // Default gray separator
