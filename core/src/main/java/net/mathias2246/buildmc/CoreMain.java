@@ -6,6 +6,7 @@ import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.event.lifecycle.BuildMcFinishedLoadingEvent;
 import net.mathias2246.buildmc.api.event.lifecycle.BuildMcRegistryEvent;
 import net.mathias2246.buildmc.api.item.ItemDropTracker;
+import net.mathias2246.buildmc.api.status.StatusInstance;
 import net.mathias2246.buildmc.claims.ClaimLogger;
 import net.mathias2246.buildmc.claims.protections.blocks.*;
 import net.mathias2246.buildmc.claims.protections.entities.*;
@@ -14,12 +15,16 @@ import net.mathias2246.buildmc.database.ClaimTable;
 import net.mathias2246.buildmc.database.DatabaseConfig;
 import net.mathias2246.buildmc.database.DatabaseManager;
 import net.mathias2246.buildmc.event.claims.PlayerCrossClaimBoundariesListener;
-import net.mathias2246.buildmc.util.*;
+import net.mathias2246.buildmc.util.BStats;
+import net.mathias2246.buildmc.util.SoundManager;
 import net.mathias2246.buildmc.util.config.ConfigHandler;
 import net.mathias2246.buildmc.util.config.ConfigurationValidationException;
 import net.mathias2246.buildmc.util.language.LanguageManager;
+import net.mathias2246.buildmc.util.registry.BaseRegistry;
+import net.mathias2246.buildmc.util.registry.DefaultRegistries;
+import net.mathias2246.buildmc.util.registry.DeferredRegistry;
+import net.mathias2246.buildmc.util.registry.RegistriesHolder;
 import org.bukkit.Bukkit;
-import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -31,8 +36,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 
 @ApiStatus.Internal
 public final class CoreMain {
@@ -58,6 +61,8 @@ public final class CoreMain {
     public static final RegistriesHolder registriesHolder = new RegistriesHolder.Builder().build();
 
     public static DeferredRegistry<Protection> protectionsRegistry;
+
+    public static BaseRegistry<StatusInstance> statusesRegistry;
 
     public static boolean isInitialized() {
         return isInitialized;
@@ -85,7 +90,9 @@ public final class CoreMain {
 
         config = plugin.getConfig();
 
-        protectionsRegistry = registriesHolder.addRegistry(DefaultRegistries.PROTECTIONS.toString(), new DeferredRegistry<>());
+        statusesRegistry = (BaseRegistry<StatusInstance>) registriesHolder.addRegistry(DefaultRegistries.STATUSES.toString(), new BaseRegistry<StatusInstance>());
+
+        protectionsRegistry = (DeferredRegistry<Protection>) registriesHolder.addRegistry(DefaultRegistries.PROTECTIONS.toString(), new DeferredRegistry<Protection>());
 
         protectionsRegistry.addEntries(
                 new Explosion(config.getConfigurationSection("claims.protections.damage.explosion-block-damage")),

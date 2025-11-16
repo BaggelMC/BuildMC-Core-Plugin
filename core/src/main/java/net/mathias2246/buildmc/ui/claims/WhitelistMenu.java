@@ -6,6 +6,7 @@ import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
 import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.mathias2246.buildmc.CoreMain;
@@ -71,9 +72,10 @@ public class WhitelistMenu {
                     pane.addItem(new GuiItem(addButton, e -> {
                         e.setCancelled(true);
                         CoreMain.mainClass.sendMessage(player,
-                                Component.translatable("messages.claims.ui.whitelist-menu.add-button.click-info").insertion(
-                                        "/claim whitelist add "+claim.getType()+" "+claim.getName()+" "
-                                )
+                                Component.translatable("messages.claims.ui.whitelist-menu.add-button.click-info")
+                                        .clickEvent(
+                                                ClickEvent.suggestCommand("/claim whitelist add "+claim.getType()+" "+claim.getName()+" ")
+                                        )
                         );
                     }), x, 2);
                 } else {

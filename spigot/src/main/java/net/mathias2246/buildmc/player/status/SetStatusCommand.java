@@ -2,6 +2,7 @@ package net.mathias2246.buildmc.player.status;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.StringArgument;
+import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.commands.CustomCommand;
 import net.mathias2246.buildmc.status.StatusConfig;
 import org.bukkit.entity.Player;
@@ -55,7 +56,8 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
                                         (info, builder) -> {
                                             String remaining = builder.getRemaining().toLowerCase();
 
-                                            for (var k : StatusConfig.loadedStatuses.keySet()) {
+                                            for (var ke : CoreMain.statusesRegistry.keySet()) {
+                                                var k = ke.toString().replace("buildmc:", "");
                                                 if (k.toLowerCase().startsWith(remaining)) {
                                                     builder.suggest(k);
                                                 }

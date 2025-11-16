@@ -1,4 +1,4 @@
-package net.mathias2246.buildmc.util;
+package net.mathias2246.buildmc.util.registry;
 
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;

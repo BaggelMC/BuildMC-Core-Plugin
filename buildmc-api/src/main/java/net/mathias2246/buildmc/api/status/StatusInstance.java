@@ -1,9 +1,10 @@
-package net.mathias2246.buildmc.status;
+package net.mathias2246.buildmc.api.status;
 
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.mathias2246.buildmc.claims.ClaimManager;
+import org.bukkit.Keyed;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
@@ -17,7 +18,8 @@ import java.util.stream.Collectors;
 
 /**The instance of a status that shows up inside the '/status set ...' command when registered.*/
 @SerializableAs("StatusInstance")
-public class StatusInstance implements ConfigurationSerializable {
+public class StatusInstance implements ConfigurationSerializable, Keyed {
+
 
     private final @NotNull String statusId;
     private final @Nullable Set<Permission> permissions;
@@ -47,8 +49,11 @@ public class StatusInstance implements ConfigurationSerializable {
         return teams;
     }
 
+    private final @NotNull NamespacedKey namespacedKey;
+
     public StatusInstance(@NotNull String statusId, @Nullable Set<Permission> permissions, @Nullable Set<Team> teams, @Nullable Component display) {
         this.statusId = statusId;
+        this.namespacedKey = Objects.requireNonNull(NamespacedKey.fromString("buildmc:" + statusId));
         this.permissions = permissions;
         this.teams = teams;
         hasRequirements = (permissions != null || teams != null);
@@ -74,7 +79,7 @@ public class StatusInstance implements ConfigurationSerializable {
         if (!allow) return AllowStatus.MISSING_PERMISSION;
 
         if (teams != null) {
-            Team team = ClaimManager.getPlayerTeam(player);
+            Team team = player.getScoreboard().getEntryTeam(player.getName());
             if (team == null) return AllowStatus.NOT_IN_TEAM;
 
             for (var t : teams) {
@@ -133,6 +138,11 @@ public class StatusInstance implements ConfigurationSerializable {
         }
 
         return new StatusInstance(statusId, perms, teams, display);
+    }
+
+    @Override
+    public @NotNull NamespacedKey getKey() {
+        return namespacedKey;
     }
 
     public enum AllowStatus {

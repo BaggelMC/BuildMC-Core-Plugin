@@ -2,9 +2,8 @@ package net.mathias2246.buildmc.player.status;
 
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.api.status.StatusInstance;
 import net.mathias2246.buildmc.platform.SoundManagerPaperImpl;
-import net.mathias2246.buildmc.status.StatusConfig;
-import net.mathias2246.buildmc.status.StatusInstance;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -25,7 +24,7 @@ public class PlayerStatus implements Listener {
 
     public static boolean doesStatusExist(String status) {
         if (status == null) return false;
-        return StatusConfig.loadedStatuses.containsKey(status);
+        return CoreMain.statusesRegistry.contains(Objects.requireNonNull(NamespacedKey.fromString("buildmc:" + status)));
     }
 
     public static void setPlayerStatus(@NotNull Player player, String status, boolean join) {
@@ -40,7 +39,7 @@ public class PlayerStatus implements Listener {
             return;
         }
 
-        StatusInstance s = StatusConfig.loadedStatuses.get(status);
+        StatusInstance s = CoreMain.statusesRegistry.getOrThrow(Objects.requireNonNull(Objects.requireNonNull(NamespacedKey.fromString("buildmc:" + status)).key()));
         var allowed = s.allowPlayer(player);
         if (!allowed.equals(StatusInstance.AllowStatus.ALLOW)) {
             switch (allowed) {

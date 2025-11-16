@@ -222,7 +222,7 @@ messages:
           name: "<green>Spieler Hinzufügen</green>"
           lore-line1: "<gray>Verwende <gold>/claim whitelist add</gold> </gray>"
           lore-line2: "<gray>um jemanden zu whitelisten.</gray>"
-          click-info: "<gray><italic>Shift-Klick hier um whitelist Befehl einzufügen.</italic></gray>"
+          click-info: "<gray><italic>Klick hier um whitelist Befehl einzufügen.</italic></gray>"
         delete-confirm-menu:
           title: player% entfernen??
           success: <green>Spieler erfolgreich von der Whitelist entfernt.</green>

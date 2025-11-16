@@ -1,7 +1,7 @@
 package net.mathias2246.buildmc.api.claims;
 
 import net.mathias2246.buildmc.api.ui.Displayable;
-import net.mathias2246.buildmc.util.DeferredRegistry;
+import net.mathias2246.buildmc.util.registry.DeferredRegistry;
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.Listener;
