@@ -1,9 +1,10 @@
-package net.mathias2246.buildmc.status;
+package net.mathias2246.buildmc.player.status;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.mathias2246.buildmc.CoreMain;
-import net.mathias2246.buildmc.platform.SoundManagerSpigotImpl;
+import net.mathias2246.buildmc.platform.SoundManagerPaperImpl;
+import net.mathias2246.buildmc.status.StatusConfig;
+import net.mathias2246.buildmc.status.StatusInstance;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,8 +14,6 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
-
-import static net.mathias2246.buildmc.Main.audiences;
 
 public class PlayerStatus implements Listener {
 
@@ -32,11 +31,11 @@ public class PlayerStatus implements Listener {
     public static void setPlayerStatus(@NotNull Player player, String status, boolean join) {
         if (!doesStatusExist(status)) {
             if (join) {
-                audiences.player(player).sendMessage(Component.translatable("messages.status.join-doesn't-exist"));
+                player.sendMessage(Component.translatable("messages.status.join-doesn't-exist"));
                 player.getPersistentDataContainer().remove(PLAYER_STATUS_PDC);
             } else {
-                audiences.player(player).sendMessage(Component.translatable("messages.status.not-found"));
-                CoreMain.soundManager.playSound(player, SoundManagerSpigotImpl.mistake);
+                player.sendMessage(Component.translatable("messages.status.not-found"));
+                CoreMain.soundManager.playSound(player, SoundManagerPaperImpl.mistake);
             }
             return;
         }
@@ -45,26 +44,22 @@ public class PlayerStatus implements Listener {
         var allowed = s.allowPlayer(player);
         if (!allowed.equals(StatusInstance.AllowStatus.ALLOW)) {
             switch (allowed) {
-                case NOT_IN_TEAM ->
-                        audiences.player(player).sendMessage(Component.translatable("messages.status.not-in-team"));
-                case MISSING_PERMISSION ->
-                        audiences.player(player).sendMessage(Component.translatable("messages.status.no-permission"));
+                case NOT_IN_TEAM -> player.sendMessage(Component.translatable("messages.status.not-in-team"));
+                case MISSING_PERMISSION -> player.sendMessage(Component.translatable("messages.status.no-permission"));
             }
             if (join) {
                 player.getPersistentDataContainer().remove(PLAYER_STATUS_PDC);
                 return;
             }
-            CoreMain.soundManager.playSound(player, SoundManagerSpigotImpl.mistake);
+            CoreMain.soundManager.playSound(player, SoundManagerPaperImpl.mistake);
             return;
         }
 
-        Component c = s.getDisplay().asComponent().append(Component.text(player.getName()));
+        Component c = s.getDisplay().asComponent().append(player.name());
 
-        String legacy = LegacyComponentSerializer.legacySection().serialize(c);
-
-        player.setPlayerListName(legacy);
-        player.setDisplayName(legacy);
-        player.setCustomName(legacy);
+        player.playerListName(c);
+        player.displayName(c);
+        player.customName(c);
         player.setCustomNameVisible(true);
 
         player.getPersistentDataContainer().set(
@@ -74,16 +69,16 @@ public class PlayerStatus implements Listener {
         );
 
         if (join) return;
-        audiences.player(player).sendMessage(Component.translatable("messages.status.successfully-set"));
-        CoreMain.soundManager.playSound(player, SoundManagerSpigotImpl.success);
+        player.sendMessage(Component.translatable("messages.status.successfully-set"));
+        CoreMain.soundManager.playSound(player, SoundManagerPaperImpl.success);
     }
 
     public static void removePlayerStatus(@NotNull Player player) {
         player.getPersistentDataContainer().remove(PLAYER_STATUS_PDC);
 
-        player.setPlayerListName(null);
-        player.setDisplayName(null);
-        player.setCustomName(null);
+        player.playerListName(null);
+        player.displayName(null);
+        player.customName(null);
         player.setCustomNameVisible(false);
     }
 

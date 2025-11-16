@@ -1,4 +1,4 @@
-package net.mathias2246.buildmc.claims;
+package net.mathias2246.buildmc.claims.tool;
 
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.mathias2246.buildmc.api.item.ItemMetaModifier;

@@ -1,5 +1,6 @@
 package net.mathias2246.buildmc;
 
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.mathias2246.buildmc.api.BuildMcAPI;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.event.lifecycle.BuildMcFinishedLoadingEvent;
@@ -19,10 +20,12 @@ import net.mathias2246.buildmc.util.config.ConfigurationValidationException;
 import net.mathias2246.buildmc.util.language.LanguageManager;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.plugin.Plugin;
+import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,10 +37,12 @@ import java.util.Map;
 @ApiStatus.Internal
 public final class CoreMain {
 
+    @Subst("")
     public static Plugin plugin;
     public static MainClass mainClass;
     public static PluginMain pluginMain;
     public static BuildMcAPI api;
+    public static FileConfiguration config;
 
     public static SoundManager soundManager;
 
@@ -46,25 +51,13 @@ public final class CoreMain {
     public static DatabaseManager databaseManager;
     public static ClaimTable claimTable;
 
+    public static BukkitAudiences bukkitAudiences;
+
     private static boolean isInitialized = false;
 
     public static final RegistriesHolder registriesHolder = new RegistriesHolder.Builder().build();
 
     public static DeferredRegistry<Protection> protectionsRegistry;
-
-    /**
-     * A fast lookup map that associates each protection's NamespacedKey
-     * with its actual Protection instance.
-     *
-     * <p>This map is built once during {@link #finishLoading()}, after all
-     * protections have been registered and initialized. It allows O(1)
-     * lookups by key, avoiding the need to iterate through
-     * {@link #protectionsRegistry} repeatedly (e.g., in commands).</p>
-     *
-     * <p>⚠️ Note: Do not modify this map manually — it is regenerated
-     * automatically every time protections are (re)loaded.</p>
-     */
-    public static final Map<NamespacedKey, Protection> protectionLookup = new HashMap<>();
 
     public static boolean isInitialized() {
         return isInitialized;
@@ -84,14 +77,15 @@ public final class CoreMain {
 
         initializeConfigs();
 
+        bukkitAudiences = BukkitAudiences.create(plugin);
+
         BStats.initialize();
 
         LanguageManager.init();
 
-        var config = plugin.getConfig();
+        config = plugin.getConfig();
 
         protectionsRegistry = registriesHolder.addRegistry(DefaultRegistries.PROTECTIONS.toString(), new DeferredRegistry<>());
-
 
         protectionsRegistry.addEntries(
                 new Explosion(config.getConfigurationSection("claims.protections.damage.explosion-block-damage")),
@@ -150,23 +144,20 @@ public final class CoreMain {
         if (plugin.getConfig().getBoolean("claims.enabled", true)) {
             initializeDatabase();
 
-            protectionLookup.clear();
-
+            var hideAllProtections = CoreMain.plugin.getConfig().getBoolean("claims.hide-all-protections");
             for (Protection protection : protectionsRegistry) {
                 var def = protection.isDefaultEnabled();
-
-                // Don't register protection events if, they are disabled and cannot be changed
-                //FIXME: This is not how hiding is supposed to work. They should still be active - Darkyl
-                if (!def && CoreMain.plugin.getConfig().getBoolean("claims.hide-all-protections")) continue;
-
-                // Add to default protection list if applicable
-                if (def) Protection.defaultProtections.add(protection.getKey().toString());
 
                 // Register the protection's event listener
                 registerEvent(protection);
 
-                // Populate fast lookup map
-                protectionLookup.put(protection.getKey(), protection);
+                // Don't register protection events if, they are disabled and cannot be changed
+                if (hideAllProtections) {
+                    protection.setHidden(true);
+                }
+
+                // Add to the default protection list if applicable
+                if (def) Protection.defaultProtections.add(protection.getKey().toString());
             }
 
             registerEvent(new PlayerCrossClaimBoundariesListener());

@@ -115,10 +115,10 @@ public class ClaimEditMenu {
                     e.setCancelled(true);
                     boolean removed = ClaimManager.removeClaimById(claim.getId());
                     if (removed) {
-                        CoreMain.mainClass.sendPlayerMessage(player,
+                        CoreMain.mainClass.sendMessage(player,
                                 Component.translatable("messages.claims.ui.edit-menu.delete-confirm-menu.success"));
                     } else {
-                        CoreMain.mainClass.sendPlayerMessage(player,
+                        CoreMain.mainClass.sendMessage(player,
                                 Component.translatable("messages.claims.ui.edit-menu.delete-confirm-menu.fail"));
                     }
                     player.closeInventory();

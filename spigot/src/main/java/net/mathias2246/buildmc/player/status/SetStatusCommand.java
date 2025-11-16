@@ -1,12 +1,14 @@
-package net.mathias2246.buildmc.status;
+package net.mathias2246.buildmc.player.status;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.StringArgument;
 import net.mathias2246.buildmc.commands.CustomCommand;
-import net.mathias2246.buildmc.util.CommandUtil;
+import net.mathias2246.buildmc.status.StatusConfig;
 import org.bukkit.entity.Player;
 import org.bukkit.help.HelpTopic;
 import org.jetbrains.annotations.NotNull;
+
+import static net.mathias2246.buildmc.commands.CommandUtil.requiresPlayer;
 
 public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCommand {
 
@@ -35,7 +37,7 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
         var removeSub = new CommandAPICommand("remove");
         removeSub.executes(
                 (command) -> {
-                    if (!(CommandUtil.requiresPlayer(command) instanceof Player player)) return;
+                    if (!(requiresPlayer(command.sender()) instanceof Player player)) return;
                     PlayerStatus.removePlayerStatus(player);
                 }
         );
@@ -43,7 +45,7 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
         var setSub = new CommandAPICommand("set")
             .executes(
                     (command) -> {
-                        if (!(CommandUtil.requiresPlayer(command) instanceof Player player)) return;
+                        if (!(requiresPlayer(command.sender()) instanceof Player player)) return;
                         PlayerStatus.setPlayerStatus(player, command.args().getByClass("status", String.class), false);
                     }
             )

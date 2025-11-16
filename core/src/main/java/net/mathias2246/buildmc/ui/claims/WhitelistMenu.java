@@ -70,8 +70,11 @@ public class WhitelistMenu {
                     }
                     pane.addItem(new GuiItem(addButton, e -> {
                         e.setCancelled(true);
-                        CoreMain.mainClass.sendPlayerMessage(player,
-                                Message.msg(player, "messages.claims.ui.whitelist-menu.add-button.click-info"));
+                        CoreMain.mainClass.sendMessage(player,
+                                Component.translatable("messages.claims.ui.whitelist-menu.add-button.click-info").insertion(
+                                        "/claim whitelist add "+claim.getType()+" "+claim.getName()+" "
+                                )
+                        );
                     }), x, 2);
                 } else {
                     // Default gray separator
@@ -179,7 +182,7 @@ public class WhitelistMenu {
             if (event.isCancelled()) return;
 
             ClaimManager.removePlayerFromWhitelist(claim.getId(), uuid);
-            CoreMain.mainClass.sendPlayerMessage(player, Component.translatable("messages.claims.ui.whitelist-menu.delete-confirm-menu.success"));
+            CoreMain.mainClass.sendMessage(player, Component.translatable("messages.claims.ui.whitelist-menu.delete-confirm-menu.success"));
             ClaimLogger.logWhitelistRemoved(player, claim.getName(), playerName, uuid.toString());
             open(player, claim);
         }), 5, 1);

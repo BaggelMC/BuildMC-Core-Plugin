@@ -1,4 +1,4 @@
-package net.mathias2246.buildmc.claims;
+package net.mathias2246.buildmc.claims.tool;
 
 import net.mathias2246.buildmc.util.LocationUtil;
 import net.mathias2246.buildmc.util.ParticleSpawner;

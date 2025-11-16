@@ -56,7 +56,7 @@ public class TeleportTimer extends PlayerTimer {
 
         @Override
         public void onExit() {
-            CoreMain.mainClass.sendPlayerMessage(player, Component.translatable("messages.teleport.successful"));
+            CoreMain.mainClass.sendMessage(player, Component.translatable("messages.teleport.successful"));
             player.teleport(to);
             CoreMain.soundManager.playSound(player, success);
         }
@@ -75,7 +75,7 @@ public class TeleportTimer extends PlayerTimer {
 
         @Override
         protected void onCancel() {
-            CoreMain.mainClass.sendPlayerMessage(player, Component.translatable("messages.teleport.cancelled"));
+            CoreMain.mainClass.sendMessage(player, Component.translatable("messages.teleport.cancelled"));
             CoreMain.soundManager.playSound(player, mistake);
         }
 
