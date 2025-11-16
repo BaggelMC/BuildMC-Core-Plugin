@@ -1,5 +1,6 @@
 package net.mathias2246.buildmc;
 
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.mathias2246.buildmc.api.BuildMcAPI;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.event.lifecycle.BuildMcFinishedLoadingEvent;
@@ -24,6 +25,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.plugin.Plugin;
+import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,6 +37,7 @@ import java.util.Map;
 @ApiStatus.Internal
 public final class CoreMain {
 
+    @Subst("")
     public static Plugin plugin;
     public static MainClass mainClass;
     public static PluginMain pluginMain;
@@ -48,25 +51,13 @@ public final class CoreMain {
     public static DatabaseManager databaseManager;
     public static ClaimTable claimTable;
 
+    public static BukkitAudiences bukkitAudiences;
+
     private static boolean isInitialized = false;
 
     public static final RegistriesHolder registriesHolder = new RegistriesHolder.Builder().build();
 
     public static DeferredRegistry<Protection> protectionsRegistry;
-
-    /**
-     * A fast lookup map that associates each protection's NamespacedKey
-     * with its actual Protection instance.
-     *
-     * <p>This map is built once during {@link #finishLoading()}, after all
-     * protections have been registered and initialized. It allows O(1)
-     * lookups by key, avoiding the need to iterate through
-     * {@link #protectionsRegistry} repeatedly (e.g., in commands).</p>
-     *
-     * <p>⚠️ Note: Do not modify this map manually — it is regenerated
-     * automatically every time protections are (re)loaded.</p>
-     */
-    public static final Map<NamespacedKey, Protection> protectionLookup = new HashMap<>();
 
     public static boolean isInitialized() {
         return isInitialized;
@@ -85,6 +76,8 @@ public final class CoreMain {
         CoreMain.api = plugin;
 
         initializeConfigs();
+
+        bukkitAudiences = BukkitAudiences.create(plugin);
 
         BStats.initialize();
 
@@ -151,8 +144,6 @@ public final class CoreMain {
         if (plugin.getConfig().getBoolean("claims.enabled", true)) {
             initializeDatabase();
 
-            protectionLookup.clear();
-
             var hideAllProtections = CoreMain.plugin.getConfig().getBoolean("claims.hide-all-protections");
             for (Protection protection : protectionsRegistry) {
                 var def = protection.isDefaultEnabled();
@@ -167,9 +158,6 @@ public final class CoreMain {
 
                 // Add to the default protection list if applicable
                 if (def) Protection.defaultProtections.add(protection.getKey().toString());
-
-                // Populate fast lookup map
-                protectionLookup.put(protection.getKey(), protection);
             }
 
             registerEvent(new PlayerCrossClaimBoundariesListener());

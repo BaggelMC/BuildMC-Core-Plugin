@@ -78,7 +78,7 @@ public class ClaimProtections {
             return 0;
         }
 
-        Protection protection = CoreMain.protectionLookup.get(flag);
+        Protection protection = CoreMain.protectionsRegistry.get(flag);
 
         if (value) {
 
