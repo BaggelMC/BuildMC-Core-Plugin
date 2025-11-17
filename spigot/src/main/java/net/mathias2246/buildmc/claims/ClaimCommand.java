@@ -9,6 +9,7 @@ import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.ClaimType;
 import net.mathias2246.buildmc.api.claims.Protection;
+import net.mathias2246.buildmc.api.item.AbstractCustomItem;
 import net.mathias2246.buildmc.claims.tool.ClaimToolItemMetaModifier;
 import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.commands.CustomCommand;
@@ -32,14 +33,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-import static net.mathias2246.buildmc.Main.*;
+import static net.mathias2246.buildmc.Main.audiences;
+import static net.mathias2246.buildmc.Main.config;
 import static net.mathias2246.buildmc.commands.CommandUtil.requiresPlayer;
 
 public class ClaimCommand implements CustomCommand {
     @Override
     public CommandAPICommand getCommand() {
         ClaimToolItemMetaModifier modifier = new ClaimToolItemMetaModifier();
-        ClaimSelectionTool claimTool = (ClaimSelectionTool) Objects.requireNonNull(customItems.get(NamespacedKey.fromString("buildmc:claim_tool")));
+        ClaimSelectionTool claimTool = (ClaimSelectionTool) Objects.requireNonNull(AbstractCustomItem.customItemsRegistry.get(Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool"))));
         boolean isClaimtoolGiveEnabled =  config.getBoolean("claims.tool.enable-give-command", true);
 
         return new CommandAPICommand("claim")

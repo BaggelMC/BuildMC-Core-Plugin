@@ -4,8 +4,8 @@ import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.api.claims.ClaimManager;
 import net.mathias2246.buildmc.api.endEvent.EndManager;
+import net.mathias2246.buildmc.api.item.AbstractCustomItem;
 import net.mathias2246.buildmc.api.item.CustomItemListener;
-import net.mathias2246.buildmc.api.item.CustomItemRegistry;
 import net.mathias2246.buildmc.api.spawnEyltra.ElytraManager;
 import net.mathias2246.buildmc.api.spawnelytra.ElytraManagerImpl;
 import net.mathias2246.buildmc.claims.ClaimCommand;
@@ -61,9 +61,6 @@ public final class Main extends PluginMain {
     public static final ElytraZoneManager zoneManager = new ElytraZoneManager();
 
     public static StatusConfig statusConfig;
-
-    public static CustomItemRegistry customItems;
-
     public static ClaimManager apiClaimManager;
     public static EndManager apiEndManager;
     private static ElytraManager apiElytraManager;
@@ -88,10 +85,8 @@ public final class Main extends PluginMain {
 
         CoreMain.initialize(this);
 
-        customItems = new CustomItemRegistry();
-
         if (config.getBoolean("claims.enabled", true)) {
-            customItems.register(
+            AbstractCustomItem.customItemsRegistry.addEntry(
                     new ClaimSelectionTool(this,
                             Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool")),
                             new ClaimToolParticles.Builder()
@@ -192,7 +187,7 @@ public final class Main extends PluginMain {
     @Override
     public void finishLoading() {
 
-        getServer().getPluginManager().registerEvents(new CustomItemListener(customItems), this);
+        getServer().getPluginManager().registerEvents(new CustomItemListener(), this);
 
         getServer().getPluginManager().registerEvents(new EndListener(), this);
         if (config.getBoolean("spawn-elytra.enabled")) {

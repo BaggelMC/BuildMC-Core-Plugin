@@ -5,6 +5,7 @@ import net.mathias2246.buildmc.api.BuildMcAPI;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.event.lifecycle.BuildMcFinishedLoadingEvent;
 import net.mathias2246.buildmc.api.event.lifecycle.BuildMcRegistryEvent;
+import net.mathias2246.buildmc.api.item.AbstractCustomItem;
 import net.mathias2246.buildmc.api.item.ItemDropTracker;
 import net.mathias2246.buildmc.api.status.StatusInstance;
 import net.mathias2246.buildmc.claims.ClaimLogger;
@@ -64,6 +65,8 @@ public final class CoreMain {
 
     public static BaseRegistry<StatusInstance> statusesRegistry;
 
+    public static DeferredRegistry<AbstractCustomItem> customItemsRegistry;
+
     public static boolean isInitialized() {
         return isInitialized;
     }
@@ -93,6 +96,8 @@ public final class CoreMain {
         statusesRegistry = (BaseRegistry<StatusInstance>) registriesHolder.addRegistry(DefaultRegistries.STATUSES.toString(), new BaseRegistry<StatusInstance>());
 
         protectionsRegistry = (DeferredRegistry<Protection>) registriesHolder.addRegistry(DefaultRegistries.PROTECTIONS.toString(), new DeferredRegistry<Protection>());
+
+        customItemsRegistry = (DeferredRegistry<AbstractCustomItem>) registriesHolder.addRegistry(DefaultRegistries.CUSTOM_ITEMS.toString(), AbstractCustomItem.customItemsRegistry);
 
         protectionsRegistry.addEntries(
                 new Explosion(config.getConfigurationSection("claims.protections.damage.explosion-block-damage")),

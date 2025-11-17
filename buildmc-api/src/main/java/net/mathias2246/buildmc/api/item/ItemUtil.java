@@ -39,4 +39,18 @@ public class ItemUtil {
         );
     }
 
+    /**Will try to get a {@link AbstractCustomItem} from an {@link ItemStack} if it is a custom item.
+     * @return The {@link AbstractCustomItem}, or {@code null} if not a custom item.
+     * */
+    public static @Nullable AbstractCustomItem getCustomItemFromItemStack(@NotNull ItemStack itemStack) {
+        ItemMeta meta = itemStack.getItemMeta();
+        if (meta == null) return null;
+
+        var customItemKey = AbstractCustomItem.getCustomItemKey(itemStack);
+
+        if (customItemKey == null) return null;
+
+        return AbstractCustomItem.customItemsRegistry.get(customItemKey);
+    }
+
 }

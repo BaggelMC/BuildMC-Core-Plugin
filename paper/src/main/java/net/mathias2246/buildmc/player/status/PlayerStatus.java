@@ -2,8 +2,10 @@ package net.mathias2246.buildmc.player.status;
 
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.api.event.player.StatusChangeEvent;
 import net.mathias2246.buildmc.api.status.StatusInstance;
 import net.mathias2246.buildmc.platform.SoundManagerPaperImpl;
+import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,6 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -27,6 +30,10 @@ public class PlayerStatus implements Listener {
         return CoreMain.statusesRegistry.contains(Objects.requireNonNull(NamespacedKey.fromString("buildmc:" + status)));
     }
 
+    public static void forcePlayerStatus(@NotNull Player player, @NotNull String Status) {
+
+    }
+
     public static void setPlayerStatus(@NotNull Player player, String status, boolean join) {
         if (!doesStatusExist(status)) {
             if (join) {
@@ -38,8 +45,19 @@ public class PlayerStatus implements Listener {
             }
             return;
         }
+        StatusInstance old = CoreMain.statusesRegistry.getOrThrow(Objects.requireNonNull(Objects.requireNonNull(NamespacedKey.fromString("buildmc:" + player.getPersistentDataContainer().get(PLAYER_STATUS_PDC, PersistentDataType.STRING))).key()));
 
         StatusInstance s = CoreMain.statusesRegistry.getOrThrow(Objects.requireNonNull(Objects.requireNonNull(NamespacedKey.fromString("buildmc:" + status)).key()));
+
+        if (!join) {
+            StatusChangeEvent e = new StatusChangeEvent(player, old, s);
+            Bukkit.getPluginManager().callEvent(e);
+            if (e.isCancelled()) {
+                CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.status.cannot-set"));
+                return;
+            }
+        }
+
         var allowed = s.allowPlayer(player);
         if (!allowed.equals(StatusInstance.AllowStatus.ALLOW)) {
             switch (allowed) {
@@ -69,16 +87,30 @@ public class PlayerStatus implements Listener {
 
         if (join) return;
         player.sendMessage(Component.translatable("messages.status.successfully-set"));
+
+
+
         CoreMain.soundManager.playSound(player, SoundManagerPaperImpl.success);
     }
 
-    public static void removePlayerStatus(@NotNull Player player) {
+    @SuppressWarnings("UnusedReturnValue")
+    public static boolean removePlayerStatus(@NotNull Player player) {
+        @Nullable StatusInstance old = CoreMain.statusesRegistry.get(Objects.requireNonNull(NamespacedKey.fromString("buildmc:" + player.getPersistentDataContainer().get(PLAYER_STATUS_PDC, PersistentDataType.STRING))).key());
+
+        StatusChangeEvent e = new StatusChangeEvent(player, old, null);
+        Bukkit.getPluginManager().callEvent(e);
+        if (e.isCancelled()) {
+            return false;
+        }
+
         player.getPersistentDataContainer().remove(PLAYER_STATUS_PDC);
 
         player.playerListName(null);
         player.displayName(null);
         player.customName(null);
         player.setCustomNameVisible(false);
+
+        return true;
     }
 
     @EventHandler
