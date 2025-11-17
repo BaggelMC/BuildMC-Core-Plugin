@@ -25,6 +25,16 @@ messages:
 
       <gold>--------------------------------</gold>'
     closed-message: <red>Das Ende ist derzeit geschlossen.
+
+  status:
+    successfully-removed: <green>Status erfolgreich entfernt.</green>
+    join-doesn't-exist: <red>Dein Status wurde entfernt.</red>
+    not-found: <red>Dieser Status existiert nicht.</red>
+    successfully-set: <green>Status erfolgreich gesetzt!</green>
+    not-in-team: <red>Du bist nicht in dem richtigen Team für diesen Status.</red>
+    no-permission: <red>Du hast nicht die benötigten Berechtigungen für diesen Status.</red>
+    cannot-set: ""<red>Dein Status kann nicht gesetzt werden!</red>"
+
   error:
     general: '<red>Ein Fehler ist aufgetreten: <red>%error_message%'
     general-str: 'Ein Fehler ist aufgetreten: %error_message%'
@@ -347,10 +357,3 @@ claims:
     entity-modifications:
       name: <green>Entity Block Änderungen</green>
       lore: <gray>Verhindert das Endermänner, Verwüster oder Wither Blöcke abbauen können.</gray>
-  status:
-    successfully-removed: <green>Status erfolgreich entfernt.</green>
-    join-doesn't-exist: <red>Dein Status wurde entfernt.</red>
-    not-found: <red>Dieser Status existiert nicht.</red>
-    successfully-set: <green>Status erfolgreich gesetzt!</green>
-    not-in-team: <red>Du bist nicht in dem richtigen Team für diesen Status.</red>
-    no-permission: <red>Du hast nicht die benötigten Berechtigungen für diesen Status.</red>

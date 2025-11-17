@@ -1,6 +1,7 @@
 package net.mathias2246.buildmc.api.item;
 
 import net.mathias2246.buildmc.util.TaskUtil;
+import net.mathias2246.buildmc.util.registry.DeferredRegistry;
 import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -22,6 +23,8 @@ import java.util.Objects;
  * Custom items are defined by some data that is stored inside the ItemStack PDC.
  * This doesn't actually define a new item type.*/
 public abstract class AbstractCustomItem implements Keyed {
+
+    public static final @NotNull DeferredRegistry<AbstractCustomItem> customItemsRegistry = new DeferredRegistry<>();
 
     private final @NotNull NamespacedKey key;
 

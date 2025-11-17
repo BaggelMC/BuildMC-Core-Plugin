@@ -11,8 +11,8 @@ import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.BlockPositionResolver;
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.CoreMain;
-import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.api.claims.Protection;
+import net.mathias2246.buildmc.api.item.AbstractCustomItem;
 import net.mathias2246.buildmc.claims.claimSubCommands.CreateClaimSubCommand;
 import net.mathias2246.buildmc.claims.claimSubCommands.WhitelistSubCommand;
 import net.mathias2246.buildmc.claims.tool.ClaimToolItemMetaModifier;
@@ -52,7 +52,7 @@ public class ClaimCommand implements CustomCommand {
                 (command) -> {
                     boolean t = config.getBoolean("claims.enabled", true);
                     if (!t) claimTool = null;
-                    else claimTool = (ClaimSelectionTool) Main.customItems.get(Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool")).key());
+                    else claimTool = (ClaimSelectionTool) AbstractCustomItem.customItemsRegistry.get(Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool")).key());
                     return t;
                 }
        );

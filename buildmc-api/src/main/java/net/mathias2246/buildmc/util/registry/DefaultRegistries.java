@@ -5,7 +5,10 @@ public enum DefaultRegistries {
 
     /**The default protection registry key*/
     PROTECTIONS ("protections"),
-    STATUSES ("statuses");
+    /// The default statuses registry key
+    STATUSES ("statuses"),
+    /// The default custom-item registry
+    CUSTOM_ITEMS ("custom_items");
 
     @Override
     public String toString() {
