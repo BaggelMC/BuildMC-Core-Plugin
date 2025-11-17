@@ -45,7 +45,7 @@ public class PlayerStatus implements Listener {
             }
             return;
         }
-        StatusInstance old = CoreMain.statusesRegistry.getOrThrow(Objects.requireNonNull(Objects.requireNonNull(NamespacedKey.fromString("buildmc:" + player.getPersistentDataContainer().get(PLAYER_STATUS_PDC, PersistentDataType.STRING))).key()));
+        StatusInstance old = CoreMain.statusesRegistry.get(Objects.requireNonNull(NamespacedKey.fromString("buildmc:" + player.getPersistentDataContainer().get(PLAYER_STATUS_PDC, PersistentDataType.STRING))).key());
 
         StatusInstance s = CoreMain.statusesRegistry.getOrThrow(Objects.requireNonNull(Objects.requireNonNull(NamespacedKey.fromString("buildmc:" + status)).key()));
 

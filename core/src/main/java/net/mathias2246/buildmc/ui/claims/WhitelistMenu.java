@@ -71,6 +71,7 @@ public class WhitelistMenu {
                     }
                     pane.addItem(new GuiItem(addButton, e -> {
                         e.setCancelled(true);
+                        CoreMain.soundManager.playSound(player, UIUtil.NOTIFICATION_SOUND);
                         CoreMain.mainClass.sendMessage(player,
                                 Component.translatable("messages.claims.ui.whitelist-menu.add-button.click-info")
                                         .clickEvent(
@@ -109,6 +110,7 @@ public class WhitelistMenu {
                 ItemStack delete = createDeleteButton(player);
                 pane.addItem(new GuiItem(delete, e -> {
                     e.setCancelled(true);
+                    CoreMain.soundManager.playSound(player, UIUtil.NOTIFICATION_SOUND);
                     openDeleteConfirmationMenu(player, claim, uuid, offlinePlayer.getName());
                 }), headX, deleteY);
 
@@ -137,6 +139,7 @@ public class WhitelistMenu {
         // Back button
         controls.addItem(new GuiItem(createNamedItem(Material.BARRIER, Message.msg(player,"messages.claims.ui.general.back")), e -> {
             e.setCancelled(true);
+            CoreMain.soundManager.playSound(player, UIUtil.CLICK_SOUND);
             ClaimEditMenu.open(player, claim); // Navigate back to Claim Edit Menu
         }), 8, 0);
 
@@ -165,12 +168,15 @@ public class WhitelistMenu {
         // Cancel button
         pane.addItem(new GuiItem(createNamedItem(Material.GREEN_CONCRETE, Message.msg(player,"messages.claims.ui.general.cancel")), e -> {
             e.setCancelled(true);
+            CoreMain.soundManager.playSound(player, UIUtil.CLICK_SOUND);
             open(player, claim); // reopen whitelist menu
         }), 3, 1);
 
         // Confirm button
         pane.addItem(new GuiItem(createNamedItem(Material.RED_CONCRETE, Message.msg(player,"messages.claims.ui.general.confirm")), e -> {
             e.setCancelled(true);
+
+            CoreMain.soundManager.playSound(player, UIUtil.CLICK_SOUND);
 
             OfflinePlayer target = Bukkit.getOfflinePlayer(uuid);
 

@@ -49,7 +49,8 @@ sounds:
   mistake: "minecraft:block.note_block.snare" # Default: "minecraft:block.note_block.snare"
   success: "minecraft:block.note_block.bell" # Default: "minecraft:block.note_block.bell"
   notification: "minecraft:entity.item.pickup" # Default: "minecraft:entity.item.pickup"
-
+  ui:
+    click: "minecraft:ui.button.click" # Default: "minecraft:ui.button.click"
 
 # World spawn teleport command
 # Players require the default permission 'buildmc.allow-spawn-teleport' to use this command!

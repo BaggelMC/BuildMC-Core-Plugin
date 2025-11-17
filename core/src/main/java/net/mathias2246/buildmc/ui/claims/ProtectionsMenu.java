@@ -90,6 +90,7 @@ public class ProtectionsMenu {
         // Back button
         controls.addItem(new GuiItem(createNamedItem(Material.BARRIER, Message.msg(player,"messages.claims.ui.general.back")), e -> {
             e.setCancelled(true);
+            CoreMain.soundManager.playSound(player, UIUtil.CLICK_SOUND);
             ClaimEditMenu.open(player, claim);
         }), 8, 0);
 
@@ -110,6 +111,7 @@ public class ProtectionsMenu {
 
         return new GuiItem(status, event -> {
             event.setCancelled(true);
+            CoreMain.soundManager.playSound(player, UIUtil.CLICK_SOUND);
 
             boolean currentlyEnabled = claim.hasProtection(protection);
 
@@ -198,6 +200,7 @@ public class ProtectionsMenu {
                     createNamedItem(Material.ARROW, Message.msg(player, "messages.claims.ui.general.previous")),
                     e -> {
                         e.setCancelled(true);
+                        CoreMain.soundManager.playSound(player, UIUtil.CLICK_SOUND);
                         int newPage = pages.getPage() - 1;
                         pages.setPage(newPage);
                         updatePageIndicator(player, controls, newPage + 1, total, pages, gui);
@@ -213,6 +216,7 @@ public class ProtectionsMenu {
                     createNamedItem(Material.ARROW, Message.msg(player, "messages.claims.ui.general.next")),
                     e -> {
                         e.setCancelled(true);
+                        CoreMain.soundManager.playSound(player, UIUtil.CLICK_SOUND);
                         int newPage = pages.getPage() + 1;
                         pages.setPage(newPage);
                         updatePageIndicator(player, controls, newPage + 1, total, pages, gui);

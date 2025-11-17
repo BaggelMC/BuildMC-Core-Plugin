@@ -30,10 +30,10 @@ messages:
     successfully-removed: <green>Status erfolgreich entfernt.</green>
     join-doesn't-exist: <red>Dein Status wurde entfernt.</red>
     not-found: <red>Dieser Status existiert nicht.</red>
-    successfully-set: <green>Status erfolgreich gesetzt!</green>
+    successfully-set: <green>Status erfolgreich gesetzt! <gray><click:run_command:/status remove>[Klicke hier zum entfernen]</click></gray></green>
     not-in-team: <red>Du bist nicht in dem richtigen Team für diesen Status.</red>
     no-permission: <red>Du hast nicht die benötigten Berechtigungen für diesen Status.</red>
-    cannot-set: ""<red>Dein Status kann nicht gesetzt werden!</red>"
+    cannot-set: "<red>Dein Status kann nicht gesetzt werden!</red>"
 
   error:
     general: '<red>Ein Fehler ist aufgetreten: <red>%error_message%'
@@ -42,9 +42,9 @@ messages:
     no-permission-str: Du hast keine Berechtigung, dies zu tun.
     not-a-player: <red>Dieser Befehl kann nur von Spielern verwendet werden.</red>
     not-a-player-str: Dieser Befehl kann nur von Spielern verwendet werden.
-    not-in-a-team: <red>You need to be in a team to perform this action.</red>
-    command-disabled: <red>Du musst in einem Team sein, um dies zu tun.</red>
-    sql: <red>Dieser Befehl wurde deaktiviert.</red>
+    not-in-a-team: <red>Du musst in einem Team sein, um dies zu tun.</red>
+    command-disabled: <red>Dieser Befehl wurde deaktiviert.</red>
+    sql: <red>Ein SQL Fehler ist aufgetretten.</red>
   claims:
     tool:
       tool-name: Claim-Ecken auswählen
@@ -53,8 +53,8 @@ messages:
       tool-tooltip-line3: ''
       tool-tooltip-line4: ''
       tool-cooldown: <red>Warte Kurz!</red>
-      give-success: <green>Erfolg! Gib '/claim help' ein, um Hilfe zu erhalten.</green>
-      full-inventory: <red>Dein Inventar ist voll! Bitte schaffe Platz für das Claim-Tool.</red>
+      give-success: <green>Erfolg! Klick <blue><click:run_command:/claim help>[HIER]</click></blue> für hilfe!</green>
+      full-inventory: <red>Dein Inventar ist vol>l! Bitte schaffe Platz für das Claim-Tool.</red>
       selection-too-large: <red>Deine Auswahl darf nicht breiter oder länger als %selection_limit%
         sein!</red>
       no-first-selection: <red>Du musst zuerst die andere Ecke auswählen!</red>

@@ -151,6 +151,7 @@ public class ClaimSelectMenu {
 
             items.add(new GuiItem(item, event -> {
                 event.setCancelled(true);
+                CoreMain.soundManager.playSound(player, UIUtil.CLICK_SOUND);
                 ClaimEditMenu.open(player, claim);
             }));
         }
@@ -178,6 +179,7 @@ public class ClaimSelectMenu {
             ItemStack prev = createNavItem(player, "messages.claims.ui.general.previous");
             controls.addItem(new GuiItem(prev, e -> {
                 e.setCancelled(true);
+                CoreMain.soundManager.playSound(player, UIUtil.CLICK_SOUND);
                 if (pages.getPage() > 0) {
                     pages.setPage(pages.getPage() - 1);
                     updatePageIndicator(player, controls, pages.getPage(), totalPages, pages, gui);
@@ -194,6 +196,7 @@ public class ClaimSelectMenu {
             ItemStack next = createNavItem(player, "messages.claims.ui.general.next");
             controls.addItem(new GuiItem(next, e -> {
                 e.setCancelled(true);
+                CoreMain.soundManager.playSound(player, UIUtil.CLICK_SOUND);
                 if (pages.getPage() < pages.getPages() - 1) {
                     pages.setPage(pages.getPage() + 1);
                     updatePageIndicator(player, controls, pages.getPage(), totalPages, pages, gui);

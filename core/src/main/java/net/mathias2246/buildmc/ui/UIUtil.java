@@ -2,6 +2,9 @@ package net.mathias2246.buildmc.ui;
 
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
+import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.item.ItemUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -19,6 +22,22 @@ public class UIUtil {
     public static final @NotNull GuiItem BLOCKED_PANE;
     public static final @NotNull GuiItem INVISIBLE_PANE;
     public static final @NotNull GuiItem EXIT_BUTTON;
+    
+    @SuppressWarnings("PatternValidation")
+    public static final @NotNull Sound CLICK_SOUND = Sound.sound(
+            Key.key(CoreMain.plugin.getConfig().getString("sounds.ui.click", "minecraft:ui.button.click")),
+            Sound.Source.UI,
+            1f,
+            1f
+    );
+
+    @SuppressWarnings("PatternValidation")
+    public static final @NotNull Sound NOTIFICATION_SOUND = Sound.sound(
+            Key.key(CoreMain.plugin.getConfig().getString("sounds.notification", "minecraft:entity.item.pickup")),
+            Sound.Source.UI,
+            1f,
+            1f
+    );
 
     public static final @NotNull NamespacedKey INVISIBLE_ITEM_KEY = Objects.requireNonNull(NamespacedKey.fromString("nations:none"));
 

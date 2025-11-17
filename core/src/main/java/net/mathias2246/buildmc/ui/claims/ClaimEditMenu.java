@@ -10,6 +10,7 @@ import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.ClaimType;
 import net.mathias2246.buildmc.claims.ClaimManager;
+import net.mathias2246.buildmc.ui.UIUtil;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -45,6 +46,7 @@ public class ClaimEditMenu {
             pane.addItem(makeButton(Material.SHIELD, Message.msg(player, "messages.claims.ui.edit-menu.protections"),
                     e -> {
                         e.setCancelled(true);
+                        CoreMain.soundManager.playSound(player, UIUtil.CLICK_SOUND);
                         ProtectionsMenu.open(player, claim);
                     }), 2, 1);
         } else {
@@ -58,6 +60,7 @@ public class ClaimEditMenu {
             pane.addItem(makeButton(Material.PLAYER_HEAD, Message.msg(player, "messages.claims.ui.edit-menu.whitelist"),
                     e -> {
                         e.setCancelled(true);
+                        CoreMain.soundManager.playSound(player, UIUtil.CLICK_SOUND);
                         WhitelistMenu.open(player,claim);
                     }), 4, 1);
         } else {
@@ -69,6 +72,7 @@ public class ClaimEditMenu {
         pane.addItem(makeButton(Material.BARRIER, Message.msg(player, "messages.claims.ui.edit-menu.delete"),
                 e -> {
                     e.setCancelled(true);
+                    CoreMain.soundManager.playSound(player, UIUtil.NOTIFICATION_SOUND);
                     openDeleteConfirmationMenu(player, claim);
                 }), 6, 1);
 
@@ -76,6 +80,7 @@ public class ClaimEditMenu {
         pane.addItem(makeButton(Material.BARRIER, Message.msg(player, "messages.claims.ui.general.back"),
                 e -> {
                     e.setCancelled(true);
+                    CoreMain.soundManager.playSound(player, UIUtil.CLICK_SOUND);
                     ClaimSelectMenu.open(player);
                 }), 8, 2);
 
@@ -106,6 +111,7 @@ public class ClaimEditMenu {
         pane.addItem(makeButton(Material.GREEN_CONCRETE, Message.msg(player, "messages.claims.ui.general.cancel"),
                 e -> {
                     e.setCancelled(true);
+                    CoreMain.soundManager.playSound(player, UIUtil.CLICK_SOUND);
                     open(player, claim); // reopen edit menu
                 }), 3, 1);
 
@@ -113,6 +119,7 @@ public class ClaimEditMenu {
         pane.addItem(makeButton(Material.RED_CONCRETE, Message.msg(player, "messages.claims.ui.general.confirm"),
                 e -> {
                     e.setCancelled(true);
+                    CoreMain.soundManager.playSound(player, UIUtil.CLICK_SOUND);
                     boolean removed = ClaimManager.removeClaimById(claim.getId());
                     if (removed) {
                         CoreMain.mainClass.sendMessage(player,

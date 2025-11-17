@@ -50,7 +50,7 @@ messages:
 
       tool-cooldown: "<red>You need to wait!</red>"
 
-      give-success: "<green>Success! Type '/claim help' to get help.</green>"
+      give-success: "<green>Success! Click <blue><click:run_command:/claim help>[HERE]</click></blue> to get help.</green>"
       full-inventory: "<red>Your inventory is full! Please make space for the claim tool.</red>"
 
       selection-too-large: "<red>Your selection cannot be wider or longer than %selection_limit% chunks!</red>"
@@ -250,7 +250,7 @@ messages:
           name: "<green>Add Player</green>"
           lore-line1: "<gray>Use the <gold>/claim whitelist add</gold> command</gray>"
           lore-line2: "<gray>to whitelist someone.</gray>"
-          click-info: "<gray><italic>Click this to insert the whitelist command</italic></gray>"
+          click-info: "<gray><italic>> Click this to insert the whitelist command <</italic></gray>"
 
         delete-confirm-menu:
           title: "Remove %player%?"
@@ -260,7 +260,7 @@ messages:
     successfully-removed: "<green>Successfully removed your status!</green>"
     join-doesn't-exist: "<red>Your status has been removed.</red>"
     not-found: "<red>Seems like this status doesn't exist.</red>"
-    successfully-set: "<green>Successfully set status!</green>"
+    successfully-set: "<green>Successfully set status! <gray><click:run_command:/status remove>[Click here to remove]</click></gray></green>"
     not-in-team: "<red>You are not in the required team for this status!</red>"
     no-permission: "<red>You don't have the required permissions for this status!</red>"
     cannot-set: "<red>Your status can't be set!</red>"
