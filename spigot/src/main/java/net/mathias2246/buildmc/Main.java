@@ -102,8 +102,6 @@ public final class Main extends PluginMain {
             );
         }
 
-        LanguageManager.init();
-
         audiences = BukkitAudiences.create(plugin);
 
         SoundManagerSpigotImpl.setup();
