@@ -55,8 +55,12 @@ public class PlayerStatus implements Listener {
             if (e.isCancelled()) {
                 CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.status.cannot-set"));
                 return;
+            } else if (e.getNewStatus() == null) {
+                forceRemovePlayerStatus(player);
+                return;
             }
         }
+
 
         var allowed = s.allowPlayer(player);
         if (!allowed.equals(StatusInstance.AllowStatus.ALLOW)) {
@@ -111,6 +115,20 @@ public class PlayerStatus implements Listener {
         player.setCustomNameVisible(false);
 
         return true;
+    }
+
+    public static void forceRemovePlayerStatus(@NotNull Player player) {
+        @Nullable StatusInstance old = CoreMain.statusesRegistry.get(Objects.requireNonNull(NamespacedKey.fromString("buildmc:" + player.getPersistentDataContainer().get(PLAYER_STATUS_PDC, PersistentDataType.STRING))).key());
+
+        StatusChangeEvent e = new StatusChangeEvent(player, old, null);
+        Bukkit.getPluginManager().callEvent(e);
+
+        player.getPersistentDataContainer().remove(PLAYER_STATUS_PDC);
+
+        player.playerListName(null);
+        player.displayName(null);
+        player.customName(null);
+        player.setCustomNameVisible(false);
     }
 
     @EventHandler
