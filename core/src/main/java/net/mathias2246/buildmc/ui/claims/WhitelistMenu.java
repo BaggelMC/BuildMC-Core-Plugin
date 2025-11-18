@@ -16,6 +16,7 @@ import net.mathias2246.buildmc.claims.ClaimLogger;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.ui.UIUtil;
 import net.mathias2246.buildmc.util.Message;
+import net.mathias2246.buildmc.util.SoundUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -71,7 +72,7 @@ public class WhitelistMenu {
                     }
                     pane.addItem(new GuiItem(addButton, e -> {
                         e.setCancelled(true);
-                        CoreMain.soundManager.playSound(player, UIUtil.NOTIFICATION_SOUND);
+                        CoreMain.soundManager.playSound(player, SoundUtil.notification);
                         CoreMain.mainClass.sendMessage(player,
                                 Component.translatable("messages.claims.ui.whitelist-menu.add-button.click-info")
                                         .clickEvent(
@@ -110,7 +111,7 @@ public class WhitelistMenu {
                 ItemStack delete = createDeleteButton(player);
                 pane.addItem(new GuiItem(delete, e -> {
                     e.setCancelled(true);
-                    CoreMain.soundManager.playSound(player, UIUtil.NOTIFICATION_SOUND);
+                    CoreMain.soundManager.playSound(player, SoundUtil.notification);
                     openDeleteConfirmationMenu(player, claim, uuid, offlinePlayer.getName());
                 }), headX, deleteY);
 

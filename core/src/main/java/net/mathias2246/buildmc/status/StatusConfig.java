@@ -1,6 +1,5 @@
 package net.mathias2246.buildmc.status;
 
-
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.status.StatusInstance;
 import net.mathias2246.buildmc.util.config.YamlConfigurationManager;
@@ -33,7 +32,7 @@ public class StatusConfig extends YamlConfigurationManager {
             var s = configuration.getConfigurationSection(key);
             if (s == null) return;
             var v = s.getValues(false);
-            reg.set(Objects.requireNonNull(NamespacedKey.fromString("buildmc:" + key)), StatusInstance.deserialize(v));
+            reg.set(Objects.requireNonNull(NamespacedKey.fromString("buildmc:" + key)), StatusInstance.deserialize(v, key));
 
         }
     }

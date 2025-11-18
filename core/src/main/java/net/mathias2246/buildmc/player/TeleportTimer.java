@@ -1,7 +1,5 @@
 package net.mathias2246.buildmc.player;
 
-import net.kyori.adventure.key.Key;
-import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.mathias2246.buildmc.CoreMain;
@@ -12,37 +10,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+import static net.mathias2246.buildmc.util.SoundUtil.*;
+
 public class TeleportTimer extends PlayerTimer {
-
-    static final Sound notification;
-    static final Sound mistake;
-    static final Sound success;
-
-
-    static {
-        //noinspection PatternValidation
-        notification = Sound.sound(
-                Key.key(CoreMain.plugin.getConfig().getString("sounds.notification", "minecraft:entity.item.pickup")),
-                Sound.Source.MASTER,
-                1f,
-                1f
-        );
-        //noinspection PatternValidation
-        mistake = Sound.sound(
-                Key.key(CoreMain.plugin.getConfig().getString("sounds.mistake", "minecraft:block.note_block.snare")),
-                Sound.Source.MASTER,
-                1f,
-                1f
-        );
-        //noinspection PatternValidation
-        success = Sound.sound(
-                Key.key(CoreMain.plugin.getConfig().getString("sounds.success", "minecraft:block.note_block.bell")),
-                Sound.Source.MASTER,
-                1f,
-                1f
-        );
-    }
-
         public static final int seconds = CoreMain.plugin.getConfig().getInt("spawn-teleport.wait-for");
 
         private Vector previousPosition;

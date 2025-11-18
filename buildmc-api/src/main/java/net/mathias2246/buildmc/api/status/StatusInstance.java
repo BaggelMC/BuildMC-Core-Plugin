@@ -106,8 +106,7 @@ public class StatusInstance implements ConfigurationSerializable, Keyed {
         return map;
     }
 
-    public static StatusInstance deserialize(Map<String, Object> map) {
-        String statusId = (String) map.get("statusId");
+    public static StatusInstance deserialize(Map<String, Object> map, @NotNull String statusId) {
 
         // Permissions as names -> convert back to Permission objects
         Set<Permission> perms = null;

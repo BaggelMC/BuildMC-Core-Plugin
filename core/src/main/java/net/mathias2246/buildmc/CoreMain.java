@@ -8,6 +8,7 @@ import net.mathias2246.buildmc.api.event.lifecycle.BuildMcRegistryEvent;
 import net.mathias2246.buildmc.api.item.AbstractCustomItem;
 import net.mathias2246.buildmc.api.item.ItemDropTracker;
 import net.mathias2246.buildmc.api.status.StatusInstance;
+import net.mathias2246.buildmc.api.status.StatusManager;
 import net.mathias2246.buildmc.claims.ClaimLogger;
 import net.mathias2246.buildmc.claims.protections.blocks.*;
 import net.mathias2246.buildmc.claims.protections.entities.*;
@@ -66,6 +67,8 @@ public final class CoreMain {
     public static BaseRegistry<StatusInstance> statusesRegistry;
 
     public static DeferredRegistry<AbstractCustomItem> customItemsRegistry;
+
+    public static StatusManager statusManager;
 
     public static boolean isInitialized() {
         return isInitialized;

@@ -4,6 +4,7 @@ import net.mathias2246.buildmc.MainClass;
 import net.mathias2246.buildmc.api.claims.ClaimManager;
 import net.mathias2246.buildmc.api.endEvent.EndManager;
 import net.mathias2246.buildmc.api.spawnEyltra.ElytraManager;
+import net.mathias2246.buildmc.api.status.StatusManager;
 import net.mathias2246.buildmc.util.SoundManager;
 import net.mathias2246.buildmc.util.registry.RegistriesHolder;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -72,6 +73,8 @@ public interface BuildMcAPI {
      * @return the ElytraManager instance
      */
     ElytraManager getElytraManager();
+
+    StatusManager getStatusManager();
 
     @NotNull
     RegistriesHolder getRegistriesHolder();

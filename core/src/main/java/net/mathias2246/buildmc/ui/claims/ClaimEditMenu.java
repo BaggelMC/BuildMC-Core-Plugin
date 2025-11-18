@@ -12,6 +12,7 @@ import net.mathias2246.buildmc.api.claims.ClaimType;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.ui.UIUtil;
 import net.mathias2246.buildmc.util.Message;
+import net.mathias2246.buildmc.util.SoundUtil;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -72,7 +73,7 @@ public class ClaimEditMenu {
         pane.addItem(makeButton(Material.BARRIER, Message.msg(player, "messages.claims.ui.edit-menu.delete"),
                 e -> {
                     e.setCancelled(true);
-                    CoreMain.soundManager.playSound(player, UIUtil.NOTIFICATION_SOUND);
+                    CoreMain.soundManager.playSound(player, SoundUtil.notification);
                     openDeleteConfirmationMenu(player, claim);
                 }), 6, 1);
 

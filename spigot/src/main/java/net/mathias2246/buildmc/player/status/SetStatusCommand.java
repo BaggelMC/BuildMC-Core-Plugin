@@ -39,7 +39,7 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
         removeSub.executes(
                 (command) -> {
                     if (!(requiresPlayer(command.sender()) instanceof Player player)) return;
-                    PlayerStatus.removePlayerStatus(player);
+                    CoreMain.statusManager.removePlayerStatus(player);
                 }
         );
 
@@ -47,7 +47,7 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
             .executes(
                     (command) -> {
                         if (!(requiresPlayer(command.sender()) instanceof Player player)) return;
-                        PlayerStatus.setPlayerStatus(player, command.args().getByClass("status", String.class), false);
+                        CoreMain.statusManager.setPlayerStatus(player, command.args().getByClass("status", String.class), false);
                     }
             )
                 .withArguments(

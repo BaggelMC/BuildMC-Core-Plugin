@@ -9,6 +9,7 @@ import net.mathias2246.buildmc.api.endEvent.EndManager;
 import net.mathias2246.buildmc.api.item.CustomItemListener;
 import net.mathias2246.buildmc.api.spawnEyltra.ElytraManager;
 import net.mathias2246.buildmc.api.spawnelytra.ElytraManagerImpl;
+import net.mathias2246.buildmc.api.status.StatusManager;
 import net.mathias2246.buildmc.claims.ClaimCommand;
 import net.mathias2246.buildmc.claims.ClaimManagerImpl;
 import net.mathias2246.buildmc.claims.tool.ClaimToolParticles;
@@ -28,10 +29,11 @@ import net.mathias2246.buildmc.spawnElytra.DisableRocketListener;
 import net.mathias2246.buildmc.spawnElytra.ElytraZoneCommand;
 import net.mathias2246.buildmc.spawnElytra.ElytraZoneManager;
 import net.mathias2246.buildmc.spawnElytra.SpawnBoostListener;
+import net.mathias2246.buildmc.status.PlayerStatusUtil;
 import net.mathias2246.buildmc.status.StatusConfig;
 import net.mathias2246.buildmc.util.SoundManager;
+import net.mathias2246.buildmc.util.SoundUtil;
 import net.mathias2246.buildmc.util.config.ConfigurationValidationException;
-import net.mathias2246.buildmc.util.language.LanguageManager;
 import net.mathias2246.buildmc.util.registry.RegistriesHolder;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -104,7 +106,6 @@ public final class Main extends PluginMain {
 
         audiences = BukkitAudiences.create(plugin);
 
-        SoundManagerSpigotImpl.setup();
         CoreMain.soundManager = new SoundManagerSpigotImpl();
 
         apiClaimManager = new ClaimManagerImpl();
@@ -175,12 +176,19 @@ public final class Main extends PluginMain {
     }
 
     @Override
+    public @NotNull StatusManager getStatusManager() {
+        return CoreMain.statusManager;
+    }
+
+    @Override
     public @NotNull RegistriesHolder getRegistriesHolder() {
         return registriesHolder;
     }
 
     @Override
     public void finishLoading() {
+
+        SoundUtil.setup();
 
         getServer().getPluginManager().registerEvents(new CustomItemListener(), this);
 
@@ -213,8 +221,9 @@ public final class Main extends PluginMain {
 
         if (config.getBoolean("status.enabled")) {
             statusConfig = new StatusConfig(this);
+            CoreMain.statusManager = new PlayerStatus();
             CommandRegister.register(new SetStatusCommand(statusConfig));
-            getServer().getPluginManager().registerEvents(new PlayerStatus(), this);
+            getServer().getPluginManager().registerEvents(new PlayerStatusUtil(), this);
         }
 
         if (config.getBoolean("disable-commands")) {

@@ -1,13 +1,12 @@
 package net.mathias2246.buildmc.claims.tools;
 
-import net.kyori.adventure.key.Key;
-import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.item.abstractTypes.AbstractSelectionTool;
 import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.ParticleSpawner;
+import net.mathias2246.buildmc.util.SoundUtil;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -24,28 +23,16 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-@SuppressWarnings({"PatternValidation", "UnstableApiUsage"})
+@SuppressWarnings({"UnstableApiUsage"})
 public class ClaimSelectionTool extends AbstractSelectionTool {
 
-    public final @NotNull Sound successSound;
-    public final @NotNull Sound mistakeSound;
+
     public final @NotNull ParticleSpawner.Builder<?> particles;
 
     @ApiStatus.Internal
     public ClaimSelectionTool(@NotNull Plugin plugin, @NotNull NamespacedKey key, @NotNull ParticleSpawner.Builder<?> particles) {
         super(plugin, key);
-        successSound = net.kyori.adventure.sound.Sound.sound(
-                Key.key(CoreMain.plugin.getConfig().getString("sounds.success", "minecraft:block.note_block.bell")),
-                net.kyori.adventure.sound.Sound.Source.MASTER,
-                1f,
-                1f
-        );
-        mistakeSound = Sound.sound(
-                Key.key(CoreMain.plugin.getConfig().getString("sounds.mistake", "minecraft:block.note_block.snare")),
-                Sound.Source.MASTER,
-                1f,
-                1f
-        );
+
         this.particles = particles;
         maxSelectionSize = plugin.getConfig().getInt("claims.tool.limit-selection", 8);
     }
@@ -112,11 +99,11 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
 
         if (player.hasCooldown(item)) {
             CoreMain.mainClass.sendMessage(player, Component.translatable("messages.claims.tool.tool-cooldown"));
-            CoreMain.soundManager.playSound(player, mistakeSound);
+            CoreMain.soundManager.playSound(player, SoundUtil.mistake);
             return false;
         } else if (first == null) {
             CoreMain.mainClass.sendMessage(player, Component.translatable("messages.claims.tool.no-first-selection"));
-            CoreMain.soundManager.playSound(player, mistakeSound);
+            CoreMain.soundManager.playSound(player, SoundUtil.mistake);
 
             return false;
         } else if (isSelectionToLarge(first, at, player)) {
@@ -126,7 +113,7 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
             );
 
             CoreMain.mainClass.sendMessage(player, msg);
-            CoreMain.soundManager.playSound(player, mistakeSound);
+            CoreMain.soundManager.playSound(player, SoundUtil.mistake);
             return false;
         }
 
@@ -139,7 +126,7 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
         Player player = event.getPlayer();
         CoreMain.mainClass.sendMessage(player, Component.translatable("messages.claims.tool.set-pos1"));
 
-        CoreMain.soundManager.playSound(player, successSound);
+        CoreMain.soundManager.playSound(player, SoundUtil.success);
 
         player.setCooldown(item, 60);
 
@@ -157,7 +144,7 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
         player.setCooldown(item, 60);
 
         CoreMain.mainClass.sendMessage(player, Component.translatable("messages.claims.tool.set-pos2"));
-        CoreMain.soundManager.playSound(player, successSound);
+        CoreMain.soundManager.playSound(player, SoundUtil.success);
 
         if (player.hasMetadata(firstSelectionKey) && player.hasMetadata(secondSelectionKey)) {
             CoreMain.mainClass.sendMessage(player, Component.translatable("messages.claims.tool.both-positions-set"));

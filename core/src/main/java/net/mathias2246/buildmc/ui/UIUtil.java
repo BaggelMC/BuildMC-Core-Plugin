@@ -31,13 +31,6 @@ public class UIUtil {
             1f
     );
 
-    @SuppressWarnings("PatternValidation")
-    public static final @NotNull Sound NOTIFICATION_SOUND = Sound.sound(
-            Key.key(CoreMain.plugin.getConfig().getString("sounds.notification", "minecraft:entity.item.pickup")),
-            Sound.Source.UI,
-            1f,
-            1f
-    );
 
     public static final @NotNull NamespacedKey INVISIBLE_ITEM_KEY = Objects.requireNonNull(NamespacedKey.fromString("nations:none"));
 

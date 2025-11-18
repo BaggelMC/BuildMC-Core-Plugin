@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class ClaimProtections {
     
@@ -78,31 +79,21 @@ public class ClaimProtections {
             return 0;
         }
 
-        Protection protection = CoreMain.protectionsRegistry.get(flag);
+        Protection protection = Objects.requireNonNull(CoreMain.protectionsRegistry.get(flag));
+
+        ClaimProtectionChangeEvent event = new ClaimProtectionChangeEvent(
+                claim,
+                protection,
+                value ? ClaimProtectionChangeEvent.ActiveState.ENABLED : ClaimProtectionChangeEvent.ActiveState.DISABLED,
+                player
+        );
+        if (event.isCancelled()) return 0;
 
         if (value) {
-
-            ClaimProtectionChangeEvent event = new ClaimProtectionChangeEvent(
-                    claim,
-                    protection,
-                    ClaimProtectionChangeEvent.ActiveState.ENABLED,
-                    player
-            );
-            if (event.isCancelled()) return 0;
-
             ClaimManager.addProtection(claimId, flag);
             CoreMain.pluginMain.sendMessage(player, Message.msg(player, "messages.claims.protections.added", Map.of("flag", flag.toString())));
             ClaimLogger.logProtectionChanged(player, name, flag.toString(), "enabled");
         } else {
-
-            ClaimProtectionChangeEvent event = new ClaimProtectionChangeEvent(
-                    claim,
-                    protection,
-                    ClaimProtectionChangeEvent.ActiveState.DISABLED,
-                    player
-            );
-            if (event.isCancelled()) return 0;
-
             ClaimManager.removeProtection(claimId, flag);
             CoreMain.pluginMain.sendMessage(player, Message.msg(player, "messages.claims.protections.removed", Map.of("flag", flag.toString())));
             ClaimLogger.logProtectionChanged(player, name, flag.toString(), "disabled");
