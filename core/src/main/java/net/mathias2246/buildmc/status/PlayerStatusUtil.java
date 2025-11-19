@@ -17,6 +17,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+import static net.mathias2246.buildmc.CoreMain.bukkitAudiences;
+
 public class PlayerStatusUtil implements Listener {
 
     public static final @NotNull NamespacedKey PLAYER_STATUS_PDC = Objects.requireNonNull(NamespacedKey.fromString("buildmc:player_status"));
@@ -79,7 +81,7 @@ public class PlayerStatusUtil implements Listener {
         );
 
         if (join) return;
-        CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.status.successfully-set"));
+        bukkitAudiences.player(player).sendMessage(Component.translatable("messages.status.successfully-set"));
         CoreMain.soundManager.playSound(player, SoundUtil.success);
     }
 

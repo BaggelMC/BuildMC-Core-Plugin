@@ -1,8 +1,6 @@
-package net.mathias2246.buildmc.api.spawnelytra;
+package net.mathias2246.buildmc.spawnElytra;
 
 import net.mathias2246.buildmc.api.spawnEyltra.ElytraManager;
-import net.mathias2246.buildmc.spawnElytra.ElytraZoneManager;
-import net.mathias2246.buildmc.spawnElytra.SpawnBoostRunnable;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -40,45 +38,45 @@ public record ElytraManagerImpl(ElytraZoneManager zoneManager) implements Elytra
     @Override
     public void setPlayerFlying(@NotNull Player player, boolean flying) {
         if (flying) {
-            SpawnBoostRunnable.setPlayerFlying(player);
+            SpawnBoostListener.setPlayerFlying(player);
         } else {
-            SpawnBoostRunnable.stopFlying(player);
+            SpawnBoostListener.stopFlying(player);
         }
     }
 
     @Override
     public boolean isUsingSpawnElytra(@NotNull Player player) {
-        return SpawnBoostRunnable.isUsingSpawnElytra(player);
+        return SpawnBoostListener.isUsingSpawnElytra(player);
     }
 
     @Override
     public boolean isUsingSpawnElytra(@NotNull Entity entity) {
-        return SpawnBoostRunnable.isUsingSpawnElytra(entity);
+        return SpawnBoostListener.isUsingSpawnElytra(entity);
     }
 
     @Override
     public boolean hasBoosted(@NotNull Player player) {
-        return SpawnBoostRunnable.isPlayerBoosted(player);
+        return SpawnBoostListener.isPlayerBoosted(player);
     }
 
     @Override
     public boolean hasBoosted(@NotNull Entity entity) {
-        return SpawnBoostRunnable.isPlayerBoosted(entity);
+        return SpawnBoostListener.isPlayerBoosted(entity);
     }
 
     @Override
     public void resetBoost(@NotNull Player player) {
-        SpawnBoostRunnable.resetBoost(player);
+        SpawnBoostListener.resetBoost(player);
     }
 
     @Override
     public void resetBoost(@NotNull Entity entity) {
-        SpawnBoostRunnable.resetBoost(entity);
+        SpawnBoostListener.resetBoost(entity);
     }
 
     @Override
     public void applyBoost(@NotNull Player player, int multiplier, double verticalVelocity) {
-        SpawnBoostRunnable.applyBoost(player, multiplier, verticalVelocity);
+        SpawnBoostListener.applyBoost(player, multiplier, verticalVelocity);
     }
 
     @Override
@@ -87,12 +85,12 @@ public record ElytraManagerImpl(ElytraZoneManager zoneManager) implements Elytra
         int multiplyValue = plugin.getConfig().getInt("spawn-elytra.strength", 2);
         double verticalVelocity = 1.2;
 
-        SpawnBoostRunnable.applyBoost(player, multiplyValue, verticalVelocity);
+        SpawnBoostListener.applyBoost(player, multiplyValue, verticalVelocity);
     }
 
     @Override
     public void applyRawBoost(@NotNull Player player, int multiplier, double verticalVelocity) {
-        SpawnBoostRunnable.applyRawBoost(player, multiplier, verticalVelocity);
+        SpawnBoostListener.applyRawBoost(player, multiplier, verticalVelocity);
     }
 
     @Override
@@ -100,6 +98,6 @@ public record ElytraManagerImpl(ElytraZoneManager zoneManager) implements Elytra
         int multiplyValue = plugin.getConfig().getInt("spawn-elytra.strength", 2);
         double verticalVelocity = 1.2;
 
-        SpawnBoostRunnable.applyRawBoost(player, multiplyValue, verticalVelocity);
+        SpawnBoostListener.applyRawBoost(player, multiplyValue, verticalVelocity);
     }
 }

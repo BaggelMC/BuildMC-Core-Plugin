@@ -3,8 +3,10 @@ package net.mathias2246.buildmc.player;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.api.event.player.PlayerSpawnTeleportPreConditionEvent;
 import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.PlayerTimer;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -14,6 +16,21 @@ import static net.mathias2246.buildmc.util.SoundUtil.*;
 
 public class TeleportTimer extends PlayerTimer {
         public static final int seconds = CoreMain.plugin.getConfig().getInt("spawn-teleport.wait-for");
+
+        public static int teleportCommandLogic(@NotNull Player player) {
+            PlayerSpawnTeleportPreConditionEvent e = new PlayerSpawnTeleportPreConditionEvent(player, player.getWorld().getSpawnLocation());
+            Bukkit.getPluginManager().callEvent(e);
+            if (e.isCancelled()) {
+                CoreMain.mainClass.sendMessage(player, Component.translatable("messages.spawn-teleport.not-working"));
+                return 0;
+            }
+
+            var timer = new TeleportTimer(player, e.getTo());
+
+            timer.start(0);
+
+            return 1;
+        }
 
         private Vector previousPosition;
 

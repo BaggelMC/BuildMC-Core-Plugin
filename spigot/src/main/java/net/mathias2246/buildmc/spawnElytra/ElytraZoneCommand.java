@@ -20,7 +20,6 @@ public record ElytraZoneCommand(ElytraZoneManager zoneManager) implements Custom
                                                 .executesPlayer((player, args) -> {
                                                     Location loc = args.getByClass("location", Location.class);
                                                     if (loc == null) {
-                                                        // TODO: Implement error handling
                                                         return;
                                                     }
                                                     zoneManager.setPos1(player, loc);
@@ -31,7 +30,6 @@ public record ElytraZoneCommand(ElytraZoneManager zoneManager) implements Custom
                                                 .executesPlayer((player, args) -> {
                                                     Location loc = args.getByClass("location", Location.class);
                                                     if (loc == null) {
-                                                        // TODO: Implement error handling
                                                         return;
                                                     }
                                                     zoneManager.setPos2(player, loc);
