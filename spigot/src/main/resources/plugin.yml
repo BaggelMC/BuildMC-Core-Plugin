@@ -14,7 +14,7 @@ permissions:
   buildmc.admin:
     default: op
     description: The BuildMC admin permission
-  allow-spawn-teleport:
+  buildmc.allow-spawn-teleport:
     default: true
     description: Allows the player to use the '/spawn' command
   buildmc.bypass-claims:
@@ -23,3 +23,6 @@ permissions:
   buildmc.bypass-end-event:
     default: false
     description: With this permission you can enter the end dimension even when the end is closed.
+  buildmc.broadcast:
+    default: op
+    description: Allows to use the '/broadcast' command

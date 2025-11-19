@@ -13,8 +13,9 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 /**A {@link DeferredRegistry} is an implementation of bukkits {@link Registry} interface.
- * <p>A {@link DeferredRegistry} allows you to change the contents of the registry while un-initialized.
- * After initializing using {@code initialize();}, the register will be made read-only for safety.</p>*/
+ * <p>A {@link DeferredRegistry} stays mutable before all plugins are loaded.
+ * You can change the contents of the registry while BuildMC-Core is un-initialized.
+ * After initializing using {@code initialize();}, the register will be made immutable for safety.</p>*/
 public class DeferredRegistry<T extends Keyed> implements Registry<T> {
 
     private final Map<NamespacedKey, T> map = new HashMap<>();
@@ -46,10 +47,13 @@ public class DeferredRegistry<T extends Keyed> implements Registry<T> {
      * </p>
      *
      * @param entry The entry to add
+     *
+     * @return The entry you tried to add
      * */
-    public void addEntry(@NotNull T entry) {
-        if (isInitialized) return;
+    public @NotNull T addEntry(@NotNull T entry) {
+        if (isInitialized) return entry;
         map.putIfAbsent(entry.getKey(), entry);
+        return entry;
     }
 
     /**Removes an entry this deferred-registry

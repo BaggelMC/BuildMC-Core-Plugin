@@ -5,7 +5,6 @@ import net.mathias2246.buildmc.api.status.StatusInstance;
 import net.mathias2246.buildmc.util.config.YamlConfigurationManager;
 import net.mathias2246.buildmc.util.registry.BaseRegistry;
 import net.mathias2246.buildmc.util.registry.DefaultRegistries;
-import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.Plugin;
 
 import java.util.Objects;
@@ -32,7 +31,7 @@ public class StatusConfig extends YamlConfigurationManager {
             var s = configuration.getConfigurationSection(key);
             if (s == null) return;
             var v = s.getValues(false);
-            reg.set(Objects.requireNonNull(NamespacedKey.fromString("buildmc:" + key)), StatusInstance.deserialize(v, key));
+            reg.addEntry(StatusInstance.deserialize(v, key));
 
         }
     }

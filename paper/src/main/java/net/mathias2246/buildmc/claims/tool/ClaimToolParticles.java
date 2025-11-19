@@ -34,7 +34,6 @@ public class ClaimToolParticles extends ParticleSpawner {
         l.setY(l.getY()+1.5);
 
 
-
         if (isRemoveSelection) {
             chunkPlane = new ParticleBuilder
                     (Particle.DUST)
