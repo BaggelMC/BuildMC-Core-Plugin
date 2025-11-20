@@ -1,8 +1,8 @@
 package net.mathias2246.buildmc.claims.protections;
 
-import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.mathias2246.buildmc.api.item.ItemUtil;
+import net.mathias2246.buildmc.inventoryframework.gui.GuiItem;
 import net.mathias2246.buildmc.ui.UIUtil;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Material;

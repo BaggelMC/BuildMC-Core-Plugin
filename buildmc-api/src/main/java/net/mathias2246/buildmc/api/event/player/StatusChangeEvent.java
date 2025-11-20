@@ -48,7 +48,7 @@ public class StatusChangeEvent extends CustomPlayerEvent implements Cancellable 
     public StatusChangeEvent(@NotNull Player player, @Nullable StatusInstance oldStatus, @Nullable StatusInstance newStatus) {
         super(player);
         this.oldStatus = oldStatus;
-        this.newStatus = newStatus;;
+        this.newStatus = newStatus;
     }
 
     @Override

@@ -183,6 +183,25 @@
                                     <shadedPattern>net.mathias2246.buildmc.inventoryframework</shadedPattern>
                                 </relocation>
                             </relocations>
+                            <!-- Filters to exclude duplicates that cause warnings -->
+                            <filters>
+                                <!-- Exclude classes that are already in BuildMC-Core -->
+
+
+                                <!-- Exclude redundant META-INF and module-info -->
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.MF</exclude>
+                                        <exclude>META-INF/LICENSE*</exclude>
+                                        <exclude>META-INF/NOTICE*</exclude>
+                                        <exclude>META-INF/services/**</exclude>
+                                        <exclude>META-INF/versions/**</exclude>
+                                        <exclude>module-info.class</exclude>
+                                        <exclude>**/module-info.class</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
                         </configuration>
                     </execution>
                 </executions>

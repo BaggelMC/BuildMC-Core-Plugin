@@ -1,10 +1,5 @@
 package net.mathias2246.buildmc.ui.claims;
 
-import com.github.stefvanschie.inventoryframework.adventuresupport.ComponentHolder;
-import com.github.stefvanschie.inventoryframework.gui.GuiItem;
-import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
-import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
-import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -14,6 +9,11 @@ import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.event.claims.ClaimWhitelistChangeEvent;
 import net.mathias2246.buildmc.claims.ClaimLogger;
 import net.mathias2246.buildmc.claims.ClaimManager;
+import net.mathias2246.buildmc.inventoryframework.adventuresupport.ComponentHolder;
+import net.mathias2246.buildmc.inventoryframework.gui.GuiItem;
+import net.mathias2246.buildmc.inventoryframework.gui.type.ChestGui;
+import net.mathias2246.buildmc.inventoryframework.pane.PaginatedPane;
+import net.mathias2246.buildmc.inventoryframework.pane.StaticPane;
 import net.mathias2246.buildmc.ui.UIUtil;
 import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.SoundUtil;

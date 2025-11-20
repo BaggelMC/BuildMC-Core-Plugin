@@ -1,14 +1,14 @@
 package net.mathias2246.buildmc.claims.protections.blocks;
 
-import com.github.stefvanschie.inventoryframework.gui.GuiItem;
-import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.item.ItemUtil;
-import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.claims.ClaimManager;
+import net.mathias2246.buildmc.inventoryframework.gui.GuiItem;
+import net.mathias2246.buildmc.inventoryframework.gui.type.util.Gui;
 import net.mathias2246.buildmc.ui.UIUtil;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Material;

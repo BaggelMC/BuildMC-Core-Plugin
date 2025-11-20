@@ -1,11 +1,11 @@
 package net.mathias2246.buildmc.ui;
 
-import com.github.stefvanschie.inventoryframework.gui.GuiItem;
-import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.item.ItemUtil;
+import net.mathias2246.buildmc.inventoryframework.gui.GuiItem;
+import net.mathias2246.buildmc.inventoryframework.pane.StaticPane;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.inventory.InventoryClickEvent;
