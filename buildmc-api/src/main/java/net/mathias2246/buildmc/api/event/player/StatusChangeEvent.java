@@ -56,7 +56,7 @@ public class StatusChangeEvent extends CustomPlayerEvent implements Cancellable 
         return HANDLERS;
     }
 
-    public @NotNull HandlerList getHandlerList() {
+    public static @NotNull HandlerList getHandlerList() {
         return HANDLERS;
     }
 
