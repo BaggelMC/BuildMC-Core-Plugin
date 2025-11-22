@@ -36,6 +36,7 @@ import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -48,6 +49,7 @@ public final class CoreMain {
     public static PluginMain pluginMain;
     public static BuildMcAPI api;
     public static FileConfiguration config;
+    public static File configFile;
 
     public static SoundManager soundManager;
 

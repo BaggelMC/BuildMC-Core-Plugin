@@ -1,8 +1,8 @@
 package net.mathias2246.buildmc.spawnElytra;
 
-import net.mathias2246.buildmc.util.Message;
+import net.kyori.adventure.text.Component;
+import net.mathias2246.buildmc.CoreMain;
 import org.bukkit.GameMode;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,15 +11,12 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityMountEvent;
 import org.bukkit.event.entity.EntityToggleGlideEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 
-import static net.mathias2246.buildmc.Main.*;
-import static net.mathias2246.buildmc.spawnElytra.SpawnBoostRunnable.*;
+import static net.mathias2246.buildmc.spawnElytra.SpawnElytraUtil.*;
 
-public record ElytraListeners(boolean boostEnabled, double multiplyValue) implements Listener {
-
+public record ElytraCheckListeners(ElytraZoneManager zoneManager, boolean boostEnabled, double multiplyValue) implements Listener {
     @EventHandler
     public void onDoubleJump(PlayerToggleFlightEvent event) {
         Player player = event.getPlayer();
@@ -34,7 +31,7 @@ public record ElytraListeners(boolean boostEnabled, double multiplyValue) implem
         setPlayerFlying(player);
 
         if (boostEnabled && !isPlayerBoosted(player)) {
-            player.sendActionBar(Message.msg(player, "messages.spawn-elytra.boost-hint"));
+            CoreMain.pluginMain.sendPlayerActionBar(player, Component.translatable("messages.spawn-elytra.boost-hint"));
         }
     }
 
@@ -92,37 +89,5 @@ public record ElytraListeners(boolean boostEnabled, double multiplyValue) implem
         if (isSurvival(oldMode) && !isSurvival(newMode) && isUsingSpawnElytra(player)) {
             stopFlying(player);
         }
-    }
-
-    // Fixes player state not resetting when reconnecting
-    @EventHandler
-    public void onJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-
-        player.getScheduler().runAtFixedRate(
-                plugin,
-                (task) -> {
-                    if (!isSurvival(player)) return;
-
-                    if (isUsingSpawnElytra(player) && !player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType().isAir()) {
-                        stopFlying(player);
-                    } else if (!player.isGliding()) {
-                        boolean inZone = zoneManager.isInZone(player);
-                        player.setAllowFlight(inZone);
-                    }
-                },
-                null,
-                1,
-                3
-        );
-
-        if (!config.getBoolean("spawn-elytra.on-join-elytra-check", true)) return;
-
-        stopFlying(player);
-
-        if (isSurvival(player)) {
-            player.setAllowFlight(false);
-        }
-
     }
 }

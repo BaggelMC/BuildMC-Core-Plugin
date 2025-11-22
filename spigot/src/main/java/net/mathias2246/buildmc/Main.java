@@ -89,6 +89,8 @@ public final class Main extends PluginMain {
         if (!configFile.exists()) this.saveResource("config.yml", false);
         config = this.getConfig();
 
+        CoreMain.configFile = configFile;
+
         CoreMain.initialize(this);
 
         if (config.getBoolean("claims.enabled", true)) {
@@ -203,6 +205,7 @@ public final class Main extends PluginMain {
         if (config.getBoolean("spawn-elytra.enabled")) {
             getServer().getPluginManager().registerEvents(new SpawnBoostListener(zoneManager), this);
             if (config.getBoolean("spawn-elytra.disable-rockets")) getServer().getPluginManager().registerEvents(new DisableRocketListener(), this);
+            getServer().getPluginManager().registerEvents(new ElytraCheckListeners(zoneManager, config.getBoolean("spawn-elytra.enabled", true), config.getDouble("spawn-elytra.strength", 2)), this);
             CommandRegister.register(new ElytraZoneCommand(zoneManager));
             zoneManager.loadZoneFromConfig();
         }

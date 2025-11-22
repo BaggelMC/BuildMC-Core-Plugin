@@ -13,7 +13,7 @@ public class DisableBoostListener implements Listener {
     public void onFireworkUse(PlayerElytraBoostEvent event) {
         Player player = event.getPlayer();
 
-        if (!SpawnBoostRunnable.isUsingSpawnElytra(player)) return;
+        if (!SpawnElytraUtil.isUsingSpawnElytra(player)) return;
 
         event.setCancelled(true);
 

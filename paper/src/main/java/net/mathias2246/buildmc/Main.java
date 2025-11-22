@@ -22,10 +22,7 @@ import net.mathias2246.buildmc.player.PlayerHeadDropModifier;
 import net.mathias2246.buildmc.player.PlayerSpawnTeleportCommand;
 import net.mathias2246.buildmc.player.status.PlayerStatus;
 import net.mathias2246.buildmc.player.status.SetStatusCommand;
-import net.mathias2246.buildmc.spawnElytra.DisableBoostListener;
-import net.mathias2246.buildmc.spawnElytra.ElytraListeners;
-import net.mathias2246.buildmc.spawnElytra.ElytraManagerImpl;
-import net.mathias2246.buildmc.spawnElytra.ElytraZoneManager;
+import net.mathias2246.buildmc.spawnElytra.*;
 import net.mathias2246.buildmc.status.PlayerStatusUtil;
 import net.mathias2246.buildmc.status.StatusConfig;
 import net.mathias2246.buildmc.util.SoundManager;
@@ -85,6 +82,8 @@ public final class Main extends PluginMain {
 
         if (!configFile.exists()) this.saveResource("config.yml", false);
         config = this.getConfig();
+
+        CoreMain.configFile = configFile;
 
         CoreMain.initialize(this);
 
@@ -200,7 +199,8 @@ public final class Main extends PluginMain {
 
         getServer().getPluginManager().registerEvents(new EndListener(), this);
         if (config.getBoolean("spawn-elytra.enabled")) {
-            getServer().getPluginManager().registerEvents(new ElytraListeners(config.getBoolean("spawn-elytra.enabled", true), config.getDouble("spawn-elytra.strength", 2)), this);
+            getServer().getPluginManager().registerEvents(new ElytraJoinListener(config.getBoolean("spawn-elytra.enabled", true), config.getDouble("spawn-elytra.strength", 2)), this);
+            getServer().getPluginManager().registerEvents(new ElytraCheckListeners(zoneManager, config.getBoolean("spawn-elytra.enabled", true), config.getDouble("spawn-elytra.strength", 2)), this);
             if (config.getBoolean("spawn-elytra.disable-rockets")) getServer().getPluginManager().registerEvents(new DisableBoostListener(), this);
 
             zoneManager.loadZoneFromConfig();

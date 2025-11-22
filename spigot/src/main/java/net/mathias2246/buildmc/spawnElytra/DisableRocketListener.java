@@ -20,7 +20,7 @@ public class DisableRocketListener implements Listener {
         ItemStack item = event.getItem();
         if (item != null && item.getType() == Material.FIREWORK_ROCKET) {
 
-            if (!SpawnBoostListener.isUsingSpawnElytra(player)) return;
+            if (!SpawnElytraUtil.isUsingSpawnElytra(player)) return;
 
             event.setCancelled(true);
 
