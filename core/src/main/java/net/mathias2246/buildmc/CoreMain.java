@@ -160,8 +160,6 @@ public final class CoreMain {
         }, plugin);
     }
 
-
-
     public static void finishLoading() {
         if (plugin.getConfig().getBoolean("claims.enabled", true)) {
             initializeDatabase();
