@@ -105,6 +105,15 @@ claims:
     # If smaller than 0, the limit will be disabled
     limit-selection: 10 # Default: 10
 
+  # Here you can set a whitelist or blacklist for where players are allowed to claim areas.
+  # Players can bypass this list when given the permission 'buildmc.bypass-claim-dimension-list'
+  dimensions:
+    # If true, the list below will block certain dimensions.
+    # If false, the list below will only allow to be claimed in the given dimensions.
+    blacklist: true # Default: true
+    list:
+      # Example: - "minecraft:the_end"
+
   # Hides all protections from all players.
   # Can be used if players should only be able to use the default protections.
   hide-all-protections: false # Default: false

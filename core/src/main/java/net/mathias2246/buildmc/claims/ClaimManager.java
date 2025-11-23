@@ -6,10 +6,7 @@ import net.mathias2246.buildmc.api.claims.ClaimType;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.event.claims.ClaimCreateEvent;
 import net.mathias2246.buildmc.api.event.claims.ClaimRemoveEvent;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scoreboard.Team;
@@ -44,6 +41,17 @@ public class ClaimManager {
 
     /** List of claim IDs of placeholder claims */
     public static List<Long> placeholderClaims;
+
+    public static boolean isDimensionBlacklist = true;
+
+    public static @NotNull List<World> dimensionList = new ArrayList<>();
+
+    public static boolean isWorldAllowed(@NotNull World world) {
+        if (isDimensionBlacklist) {
+            return !dimensionList.contains(world);
+        }
+        return dimensionList.contains(world);
+    }
 
     /** Gets the player's team
      * @return the team the player is currently on, or null if they have no team */
@@ -327,8 +335,10 @@ public class ClaimManager {
         return tryClaimArea(ClaimType.PLACEHOLDER, "server", claimName, pos1, pos2);
     }
 
-    private static boolean tryClaimArea(@NotNull ClaimType type, @NotNull String ownerId, @NotNull String claimName, @NotNull Location pos1, @NotNull Location pos2) {
+    public static boolean tryClaimArea(@NotNull ClaimType type, @NotNull String ownerId, @NotNull String claimName, @NotNull Location pos1, @NotNull Location pos2) {
         if (pos1.getWorld() == null || pos2.getWorld() == null) return false;
+
+        if (pos1.getWorld() != pos2.getWorld()) return false;
 
         UUID worldId = pos1.getWorld().getUID();
 

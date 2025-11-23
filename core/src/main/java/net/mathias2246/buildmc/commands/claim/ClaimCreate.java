@@ -40,6 +40,12 @@ public class ClaimCreate {
             CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.create.different-worlds"));
             return 0;
         }
+        if (!player.hasPermission("buildmc.bypass-claim-dimension-list")) {
+            if (!ClaimManager.isWorldAllowed(Objects.requireNonNull(pos1.getWorld()))) {
+                CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.create.world-not-allowed"));
+                return 0;
+            }
+        }
 
         List<Claim> overlappingClaims;
         try {

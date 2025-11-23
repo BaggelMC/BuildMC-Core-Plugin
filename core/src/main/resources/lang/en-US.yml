@@ -108,6 +108,8 @@ messages:
       success-server: "<blue>------------------------</blue>\n<green>Successfully claimed server area!</green>\n<blue>------------------------</blue>"
       success-placeholder: "<blue>------------------------</blue>\n<green>Successfully claimed placeholder area!</green>\n<blue>------------------------</blue>"
 
+      world-not-allowed: "<red>You cannot create a claim in this dimension!</red>"
+
       invalid-type: "<red>Error: Argument 'type' must be either 'player' or 'team'.</red>"
       different-worlds: "<red>Error: Both positions must be in the same world.</red>"
       no-remaining-claims: "<red>You do not have enough chunks left to claim.\nChunks left: %remaining_claims%</red>"

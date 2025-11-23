@@ -10,6 +10,7 @@ import net.mathias2246.buildmc.api.item.ItemDropTracker;
 import net.mathias2246.buildmc.api.status.StatusInstance;
 import net.mathias2246.buildmc.api.status.StatusManager;
 import net.mathias2246.buildmc.claims.ClaimLogger;
+import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.claims.protections.blocks.*;
 import net.mathias2246.buildmc.claims.protections.entities.*;
 import net.mathias2246.buildmc.claims.protections.misc.*;
@@ -27,6 +28,7 @@ import net.mathias2246.buildmc.util.registry.DefaultRegistries;
 import net.mathias2246.buildmc.util.registry.DeferredRegistry;
 import net.mathias2246.buildmc.util.registry.RegistriesHolder;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -39,6 +41,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 @ApiStatus.Internal
 public final class CoreMain {
@@ -97,6 +100,8 @@ public final class CoreMain {
         LanguageManager.init();
 
         config = plugin.getConfig();
+
+
 
         statusesRegistry = (BaseRegistry<StatusInstance>) registriesHolder.addRegistry(DefaultRegistries.STATUSES.toString(), new BaseRegistry<StatusInstance>());
 
@@ -160,6 +165,15 @@ public final class CoreMain {
     public static void finishLoading() {
         if (plugin.getConfig().getBoolean("claims.enabled", true)) {
             initializeDatabase();
+
+            var dimensionListSect = config.getConfigurationSection("claims.dimensions");
+            if (dimensionListSect != null) {
+                ClaimManager.isDimensionBlacklist = dimensionListSect.getBoolean("blacklist", true);
+                List<String> str = dimensionListSect.getStringList("list");
+                for (World w : Bukkit.getWorlds()) {
+                    if (str.contains(w.getKey().toString())) ClaimManager.dimensionList.add(w);
+                }
+            }
 
             var hideAllProtections = CoreMain.plugin.getConfig().getBoolean("claims.hide-all-protections");
             for (Protection protection : protectionsRegistry) {

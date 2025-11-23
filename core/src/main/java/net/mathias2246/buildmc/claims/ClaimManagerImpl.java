@@ -6,6 +6,7 @@ import net.mathias2246.buildmc.api.claims.Protection;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
@@ -20,6 +21,11 @@ public class ClaimManagerImpl implements ClaimManager {
     @Override
     public @Nullable Team getPlayerTeam(@NotNull Player player) {
         return net.mathias2246.buildmc.claims.ClaimManager.getPlayerTeam(player);
+    }
+
+    @Override
+    public boolean isWorldAllowed(@NotNull World world) {
+        return net.mathias2246.buildmc.claims.ClaimManager.isWorldAllowed(world);
     }
 
     @Override

@@ -121,6 +121,9 @@ messages:
       no-remaining-claims: '<red>Du hast nicht genug Chunks übrig
 
         Übrige Chunks: %remaining_claims%</red>'
+
+      world-not-allowed: "<red>Du kannst in dieser Dimension keine Claims erstellen!</red>"
+
       duplicate-name: <red>Ein Claim mit diesem Namen existiert bereits.</red>
       error-database: <red>Ein Datenbank Fehler ist aufgetreten.</red>
       protected-server: <red>Das ausgewählte Gebiet enthält einen Schutz vom Server.</red>

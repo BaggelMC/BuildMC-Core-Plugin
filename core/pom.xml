@@ -147,9 +147,6 @@
 
                             <!-- Filters to exclude duplicates that cause warnings -->
                             <filters>
-                                <!-- Exclude classes that are already in BuildMC-Core -->
-
-
                                 <!-- Exclude redundant META-INF and module-info -->
                                 <filter>
                                     <artifact>*:*</artifact>

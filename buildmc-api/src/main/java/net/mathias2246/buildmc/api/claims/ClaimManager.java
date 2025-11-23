@@ -3,6 +3,7 @@ package net.mathias2246.buildmc.api.claims;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
@@ -29,6 +30,17 @@ public interface ClaimManager {
      * @return the team the player is in, or {@code null} if none
      */
     @Nullable Team getPlayerTeam(@NotNull Player player);
+
+    /**
+     * Checks whether a player is allowed to create a claim in a specific world.
+     * <p>
+     *     Players can bypass this by using the <i>'buildmc.bypass-claim-dimension-list'</i> permission.
+     * </p>
+     *
+     * @param world The {@link World} to check
+     * @return {@code true} if, claims can be created by anyone in the given world.
+     * */
+    boolean isWorldAllowed(@NotNull World world);
 
     /**
      * Checks whether a player is allowed to perform an action at a specific location
