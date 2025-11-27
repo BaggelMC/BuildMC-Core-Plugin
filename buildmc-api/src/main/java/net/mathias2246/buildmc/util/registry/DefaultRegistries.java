@@ -8,7 +8,9 @@ public enum DefaultRegistries {
     /// The default statuses registry key
     STATUSES ("statuses"),
     /// The default custom-item registry
-    CUSTOM_ITEMS ("custom_items");
+    CUSTOM_ITEMS ("custom_items"),
+    /// The default permission group registry
+    PERMISSION_GROUPS ("permission_groups");
 
     @Override
     public String toString() {

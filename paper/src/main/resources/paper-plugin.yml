@@ -32,3 +32,5 @@ permissions:
   buildmc.bypass-claim-dimension-list:
     default: op
     description: Allows players to bypass the dimension whitelist / blacklist
+  buildmc.debug:
+    description: Allows access to plugin debug tools

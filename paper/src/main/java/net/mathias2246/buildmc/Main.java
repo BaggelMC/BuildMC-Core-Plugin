@@ -14,8 +14,10 @@ import net.mathias2246.buildmc.claims.tool.ClaimToolParticles;
 import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.commands.BroadcastCommandPlatform;
 import net.mathias2246.buildmc.commands.BuildMcCommand;
+import net.mathias2246.buildmc.commands.PermsCommand;
 import net.mathias2246.buildmc.endEvent.EndListener;
 import net.mathias2246.buildmc.endEvent.EndManagerImpl;
+import net.mathias2246.buildmc.permissions.PermissionListener;
 import net.mathias2246.buildmc.platform.SoundManagerPaperImpl;
 import net.mathias2246.buildmc.player.PlayerHeadDropDeathListener;
 import net.mathias2246.buildmc.player.PlayerHeadDropModifier;
@@ -106,6 +108,8 @@ public final class Main extends PluginMain {
             commands.registrar().register(new PlayerSpawnTeleportCommand().getCommand());
 
             commands.registrar().register(new BroadcastCommandPlatform().getCommand());
+
+            commands.registrar().register(new PermsCommand().getCommand());
 
         });
 
@@ -228,5 +232,7 @@ public final class Main extends PluginMain {
         if (config.getBoolean("player-head.on-death")) {
             getServer().getPluginManager().registerEvents(new PlayerHeadDropDeathListener(new PlayerHeadDropModifier()), this);
         }
+
+        getServer().getPluginManager().registerEvents(new PermissionListener(), this);
     }
 }

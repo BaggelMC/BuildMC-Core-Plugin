@@ -23,7 +23,7 @@ public class BuildMcCommand implements CustomCommand {
         });
 
         var debugSub = Commands.literal("debug")
-                .requires(c -> c.getSender().hasPermission("buildmc.admin"))
+                .requires(c -> c.getSender().hasPermission("buildmc.debug"))
                 .executes(ctx -> {
                     ctx.getSource().getSender().sendMessage("/buildmc debug <args>");
                     return 1;

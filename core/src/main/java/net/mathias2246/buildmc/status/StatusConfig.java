@@ -7,6 +7,7 @@ import net.mathias2246.buildmc.util.registry.BaseRegistry;
 import net.mathias2246.buildmc.util.registry.DefaultRegistries;
 import org.bukkit.plugin.Plugin;
 
+import java.util.HashMap;
 import java.util.Objects;
 
 /**The configuration that stores and manages all statuses available.*/
@@ -29,9 +30,18 @@ public class StatusConfig extends YamlConfigurationManager {
             //if (!configuration.isConfigurationSection(key)) return;
 
             var s = configuration.getConfigurationSection(key);
-            if (s == null) return;
-            var v = s.getValues(false);
-            reg.addEntry(StatusInstance.deserialize(v, key));
+            if (s == null) {
+                CoreMain.plugin.getLogger().warning("Skipping status '" + key + "' because it's not a section.");
+                continue;
+            }
+            var raw = s.getValues(false);
+            var v = new HashMap<String, Object>();
+
+            for (var entry : raw.entrySet()) {
+                v.put(entry.getKey().toLowerCase(), entry.getValue());
+            }
+
+            reg.addEntry(StatusInstance.deserialize(v, key.toLowerCase()));
 
         }
     }

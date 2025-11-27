@@ -1,0 +1,6 @@
+name: "operator"
+
+priority: 99999
+
+permissions:
+  "buildmc.admin": true

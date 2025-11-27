@@ -7,6 +7,7 @@ import net.mathias2246.buildmc.api.event.lifecycle.BuildMcFinishedLoadingEvent;
 import net.mathias2246.buildmc.api.event.lifecycle.BuildMcRegistryEvent;
 import net.mathias2246.buildmc.api.item.AbstractCustomItem;
 import net.mathias2246.buildmc.api.item.ItemDropTracker;
+import net.mathias2246.buildmc.api.permissions.PermissionGroup;
 import net.mathias2246.buildmc.api.status.StatusInstance;
 import net.mathias2246.buildmc.api.status.StatusManager;
 import net.mathias2246.buildmc.claims.ClaimLogger;
@@ -18,6 +19,7 @@ import net.mathias2246.buildmc.database.ClaimTable;
 import net.mathias2246.buildmc.database.DatabaseConfig;
 import net.mathias2246.buildmc.database.DatabaseManager;
 import net.mathias2246.buildmc.event.claims.PlayerCrossClaimBoundariesListener;
+import net.mathias2246.buildmc.permissions.PermissionGroupLoader;
 import net.mathias2246.buildmc.util.BStats;
 import net.mathias2246.buildmc.util.SoundManager;
 import net.mathias2246.buildmc.util.config.ConfigHandler;
@@ -73,6 +75,8 @@ public final class CoreMain {
 
     public static DeferredRegistry<AbstractCustomItem> customItemsRegistry;
 
+    public static DeferredRegistry<PermissionGroup> permissionGroupRegistry;
+
     public static StatusManager statusManager;
 
     public static boolean isInitialized() {
@@ -101,13 +105,15 @@ public final class CoreMain {
 
         config = plugin.getConfig();
 
-
-
         statusesRegistry = (BaseRegistry<StatusInstance>) registriesHolder.addRegistry(DefaultRegistries.STATUSES.toString(), new BaseRegistry<StatusInstance>());
 
         protectionsRegistry = (DeferredRegistry<Protection>) registriesHolder.addRegistry(DefaultRegistries.PROTECTIONS.toString(), new DeferredRegistry<Protection>());
 
         customItemsRegistry = (DeferredRegistry<AbstractCustomItem>) registriesHolder.addRegistry(DefaultRegistries.CUSTOM_ITEMS.toString(), AbstractCustomItem.customItemsRegistry);
+
+        permissionGroupRegistry = (DeferredRegistry<PermissionGroup>) registriesHolder.addRegistry(DefaultRegistries.PERMISSION_GROUPS.toString(), new DeferredRegistry<PermissionGroup>());
+
+        new PermissionGroupLoader(permissionGroupRegistry).loadAll();
 
         protectionsRegistry.addEntries(
                 new Explosion(config.getConfigurationSection("claims.protections.damage.explosion-block-damage")),
@@ -197,6 +203,13 @@ public final class CoreMain {
         new ItemDropTracker(plugin);
 
         pluginMain.finishLoading();
+
+        // Initialize deferred registries
+        if (plugin.getConfig().getBoolean("claims.enabled", true)) {
+            protectionsRegistry.initialize();
+        }
+        customItemsRegistry.initialize();
+        permissionGroupRegistry.initialize();
 
         isInitialized = true;
 

@@ -1,0 +1,7 @@
+name: "default"
+
+priority: 0
+
+permissions:
+  "buildmc.player": true
+  "buildmc.allow-spawn-teleport": true
