@@ -8,7 +8,13 @@
 
 As Maven dependency:<br/>
 
+
 ```xml
+  <repository>
+    <id>central</id>
+    <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+  </repository>
+
   <dependency>
     <groupId>net.mathias2246</groupId>
     <artifactId>buildmc-api</artifactId>
