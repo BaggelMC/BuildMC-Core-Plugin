@@ -46,7 +46,7 @@ public class DisableCommands {
             Command blockedCommand = new Command(commandName) {
                 @Override
                 public boolean execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
-                    CoreMain.mainClass.sendMessage(sender, Message.msg(sender, "messages.error.command-disabled"));
+                    CoreMain.plugin.sendMessage(sender, Message.msg(sender, "messages.error.command-disabled"));
                     return true;
                 }
             };

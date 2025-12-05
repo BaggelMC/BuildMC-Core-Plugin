@@ -28,7 +28,7 @@ public class ClaimRemove {
             case "team" -> {
                 Team team = ClaimManager.getPlayerTeam(player);
                 if (team == null) {
-                    CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.error.not-in-a-team"));
+                    CoreMain.plugin.sendMessage(player, Component.translatable("messages.error.not-in-a-team"));
                     return 0;
                 }
                 List<Long> ids = ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
@@ -42,7 +42,7 @@ public class ClaimRemove {
             }
             case "server", "placeholder" -> {
                 if (!player.hasPermission("buildmc.admin")) {
-                    CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.error.no-permission"));
+                    CoreMain.plugin.sendMessage(player, Component.translatable("messages.error.no-permission"));
                     return 0;
                 }
                 List<Long> ids = type.equals("server") ? ClaimManager.serverClaims : ClaimManager.placeholderClaims;
@@ -55,23 +55,23 @@ public class ClaimRemove {
                 }
             }
             default -> {
-                CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.remove.invalid-type"));
+                CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.remove.invalid-type"));
                 return 0;
             }
         }
 
         if (claimId == -1) {
-            CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.remove.not-found"));
+            CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.remove.not-found"));
             return 0;
         }
 
         boolean success = ClaimManager.removeClaimById(claimId);
         if (success) {
-            CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.remove.success"));
+            CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.remove.success"));
             ClaimLogger.logClaimDeleted(player, claimName);
             return 1;
         }
-        CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.remove.failed"));
+        CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.remove.failed"));
         return 0;
     }
     

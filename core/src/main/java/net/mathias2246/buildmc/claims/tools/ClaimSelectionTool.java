@@ -98,11 +98,11 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
         var first = getFirstSelection(player);
 
         if (player.hasCooldown(item)) {
-            CoreMain.mainClass.sendMessage(player, Component.translatable("messages.claims.tool.tool-cooldown"));
+            CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.tool.tool-cooldown"));
             CoreMain.soundManager.playSound(player, SoundUtil.mistake);
             return false;
         } else if (first == null) {
-            CoreMain.mainClass.sendMessage(player, Component.translatable("messages.claims.tool.no-first-selection"));
+            CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.tool.no-first-selection"));
             CoreMain.soundManager.playSound(player, SoundUtil.mistake);
 
             return false;
@@ -112,7 +112,7 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
                     TextReplacementConfig.builder().matchLiteral("%selection_limit%").replacement(Integer.toString(maxSelectionSize)).build()
             );
 
-            CoreMain.mainClass.sendMessage(player, msg);
+            CoreMain.plugin.sendMessage(player, msg);
             CoreMain.soundManager.playSound(player, SoundUtil.mistake);
             return false;
         }
@@ -124,7 +124,7 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
     @Override
     public void onSuccessfulFirstSelection(@NotNull ItemStack item, @NotNull Location at, @NotNull PlayerInteractEvent event) {
         Player player = event.getPlayer();
-        CoreMain.mainClass.sendMessage(player, Component.translatable("messages.claims.tool.set-pos1"));
+        CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.tool.set-pos1"));
 
         CoreMain.soundManager.playSound(player, SoundUtil.success);
 
@@ -143,11 +143,11 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
 
         player.setCooldown(item, 60);
 
-        CoreMain.mainClass.sendMessage(player, Component.translatable("messages.claims.tool.set-pos2"));
+        CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.tool.set-pos2"));
         CoreMain.soundManager.playSound(player, SoundUtil.success);
 
         if (player.hasMetadata(firstSelectionKey) && player.hasMetadata(secondSelectionKey)) {
-            CoreMain.mainClass.sendMessage(player, Component.translatable("messages.claims.tool.both-positions-set"));
+            CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.tool.both-positions-set"));
         }
     }
 }

@@ -22,7 +22,7 @@ public class ClaimProtections {
     public static int changeClaimProtections(@NotNull Player player, @NotNull NamespacedKey flag, boolean value, String type, String name) {
 
         if (Protection.isHiddenProtection(CoreMain.protectionsRegistry, flag)) {
-            CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.protections.invalid-flag"));
+            CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.protections.invalid-flag"));
             return 0;
         }
 
@@ -43,7 +43,7 @@ public class ClaimProtections {
             case "team" -> {
                 Team team = ClaimManager.getPlayerTeam(player);
                 if (team == null) {
-                    CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.error.not-in-a-team"));
+                    CoreMain.plugin.sendMessage(player, Component.translatable("messages.error.not-in-a-team"));
                     return 0;
                 }
                 List<Long> ids = ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
@@ -57,7 +57,7 @@ public class ClaimProtections {
             }
             case "server" -> {
                 if (!player.hasPermission("buildmc.admin")) {
-                    CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.error.no-permission"));
+                    CoreMain.plugin.sendMessage(player, Component.translatable("messages.error.no-permission"));
                     return 0;
                 }
                 for (long id : ClaimManager.serverClaims) {
@@ -69,13 +69,13 @@ public class ClaimProtections {
                 }
             }
             default -> {
-                CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.protections.invalid-type"));
+                CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.protections.invalid-type"));
                 return 0;
             }
         }
 
         if (claim == null || claimId == -1) {
-            CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.remove.not-found"));
+            CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.remove.not-found"));
             return 0;
         }
 
@@ -91,11 +91,11 @@ public class ClaimProtections {
 
         if (value) {
             ClaimManager.addProtection(claimId, flag);
-            CoreMain.pluginMain.sendMessage(player, Message.msg(player, "messages.claims.protections.added", Map.of("flag", flag.toString())));
+            CoreMain.plugin.sendMessage(player, Message.msg(player, "messages.claims.protections.added", Map.of("flag", flag.toString())));
             ClaimLogger.logProtectionChanged(player, name, flag.toString(), "enabled");
         } else {
             ClaimManager.removeProtection(claimId, flag);
-            CoreMain.pluginMain.sendMessage(player, Message.msg(player, "messages.claims.protections.removed", Map.of("flag", flag.toString())));
+            CoreMain.plugin.sendMessage(player, Message.msg(player, "messages.claims.protections.removed", Map.of("flag", flag.toString())));
             ClaimLogger.logProtectionChanged(player, name, flag.toString(), "disabled");
         }
 

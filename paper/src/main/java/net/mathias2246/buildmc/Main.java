@@ -23,7 +23,6 @@ import net.mathias2246.buildmc.player.PlayerSpawnTeleportCommand;
 import net.mathias2246.buildmc.player.status.PlayerStatus;
 import net.mathias2246.buildmc.player.status.SetStatusCommand;
 import net.mathias2246.buildmc.spawnElytra.*;
-import net.mathias2246.buildmc.status.PlayerStatusUtil;
 import net.mathias2246.buildmc.status.StatusConfig;
 import net.mathias2246.buildmc.util.SoundManager;
 import net.mathias2246.buildmc.util.SoundUtil;
@@ -44,7 +43,6 @@ import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 import static net.mathias2246.buildmc.CoreMain.registriesHolder;
-import static net.mathias2246.buildmc.commands.disabledCommands.DisableCommands.disableCommand;
 
 public final class Main extends PluginMain {
 
@@ -209,20 +207,6 @@ public final class Main extends PluginMain {
         if (config.getBoolean("status.enabled")) {
             statusConfig = new StatusConfig(this);
             CoreMain.statusManager = new PlayerStatus();
-            getServer().getPluginManager().registerEvents(new PlayerStatusUtil(), this);
-        }
-
-        if (config.getBoolean("disable-commands")) {
-            if (config.isList("disabled-commands")) {
-                for (String fullCommand : config.getStringList("disabled-commands")) {
-                    String[] parts = fullCommand.split(":", 2);
-                    if (parts.length == 2) {
-                        disableCommand(parts[0], parts[1]);
-                    } else {
-                        logger.warning("Invalid command format in 'disabled-commands': " + fullCommand);
-                    }
-                }
-            }
         }
 
         if (config.getBoolean("player-head.on-death")) {

@@ -20,7 +20,7 @@ public class BroadcastCommand {
         try {
             component = mm.deserialize(input);
         } catch (Exception e) {
-            CoreMain.mainClass.sendMessage(sender, Component.text(
+            CoreMain.plugin.sendMessage(sender, Component.text(
                     "Failed to parse MiniMessage: " + e.getMessage(),
                     NamedTextColor.RED
             ));
@@ -41,7 +41,7 @@ public class BroadcastCommand {
 
         audience.playSound(SoundUtil.notification);
 
-        CoreMain.mainClass.sendMessage(sender, Component.text(
+        CoreMain.plugin.sendMessage(sender, Component.text(
                 "Broadcast sent!",
                 NamedTextColor.GREEN
         ));

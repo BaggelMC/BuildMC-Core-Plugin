@@ -62,7 +62,7 @@ public class Break extends Protection {
         Player player = event.getPlayer();
 
         if (!ClaimManager.isPlayerAllowed(player, getKey(), event.getBlock().getLocation())) {
-            CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.block-break"));
+            CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.block-break"));
             event.setCancelled(true);
         }
     }

@@ -63,7 +63,7 @@ public class ItemDrop extends Protection {
         Player player = event.getPlayer();
 
         if (!ClaimManager.isPlayerAllowed(player, getKey(), player.getLocation())) {
-            CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.item-drop"));
+            CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.item-drop"));
             event.setCancelled(true);
         }
 

@@ -59,7 +59,7 @@ public class PlayerFriendlyFire extends Protection {
 
         if (claim.hasProtection(getKey()) && victim instanceof Player player) {
             event.setCancelled(true);
-            CoreMain.mainClass.sendPlayerActionBar(attacker, Component.translatable("messages.claims.not-accessible.entity-damage"));
+            CoreMain.plugin.sendPlayerActionBar(attacker, Component.translatable("messages.claims.not-accessible.entity-damage"));
         }
     }
 

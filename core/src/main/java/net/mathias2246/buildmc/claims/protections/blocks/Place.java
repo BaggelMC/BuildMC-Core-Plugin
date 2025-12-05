@@ -61,7 +61,7 @@ public class Place extends Protection {
         Player player = event.getPlayer();
 
         if (!ClaimManager.isPlayerAllowed(player, getKey(), event.getBlock().getLocation())) {
-            CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.block-place"));
+            CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.block-place"));
             event.setCancelled(true);
         }
     }

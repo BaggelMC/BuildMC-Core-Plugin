@@ -73,7 +73,7 @@ public class WhitelistMenu {
                     pane.addItem(new GuiItem(addButton, e -> {
                         e.setCancelled(true);
                         CoreMain.soundManager.playSound(player, SoundUtil.notification);
-                        CoreMain.mainClass.sendMessage(player,
+                        CoreMain.plugin.sendMessage(player,
                                 Component.translatable("messages.claims.ui.whitelist-menu.add-button.click-info")
                                         .clickEvent(
                                                 ClickEvent.suggestCommand("/claim whitelist add "+claim.getType()+" "+claim.getName()+" ")
@@ -134,7 +134,7 @@ public class WhitelistMenu {
         // Add button
 //        controls.addItem(new GuiItem(createNamedItem(Material.EMERALD, Component.translatable("messages.claims.ui.whitelist-menu.add")), e -> {
 //            e.setCancelled(true);
-//            CoreMain.mainClass.sendPlayerMessage(player, Component.text("Add player to whitelist (not implemented yet)", NamedTextColor.GRAY));
+//            CoreMain.plugin.sendPlayerMessage(player, Component.text("Add player to whitelist (not implemented yet)", NamedTextColor.GRAY));
 //        }), 0, 0);
 
         // Back button
@@ -191,7 +191,7 @@ public class WhitelistMenu {
             if (event.isCancelled()) return;
 
             ClaimManager.removePlayerFromWhitelist(claim.getId(), uuid);
-            CoreMain.mainClass.sendMessage(player, Component.translatable("messages.claims.ui.whitelist-menu.delete-confirm-menu.success"));
+            CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.ui.whitelist-menu.delete-confirm-menu.success"));
             ClaimLogger.logWhitelistRemoved(player, claim.getName(), playerName, uuid.toString());
             open(player, claim);
         }), 5, 1);

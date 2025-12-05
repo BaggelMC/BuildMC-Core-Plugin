@@ -66,7 +66,7 @@ public class VehicleEnter extends Protection {
 
         if (!(entered instanceof Player player)) return;
         if (!ClaimManager.isPlayerAllowed(player, getKey(), vehicle.getLocation())) {
-            CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.vehicle"));
+            CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.vehicle"));
             event.setCancelled(true);
         }
     }

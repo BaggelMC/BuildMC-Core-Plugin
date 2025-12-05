@@ -62,7 +62,7 @@ public class EntityLeash extends Protection {
         Entity entity = event.getEntity();
 
         if (!ClaimManager.isPlayerAllowed(player, getKey(), entity.getLocation())) {
-            CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.attach-leash"));
+            CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.attach-leash"));
             event.setCancelled(true);
         }
     }

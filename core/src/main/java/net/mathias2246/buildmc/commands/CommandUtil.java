@@ -11,7 +11,7 @@ public class CommandUtil {
         if (sender instanceof Player player) {
             return player;
         } else {
-            CoreMain.pluginMain.sendMessage(sender, Component.translatable("messages.error.not-a-player"));
+            CoreMain.plugin.sendMessage(sender, Component.translatable("messages.error.not-a-player"));
             return null;
         }
     }

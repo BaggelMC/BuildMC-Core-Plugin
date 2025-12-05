@@ -79,7 +79,7 @@ public class EndListener implements Listener {
             event.setCancelled(true);
 
             Component message = Message.msg(event.getPlayer(), "messages.end-event.closed-message");
-            CoreMain.mainClass.sendPlayerActionBar(event.getPlayer(), message);
+            CoreMain.plugin.sendPlayerActionBar(event.getPlayer(), message);
         }
     }
 }

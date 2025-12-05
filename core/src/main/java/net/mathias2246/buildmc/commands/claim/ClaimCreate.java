@@ -24,7 +24,7 @@ public class ClaimCreate {
     
     public static int createClaimCommand(@NotNull Player player, String type, String name) {
         if (!player.hasMetadata("buildmc:claim_tool_first_selection") || !player.hasMetadata("buildmc:claim_tool_second_selection")) {
-            CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.create.missing-positions"));
+            CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.create.missing-positions"));
             return 0;
         }
 
@@ -32,17 +32,17 @@ public class ClaimCreate {
         Location pos2 = LocationUtil.tryDeserialize(player.getMetadata("buildmc:claim_tool_second_selection").getFirst().asString());
 
         if (pos1 == null || pos2 == null) {
-            CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.create.missing-positions"));
+            CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.create.missing-positions"));
             return 0;
         }
 
         if (!Objects.equals(pos1.getWorld(), pos2.getWorld())) {
-            CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.create.different-worlds"));
+            CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.create.different-worlds"));
             return 0;
         }
         if (!player.hasPermission("buildmc.bypass-claim-dimension-list")) {
             if (!ClaimManager.isWorldAllowed(Objects.requireNonNull(pos1.getWorld()))) {
-                CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.create.world-not-allowed"));
+                CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.create.world-not-allowed"));
                 return 0;
             }
         }
@@ -52,7 +52,7 @@ public class ClaimCreate {
             overlappingClaims = ClaimManager.getClaimsInArea(pos1, pos2);
         } catch (SQLException e) {
             plugin.getLogger().severe("There was an error while getting the claims in an area: " + e.getMessage());
-            CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.create.error-database"));
+            CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.create.error-database"));
             return 0;
         }
 
@@ -61,9 +61,9 @@ public class ClaimCreate {
                     .anyMatch(claim -> claim.getType() == ClaimType.SERVER);
 
             if (serverProtected) {
-                CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.create.protected-server"));
+                CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.create.protected-server"));
             } else {
-                CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.create.overlap"));
+                CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.create.overlap"));
             }
             return 0;
         }
@@ -76,29 +76,29 @@ public class ClaimCreate {
                 int maxChunksAllowed = plugin.getConfig().getInt("claims.player-max-chunk-claim-amount");
                 int remainingChunks = ClaimManager.playerRemainingClaims.getOrDefault(player.getUniqueId().toString(), maxChunksAllowed);
                 if ((remainingChunks - newClaimChunks) < 0) {
-                    CoreMain.pluginMain.sendMessage(player, Message.msg(player, "messages.claims.create.no-remaining-claims", Map.of("no-remaining-claims", String.valueOf(remainingChunks))));
+                    CoreMain.plugin.sendMessage(player, Message.msg(player, "messages.claims.create.no-remaining-claims", Map.of("no-remaining-claims", String.valueOf(remainingChunks))));
                     return 0;
                 }
 
                 try {
                     if (ClaimManager.doesOwnerHaveClaimWithName(player.getUniqueId().toString(), name)) {
-                        CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.create.duplicate-name"));
+                        CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.create.duplicate-name"));
                         return 1;
                     }
                 } catch (SQLException e) {
                     plugin.getLogger().severe("SQL Error while trying to check claim name availability: " + e);
-                    CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.create.error-database"));
+                    CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.create.error-database"));
                     return 0;
                 }
 
                 boolean success = ClaimManager.tryClaimPlayerArea(player, name, pos1, pos2);
                 if (success) {
-                    CoreMain.pluginMain.sendMessage(player, Message.msg(player, "messages.claims.create.success", Map.of("remaining_claims", String.valueOf(remainingChunks - newClaimChunks))));
+                    CoreMain.plugin.sendMessage(player, Message.msg(player, "messages.claims.create.success", Map.of("remaining_claims", String.valueOf(remainingChunks - newClaimChunks))));
                     removeSelectionData(player);
                     ClaimLogger.logClaimCreated(player, name);
                     return 1;
                 } else {
-                    CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.create.failed"));
+                    CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.create.failed"));
                     return 0;
                 }
             }
@@ -106,7 +106,7 @@ public class ClaimCreate {
             case "team" -> {
                 Team team = ClaimManager.getPlayerTeam(player);
                 if (team == null) {
-                    CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.error.not-in-a-team"));
+                    CoreMain.plugin.sendMessage(player, Component.translatable("messages.error.not-in-a-team"));
                     return 0;
                 }
 
@@ -114,47 +114,47 @@ public class ClaimCreate {
                 int maxChunksAllowed = plugin.getConfig().getInt("claims.team-max-chunk-claim-amount");
                 int remainingChunks = ClaimManager.teamRemainingClaims.getOrDefault(team.getName(), maxChunksAllowed);
                 if ((remainingChunks - newClaimChunks) < 0) {
-                    CoreMain.pluginMain.sendMessage(player, Message.msg(player, "messages.claims.create.no-remaining-claims", Map.of("remaining_claims", String.valueOf(remainingChunks))));
+                    CoreMain.plugin.sendMessage(player, Message.msg(player, "messages.claims.create.no-remaining-claims", Map.of("remaining_claims", String.valueOf(remainingChunks))));
                     return 0;
                 }
 
                 try {
                     if (ClaimManager.doesOwnerHaveClaimWithName(team.getName(), name)) {
-                        CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.create.duplicate-name"));
+                        CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.create.duplicate-name"));
                         return 1;
                     }
                 } catch (SQLException e) {
                     plugin.getLogger().severe("SQL Error while trying to check claim name availability: " + e);
-                    CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.create.error-database"));
+                    CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.create.error-database"));
                     return 0;
                 }
 
                 boolean success = ClaimManager.tryClaimTeamArea(team, name, pos1, pos2);
                 if (success) {
-                    CoreMain.pluginMain.sendMessage(player, Message.msg(player, "messages.claims.create.success", Map.of("remaining_claims", String.valueOf(remainingChunks - newClaimChunks))));
+                    CoreMain.plugin.sendMessage(player, Message.msg(player, "messages.claims.create.success", Map.of("remaining_claims", String.valueOf(remainingChunks - newClaimChunks))));
                     removeSelectionData(player);
                     ClaimLogger.logClaimCreated(player, name);
                     return 1;
                 } else {
-                    CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.create.failed"));
+                    CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.create.failed"));
                     return 0;
                 }
             }
 
             case "server", "placeholder" -> {
                 if (!player.hasPermission("buildmc.admin")) {
-                    CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.error.no-permission"));
+                    CoreMain.plugin.sendMessage(player, Component.translatable("messages.error.no-permission"));
                     return 0;
                 }
 
                 try {
                     if (ClaimManager.doesOwnerHaveClaimWithName(type.toLowerCase(), name)) {
-                        CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.create.duplicate-name"));
+                        CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.create.duplicate-name"));
                         return 1;
                     }
                 } catch (SQLException e) {
                     plugin.getLogger().severe("SQL Error while trying to check claim name availability: " + e);
-                    CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.create.error-database"));
+                    CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.create.error-database"));
                     return 0;
                 }
 
@@ -165,7 +165,7 @@ public class ClaimCreate {
                 };
 
                 if (success) {
-                    CoreMain.pluginMain.sendMessage(player, Message.msg(player,
+                    CoreMain.plugin.sendMessage(player, Message.msg(player,
                             "messages.claims.create.success-" + type.toLowerCase(),
                             Map.of("claim_name", name)
                     ));
@@ -173,13 +173,13 @@ public class ClaimCreate {
                     ClaimLogger.logClaimCreated(player, name);
                     return 1;
                 } else {
-                    CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.create.failed"));
+                    CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.create.failed"));
                     return 0;
                 }
             }
 
             default -> {
-                CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.create.invalid-type"));
+                CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.create.invalid-type"));
                 return 0;
             }
         }

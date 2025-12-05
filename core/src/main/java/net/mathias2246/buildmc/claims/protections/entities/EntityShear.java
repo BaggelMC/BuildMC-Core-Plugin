@@ -65,7 +65,7 @@ public class EntityShear extends Protection {
 
         if (!ClaimManager.isPlayerAllowed(player, getKey(), entity.getLocation())) {
             event.setCancelled(true);
-            CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.shear-entity"));
+            CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.shear-entity"));
         }
     }
 }

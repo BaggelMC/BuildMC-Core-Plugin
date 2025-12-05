@@ -50,6 +50,7 @@ public class DeferredRegistry<T extends Keyed> implements Registry<T> {
      *
      * @return The entry you tried to add
      * */
+    @SuppressWarnings("UnusedReturnValue")
     public @NotNull T addEntry(@NotNull T entry) {
         if (isInitialized) return entry;
         map.putIfAbsent(entry.getKey(), entry);

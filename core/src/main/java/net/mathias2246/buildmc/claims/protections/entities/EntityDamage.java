@@ -63,7 +63,7 @@ public class EntityDamage extends Protection {
         NamespacedKey k = getKey();
 
         if (claim.hasProtection(k) && !ClaimManager.isPlayerAllowed(attacker, k, claim)) {
-            CoreMain.mainClass.sendPlayerActionBar(attacker, Component.translatable("messages.claims.not-accessible.entity-damage"));
+            CoreMain.plugin.sendPlayerActionBar(attacker, Component.translatable("messages.claims.not-accessible.entity-damage"));
             event.setCancelled(true);
         }
     }
@@ -76,7 +76,7 @@ public class EntityDamage extends Protection {
         if (!(damager instanceof Player attacker)) return;
 
         if (!ClaimManager.isPlayerAllowed(attacker, getKey(), victim.getLocation())) {
-            CoreMain.mainClass.sendPlayerActionBar(attacker, Component.translatable("messages.claims.not-accessible.entity-damage"));
+            CoreMain.plugin.sendPlayerActionBar(attacker, Component.translatable("messages.claims.not-accessible.entity-damage"));
             event.setCancelled(true);
         }
     }

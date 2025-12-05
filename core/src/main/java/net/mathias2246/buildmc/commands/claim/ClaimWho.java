@@ -25,19 +25,19 @@ public class ClaimWho {
             claim = ClaimManager.getClaim(location);
         } catch (SQLException e) {
             CoreMain.plugin.getLogger().severe("An error occurred while getting a claim from the database: " + e.getMessage());
-            CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.error.sql"));
+            CoreMain.plugin.sendMessage(player, Component.translatable("messages.error.sql"));
             return 0;
         }
 
         if (claim == null) {
-            CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.who.unclaimed"));
+            CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.who.unclaimed"));
             return 1;
         }
 
         ClaimType claimType = claim.getType();
 
         if (claimType == ClaimType.TEAM) {
-            CoreMain.pluginMain.sendMessage(player, Message.msg(player, "messages.claims.who.team-message", Map.of("owner", claim.getOwnerId())));
+            CoreMain.plugin.sendMessage(player, Message.msg(player, "messages.claims.who.team-message", Map.of("owner", claim.getOwnerId())));
         } else if (claimType == ClaimType.PLAYER) {
             UUID ownerId = UUID.fromString(claim.getOwnerId());
             OfflinePlayer owner = Bukkit.getOfflinePlayer(ownerId);
@@ -47,9 +47,9 @@ public class ClaimWho {
                 ownerName = "Unknown";
             }
 
-            CoreMain.pluginMain.sendMessage(player, Message.msg(player, "messages.claims.who.player-message", Map.of("owner", ownerName)));
+            CoreMain.plugin.sendMessage(player, Message.msg(player, "messages.claims.who.player-message", Map.of("owner", ownerName)));
         } else if (claimType == ClaimType.SERVER || claimType == ClaimType.PLACEHOLDER) {
-            CoreMain.pluginMain.sendMessage(player, Message.msg(player, "messages.claims.who.server-message"));
+            CoreMain.plugin.sendMessage(player, Message.msg(player, "messages.claims.who.server-message"));
         }
 
         return 1;

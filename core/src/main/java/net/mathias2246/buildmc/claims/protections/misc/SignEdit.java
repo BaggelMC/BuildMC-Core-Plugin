@@ -72,7 +72,7 @@ public class SignEdit extends Protection {
             }
 
             // Send feedback to the player
-            CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.sign"));
+            CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.sign"));
         }
     }
 }

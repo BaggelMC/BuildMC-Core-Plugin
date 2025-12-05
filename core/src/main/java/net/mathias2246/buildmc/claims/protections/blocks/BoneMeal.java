@@ -40,7 +40,7 @@ public class BoneMeal extends Protection {
         Player player = event.getPlayer();
         if (!ClaimManager.isPlayerAllowed(player, getKey(), event.getClickedBlock().getLocation())) {
             event.setCancelled(true);
-            CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.interact"));
+            CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.interact"));
         }
     }
 

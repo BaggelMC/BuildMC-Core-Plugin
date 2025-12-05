@@ -69,7 +69,7 @@ public class PotionSplash extends Protection {
         ThrownPotion thrownPotion = event.getPotion();
         if (thrownPotion.getShooter() instanceof Player player) {
             if (!ClaimManager.isPlayerAllowed(player, getKey(), thrownPotion.getLocation())) {
-                CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.potion-splash"));
+                CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.potion-splash"));
                 event.setCancelled(true);
             }
         }
@@ -80,7 +80,7 @@ public class PotionSplash extends Protection {
         ThrownPotion thrownPotion = event.getEntity();
         if (thrownPotion.getShooter() instanceof Player player) {
             if (!ClaimManager.isPlayerAllowed(player, getKey(), thrownPotion.getLocation())) {
-                CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.potion-splash"));
+                CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.potion-splash"));
                 event.setCancelled(true);
             }
         }
