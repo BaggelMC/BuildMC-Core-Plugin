@@ -28,6 +28,7 @@ import java.util.Objects;
 
 public class EntityShear extends Protection {
     public EntityShear(@Nullable ConfigurationSection section) {
+        //noinspection SimplifiableConditionalExpression
         super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:entity_shear")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 

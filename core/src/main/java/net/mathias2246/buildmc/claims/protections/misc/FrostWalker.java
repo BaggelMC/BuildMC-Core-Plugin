@@ -28,6 +28,7 @@ import java.util.Objects;
 
 public class FrostWalker extends Protection {
     public FrostWalker(@Nullable ConfigurationSection section) {
+        //noinspection SimplifiableConditionalExpression
         super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:frost_walker")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 

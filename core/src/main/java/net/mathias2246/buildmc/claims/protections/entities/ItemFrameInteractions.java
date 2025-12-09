@@ -28,6 +28,7 @@ import java.util.Objects;
 public class ItemFrameInteractions extends Protection {
 
     public ItemFrameInteractions(@Nullable ConfigurationSection section) {
+        //noinspection SimplifiableConditionalExpression
         super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:item_frame_interaction")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 

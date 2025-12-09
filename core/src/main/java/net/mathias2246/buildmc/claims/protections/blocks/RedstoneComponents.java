@@ -30,6 +30,7 @@ import java.util.Objects;
 
 public class RedstoneComponents extends Protection {
     public RedstoneComponents(@Nullable ConfigurationSection section) {
+        //noinspection SimplifiableConditionalExpression
         super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:redstone_components")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 

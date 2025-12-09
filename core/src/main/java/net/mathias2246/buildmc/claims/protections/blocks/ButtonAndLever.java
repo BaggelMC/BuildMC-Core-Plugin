@@ -32,6 +32,7 @@ import java.util.Objects;
 public class ButtonAndLever extends Protection {
 
     public ButtonAndLever(@Nullable ConfigurationSection section) {
+        //noinspection SimplifiableConditionalExpression
         super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:button_and_lever_interactions")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 

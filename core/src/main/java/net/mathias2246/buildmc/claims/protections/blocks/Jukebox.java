@@ -31,6 +31,7 @@ import java.util.Objects;
 
 public class Jukebox extends Protection {
     public Jukebox(@Nullable ConfigurationSection section) {
+        //noinspection SimplifiableConditionalExpression
         super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:jukebox")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 

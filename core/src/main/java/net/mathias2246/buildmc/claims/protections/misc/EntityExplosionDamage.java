@@ -29,6 +29,7 @@ import static net.mathias2246.buildmc.CoreMain.plugin;
 
 public class EntityExplosionDamage extends Protection {
     public EntityExplosionDamage(@Nullable ConfigurationSection section) {
+        //noinspection SimplifiableConditionalExpression
         super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:explosions")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 

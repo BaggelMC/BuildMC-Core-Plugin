@@ -2,8 +2,10 @@ package net.mathias2246.buildmc.commands.claim;
 
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.claims.ClaimLogger;
 import net.mathias2246.buildmc.claims.ClaimManager;
+import net.mathias2246.buildmc.util.LocationUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
@@ -65,7 +67,31 @@ public class ClaimRemove {
             return 0;
         }
 
+        Claim claim = ClaimManager.getClaimByID(claimId);
+        if (claim == null) {
+            CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.remove.failed"));
+            return 0;
+        }
+
+        int restoredChunks = LocationUtil.calculateChunkArea(claim.getChunkX1(), claim.getChunkZ1(), claim.getChunkX2(), claim.getChunkZ2());
+
+        switch (claim.getType()) {
+            case PLAYER -> {
+                String ownerUUID = claim.getOwnerId();
+                int max = CoreMain.plugin.getConfig().getInt("claims.player-max-chunk-claim-amount");
+                int current = ClaimManager.playerRemainingClaims.getOrDefault(ownerUUID, max);
+                ClaimManager.playerRemainingClaims.put(ownerUUID, current + restoredChunks);
+            }
+            case TEAM -> {
+                String teamName = claim.getOwnerId();
+                int max = CoreMain.plugin.getConfig().getInt("claims.team-max-chunk-claim-amount");
+                int current = ClaimManager.teamRemainingClaims.getOrDefault(teamName, max);
+                ClaimManager.teamRemainingClaims.put(teamName, current + restoredChunks);
+            }
+        }
+
         boolean success = ClaimManager.removeClaimById(claimId);
+
         if (success) {
             CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.remove.success"));
             ClaimLogger.logClaimDeleted(player, claimName);

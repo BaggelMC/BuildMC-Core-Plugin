@@ -28,6 +28,7 @@ import java.util.Objects;
 public class Fishing extends Protection {
 
     public Fishing(@Nullable ConfigurationSection section) {
+        //noinspection SimplifiableConditionalExpression
         super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:fishing")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 

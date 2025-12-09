@@ -28,6 +28,7 @@ import java.util.Objects;
 
 public class SignEdit extends Protection {
     public SignEdit(@Nullable ConfigurationSection section) {
+        //noinspection SimplifiableConditionalExpression
         super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:sign_edit")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 

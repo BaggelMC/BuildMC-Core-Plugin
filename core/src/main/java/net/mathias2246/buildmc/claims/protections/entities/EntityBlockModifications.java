@@ -30,6 +30,7 @@ import java.util.Objects;
 public class EntityBlockModifications extends Protection {
 
     public EntityBlockModifications(@Nullable ConfigurationSection section) {
+        //noinspection SimplifiableConditionalExpression
         super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:entity_block_modifications")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 

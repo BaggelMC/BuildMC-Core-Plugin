@@ -30,6 +30,7 @@ public class Beehive extends Protection {
 
     @SuppressWarnings("SimplifiableConditionalExpression")
     public Beehive(@Nullable ConfigurationSection section) {
+        //noinspection SimplifiableConditionalExpression
         super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:beehive_interactions")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 

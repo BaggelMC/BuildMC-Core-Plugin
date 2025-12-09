@@ -30,6 +30,7 @@ import java.util.Objects;
 
 public class PotionSplash extends Protection {
     public PotionSplash(@Nullable ConfigurationSection section) {
+        //noinspection SimplifiableConditionalExpression
         super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:splash_potion")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 

@@ -28,6 +28,7 @@ import java.util.Objects;
 public class HangingEntities extends Protection {
 
     public HangingEntities(@Nullable ConfigurationSection section) {
+        //noinspection SimplifiableConditionalExpression
         super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:hanging_entities")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 

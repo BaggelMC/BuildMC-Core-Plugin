@@ -27,6 +27,7 @@ import java.util.Objects;
 
 public class SculkSensors extends Protection {
     public SculkSensors(@Nullable ConfigurationSection section) {
+        //noinspection SimplifiableConditionalExpression
         super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:sculk_sensors")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 

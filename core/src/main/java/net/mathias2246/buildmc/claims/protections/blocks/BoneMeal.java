@@ -28,6 +28,7 @@ import java.util.Objects;
 public class BoneMeal extends Protection {
 
     public BoneMeal(@Nullable ConfigurationSection section) {
+        //noinspection SimplifiableConditionalExpression
         super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:bone_meal_interactions")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 

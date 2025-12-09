@@ -31,6 +31,7 @@ import java.util.Objects;
 
 public class Campfire extends Protection {
     public Campfire(@Nullable ConfigurationSection section) {
+        //noinspection SimplifiableConditionalExpression
         super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:campfire")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 

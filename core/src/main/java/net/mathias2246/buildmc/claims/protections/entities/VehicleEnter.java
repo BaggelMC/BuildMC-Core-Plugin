@@ -29,6 +29,7 @@ import java.util.Objects;
 
 public class VehicleEnter extends Protection {
     public VehicleEnter(@Nullable ConfigurationSection section) {
+        //noinspection SimplifiableConditionalExpression
         super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:vehicle_enter")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 

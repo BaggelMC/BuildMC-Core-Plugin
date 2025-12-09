@@ -32,6 +32,7 @@ import java.util.Objects;
 
 public class ProjectileInteractions extends Protection {
     public ProjectileInteractions(@Nullable ConfigurationSection section) {
+        //noinspection SimplifiableConditionalExpression
         super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:projectile_interactions")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 

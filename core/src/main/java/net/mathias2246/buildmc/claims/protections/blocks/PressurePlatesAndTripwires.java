@@ -32,6 +32,7 @@ import java.util.Objects;
 
 public class PressurePlatesAndTripwires extends Protection {
     public PressurePlatesAndTripwires(@Nullable ConfigurationSection section) {
+        //noinspection SimplifiableConditionalExpression
         super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:pressure_plates_and_tripwires")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 

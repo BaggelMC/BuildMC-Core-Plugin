@@ -30,6 +30,7 @@ import static net.mathias2246.buildmc.CoreMain.plugin;
 
 public class Explosion extends Protection {
     public Explosion(@Nullable ConfigurationSection section) {
+        //noinspection SimplifiableConditionalExpression
         super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:explosions")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 

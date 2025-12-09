@@ -30,6 +30,7 @@ import java.util.Objects;
 
 public class PistonMovement extends Protection {
     public PistonMovement(@Nullable ConfigurationSection section) {
+        //noinspection SimplifiableConditionalExpression
         super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:piston_movement")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 

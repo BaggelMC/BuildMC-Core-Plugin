@@ -27,6 +27,7 @@ import java.util.Objects;
 
 public class EntityPlace extends Protection {
     public EntityPlace(@Nullable ConfigurationSection section) {
+        //noinspection SimplifiableConditionalExpression
         super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:entity_place")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 

@@ -28,6 +28,7 @@ import java.util.Objects;
 public class ItemDrop extends Protection {
 
     public ItemDrop(@Nullable ConfigurationSection section) {
+        //noinspection SimplifiableConditionalExpression
         super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:item_drop")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 

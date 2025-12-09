@@ -30,6 +30,7 @@ import java.util.Objects;
 public class ItemPickup extends Protection {
 
     public ItemPickup(@Nullable ConfigurationSection section) {
+        //noinspection SimplifiableConditionalExpression
         super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:item_pickup")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 

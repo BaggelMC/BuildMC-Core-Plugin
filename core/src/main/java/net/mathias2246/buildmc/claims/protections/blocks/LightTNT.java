@@ -30,6 +30,7 @@ import java.util.Objects;
 
 public class LightTNT extends Protection {
     public LightTNT(@Nullable ConfigurationSection section) {
+        //noinspection SimplifiableConditionalExpression
         super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:light_tnt")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 

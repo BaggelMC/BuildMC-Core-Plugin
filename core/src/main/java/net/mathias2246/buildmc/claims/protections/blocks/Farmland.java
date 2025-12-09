@@ -28,6 +28,7 @@ import java.util.Objects;
 
 public class Farmland extends Protection {
     public Farmland(@Nullable ConfigurationSection section) {
+        //noinspection SimplifiableConditionalExpression
         super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:destroy_farmland")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 

@@ -33,6 +33,7 @@ import java.util.Objects;
 public class EntityDamage extends Protection {
 
     public EntityDamage(@Nullable ConfigurationSection section) {
+        //noinspection SimplifiableConditionalExpression
         super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:entity_damage")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 

@@ -21,6 +21,7 @@ import java.util.Objects;
 public class ArmorStand extends Protection {
 
     public ArmorStand(@Nullable ConfigurationSection section) {
+        //noinspection SimplifiableConditionalExpression
         super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:armor_stand_manipulation")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 
