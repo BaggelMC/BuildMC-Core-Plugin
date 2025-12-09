@@ -22,14 +22,14 @@ public class ClaimWhitelist {
             case "team" -> {
                 Team team = ClaimManager.getPlayerTeam(player);
                 if (team == null) {
-                    CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.error.not-in-a-team"));
+                    CoreMain.plugin.sendMessage(player, Component.translatable("messages.error.not-in-a-team"));
                     yield List.of();
                 }
                 yield ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
             }
             case "server" -> player.hasPermission("buildmc.admin") ? ClaimManager.serverClaims : List.of();
             default -> {
-                CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.create.invalid-type"));
+                CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.create.invalid-type"));
                 yield List.of();
             }
         };
@@ -40,27 +40,27 @@ public class ClaimWhitelist {
                 .orElse(null);
 
         if (claimId == null) {
-            CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.whitelist.claim-not-found"));
+            CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.whitelist.claim-not-found"));
             return 0;
         }
 
         Player target = Bukkit.getPlayerExact(targetPlayerName);
         if (target == null) {
-            CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.whitelist.player-not-found"));
+            CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.whitelist.player-not-found"));
             return 0;
         }
 
         UUID targetUUID = target.getUniqueId();
         Claim claim = ClaimManager.getClaimByID(claimId);
         if (claim == null) {
-            CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.whitelist.claim-not-found"));
+            CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.whitelist.claim-not-found"));
             return 0;
         }
 
         switch (action.toLowerCase()) {
             case "add" -> {
                 if (claim.getWhitelistedPlayers().contains(targetUUID)) {
-                    CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.whitelist.already-added"));
+                    CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.whitelist.already-added"));
                     return 0;
                 }
 
@@ -75,13 +75,13 @@ public class ClaimWhitelist {
 
 
                 ClaimManager.addPlayerToWhitelist(claimId, targetUUID);
-                CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.whitelist.added"));
+                CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.whitelist.added"));
                 ClaimLogger.logWhitelistAdded(player, name, targetPlayerName, targetUUID.toString());
                 return 1;
             }
             case "remove" -> {
                 if (!claim.getWhitelistedPlayers().contains(targetUUID)) {
-                    CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.whitelist.not-on-list"));
+                    CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.whitelist.not-on-list"));
                     return 0;
                 }
 
@@ -95,12 +95,12 @@ public class ClaimWhitelist {
                 if (event.isCancelled()) return 0;
 
                 ClaimManager.removePlayerFromWhitelist(claimId, targetUUID);
-                CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.whitelist.removed"));
+                CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.whitelist.removed"));
                 ClaimLogger.logWhitelistRemoved(player, name, targetPlayerName, targetUUID.toString());
                 return 1;
             }
             default -> {
-                CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.whitelist.invalid-action"));
+                CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.whitelist.invalid-action"));
                 return 0;
             }
         }

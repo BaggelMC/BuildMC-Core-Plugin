@@ -21,7 +21,7 @@ public class TeleportTimer extends PlayerTimer {
             PlayerSpawnTeleportPreConditionEvent e = new PlayerSpawnTeleportPreConditionEvent(player, player.getWorld().getSpawnLocation());
             Bukkit.getPluginManager().callEvent(e);
             if (e.isCancelled()) {
-                CoreMain.mainClass.sendMessage(player, Component.translatable("messages.spawn-teleport.not-working"));
+                CoreMain.plugin.sendMessage(player, Component.translatable("messages.spawn-teleport.not-working"));
                 return 0;
             }
 
@@ -43,7 +43,7 @@ public class TeleportTimer extends PlayerTimer {
 
         @Override
         public void onExit() {
-            CoreMain.mainClass.sendMessage(player, Component.translatable("messages.teleport.successful"));
+            CoreMain.plugin.sendMessage(player, Component.translatable("messages.teleport.successful"));
             player.teleport(to);
             CoreMain.soundManager.playSound(player, success);
         }
@@ -62,7 +62,7 @@ public class TeleportTimer extends PlayerTimer {
 
         @Override
         protected void onCancel() {
-            CoreMain.mainClass.sendMessage(player, Component.translatable("messages.teleport.cancelled"));
+            CoreMain.plugin.sendMessage(player, Component.translatable("messages.teleport.cancelled"));
             CoreMain.soundManager.playSound(player, mistake);
         }
 
@@ -71,7 +71,7 @@ public class TeleportTimer extends PlayerTimer {
 
             TextReplacementConfig r = TextReplacementConfig.builder().matchLiteral("%seconds%").replacement(String.valueOf(steps-currentStep)).build();
 
-            CoreMain.mainClass.sendPlayerActionBar(
+            CoreMain.plugin.sendPlayerActionBar(
                     player,
                     Message.msg(player,"messages.teleport.counter").replaceText(r)
             );

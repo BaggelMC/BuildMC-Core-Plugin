@@ -63,7 +63,7 @@ public class EntityTame extends Protection {
         Entity entity = event.getEntity();
 
         if (!ClaimManager.isPlayerAllowed(player, getKey(), entity.getLocation())) {
-            CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.tame-entity"));
+            CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.tame-entity"));
             event.setCancelled(true);
         }
     }

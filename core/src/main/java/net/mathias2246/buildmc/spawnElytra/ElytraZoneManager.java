@@ -22,13 +22,13 @@ public class ElytraZoneManager {
 
     public void setPos1(@NotNull Player player, @NotNull Location loc) {
         pos1 = loc;
-        CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.spawn-elytra.pos1-set"));
+        CoreMain.plugin.sendMessage(player, Component.translatable("messages.spawn-elytra.pos1-set"));
         tryCreateZone(player);
     }
 
     public void setPos2(@NotNull Player player, @NotNull Location loc) {
         pos2 = loc;
-        CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.spawn-elytra.pos2-set"));
+        CoreMain.plugin.sendMessage(player, Component.translatable("messages.spawn-elytra.pos2-set"));
         tryCreateZone(player);
     }
 
@@ -36,14 +36,14 @@ public class ElytraZoneManager {
         if (pos1 == null || pos2 == null) return;
 
         if (!Objects.equals(pos1.getWorld(), pos2.getWorld())) {
-            CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.spawn-elytra.error.different-worlds"));
+            CoreMain.plugin.sendMessage(player, Component.translatable("messages.spawn-elytra.error.different-worlds"));
             return;
         }
 
         boundingBox = BoundingBox.of(pos1.toVector(), pos2.toVector());
         world = pos1.getWorld();
         saveZoneToConfig();
-        CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.spawn-elytra.success"));
+        CoreMain.plugin.sendMessage(player, Component.translatable("messages.spawn-elytra.success"));
     }
 
     public void registerZone(@NotNull Location pos1, @NotNull Location pos2, @NotNull World world) {
@@ -77,7 +77,7 @@ public class ElytraZoneManager {
         try {
             CoreMain.config.save(CoreMain.configFile);
         } catch (IOException e) {
-            CoreMain.pluginMain.getLogger().warning("Failed to save config file: " + e.getMessage());
+            CoreMain.plugin.getLogger().warning("Failed to save config file: " + e.getMessage());
         }
     }
 
@@ -87,7 +87,7 @@ public class ElytraZoneManager {
 
         world = Bukkit.getWorld(worldName);
         if (world == null) {
-            CoreMain.pluginMain.getLogger().warning("ElytraZoneManager: World '" + worldName + "' not found.");
+            CoreMain.plugin.getLogger().warning("ElytraZoneManager: World '" + worldName + "' not found.");
             return;
         }
 
@@ -104,7 +104,7 @@ public class ElytraZoneManager {
             pos2 = new Location(world, x2, y2, z2);
             boundingBox = BoundingBox.of(pos1.toVector(), pos2.toVector());
         } catch (Exception e) {
-            CoreMain.pluginMain.getLogger().warning("ElytraZoneManager: Failed to load elytra zone from config: " + e.getMessage());
+            CoreMain.plugin.getLogger().warning("ElytraZoneManager: Failed to load elytra zone from config: " + e.getMessage());
         }
 
     }

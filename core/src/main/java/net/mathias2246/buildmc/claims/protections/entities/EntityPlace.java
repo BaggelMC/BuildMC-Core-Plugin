@@ -66,7 +66,7 @@ public class EntityPlace extends Protection {
 
         if (!ClaimManager.isPlayerAllowed(player, getKey(), entity.getLocation())) {
             event.setCancelled(true);
-            CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.entity-place"));
+            CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.entity-place"));
         }
     }
 }

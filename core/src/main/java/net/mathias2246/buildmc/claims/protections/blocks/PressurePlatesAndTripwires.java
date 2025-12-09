@@ -91,7 +91,7 @@ public class PressurePlatesAndTripwires extends Protection {
 
         if (!ClaimManager.isPlayerAllowed(player, getKey(), block.getLocation())) {
             event.setCancelled(true);
-            CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.interact"));
+            CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.interact"));
         }
     }
 }

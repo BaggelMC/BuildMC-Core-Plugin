@@ -56,7 +56,7 @@ public class Buckets extends Protection {
         if (!isBucketUse) return;
 
         if (!ClaimManager.isPlayerAllowed(player, getKey(), block.getLocation())) {
-            CoreMain.mainClass.sendPlayerActionBar(player,
+            CoreMain.plugin.sendPlayerActionBar(player,
                     Component.translatable("messages.claims.not-accessible.block-place"));
             event.setCancelled(true);
         }
@@ -68,7 +68,7 @@ public class Buckets extends Protection {
         Entity entity = event.getEntity();
 
         if (!ClaimManager.isPlayerAllowed(player, getKey(), entity.getLocation())) {
-            CoreMain.mainClass.sendPlayerActionBar(player,
+            CoreMain.plugin.sendPlayerActionBar(player,
                     Component.translatable("messages.claims.not-accessible.entity-bucket"));
             event.setCancelled(true);
         }

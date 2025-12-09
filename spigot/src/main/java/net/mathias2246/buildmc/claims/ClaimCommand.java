@@ -135,7 +135,7 @@ public class ClaimCommand implements CustomCommand {
 
                                                             Location l = command.args().getByClass("loc", Location.class);
                                                             if (l == null) {
-                                                                CoreMain.mainClass.sendMessage(player, Component.translatable("messages.error.general"));
+                                                                CoreMain.plugin.sendMessage(player, Component.translatable("messages.error.general"));
                                                                 return 0;
                                                             }
 

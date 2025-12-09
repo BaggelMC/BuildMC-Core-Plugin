@@ -1,7 +1,6 @@
 package net.mathias2246.buildmc;
 
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import net.mathias2246.buildmc.api.BuildMcAPI;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.event.lifecycle.BuildMcFinishedLoadingEvent;
 import net.mathias2246.buildmc.api.event.lifecycle.BuildMcRegistryEvent;
@@ -18,6 +17,7 @@ import net.mathias2246.buildmc.database.ClaimTable;
 import net.mathias2246.buildmc.database.DatabaseConfig;
 import net.mathias2246.buildmc.database.DatabaseManager;
 import net.mathias2246.buildmc.event.claims.PlayerCrossClaimBoundariesListener;
+import net.mathias2246.buildmc.status.PlayerStatusUtil;
 import net.mathias2246.buildmc.util.BStats;
 import net.mathias2246.buildmc.util.SoundManager;
 import net.mathias2246.buildmc.util.config.ConfigHandler;
@@ -33,7 +33,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerLoadEvent;
-import org.bukkit.plugin.Plugin;
 import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -43,14 +42,13 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
+import static net.mathias2246.buildmc.commands.disabledCommands.DisableCommands.disableCommand;
+
 @ApiStatus.Internal
 public final class CoreMain {
 
     @Subst("")
-    public static Plugin plugin;
-    public static MainClass mainClass;
-    public static PluginMain pluginMain;
-    public static BuildMcAPI api;
+    public static PluginMain plugin;
     public static FileConfiguration config;
     public static File configFile;
 
@@ -85,11 +83,7 @@ public final class CoreMain {
             plugin.getLogger().warning("CoreMain has been initialized multiple times!");
         }
 
-        // Bruh
         CoreMain.plugin = plugin;
-        CoreMain.mainClass = plugin;
-        CoreMain.pluginMain = plugin;
-        CoreMain.api = plugin;
 
         initializeConfigs();
 
@@ -154,7 +148,7 @@ public final class CoreMain {
         Bukkit.getPluginManager().registerEvents(new Listener() {
             @EventHandler
             public void onServerLoad(ServerLoadEvent event) {
-                Bukkit.getPluginManager().callEvent(new BuildMcRegistryEvent(api));
+                Bukkit.getPluginManager().callEvent(new BuildMcRegistryEvent(plugin));
                 finishLoading();
             }
         }, plugin);
@@ -162,6 +156,9 @@ public final class CoreMain {
 
     public static void finishLoading() {
         if (plugin.getConfig().getBoolean("claims.enabled", true)) {
+
+            protectionsRegistry.initialize();
+
             initializeDatabase();
 
             var dimensionListSect = config.getConfigurationSection("claims.dimensions");
@@ -191,16 +188,35 @@ public final class CoreMain {
 
             registerEvent(new PlayerCrossClaimBoundariesListener());
 
+            customItemsRegistry.initialize();
+
             ClaimLogger.init(plugin);
+        }
+
+        if (config.getBoolean("status.enabled")) {
+            registerEvent(new PlayerStatusUtil());
+        }
+
+        if (config.getBoolean("disable-commands")) {
+            if (config.isList("disabled-commands")) {
+                for (String fullCommand : config.getStringList("disabled-commands")) {
+                    String[] parts = fullCommand.split(":", 2);
+                    if (parts.length == 2) {
+                        disableCommand(parts[0], parts[1]);
+                    } else {
+                        plugin.getLogger().warning("Invalid command format in 'disabled-commands': " + fullCommand);
+                    }
+                }
+            }
         }
 
         new ItemDropTracker(plugin);
 
-        pluginMain.finishLoading();
+        plugin.finishLoading();
 
         isInitialized = true;
 
-        Bukkit.getPluginManager().callEvent(new BuildMcFinishedLoadingEvent(api));
+        Bukkit.getPluginManager().callEvent(new BuildMcFinishedLoadingEvent(plugin));
     }
 
     public static void registerEvent(@NotNull Listener event) {

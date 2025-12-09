@@ -123,10 +123,10 @@ public class ClaimEditMenu {
                     CoreMain.soundManager.playSound(player, UIUtil.CLICK_SOUND);
                     boolean removed = ClaimManager.removeClaimById(claim.getId());
                     if (removed) {
-                        CoreMain.mainClass.sendMessage(player,
+                        CoreMain.plugin.sendMessage(player,
                                 Component.translatable("messages.claims.ui.edit-menu.delete-confirm-menu.success"));
                     } else {
-                        CoreMain.mainClass.sendMessage(player,
+                        CoreMain.plugin.sendMessage(player,
                                 Component.translatable("messages.claims.ui.edit-menu.delete-confirm-menu.fail"));
                     }
                     player.closeInventory();

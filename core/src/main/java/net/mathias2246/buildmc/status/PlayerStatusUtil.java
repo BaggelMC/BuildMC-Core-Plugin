@@ -30,10 +30,10 @@ public class PlayerStatusUtil implements Listener {
     public static void setPlayerStatus(@NotNull Player player, String status, boolean join) {
         if (!doesStatusExist(status)) {
             if (join) {
-                CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.status.join-doesn't-exist"));
+                CoreMain.plugin.sendMessage(player, Component.translatable("messages.status.join-doesn't-exist"));
                 player.getPersistentDataContainer().remove(PLAYER_STATUS_PDC);
             } else {
-                CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.status.not-found"));
+                CoreMain.plugin.sendMessage(player, Component.translatable("messages.status.not-found"));
                 CoreMain.soundManager.playSound(player, SoundUtil.mistake);
             }
             return;
@@ -46,7 +46,7 @@ public class PlayerStatusUtil implements Listener {
             StatusChangeEvent e = new StatusChangeEvent(player, old, s);
             Bukkit.getPluginManager().callEvent(e);
             if (e.isCancelled()) {
-                CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.status.cannot-set"));
+                CoreMain.plugin.sendMessage(player, Component.translatable("messages.status.cannot-set"));
                 return;
             } else if (e.getNewStatus() == null) {
                 CoreMain.statusManager.forceRemovePlayerStatus(player);
@@ -58,9 +58,9 @@ public class PlayerStatusUtil implements Listener {
         if (!allowed.equals(StatusInstance.AllowStatus.ALLOW)) {
             switch (allowed) {
                 case NOT_IN_TEAM ->
-                        CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.status.not-in-team"));
+                        CoreMain.plugin.sendMessage(player, Component.translatable("messages.status.not-in-team"));
                 case MISSING_PERMISSION ->
-                        CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.status.no-permission"));
+                        CoreMain.plugin.sendMessage(player, Component.translatable("messages.status.no-permission"));
             }
             if (join) {
                 player.getPersistentDataContainer().remove(PLAYER_STATUS_PDC);

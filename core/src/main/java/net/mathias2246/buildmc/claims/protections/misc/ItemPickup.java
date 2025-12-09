@@ -71,7 +71,7 @@ public class ItemPickup extends Protection {
 
         if (!ClaimManager.isPlayerAllowed(player, getKey(), item.getLocation())) {
             event.setCancelled(true);
-            CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.item-pickup"));
+            CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.item-pickup"));
         }
 
     }

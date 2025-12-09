@@ -15,12 +15,12 @@ public class DisableCommandsListener implements Listener {
         if (CoreMain.config.getBoolean("disable-reload-command") &&
                 (msg.equals("/reload") || msg.equals("/rl") || msg.equals("/bukkit:reload"))) {
             event.setCancelled(true);
-            CoreMain.pluginMain.sendMessage(event.getPlayer(), Component.translatable("messages.error.command-disabled"));
+            CoreMain.plugin.sendMessage(event.getPlayer(), Component.translatable("messages.error.command-disabled"));
         }
         else if (CoreMain.config.getBoolean("disable-seed-command") &&
                 (msg.equals("/seed") || msg.equals("/minecraft:seed"))) {
             event.setCancelled(true);
-            CoreMain.pluginMain.sendMessage(event.getPlayer(), Component.translatable("messages.error.command-disabled"));
+            CoreMain.plugin.sendMessage(event.getPlayer(), Component.translatable("messages.error.command-disabled"));
         }
     }
 

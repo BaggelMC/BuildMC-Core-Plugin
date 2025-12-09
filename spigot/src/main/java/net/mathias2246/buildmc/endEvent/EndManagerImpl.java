@@ -87,7 +87,7 @@ public class EndManagerImpl implements EndManager {
 
         Component msg = Component.translatable(announcementKey);
         for (Player player : Bukkit.getOnlinePlayers()) {
-            CoreMain.mainClass.sendMessage(player, msg);
+            CoreMain.plugin.sendMessage(player, msg);
         }
     }
 }

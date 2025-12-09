@@ -68,7 +68,7 @@ public class FrostWalker extends Protection {
 
         if (!ClaimManager.isPlayerAllowed(player, getKey(), event.getBlock().getLocation())) {
             event.setCancelled(true);
-            CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.frostwalker"));
+            CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.frostwalker"));
         }
     }
 }

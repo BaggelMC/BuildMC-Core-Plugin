@@ -57,7 +57,7 @@ public class HangingEntities extends Protection {
 
         if (!ClaimManager.isPlayerAllowed(player, getKey(), event.getEntity().getLocation())) {
             event.setCancelled(true);
-            CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.entity-damage"));
+            CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.entity-damage"));
         }
     }
 
@@ -69,7 +69,7 @@ public class HangingEntities extends Protection {
 
         if (!ClaimManager.isPlayerAllowed(player, getKey(), event.getEntity().getLocation())) {
             event.setCancelled(true);
-            CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.block-place"));
+            CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.block-place"));
         }
     }
 

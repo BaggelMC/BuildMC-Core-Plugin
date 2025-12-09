@@ -63,7 +63,7 @@ public class ItemFrameInteractions extends Protection {
         Player player = event.getPlayer();
         if (!ClaimManager.isPlayerAllowed(player, getKey(), event.getRightClicked().getLocation())) {
             event.setCancelled(true);
-            CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.entity-container"));
+            CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.entity-container"));
         }
     }
 }
