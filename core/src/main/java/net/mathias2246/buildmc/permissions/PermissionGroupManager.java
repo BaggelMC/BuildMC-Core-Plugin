@@ -3,6 +3,7 @@ package net.mathias2246.buildmc.permissions;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.permissions.PermissionGroup;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.persistence.PersistentDataHolder;
 import org.bukkit.persistence.PersistentDataType;
@@ -17,14 +18,27 @@ public final class PermissionGroupManager {
     private static final NamespacedKey GROUPS_KEY =
             new NamespacedKey(CoreMain.plugin, "permission_groups");
 
+    private static final String DEFAULT_GROUP = "default";
+
+
     /**
      * Reads a player's assigned group IDs from PDC
      */
     public static @NotNull List<String> getAssignedGroups(@NotNull PersistentDataHolder holder) {
         String stored = holder.getPersistentDataContainer().get(GROUPS_KEY, PersistentDataType.STRING);
-        if (stored == null || stored.isEmpty()) return Collections.emptyList();
-        return Arrays.asList(stored.split(","));
+
+        List<String> groups;
+        if (stored == null || stored.isEmpty()) {
+            groups = new ArrayList<>();
+        } else {
+            groups = new ArrayList<>(Arrays.asList(stored.split(",")));
+        }
+
+        if (!groups.contains(DEFAULT_GROUP)) groups.add(DEFAULT_GROUP);
+
+        return groups;
     }
+
 
     /**
      * Writes assigned group IDs back into PDC
@@ -55,11 +69,17 @@ public final class PermissionGroupManager {
      * Remove a permission group from a player
      */
     public static void removeGroup(@NotNull PersistentDataHolder holder, @NotNull String groupId) {
+
+        if (groupId.equalsIgnoreCase(DEFAULT_GROUP)) {
+            return; // default group can never be removed
+        }
+
         List<String> groups = new ArrayList<>(getAssignedGroups(holder));
         if (groups.remove(groupId)) {
             setAssignedGroups(holder, groups);
         }
     }
+
 
     /**
      * Returns the actual PermissionGroup objects.
@@ -91,7 +111,12 @@ public final class PermissionGroupManager {
     public static @NotNull Map<String, Boolean> recalculatePermissions(
             @NotNull PersistentDataHolder holder
     ) {
-        List<PermissionGroup> groups = resolveGroups(holder);
+        List<PermissionGroup> groups = new ArrayList<>(resolveGroups(holder));
+
+        PermissionGroup defaultGroup = CoreMain.permissionGroupRegistry.get(Objects.requireNonNull(idToNamespacedKey(DEFAULT_GROUP)));
+        if (defaultGroup != null && groups.stream().noneMatch(g -> g.getId().equalsIgnoreCase(DEFAULT_GROUP))) {
+            groups.add(defaultGroup);
+        }
 
         // Sort by priority, lowest first
         groups.sort(Comparator.comparingInt(PermissionGroup::getPriority));
@@ -106,7 +131,6 @@ public final class PermissionGroupManager {
             }
         }
 
-        // If holder is Permissible, apply permissions into Bukkit's system
         if (holder instanceof Permissible permissible) {
             applyPermissions(permissible, result);
         }
@@ -122,7 +146,6 @@ public final class PermissionGroupManager {
             @NotNull Permissible permissible,
             @NotNull Map<String, Boolean> permissions
     ) {
-        // Clear old attachments
         permissible.getEffectivePermissions().forEach(info -> {
             if (info.getAttachment() != null) info.getAttachment().remove();
         });
@@ -131,6 +154,10 @@ public final class PermissionGroupManager {
 
         for (Map.Entry<String, Boolean> perm : permissions.entrySet()) {
             attachment.setPermission(perm.getKey(), perm.getValue());
+        }
+
+        if (permissible instanceof Player player) {
+            player.updateCommands();
         }
     }
 

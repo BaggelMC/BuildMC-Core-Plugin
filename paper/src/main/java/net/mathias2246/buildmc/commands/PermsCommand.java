@@ -30,6 +30,7 @@ public class PermsCommand implements CustomCommand {
                             var sender = ctx.getSource().getSender();
                             String groups = CoreMain.permissionGroupRegistry.stream()
                                     .map(PermissionGroup::getId)
+                                    .filter(id -> !id.equalsIgnoreCase("default"))
                                     .collect(Collectors.joining(", "));
                             sender.sendMessage("Groups: " + groups);
                             return 1;
@@ -50,6 +51,7 @@ public class PermsCommand implements CustomCommand {
                                                             // suggest all groups
                                                             CoreMain.permissionGroupRegistry.stream()
                                                                     .map(PermissionGroup::getId)
+                                                                    .filter(id -> !id.equalsIgnoreCase("default"))
                                                                     .forEach(builder::suggest);
                                                             return builder.buildFuture();
                                                         })
@@ -95,7 +97,9 @@ public class PermsCommand implements CustomCommand {
                                                             Player target = Bukkit.getPlayerExact(playerName);
                                                             if (target != null) {
                                                                 List<String> assigned = PermissionGroupManager.getAssignedGroups(target);
-                                                                assigned.forEach(builder::suggest);
+                                                                assigned.stream()
+                                                                        .filter(id -> !id.equalsIgnoreCase("default"))
+                                                                        .forEach(builder::suggest);
                                                             }
                                                             return builder.buildFuture();
                                                         })
@@ -107,6 +111,11 @@ public class PermsCommand implements CustomCommand {
                                                             Player target = Bukkit.getPlayerExact(playerName);
                                                             if (target == null) {
                                                                 sender.sendMessage("Player not found.");
+                                                                return 0;
+                                                            }
+
+                                                            if (groupId.equalsIgnoreCase("default")) {
+                                                                sender.sendMessage("You cannot remove the default group.");
                                                                 return 0;
                                                             }
 

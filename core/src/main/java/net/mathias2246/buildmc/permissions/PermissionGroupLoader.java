@@ -72,23 +72,36 @@ public final class PermissionGroupLoader {
     }
 
     private void ensureRequiredGroups() {
-        addIfMissing("default", 0, Map.of());
-        addIfMissing("operator", 99999, Map.of("*", true));
+        createGroupFileIfMissing("default", 0, Map.of("buildmc.player", true, "buildmc.allow-spawn-teleport", true));
+        // createGroupFileIfMissing("operator", 99999, Map.of("*", true));
     }
 
-    private void addIfMissing(String id, int priority, Map<String, Boolean> perms) {
-        NamespacedKey key = PermissionGroupManager.idToNamespacedKey(id);
-        if (key == null) {
-            CoreMain.plugin.getLogger().severe("Cannot create NamespacedKey for group ID: " + id);
-            return;
+    @SuppressWarnings("SameParameterValue")
+    private void createGroupFileIfMissing(String id, int priority, Map<String, Boolean> perms) {
+        File file = new File(groupFolder, id + ".yml");
+        if (file.exists()) return;
+
+        try {
+            YamlConfiguration cfg = new YamlConfiguration();
+
+            cfg.set("name", id);
+            cfg.set("priority", priority);
+
+            if (!perms.isEmpty()) {
+                for (var entry : perms.entrySet()) {
+                    cfg.set("permissions." + entry.getKey(), entry.getValue());
+                }
+            }
+
+            cfg.save(file);
+
+            CoreMain.plugin.getLogger().info(
+                    "Generated missing required group file: " + file.getName()
+            );
+        } catch (Exception e) {
+            CoreMain.plugin.getLogger().severe(
+                    "Failed to generate required group file '" + id + "': " + e.getMessage()
+            );
         }
-
-        if (registry.get(key) != null) return;
-
-        registry.addEntry(new PermissionGroup(key, id, priority, perms));
-
-        CoreMain.plugin.getLogger().info(
-                "Generated missing required group '" + id + "' with priority " + priority
-        );
     }
 }
