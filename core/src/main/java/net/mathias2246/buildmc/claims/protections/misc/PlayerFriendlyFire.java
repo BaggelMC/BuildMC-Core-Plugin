@@ -84,7 +84,7 @@ public class PlayerFriendlyFire extends Protection {
             // If victim is allowed but attacker is not allowed, cancel the damage
             if (victimAllowed && !attackerAllowed) {
                 event.setCancelled(true);
-                CoreMain.mainClass.sendPlayerActionBar(attacker, Component.translatable("messages.claims.not-accessible.entity-damage"));
+                CoreMain.plugin.sendPlayerActionBar(attacker, Component.translatable("messages.claims.not-accessible.entity-damage"));
             }
         }
     }

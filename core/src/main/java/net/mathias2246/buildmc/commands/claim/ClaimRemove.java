@@ -69,7 +69,7 @@ public class ClaimRemove {
 
         Claim claim = ClaimManager.getClaimByID(claimId);
         if (claim == null) {
-            CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.remove.failed"));
+            CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.remove.failed"));
             return 0;
         }
 
