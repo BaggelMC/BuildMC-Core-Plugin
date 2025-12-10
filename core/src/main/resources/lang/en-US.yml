@@ -1,4 +1,6 @@
 messages:
+  rules: "<gray>==============================</gray>\n\n<gold>Check out the full rules <blue><click:open_url:'https://baggel.de/projects/buildmc/rules/'>[HERE]</click></blue>!</gold>\n\n<gray>==============================</gray>"
+
   spawn-elytra:
     boost-hint: "Press <key:key.swapOffhand> to boost!"
     firework-disabled-hint: "<red>Firework boost is disabled for spawn elytra.</red>"

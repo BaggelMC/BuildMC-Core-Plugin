@@ -1,4 +1,6 @@
 messages:
+  rules: "<gray>==============================</gray>\n\n<gold>Schau dir die vollständigen Regeln <blue><click:open_url:'https://baggel.de/projects/buildmc/rules/'>[HIER]</click></blue> an!</gold>\n\n<gray>==============================</gray>"
+
   spawn-elytra:
     boost-hint: Drücke <key:key.swapOffhand> um zu beschleunigen!
     firework-disabled-hint: <red>Raketen sind für Spawn-Elytren deaktiviert.</red>
@@ -45,6 +47,13 @@ messages:
     not-in-a-team: <red>Du musst in einem Team sein, um dies zu tun.</red>
     command-disabled: <red>Dieser Befehl wurde deaktiviert.</red>
     sql: <red>Ein SQL Fehler ist aufgetretten.</red>
+
+  teleport:
+    not-working: "<red>Du kannst gerade '/spawn' nicht verwenden!</red>"
+    cancelled: "<red>Dein teleport wurde abgebrochen.</red>"
+    successful: "<green>Du wurdest erfolgreich teleportiert!</green>"
+    counter: "<white>Bewege dich nicht für %seconds% sekunden...</white>"
+
   claims:
     tool:
       tool-name: Claim-Ecken auswählen
