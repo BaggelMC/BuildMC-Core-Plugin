@@ -31,7 +31,7 @@ public class StatusConfig extends YamlConfigurationManager {
             var s = configuration.getConfigurationSection(key);
             if (s == null) return;
             var v = s.getValues(false);
-            reg.addEntry(StatusInstance.deserialize(v, key));
+            reg.addEntry(StatusInstance.deserialize(v, key.toLowerCase()));
 
         }
     }

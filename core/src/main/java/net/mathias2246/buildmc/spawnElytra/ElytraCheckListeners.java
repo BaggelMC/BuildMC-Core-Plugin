@@ -10,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityMountEvent;
 import org.bukkit.event.entity.EntityToggleGlideEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
@@ -89,5 +90,10 @@ public record ElytraCheckListeners(ElytraZoneManager zoneManager, boolean boostE
         if (isSurvival(oldMode) && !isSurvival(newMode) && isUsingSpawnElytra(player)) {
             stopFlying(player);
         }
+    }
+
+    @EventHandler
+    public void onDeath(PlayerDeathEvent event) {
+        stopFlying(event.getEntity());
     }
 }
