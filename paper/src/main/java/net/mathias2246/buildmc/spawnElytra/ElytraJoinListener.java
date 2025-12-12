@@ -5,33 +5,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 
 import static net.mathias2246.buildmc.Main.*;
 import static net.mathias2246.buildmc.spawnElytra.SpawnElytraUtil.*;
 
 public record ElytraJoinListener(boolean boostEnabled, double multiplyValue) implements Listener {
 
-    // Fixes player state not resetting when reconnecting & Starts elytra runnable
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        player.getScheduler().runAtFixedRate(
-                plugin,
-                (task) -> {
-                    if (!isSurvival(player)) return;
-
-                    if (isUsingSpawnElytra(player) && !player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType().isAir()) {
-                        stopFlying(player);
-                    } else if (!player.isGliding()) {
-                        boolean inZone = zoneManager.isInZone(player);
-                        player.setAllowFlight(inZone);
-                    }
-                },
-                null,
-                1,
-                3
-        );
+        startElytraStateTask(player);
 
         if (!config.getBoolean("spawn-elytra.on-join-elytra-check", true)) return;
 
@@ -40,6 +25,44 @@ public record ElytraJoinListener(boolean boostEnabled, double multiplyValue) imp
         if (isSurvival(player)) {
             player.setAllowFlight(false);
         }
-
     }
+
+    // Reattach runnable to new Player object
+    @EventHandler
+    public void onRespawn(PlayerRespawnEvent event) {
+        Player player = event.getPlayer();
+
+        startElytraStateTask(player);
+
+        stopFlying(player);
+
+        if (isSurvival(player)) {
+            player.setAllowFlight(false);
+        }
+    }
+
+
+    private void startElytraStateTask(Player player) {
+        player.getScheduler().runAtFixedRate(
+                plugin,
+                (task) -> {
+                    if (!isSurvival(player)) return;
+
+                    if (isUsingSpawnElytra(player) &&
+                            !player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType().isAir()) {
+
+                        stopFlying(player);
+
+                    } else if (!player.isGliding()) {
+
+                        boolean inZone = zoneManager.isInZone(player);
+                        player.setAllowFlight(inZone);
+                    }
+                },
+                null,
+                1,
+                3
+        );
+    }
+
 }
