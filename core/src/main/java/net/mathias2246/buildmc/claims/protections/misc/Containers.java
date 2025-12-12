@@ -23,6 +23,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTakeLecternBookEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -135,4 +136,46 @@ public class Containers extends Protection {
             CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.interact"));
         }
     }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onBlockInteract(PlayerInteractEvent event) {
+        if (event.getClickedBlock() == null) return;
+
+        var block = event.getClickedBlock();
+        var player = event.getPlayer();
+        Material type = block.getType();
+
+        switch (event.getAction()) {
+            case RIGHT_CLICK_BLOCK -> {}
+            default -> { return; }
+        }
+
+        boolean isChiseledBookshelf = type == Material.CHISELED_BOOKSHELF;
+        boolean isDecoratedPot = type == Material.DECORATED_POT;
+        boolean isShelf = type.name().endsWith("_SHELF") || type.name().equals("SHELF");
+
+        if (!isChiseledBookshelf && !isDecoratedPot && !isShelf)
+            return;
+
+        Claim claim;
+        try {
+            claim = ClaimManager.getClaim(block.getLocation());
+        } catch (SQLException e) {
+            CoreMain.plugin.getLogger().severe("SQL error while getting claim: " + e);
+            return;
+        }
+
+        if (claim == null) return;
+
+        if (claim.getWhitelistedPlayers().contains(player.getUniqueId())) return;
+
+        if (!ClaimManager.isPlayerAllowed(player, getKey(), claim)) {
+            event.setCancelled(true);
+            CoreMain.plugin.sendPlayerActionBar(
+                    player,
+                    Component.translatable("messages.claims.not-accessible.container")
+            );
+        }
+    }
+
 }
