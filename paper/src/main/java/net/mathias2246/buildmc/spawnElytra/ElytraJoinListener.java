@@ -1,6 +1,7 @@
 package net.mathias2246.buildmc.spawnElytra;
 
-import org.bukkit.block.BlockFace;
+import org.bukkit.Location;
+import org.bukkit.Tag;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -48,8 +49,11 @@ public record ElytraJoinListener(boolean boostEnabled, double multiplyValue) imp
                 (task) -> {
                     if (!isSurvival(player)) return;
 
+                    Location blockCheck = player.getLocation();
+                    blockCheck.setY(blockCheck.getY()-0.2);
+
                     if (isUsingSpawnElytra(player) &&
-                            !player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType().isAir()) {
+                            !Tag.REPLACEABLE.isTagged(blockCheck.getBlock().getType())) {
 
                         stopFlying(player);
 

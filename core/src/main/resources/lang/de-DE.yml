@@ -1,6 +1,24 @@
 messages:
   rules: "<gray>==============================</gray>\n\n<gold>Schau dir die vollständigen Regeln <blue><click:open_url:'https://baggel.de/projects/buildmc/rules/'>[HIER]</click></blue> an!</gold>\n\n<gray>==============================</gray>"
 
+  guides:
+
+    guide-not-found: "<red>Diesen Guide gibt es nicht!</red>"
+
+    commands: |-
+      ===================== <blue>Commands</blue> =====================
+      <gray>Hier ist eine Liste an neuen Befehlen die du nutzen kannst:</gray>
+
+      <gray>- </gray><gold>/rules</gold>  | Gibt dir die Regeln des Servers
+      <gray>- </gray><gold>/spawn</gold> | Teleportiert dich zum Weltspawn
+      <gray>- </gray><gold>/claim</gold>   | Verwalte deine Claims
+      <gray>- </gray><gold>/status</gold> | Setze oder entferne deinen Status
+    spawn-elytra: |-
+      ==================== <blue>Spawn-Elytra</blue> ====================
+      Wenn du in einem Bereich bist indem die Spawn-Elytra aktiv ist
+      kannst du mit einem <gold>doppel Sprung fliegen</gold>, und wenn 
+      du <gold><key:key.swapOffhand> drückst wirst du geboostet</gold>.
+
   spawn-elytra:
     boost-hint: Drücke <key:key.swapOffhand> um zu beschleunigen!
     firework-disabled-hint: <red>Raketen sind für Spawn-Elytren deaktiviert.</red>

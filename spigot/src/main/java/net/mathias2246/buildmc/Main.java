@@ -13,10 +13,7 @@ import net.mathias2246.buildmc.claims.ClaimCommand;
 import net.mathias2246.buildmc.claims.ClaimManagerImpl;
 import net.mathias2246.buildmc.claims.tool.ClaimToolParticles;
 import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
-import net.mathias2246.buildmc.commands.BroadcastCommandPlatform;
-import net.mathias2246.buildmc.commands.BuildMcCommand;
-import net.mathias2246.buildmc.commands.CommandRegister;
-import net.mathias2246.buildmc.commands.RulesCommandPLatform;
+import net.mathias2246.buildmc.commands.*;
 import net.mathias2246.buildmc.endEvent.EndListener;
 import net.mathias2246.buildmc.endEvent.EndManagerImpl;
 import net.mathias2246.buildmc.platform.SoundManagerSpigotImpl;
@@ -212,6 +209,10 @@ public final class Main extends PluginMain {
 
         if (config.getBoolean("claims.enabled", true)) {
             CommandRegister.register(new ClaimCommand());
+        }
+
+        if (GuidesCommand.enabled) {
+            CommandRegister.register(new GuideCommand());
         }
 
         if (config.getBoolean("spawn-teleport.enabled", true)) {

@@ -1,6 +1,24 @@
 messages:
   rules: "<gray>==============================</gray>\n\n<gold>Check out the full rules <blue><click:open_url:'https://baggel.de/projects/buildmc/rules/'>[HERE]</click></blue>!</gold>\n\n<gray>==============================</gray>"
 
+  guides:
+
+    guide-not-found: "<red>This guide doesn't exist!</red>"
+
+    commands: |-
+      ==================== <blue>Commands</blue> ====================
+      <gray>Here is a list of custom commands you can use:</gray>
+      
+      <gray>- </gray><gold>/rules</gold>  | Gives you the rules of the server
+      <gray>- </gray><gold>/spawn</gold> | Teleports you to the worldspawn
+      <gray>- </gray><gold>/claim</gold>   | Manage your claims
+      <gray>- </gray><gold>/status</gold> | Set or Remove your status
+    spawn-elytra: |-
+      ==================== <blue>Spawn-Elytra</blue> ====================
+      When you are in an area where the spawn-elytra is enabled.
+      You can <gold>double jump to glide</gold>,
+      and press <gold><key:key.swapOffhand> to boost</gold> yourself of the ground.
+
   spawn-elytra:
     boost-hint: "Press <key:key.swapOffhand> to boost!"
     firework-disabled-hint: "<red>Firework boost is disabled for spawn elytra.</red>"

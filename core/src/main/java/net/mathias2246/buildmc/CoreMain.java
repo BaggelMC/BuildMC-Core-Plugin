@@ -1,6 +1,7 @@
 package net.mathias2246.buildmc;
 
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.event.lifecycle.BuildMcFinishedLoadingEvent;
 import net.mathias2246.buildmc.api.event.lifecycle.BuildMcRegistryEvent;
@@ -13,6 +14,7 @@ import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.claims.protections.blocks.*;
 import net.mathias2246.buildmc.claims.protections.entities.*;
 import net.mathias2246.buildmc.claims.protections.misc.*;
+import net.mathias2246.buildmc.commands.GuidesCommand;
 import net.mathias2246.buildmc.database.ClaimTable;
 import net.mathias2246.buildmc.database.DatabaseConfig;
 import net.mathias2246.buildmc.database.DatabaseManager;
@@ -23,10 +25,7 @@ import net.mathias2246.buildmc.util.SoundManager;
 import net.mathias2246.buildmc.util.config.ConfigHandler;
 import net.mathias2246.buildmc.util.config.ConfigurationValidationException;
 import net.mathias2246.buildmc.util.language.LanguageManager;
-import net.mathias2246.buildmc.util.registry.BaseRegistry;
-import net.mathias2246.buildmc.util.registry.DefaultRegistries;
-import net.mathias2246.buildmc.util.registry.DeferredRegistry;
-import net.mathias2246.buildmc.util.registry.RegistriesHolder;
+import net.mathias2246.buildmc.util.registry.*;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -71,6 +70,10 @@ public final class CoreMain {
 
     public static DeferredRegistry<AbstractCustomItem> customItemsRegistry;
 
+    public static BaseRegistry<KeyHolder<Component>> guides;
+
+    public static GuidesCommand guideCommand;
+
     public static StatusManager statusManager;
 
     public static boolean isInitialized() {
@@ -95,7 +98,10 @@ public final class CoreMain {
 
         config = plugin.getConfig();
 
+        guides = (BaseRegistry<KeyHolder<Component>>) registriesHolder.addRegistry(DefaultRegistries.GUIDES.toString(), new BaseRegistry<KeyHolder<Component>>());
 
+        guideCommand = new GuidesCommand(plugin, "guides.yml");
+        GuidesCommand.enabled = guideCommand.configuration.getBoolean("enabled", true);
 
         statusesRegistry = (BaseRegistry<StatusInstance>) registriesHolder.addRegistry(DefaultRegistries.STATUSES.toString(), new BaseRegistry<StatusInstance>());
 
