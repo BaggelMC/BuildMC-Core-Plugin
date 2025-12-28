@@ -48,7 +48,7 @@ public class PlayerCrossClaimBoundariesListener implements Listener {
             ));
         }
 
-        // Fire enter event only if player is entering a claim
+        // Fire enter event only if the player is entering a claim
         if (newClaim != null) {
             plugin.getServer().getPluginManager().callEvent(new PlayerEnterClaimEvent(
                     player,

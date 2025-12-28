@@ -24,10 +24,10 @@ import java.util.UUID;
 public interface ClaimManager {
 
     /**
-     * Gets the current scoreboard team of a player.
+     * Gets the current scoreboard {@link Team} of a player.
      *
      * @param player the player
-     * @return the team the player is in, or {@code null} if none
+     * @return the {@link Team} the player is in, or {@code null} if none
      */
     @Nullable Team getPlayerTeam(@NotNull Player player);
 
@@ -41,6 +41,19 @@ public interface ClaimManager {
      * @return {@code true} if, claims can be created by anyone in the given world.
      * */
     boolean isWorldAllowed(@NotNull World world);
+
+    /**
+     * Checks whether a player is allowed to be inside the given claim.
+     * If the player is not the owner, not whitelisted or doesn't bypass protections, he won't be allowed.
+     * <p>
+     *     This will only check on {@link ClaimType#PLAYER} or {@link ClaimType#SERVER}.
+     * </p>
+     *
+     * @param claim       the {@link Claim} to check
+     * @param player      the player
+     * @return {@code true} if the player is allowed, otherwise {@code false}
+     */
+    boolean isPlayerAllowedInClaim(@Nullable Claim claim, @NotNull Player player);
 
     /**
      * Checks whether a player is allowed to perform an action at a specific location
@@ -101,7 +114,7 @@ public interface ClaimManager {
      * Checks if a claim has a specific protection.
      *
      * @param claim      the claim
-     * @param protection the protection (protection) to check
+     * @param protection the protection to check
      * @return {@code true} if the claim has the protection
      */
     boolean hasProtection(Claim claim, NamespacedKey protection);
@@ -144,12 +157,12 @@ public interface ClaimManager {
      * @param pos2 opposite corner location
      * @return list of claims in the area
      * @throws SQLException              if a database error occurs
-     * @throws IllegalArgumentException  if any of the locations are null, or they're not in the same world.
+     * @throws IllegalArgumentException  if any of the {@link Location}s are null, or they're not in the same world.
      */
     List<Claim> getClaimsInArea(Location pos1, Location pos2) throws SQLException, IllegalArgumentException;
 
     /**
-     * Checks if a chunk is claimed.
+     * Checks if a {@link Chunk} is claimed.
      *
      * @param chunk the chunk
      * @return {@code true} if the chunk is claimed
@@ -157,7 +170,7 @@ public interface ClaimManager {
     boolean isClaimed(Chunk chunk);
 
     /**
-     * Gets the claim ID of a claimed chunk.
+     * Gets the claim ID of a claimed {@link Chunk}.
      *
      * @param chunk the chunk
      * @return the claim ID, or {@code null} if unclaimed
@@ -165,7 +178,7 @@ public interface ClaimManager {
     @Nullable Long getClaimId(Chunk chunk);
 
     /**
-     * Gets the claim associated with a chunk.
+     * Gets the claim associated with a {@link Chunk}.
      *
      * @param chunk the chunk
      * @return the claim
@@ -209,19 +222,19 @@ public interface ClaimManager {
      * @param pos1      first corner location
      * @param pos2      opposite corner location
      * @return {@code true} if the claim was created successfully
-     * @throws IllegalArgumentException  if any of the locations are null, or they're not in the same world.
+     * @throws IllegalArgumentException  if any of the {@link Location}s are null, or they're not in the same world.
      */
     boolean tryClaimPlayerArea(@NotNull Player player, String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
 
     /**
-     * Attempts to create a claim for a team between two positions.
+     * Attempts to create a claim for a {@link Team} between two positions.
      *
      * @param team      the team
      * @param claimName the claim name
      * @param pos1      first corner location
      * @param pos2      opposite corner location
      * @return {@code true} if the claim was created successfully
-     * @throws IllegalArgumentException  if any of the locations are null, or they're not in the same world.
+     * @throws IllegalArgumentException  if any of the {@link Location}s are null, or they're not in the same world.
      */
     boolean tryClaimTeamArea(@NotNull Team team, String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
 
@@ -232,14 +245,14 @@ public interface ClaimManager {
      * @param pos1      first corner location
      * @param pos2      opposite corner location
      * @return {@code true} if the claim was created successfully
-     * @throws IllegalArgumentException if any of the locations are null, or they're not in the same world
+     * @throws IllegalArgumentException if any of the {@link Location}s are null, or they're not in the same world
      */
     boolean tryClaimServerArea(String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
 
     /**
      * Attempts to create a placeholder claim between two positions.
      * <p>
-     * A placeholder claim may be used to reserve an area temporarily
+     * A {@link ClaimType#PLACEHOLDER} claim may be used to reserve an area temporarily
      * without assigning it to a player, team, or the server.
      * </p>
      *
@@ -247,7 +260,7 @@ public interface ClaimManager {
      * @param pos1      first corner location
      * @param pos2      opposite corner location
      * @return {@code true} if the claim was created successfully
-     * @throws IllegalArgumentException if any of the locations are null, or they're not in the same world
+     * @throws IllegalArgumentException if any of the {@link Location}s are null, or they're not in the same world
      */
     boolean tryClaimPlaceholderArea(String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
 

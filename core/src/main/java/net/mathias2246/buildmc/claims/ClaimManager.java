@@ -217,6 +217,33 @@ public class ClaimManager {
         }
     }
 
+    public static boolean isPlayerAllowedInClaim(@Nullable Claim claim, @NotNull Player player) {
+        if (player.hasPermission("buildmc.bypass-claims")) return true;
+
+        // Allow if no claim found
+        if (claim == null) return true;
+
+        ClaimType type = claim.getType();
+
+        // Allow if claim is a placeholder
+        if (type == ClaimType.PLACEHOLDER || type == ClaimType.SERVER) return true;
+
+        // Allow if player is explicitly whitelisted
+        if (claim.getWhitelistedPlayers().contains(player.getUniqueId())) return true;
+
+
+        String playerId = player.getUniqueId().toString();
+
+        return switch (type) {
+            case PLAYER -> Objects.equals(claim.getOwnerId(), playerId);
+            case TEAM -> {
+                Team playerTeam = getPlayerTeam(player);
+                yield (playerTeam != null && Objects.equals(playerTeam.getName(), claim.getOwnerId()));
+            }
+            default -> true;
+        };
+    }
+
     public static boolean hasAnyProtection(Claim claim, Collection<NamespacedKey> protections) {
         for (NamespacedKey key : protections) {
             if (claim.hasProtection(key)) return true;

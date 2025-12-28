@@ -9,6 +9,7 @@ import net.mathias2246.buildmc.util.PlayerTimer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +19,7 @@ public class TeleportTimer extends PlayerTimer {
         public static final int seconds = CoreMain.plugin.getConfig().getInt("spawn-teleport.wait-for");
 
         public static int teleportCommandLogic(@NotNull Player player) {
-            PlayerSpawnTeleportPreConditionEvent e = new PlayerSpawnTeleportPreConditionEvent(player, player.getWorld().getSpawnLocation());
+            PlayerSpawnTeleportPreConditionEvent e = new PlayerSpawnTeleportPreConditionEvent(player, Bukkit.getWorlds().getFirst().getSpawnLocation());
             Bukkit.getPluginManager().callEvent(e);
             if (e.isCancelled()) {
                 CoreMain.plugin.sendMessage(player, Component.translatable("messages.spawn-teleport.not-working"));
@@ -44,7 +45,7 @@ public class TeleportTimer extends PlayerTimer {
         @Override
         public void onExit() {
             CoreMain.plugin.sendMessage(player, Component.translatable("messages.teleport.successful"));
-            player.teleport(to);
+            player.teleport(to, PlayerTeleportEvent.TeleportCause.PLUGIN);
             CoreMain.soundManager.playSound(player, success);
         }
 

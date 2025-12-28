@@ -29,8 +29,14 @@ public class ClaimManagerImpl implements ClaimManager {
     }
 
     @Override
+    public boolean isPlayerAllowedInClaim(@Nullable Claim claim, @NotNull Player player) {
+        return net.mathias2246.buildmc.claims.ClaimManager.isPlayerAllowedInClaim(claim, player);
+    }
+
+    @Override
     public boolean isPlayerAllowed(@NotNull Player player, @NotNull Collection<NamespacedKey> protections, Location location) {
         return net.mathias2246.buildmc.claims.ClaimManager.isPlayerAllowed(player, protections, location);
+
     }
 
     @Override
