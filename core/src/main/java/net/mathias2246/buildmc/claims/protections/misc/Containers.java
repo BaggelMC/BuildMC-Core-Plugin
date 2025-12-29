@@ -21,6 +21,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -145,9 +146,9 @@ public class Containers extends Protection {
         var player = event.getPlayer();
         Material type = block.getType();
 
-        switch (event.getAction()) {
-            case RIGHT_CLICK_BLOCK -> {}
-            default -> { return; }
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+        } else {
+            return;
         }
 
         boolean isChiseledBookshelf = type == Material.CHISELED_BOOKSHELF;

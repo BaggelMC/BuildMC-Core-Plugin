@@ -1,5 +1,8 @@
 package net.mathias2246.buildmc.player.status;
 
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.suggestion.Suggestions;
+import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
@@ -11,6 +14,8 @@ import net.mathias2246.buildmc.status.StatusConfig;
 import net.mathias2246.buildmc.util.SoundUtil;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.CompletableFuture;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.string;
 import static net.mathias2246.buildmc.CoreMain.soundManager;
@@ -74,18 +79,7 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
                 );
 
         setSubArg.suggests(
-                (ctx, builder) -> {
-                    String remaining = builder.getRemaining().toLowerCase();
-
-                    for (var si : CoreMain.statusesRegistry.keySet()) {
-                        var statusId = si.toString().replace("buildmc:", "");
-                        if (statusId.toLowerCase().startsWith(remaining)) {
-                            builder.suggest(statusId);
-                        }
-                    }
-
-                    return builder.buildFuture();
-                }
+                SetStatusCommand::getStatusesIdSuggestion
         );
 
         setSub.then(setSubArg);
@@ -94,5 +88,18 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
         cmd.then(setSub);
 
         return cmd.build();
+    }
+
+    public static CompletableFuture<Suggestions> getStatusesIdSuggestion(CommandContext<CommandSourceStack> ctx, SuggestionsBuilder builder) {
+        String remaining = builder.getRemaining().toLowerCase();
+
+        for (var si : CoreMain.statusesRegistry.keySet()) {
+            var statusId = si.toString().replace("buildmc:", "");
+            if (statusId.toLowerCase().startsWith(remaining)) {
+                builder.suggest(statusId);
+            }
+        }
+
+        return builder.buildFuture();
     }
 }

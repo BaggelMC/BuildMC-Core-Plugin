@@ -1,5 +1,7 @@
 package net.mathias2246.buildmc.commands;
 
+import com.mojang.brigadier.suggestion.Suggestions;
+import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.mathias2246.buildmc.CoreMain;
@@ -13,6 +15,7 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 import static net.mathias2246.buildmc.CoreMain.guides;
 import static net.mathias2246.buildmc.CoreMain.plugin;
@@ -44,6 +47,19 @@ public class GuidesCommand extends YamlConfigurationManager {
         if (sender instanceof Player player) plugin.getSoundManager().playSound(player, SoundUtil.notification);
         plugin.sendMessage(sender, Objects.requireNonNull(guides.get(n)).getValue());
         return 1;
+    }
+
+    public static CompletableFuture<Suggestions> buildSuggestions(SuggestionsBuilder builder) {
+        String remaining = builder.getRemaining().toLowerCase();
+
+        for (var si : CoreMain.guides.keySet()) {
+            var statusId = si.toString().replace("buildmc:", "");
+            if (statusId.toLowerCase().startsWith(remaining)) {
+                builder.suggest(statusId);
+            }
+        }
+
+        return builder.buildFuture();
     }
 
     /**

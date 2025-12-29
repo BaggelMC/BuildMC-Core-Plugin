@@ -4,7 +4,6 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
-import net.mathias2246.buildmc.CoreMain;
 
 public class GuideCommand implements CustomCommand {
 
@@ -30,18 +29,7 @@ public class GuideCommand implements CustomCommand {
                                         )
                         )
                         .suggests(
-                                (ctx, builder) -> {
-                                    String remaining = builder.getRemaining().toLowerCase();
-
-                                    for (var si : CoreMain.guides.keySet()) {
-                                        var statusId = si.toString().replace("buildmc:", "");
-                                        if (statusId.toLowerCase().startsWith(remaining)) {
-                                            builder.suggest(statusId);
-                                        }
-                                    }
-
-                                    return builder.buildFuture();
-                                }
+                                (ctx, builder) -> GuidesCommand.buildSuggestions(builder)
                         )
         );
 

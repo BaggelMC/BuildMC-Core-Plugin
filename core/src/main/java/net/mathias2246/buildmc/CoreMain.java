@@ -1,5 +1,8 @@
 package net.mathias2246.buildmc;
 
+import com.google.gson.FormattingStyle;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.api.claims.Protection;
@@ -20,6 +23,7 @@ import net.mathias2246.buildmc.database.DatabaseConfig;
 import net.mathias2246.buildmc.database.DatabaseManager;
 import net.mathias2246.buildmc.event.claims.PlayerCrossClaimBoundariesListener;
 import net.mathias2246.buildmc.status.PlayerStatusUtil;
+import net.mathias2246.buildmc.status.StatusConfig;
 import net.mathias2246.buildmc.util.BStats;
 import net.mathias2246.buildmc.util.SoundManager;
 import net.mathias2246.buildmc.util.config.ConfigHandler;
@@ -71,6 +75,12 @@ public final class CoreMain {
     public static DeferredRegistry<AbstractCustomItem> customItemsRegistry;
 
     public static BaseRegistry<KeyHolder<Component>> guides;
+
+    public final static Gson gson = new GsonBuilder()
+            .setFormattingStyle(FormattingStyle.PRETTY)
+            .serializeNulls()
+            .registerTypeAdapter(StatusInstance.class, new StatusConfig.StatusInstanceJsonDeserializer())
+            .create();
 
     public static GuidesCommand guideCommand;
 

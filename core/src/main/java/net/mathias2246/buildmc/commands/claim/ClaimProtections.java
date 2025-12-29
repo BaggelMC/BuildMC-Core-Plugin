@@ -19,7 +19,21 @@ import java.util.Objects;
 
 public class ClaimProtections {
     
-    public static int changeClaimProtections(@NotNull Player player, @NotNull NamespacedKey flag, boolean value, String type, String name) {
+    public static int changeClaimProtections(@NotNull Player player, @NotNull NamespacedKey flag, String valueStr, String type, String name) {
+
+        type = type.toLowerCase();
+        valueStr = valueStr.toLowerCase();
+
+        // Parse value safely
+        boolean enable;
+        if (valueStr.equals("true")) {
+            enable = true;
+        } else if (valueStr.equals("false")) {
+            enable = false;
+        } else {
+            CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.protections.invalid-value"));
+            return 0;
+        }
 
         if (Protection.isHiddenProtection(CoreMain.protectionsRegistry, flag)) {
             CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.protections.invalid-flag"));
@@ -84,12 +98,12 @@ public class ClaimProtections {
         ClaimProtectionChangeEvent event = new ClaimProtectionChangeEvent(
                 claim,
                 protection,
-                value ? ClaimProtectionChangeEvent.ActiveState.ENABLED : ClaimProtectionChangeEvent.ActiveState.DISABLED,
+                enable ? ClaimProtectionChangeEvent.ActiveState.ENABLED : ClaimProtectionChangeEvent.ActiveState.DISABLED,
                 player
         );
         if (event.isCancelled()) return 0;
 
-        if (value) {
+        if (enable) {
             ClaimManager.addProtection(claimId, flag);
             CoreMain.plugin.sendMessage(player, Message.msg(player, "messages.claims.protections.added", Map.of("flag", flag.toString())));
             ClaimLogger.logProtectionChanged(player, name, flag.toString(), "enabled");

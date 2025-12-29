@@ -2,7 +2,6 @@ package net.mathias2246.buildmc.commands;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.GreedyStringArgument;
-import net.mathias2246.buildmc.CoreMain;
 
 public class GuideCommand implements CustomCommand {
 
@@ -27,18 +26,7 @@ public class GuideCommand implements CustomCommand {
                                 }
                         )
                         .replaceSuggestions(
-                                (info, builder) -> {
-                                    String remaining = builder.getRemaining().toLowerCase();
-
-                                    for (var ke : CoreMain.guides.keySet()) {
-                                        var k = ke.toString().replace("buildmc:", "");
-                                        if (k.toLowerCase().startsWith(remaining)) {
-                                            builder.suggest(k);
-                                        }
-                                    }
-
-                                    return builder.buildFuture();
-                                }
+                                (ctx, builder) -> GuidesCommand.buildSuggestions(builder)
                         )
         );
 

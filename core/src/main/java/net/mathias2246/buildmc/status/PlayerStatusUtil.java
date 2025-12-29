@@ -27,6 +27,38 @@ public class PlayerStatusUtil implements Listener {
         return player.getPersistentDataContainer().has(PLAYER_STATUS_PDC);
     }
 
+    public static void reloadPlayerStatus(@NotNull Player player) {
+
+        String status = player.getPersistentDataContainer().get(PLAYER_STATUS_PDC, PersistentDataType.STRING);
+        if (status == null) return;
+        StatusInstance s;
+        try {
+            s = CoreMain.statusesRegistry.getOrThrow(Objects.requireNonNull(NamespacedKey.fromString("buildmc:" + status)));
+        } catch (Exception ignore) {
+            return;
+        }
+
+        var allowed = s.allowPlayer(player);
+        if (!allowed.equals(StatusInstance.AllowStatus.ALLOW)) {
+            switch (allowed) {
+                case NOT_IN_TEAM, MISSING_PERMISSION ->
+                {
+                    return;
+                }
+            }
+        }
+
+        Component c = s.getDisplay().asComponent().append(Component.text(player.getName()));
+
+        CoreMain.statusManager.setPlayerName(player, c);
+
+        player.getPersistentDataContainer().set(
+                PLAYER_STATUS_PDC,
+                PersistentDataType.STRING,
+                status
+        );
+    }
+
     public static void setPlayerStatus(@NotNull Player player, String status, boolean join) {
         if (!doesStatusExist(status)) {
             if (join) {

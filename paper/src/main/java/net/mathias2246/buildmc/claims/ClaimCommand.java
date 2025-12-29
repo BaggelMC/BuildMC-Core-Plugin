@@ -3,7 +3,6 @@ package net.mathias2246.buildmc.claims;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
@@ -20,19 +19,16 @@ import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.commands.CustomCommand;
 import net.mathias2246.buildmc.commands.claim.ClaimProtections;
 import net.mathias2246.buildmc.commands.claim.ClaimRemove;
+import net.mathias2246.buildmc.commands.claim.ClaimSuggestions;
 import net.mathias2246.buildmc.commands.claim.ClaimWho;
 import net.mathias2246.buildmc.ui.claims.ClaimSelectMenu;
 import net.mathias2246.buildmc.util.CommandUtil;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 
 import static net.mathias2246.buildmc.Main.config;
 import static net.mathias2246.buildmc.commands.CommandUtil.requiresPlayer;
@@ -87,9 +83,20 @@ public class ClaimCommand implements CustomCommand {
         cmd.then(
                 Commands.literal("remove")
                         .then(Commands.argument("type", StringArgumentType.word())
-                                .suggests(ClaimCommand::claimTypesSuggestions)
+                                .suggests((ctx, builder) -> {
+                                    if (ctx.getSource().getSender() instanceof Player player)
+                                        return ClaimSuggestions.claimTypesSuggestions(player, builder);
+                                    return builder.buildFuture();
+                                })
                                 .then(Commands.argument("claim", StringArgumentType.word())
-                                        .suggests(ClaimCommand::claimIdsSuggestions)
+                                        .suggests(
+                                                (ctx, builder) -> {
+                                                    if (ctx.getSource().getSender() instanceof Player player) {
+                                                        return ClaimSuggestions.claimIdsSuggestions(player, ctx.getArgument("type", String.class), builder);
+                                                    }
+                                                    return builder.buildFuture();
+                                                }
+                                        )
                                         .executes(command -> {
                                             var sender = command.getSource().getSender();
                                             if (!(requiresPlayer(sender) instanceof Player player)) return 0;
@@ -104,15 +111,26 @@ public class ClaimCommand implements CustomCommand {
         );
 
         cmd.then(
-                WhitelistSubCommand.createSubCommand()
+                WhitelistSubCommand.whitelistSubCommand()
         );
         cmd.then(
                 Commands.literal("protections")
                         .requires((command) -> !CoreMain.plugin.getConfig().getBoolean("claims.hide-all-protections"))
                         .then(Commands.argument("type", StringArgumentType.word())
-                                .suggests(ClaimCommand::claimTypesSuggestions)
+                                .suggests((ctx, builder) -> {
+                                    if (ctx.getSource().getSender() instanceof Player player)
+                                        return ClaimSuggestions.claimTypesSuggestions(player, builder);
+                                    return builder.buildFuture();
+                                })
                                 .then(Commands.argument("claim", StringArgumentType.word())
-                                        .suggests(ClaimCommand::claimIdsSuggestions)
+                                        .suggests(
+                                                (ctx, builder) -> {
+                                                    if (ctx.getSource().getSender() instanceof Player player) {
+                                                        return ClaimSuggestions.claimIdsSuggestions(player, ctx.getArgument("type", String.class), builder);
+                                                    }
+                                                    return builder.buildFuture();
+                                                }
+                                        )
                                         .then(Commands.argument("key", ArgumentTypes.namespacedKey())
                                                 .suggests((ctx, builder) -> {
                                                     String remaining = builder.getRemaining();
@@ -137,22 +155,12 @@ public class ClaimCommand implements CustomCommand {
                                                             flag = command.getArgument("key", NamespacedKey.class);
                                                             String valueStr = StringArgumentType.getString(command, "value").toLowerCase();
 
-                                                            boolean value;
-                                                            if (valueStr.equals("true")) {
-                                                                value = true;
-                                                            } else if (valueStr.equals("false")) {
-                                                                value = false;
-                                                            } else {
-                                                                player.sendMessage(Component.translatable("messages.claims.protections.invalid-value"));
-                                                                return 0;
-                                                            }
-
                                                             if (flag == null || Protection.isHiddenProtection(CoreMain.protectionsRegistry, flag)) {
                                                                 player.sendMessage(Component.translatable("messages.claims.protections.invalid-flag"));
                                                                 return 0;
                                                             }
 
-                                                            return ClaimProtections.changeClaimProtections(player, flag, value, type, claimName);
+                                                            return ClaimProtections.changeClaimProtections(player, flag, valueStr, type, claimName);
                                                         })
                                                 )
                                         )
@@ -207,62 +215,5 @@ public class ClaimCommand implements CustomCommand {
         var sender = command.getSource().getSender();
         sender.sendMessage(Component.translatable("messages.claims.help-message"));
         return 1;
-    }
-    
-    public static CompletableFuture<com.mojang.brigadier.suggestion.Suggestions> claimTypesSuggestions(CommandContext<CommandSourceStack> context, SuggestionsBuilder builder) {
-        List<String> suggestions = new ArrayList<>(List.of("player", "team"));
-
-        // Add admin-only options
-        if (context.getSource().getSender() instanceof Player player &&
-                player.hasPermission("buildmc.admin")) {
-            suggestions.add("server");
-            suggestions.add("placeholder");
-        }
-
-        for (String suggestion : suggestions) {
-            if (suggestion.startsWith(builder.getRemaining().toLowerCase())) {
-                builder.suggest(suggestion);
-            }
-        }
-        return builder.buildFuture();
-    }
-
-    public static CompletableFuture<com.mojang.brigadier.suggestion.Suggestions> claimIdsSuggestions(CommandContext<CommandSourceStack> ctx, SuggestionsBuilder builder) {
-        var sender = ctx.getSource().getSender();
-        if (!(sender instanceof Player player)) return builder.buildFuture();
-        String type = StringArgumentType.getString(ctx, "type");
-
-        if (type.equalsIgnoreCase("player")) {
-            List<Long> claimIds = ClaimManager.playerOwner.getOrDefault(player.getUniqueId(), List.of());
-            for (long id : claimIds) {
-                String name = ClaimManager.getClaimNameById(id);
-                if (name != null && name.toLowerCase().startsWith(builder.getRemaining().toLowerCase())) {
-                    builder.suggest(name);
-                }
-            }
-        } else if (type.equalsIgnoreCase("team")) {
-            Team team = ClaimManager.getPlayerTeam(player);
-            if (team != null) {
-                List<Long> claimIds = ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
-                for (long id : claimIds) {
-                    String name = ClaimManager.getClaimNameById(id);
-                    if (name != null && name.toLowerCase().startsWith(builder.getRemaining().toLowerCase())) {
-                        builder.suggest(name);
-                    }
-                }
-            }
-        } else if (type.equalsIgnoreCase("server")) {
-            if (player.hasPermission("buildmc.admin")) {
-                List<Long> claimIds = ClaimManager.serverClaims;
-                for (long id : claimIds) {
-                    String name = ClaimManager.getClaimNameById(id);
-                    if (name != null && name.toLowerCase().startsWith(builder.getRemaining().toLowerCase())) {
-                        builder.suggest(name);
-                    }
-                }
-            }
-        }
-
-        return builder.buildFuture();
     }
 }

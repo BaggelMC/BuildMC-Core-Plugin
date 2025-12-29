@@ -95,7 +95,6 @@ public class StatusInstance implements ConfigurationSerializable, Keyed {
     @Override
     public @NotNull Map<String, Object> serialize() {
         Map<String, Object> map = new LinkedHashMap<>();
-        map.put("statusId", statusId);
         if (permissions != null) {
             map.put("permissions", permissions.stream().map(Permission::getName).collect(Collectors.toList()));
         }

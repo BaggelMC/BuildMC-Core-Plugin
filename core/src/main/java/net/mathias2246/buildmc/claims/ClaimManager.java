@@ -44,7 +44,7 @@ public class ClaimManager {
 
     public static boolean isDimensionBlacklist = true;
 
-    public static @NotNull List<World> dimensionList = new ArrayList<>();
+    public final static @NotNull List<World> dimensionList = new ArrayList<>();
 
     public static boolean isWorldAllowed(@NotNull World world) {
         if (isDimensionBlacklist) {

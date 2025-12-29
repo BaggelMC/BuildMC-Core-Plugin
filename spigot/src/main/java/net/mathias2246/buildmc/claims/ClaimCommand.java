@@ -7,31 +7,21 @@ import dev.jorel.commandapi.arguments.StringArgument;
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
-import net.mathias2246.buildmc.api.claims.ClaimType;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.item.AbstractCustomItem;
 import net.mathias2246.buildmc.claims.tool.ClaimToolItemMetaModifier;
 import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.commands.CustomCommand;
-import net.mathias2246.buildmc.commands.claim.ClaimCreate;
-import net.mathias2246.buildmc.commands.claim.ClaimProtections;
-import net.mathias2246.buildmc.commands.claim.ClaimRemove;
-import net.mathias2246.buildmc.commands.claim.ClaimWhitelist;
+import net.mathias2246.buildmc.commands.claim.*;
 import net.mathias2246.buildmc.ui.claims.ClaimSelectMenu;
 import net.mathias2246.buildmc.util.Message;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.Team;
 
-import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
 
 import static net.mathias2246.buildmc.Main.audiences;
 import static net.mathias2246.buildmc.Main.config;
@@ -89,40 +79,7 @@ public class ClaimCommand implements CustomCommand {
                                         (command) -> {
                                             if (!(requiresPlayer(command.sender()) instanceof Player player)) return 0;
 
-                                            Claim claim;
-
-                                            try {
-                                                claim = ClaimManager.getClaim(player.getLocation());
-                                            } catch (SQLException e) {
-                                                CoreMain.plugin.getLogger().severe("An error occurred while getting a claim from the database: " + e.getMessage());
-                                                audiences.player(player).sendMessage(Component.translatable("messages.error.sql"));
-                                                return 0;
-                                            }
-
-                                            if (claim == null) {
-                                                audiences.sender(command.sender()).sendMessage(Component.translatable("messages.claims.who.unclaimed"));
-                                                return 1;
-                                            }
-
-                                            ClaimType claimType = claim.getType();
-
-                                            if (claimType == ClaimType.TEAM) {
-                                                audiences.player(player).sendMessage(Message.msg(player, "messages.claims.who.team-message", Map.of("owner", claim.getOwnerId())));
-                                            } else if (claimType == ClaimType.PLAYER) {
-                                                UUID ownerId = UUID.fromString(claim.getOwnerId());
-                                                OfflinePlayer owner = Bukkit.getOfflinePlayer(ownerId);
-                                                String ownerName = owner.getName();
-
-                                                if (ownerName == null) {
-                                                    ownerName = "Unknown";
-                                                }
-
-                                                audiences.player(player).sendMessage(Message.msg(player, "messages.claims.who.player-message", Map.of("owner", ownerName)));
-                                            } else if (claimType == ClaimType.SERVER || claimType == ClaimType.PLACEHOLDER) {
-                                                audiences.player(player).sendMessage(Message.msg(player, "messages.claims.who.server-message"));
-                                            }
-
-                                            return 1;
+                                            return ClaimWho.whoClaimCommand(player, player.getLocation());
                                         }
                                 )
                                 .withArguments(
@@ -139,38 +96,7 @@ public class ClaimCommand implements CustomCommand {
                                                                 return 0;
                                                             }
 
-                                                            try {
-                                                                claim = ClaimManager.getClaim(l);
-                                                            } catch (SQLException e) {
-                                                                CoreMain.plugin.getLogger().severe("An error occurred while getting a claim from the database: " + e.getMessage());
-                                                                audiences.player(player).sendMessage(Component.translatable("messages.error.sql"));
-                                                                return 0;
-                                                            }
-
-                                                            if (claim == null) {
-                                                                audiences.sender(command.sender()).sendMessage(Component.translatable("messages.claims.who.unclaimed"));
-                                                                return 1;
-                                                            }
-
-                                                            ClaimType claimType = claim.getType();
-
-                                                            if (claimType == ClaimType.TEAM) {
-                                                                audiences.player(player).sendMessage(Message.msg(player, "messages.claims.who.team-message", Map.of("owner", claim.getOwnerId())));
-                                                            } else if (claimType == ClaimType.PLAYER) {
-                                                                UUID ownerId = UUID.fromString(claim.getOwnerId());
-                                                                OfflinePlayer owner = Bukkit.getOfflinePlayer(ownerId);
-                                                                String ownerName = owner.getName();
-
-                                                                if (ownerName == null) {
-                                                                    ownerName = "Unknown";
-                                                                }
-
-                                                                audiences.player(player).sendMessage(Message.msg(player, "messages.claims.who.player-message", Map.of("owner", ownerName)));
-                                                            } else if (claimType == ClaimType.SERVER || claimType == ClaimType.PLACEHOLDER) {
-                                                                audiences.player(player).sendMessage(Message.msg(player, "messages.claims.who.server-message"));
-                                                            }
-
-                                                            return 1;
+                                                            return ClaimWho.whoClaimCommand(player, l);
                                                         }
                                                 )
                                 )
@@ -188,15 +114,9 @@ public class ClaimCommand implements CustomCommand {
                         new CommandAPICommand("create")
                                 .withArguments(
                                         new StringArgument("type")
-                                                .replaceSuggestions((info, builder) -> {
-                                                    builder.suggest("player").suggest("team");
-
-                                                    // Add admin-only options
-                                                    if (info.sender() instanceof Player player &&
-                                                            player.hasPermission("buildmc.admin")) {
-                                                        builder.suggest("server").suggest("placeholder");
-                                                    }
-
+                                                .replaceSuggestions((ctx, builder) -> {
+                                                    if (ctx.sender() instanceof Player player)
+                                                        return ClaimSuggestions.claimTypesSuggestions(player, builder);
                                                     return builder.buildFuture();
                                                 })
                                 )
@@ -220,42 +140,24 @@ public class ClaimCommand implements CustomCommand {
                         new CommandAPICommand("remove")
                                 .withArguments(
                                         new StringArgument("type")
-                                                .replaceSuggestions((info, builder) -> {
-                                                    builder.suggest("player").suggest("team");
-
-                                                    if (info.sender() instanceof Player player && player.hasPermission("buildmc.admin")) {
-                                                        builder.suggest("server").suggest("placeholder");
-                                                    }
+                                                .replaceSuggestions((ctx, builder) -> {
+                                                    if (ctx.sender() instanceof Player player)
+                                                        return ClaimSuggestions.claimTypesSuggestions(player, builder);
                                                     return builder.buildFuture();
                                                 }),
                                         new StringArgument("claim")
-                                                .replaceSuggestions((info, builder) -> {
-                                                    if (!(info.sender() instanceof Player player)) {
-                                                        return builder.buildFuture();
-                                                    }
-
-                                                    String type = info.previousArgs().getOrDefault("type", "").toString().toLowerCase();
-                                                    List<Long> claimIds = switch (type) {
-                                                        case "player" -> ClaimManager.playerOwner.getOrDefault(player.getUniqueId(), List.of());
-                                                        case "team" -> {
-                                                            Team team = ClaimManager.getPlayerTeam(player);
-                                                            if (team == null) yield List.of();
-                                                            yield ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
+                                                .replaceSuggestions(
+                                                        (ctx, builder) -> {
+                                                            if (ctx.sender() instanceof Player player) {
+                                                                return ClaimSuggestions.claimIdsSuggestions(
+                                                                        player,
+                                                                        ctx.previousArgs().getByClassOrDefault("type", String.class, "player"),
+                                                                        builder
+                                                                );
+                                                            }
+                                                            return builder.buildFuture();
                                                         }
-                                                        case "server" -> player.hasPermission("buildmc.admin") ? ClaimManager.serverClaims : List.of();
-                                                        case "placeholder" -> player.hasPermission("buildmc.admin") ? ClaimManager.placeholderClaims : List.of();
-                                                        default -> List.of();
-                                                    };
-
-                                                    for (Long id : claimIds) {
-                                                        String name = ClaimManager.getClaimNameById(id);
-                                                        if (name != null && name.toLowerCase().startsWith(builder.getRemaining().toLowerCase())) {
-                                                            builder.suggest(name);
-                                                        }
-                                                    }
-
-                                                    return builder.buildFuture();
-                                                })
+                                                )
                                 )
                                 .executes((command) -> {
                                     if (!(requiresPlayer(command.sender()) instanceof Player player)) return 0;
@@ -278,88 +180,38 @@ public class ClaimCommand implements CustomCommand {
                                         new StringArgument("action").replaceSuggestions((info, builder) -> builder.suggest("add").suggest("remove").buildFuture()),
 
                                         new StringArgument("type")
-                                                .replaceSuggestions((info, builder) -> {
-                                                    builder.suggest("player").suggest("team");
-                                                    if (info.sender() instanceof Player player && player.hasPermission("buildmc.admin")) {
-                                                        builder.suggest("server");
-                                                    }
+                                                .replaceSuggestions((ctx, builder) -> {
+                                                    if (ctx.sender() instanceof Player player)
+                                                        return ClaimSuggestions.claimTypesSuggestions(player, builder);
                                                     return builder.buildFuture();
                                                 }),
 
                                         new StringArgument("claim")
-                                                .replaceSuggestions((info, builder) -> {
-                                                    if (!(info.sender() instanceof Player player)) {
-                                                        return builder.buildFuture();
-                                                    }
-
-                                                    String type = info.previousArgs().getOrDefault("type", "").toString().toLowerCase();
-
-                                                    List<Long> claimIds = switch (type) {
-                                                        case "player" -> ClaimManager.playerOwner.getOrDefault(player.getUniqueId(), List.of());
-                                                        case "team" -> {
-                                                            Team team = ClaimManager.getPlayerTeam(player);
-                                                            if (team == null) yield List.of();
-                                                            yield ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
+                                                .replaceSuggestions(
+                                                        (ctx, builder) -> {
+                                                            if (ctx.sender() instanceof Player player) {
+                                                                return ClaimSuggestions.claimIdsSuggestions(
+                                                                        player,
+                                                                        ctx.previousArgs().getByClassOrDefault("type", String.class, "player"),
+                                                                        builder
+                                                                );
+                                                            }
+                                                            return builder.buildFuture();
                                                         }
-                                                        case "server" -> player.hasPermission("buildmc.admin") ? ClaimManager.serverClaims : List.of();
-                                                        default -> List.of();
-                                                    };
-
-                                                    for (Long claimId : claimIds) {
-                                                        String name = ClaimManager.getClaimNameById(claimId);
-                                                        if (name != null) builder.suggest(name);
-                                                    }
-
-                                                    return builder.buildFuture();
-                                                }),
+                                                ),
 
                                         new StringArgument("targetPlayer")
                                                 .replaceSuggestions((info, builder) -> {
                                                     CommandSender sender = info.sender();
-                                                    if (!(sender instanceof Player player)) {
+                                                    if (!(sender instanceof Player player))
                                                         return builder.buildFuture();
-                                                    }
-
                                                     List<String> inputArgs = List.of(info.currentInput().split(" "));
-                                                    if (inputArgs.size() < 4) {
+                                                    if (inputArgs.size() < 4)
                                                         return builder.buildFuture();
-                                                    }
-
                                                     String type = inputArgs.get(2);
                                                     String claimName = inputArgs.get(3);
 
-                                                    List<Long> claimIds = switch (type.toLowerCase()) {
-                                                        case "player" -> ClaimManager.playerOwner.getOrDefault(player.getUniqueId(), List.of());
-                                                        case "team" -> {
-                                                            Team team = ClaimManager.getPlayerTeam(player);
-                                                            if (team == null) yield List.of();
-                                                            yield ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
-                                                        }
-                                                        case "server" -> player.hasPermission("buildmc.admin") ? ClaimManager.serverClaims : List.of();
-                                                        default -> List.of();
-                                                    };
-
-                                                    for (Long claimId : claimIds) {
-                                                        String name = ClaimManager.getClaimNameById(claimId);
-                                                        if (name != null && name.equalsIgnoreCase(claimName)) {
-                                                            Claim claim = ClaimManager.getClaimByID(claimId);
-                                                            if (claim != null) {
-                                                                List<UUID> whitelisted = claim.getWhitelistedPlayers();
-                                                                Team team = ClaimManager.getPlayerTeam(player);
-
-                                                                Bukkit.getOnlinePlayers().stream()
-                                                                        .filter(p -> claim.getType().equals(ClaimType.SERVER) || !p.getUniqueId().equals(player.getUniqueId()))
-                                                                        .filter(p -> team == null || !team.hasEntry(p.getName()))
-                                                                        .filter(p -> !whitelisted.contains(p.getUniqueId()))
-                                                                        .map(Player::getName)
-                                                                        .forEach(builder::suggest);
-
-                                                                break;
-                                                            }
-                                                        }
-                                                    }
-
-                                                    return builder.buildFuture();
+                                                    return ClaimSuggestions.claimPlayerWhitelistSuggestions(player, type, claimName, builder);
                                                 })
 
                                 )
@@ -383,45 +235,24 @@ public class ClaimCommand implements CustomCommand {
                         new CommandAPICommand("protections")
                                 .withArguments(
                                         new StringArgument("type")
-                                                .replaceSuggestions((info, builder) -> {
-                                                    builder.suggest("player").suggest("team");
-                                                    if (info.sender() instanceof Player player && player.hasPermission("buildmc.admin")) {
-                                                        builder.suggest("server");
-                                                    }
+                                                .replaceSuggestions((ctx, builder) -> {
+                                                    if (ctx.sender() instanceof Player player)
+                                                        return ClaimSuggestions.claimTypesSuggestions(player, builder);
                                                     return builder.buildFuture();
                                                 }),
                                         new StringArgument("claim")
-                                                .replaceSuggestions((info, builder) -> {
-                                                    if (!(info.sender() instanceof Player player)) {
-                                                        return builder.buildFuture();
-                                                    }
-
-                                                    String type = info.previousArgs().getOrDefault("type", "").toString().toLowerCase();
-                                                    List<Long> claimIds;
-
-                                                    switch (type) {
-                                                        case "player" -> claimIds = ClaimManager.playerOwner.getOrDefault(player.getUniqueId(), List.of());
-                                                        case "team" -> {
-                                                            Team team = ClaimManager.getPlayerTeam(player);
-                                                            if (team == null) return builder.buildFuture();
-                                                            claimIds = ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
+                                                .replaceSuggestions(
+                                                        (ctx, builder) -> {
+                                                            if (ctx.sender() instanceof Player player) {
+                                                                return ClaimSuggestions.claimIdsSuggestions(
+                                                                        player,
+                                                                        ctx.previousArgs().getByClassOrDefault("type", String.class, "player"),
+                                                                        builder
+                                                                );
+                                                            }
+                                                            return builder.buildFuture();
                                                         }
-                                                        case "server" -> {
-                                                            if (!player.hasPermission("buildmc.admin")) return builder.buildFuture();
-                                                            claimIds = ClaimManager.serverClaims;
-                                                        }
-                                                        default -> claimIds = List.of();
-                                                    }
-
-                                                    for (Long claimId : claimIds) {
-                                                        String name = ClaimManager.getClaimNameById(claimId);
-                                                        if (name != null && name.toLowerCase().startsWith(builder.getRemaining().toLowerCase())) {
-                                                            builder.suggest(name);
-                                                        }
-                                                    }
-
-                                                    return builder.buildFuture();
-                                                }),
+                                                ),
                                         new NamespacedKeyArgument("flag")
                                                 .replaceSuggestions((info, builder) -> {
                                                     String remaining = builder.getRemaining();
@@ -442,29 +273,15 @@ public class ClaimCommand implements CustomCommand {
                                     String type = command.args().getByClass("type", String.class);
                                     String claimName = command.args().getByClass("claim", String.class);
                                     NamespacedKey flag = command.args().getByClass("flag", NamespacedKey.class);
-                                    String value = command.args().getByClass("value", String.class);
+                                    String valueStr = command.args().getByClass("value", String.class);
 
                                     // Null checks
-                                    if (type == null || claimName == null || flag == null || value == null) {
+                                    if (type == null || claimName == null || flag == null || valueStr == null) {
                                         audiences.player(player).sendMessage(Component.translatable("messages.error.invalid-args"));
                                         return 0;
                                     }
 
-                                    type = type.toLowerCase();
-                                    value = value.toLowerCase();
-
-                                    // Parse value safely
-                                    boolean enable;
-                                    if (value.equals("true")) {
-                                        enable = true;
-                                    } else if (value.equals("false")) {
-                                        enable = false;
-                                    } else {
-                                        audiences.player(player).sendMessage(Component.translatable("messages.claims.protections.invalid-value"));
-                                        return 0;
-                                    }
-
-                                    return ClaimProtections.changeClaimProtections(player, flag, enable, type, claimName);
+                                    return ClaimProtections.changeClaimProtections(player, flag, valueStr, type, claimName);
                                 })
                 )
 

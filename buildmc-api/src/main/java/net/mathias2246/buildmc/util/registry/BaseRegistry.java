@@ -21,10 +21,15 @@ public class BaseRegistry<T extends Keyed> implements Registry<T>, Iterable<T> {
         this.registry = new HashMap<>();
     }
 
+    /**Removes an entry from the registry.
+
+     * @param key The {@link NamespacedKey} of the entry to remove
+     */
+    public void removeEntry(@NotNull NamespacedKey key) {
+        registry.remove(key);
+    }
+
     /**Registers a new entry under a certain key.
-     * <p>
-     *     Nothing will change when this deferred-registry is initialized.
-     * </p>
      *
      * @param entry The entry to add
      *

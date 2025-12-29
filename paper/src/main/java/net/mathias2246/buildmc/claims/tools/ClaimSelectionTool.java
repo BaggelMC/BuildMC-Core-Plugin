@@ -54,7 +54,7 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
         ItemMeta m = claimToolItemstack.getItemMeta();
 
         if (m != null) {
-            m.setItemName("Select Claim Corners");
+            m.itemName(Component.text("Select Claim Corners"));
             m.setTool(null);
             m.addItemFlags(
                     ItemFlag.HIDE_ATTRIBUTES,
