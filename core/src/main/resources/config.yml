@@ -112,8 +112,7 @@ claims:
     # If false, the list below will only allow to be claimed in the given dimensions.
     blacklist: true # Default: true
     list:
-      # Example:
-      # - "minecraft:the_end"
+      - "minecraft:the_end"
 
   # Hides all protections from all players.
   # Can be used if players should only be able to use the default protections.
