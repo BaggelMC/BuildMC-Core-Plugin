@@ -196,6 +196,7 @@ public final class Main extends PluginMain {
         CommandRegister.register(new BuildMcCommand());
         CommandRegister.register(new BroadcastCommandPlatform());
         CommandRegister.register(new RulesCommandPLatform());
+        CommandRegister.register(new DeathsCommandPlatform());
 
         getServer().getPluginManager().registerEvents(new EndListener(), this);
 

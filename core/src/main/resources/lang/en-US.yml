@@ -59,6 +59,19 @@ messages:
     successful: "<green>Successfully teleported you!</green>"
     counter: "<white>Don't move for %seconds% seconds...</white>"
 
+  deaths:
+    error:
+      player-not-found: "<red>The specified player was not found."
+      load-failed: "<red>Failed to load deaths."
+      not-found: "<red>Death ID not found."
+      wrong-player: "<red>This death does not belong to that player."
+      restore-failed: "<red>Failed to restore death."
+
+    none: "<yellow>No deaths recorded for %s"
+    list-part: "<yellow>Deaths for "
+
+    restored: "<green>Death restored successfully."
+
   claims:
     tool:
       tool-name: "Select Claim Corners"

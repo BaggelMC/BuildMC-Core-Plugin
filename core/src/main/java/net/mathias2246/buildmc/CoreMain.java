@@ -21,6 +21,8 @@ import net.mathias2246.buildmc.commands.GuidesCommand;
 import net.mathias2246.buildmc.database.ClaimTable;
 import net.mathias2246.buildmc.database.DatabaseConfig;
 import net.mathias2246.buildmc.database.DatabaseManager;
+import net.mathias2246.buildmc.database.DeathTable;
+import net.mathias2246.buildmc.deaths.DeathListener;
 import net.mathias2246.buildmc.event.claims.PlayerCrossClaimBoundariesListener;
 import net.mathias2246.buildmc.status.PlayerStatusUtil;
 import net.mathias2246.buildmc.status.StatusConfig;
@@ -61,6 +63,7 @@ public final class CoreMain {
 
     public static DatabaseManager databaseManager;
     public static ClaimTable claimTable;
+    public static DeathTable deathTable;
 
     public static BukkitAudiences bukkitAudiences;
 
@@ -191,7 +194,7 @@ public final class CoreMain {
                 var def = protection.isDefaultEnabled();
 
                 // Register the protection's event listener
-                registerEvent(protection);
+                registerListener(protection);
 
                 // Don't register protection events if, they are disabled and cannot be changed
                 if (hideAllProtections) {
@@ -202,7 +205,8 @@ public final class CoreMain {
                 if (def) Protection.defaultProtections.add(protection.getKey().toString());
             }
 
-            registerEvent(new PlayerCrossClaimBoundariesListener());
+            registerListener(new PlayerCrossClaimBoundariesListener());
+            registerListener(new DeathListener());
 
             customItemsRegistry.initialize();
 
@@ -210,7 +214,7 @@ public final class CoreMain {
         }
 
         if (config.getBoolean("status.enabled")) {
-            registerEvent(new PlayerStatusUtil());
+            registerListener(new PlayerStatusUtil());
         }
 
         if (config.getBoolean("disable-commands")) {
@@ -235,7 +239,7 @@ public final class CoreMain {
         Bukkit.getPluginManager().callEvent(new BuildMcFinishedLoadingEvent(plugin));
     }
 
-    public static void registerEvent(@NotNull Listener event) {
+    public static void registerListener(@NotNull Listener event) {
         plugin.getServer().getPluginManager().registerEvents(event, plugin);
     }
 
@@ -255,6 +259,8 @@ public final class CoreMain {
         databaseManager = new DatabaseManager(CoreMain.plugin);
         claimTable = new ClaimTable();
         databaseManager.registerTable(claimTable);
+        deathTable = new DeathTable();
+        databaseManager.registerTable(deathTable);
 
         try {
             claimTable.loadClaimOwners(databaseManager.getConnection());

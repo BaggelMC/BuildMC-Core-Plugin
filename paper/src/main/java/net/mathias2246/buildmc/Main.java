@@ -12,10 +12,7 @@ import net.mathias2246.buildmc.claims.ClaimCommand;
 import net.mathias2246.buildmc.claims.ClaimManagerImpl;
 import net.mathias2246.buildmc.claims.tool.ClaimToolParticles;
 import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
-import net.mathias2246.buildmc.commands.BroadcastCommandPlatform;
-import net.mathias2246.buildmc.commands.BuildMcCommand;
-import net.mathias2246.buildmc.commands.GuideCommand;
-import net.mathias2246.buildmc.commands.RulesCommandPlatform;
+import net.mathias2246.buildmc.commands.*;
 import net.mathias2246.buildmc.endEvent.EndListener;
 import net.mathias2246.buildmc.endEvent.EndManagerImpl;
 import net.mathias2246.buildmc.platform.SoundManagerPaperImpl;
@@ -110,6 +107,8 @@ public final class Main extends PluginMain {
             commands.registrar().register(new RulesCommandPlatform().getCommand());
 
             commands.registrar().register(new GuideCommand().getCommand());
+
+            commands.registrar().register(new DeathsCommandPlatform().getCommand());
 
         });
 

@@ -35,3 +35,6 @@ permissions:
   buildmc.allow-edit-statuses:
     default: op
     description: Allows players to add, change or remove statuses using '/buildmc status ...'
+  buildmc.restore-deaths:
+    default: op
+    description: Allows to use commands to restore deaths of players
