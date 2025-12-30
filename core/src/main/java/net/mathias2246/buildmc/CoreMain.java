@@ -245,7 +245,14 @@ public final class CoreMain {
 
     @ApiStatus.Internal
     public static void stop() {
-        if (plugin.getConfig().getBoolean("claims.enabled", true)) databaseManager.close();
+        if (plugin.getConfig().getBoolean("claims.enabled", true)) {
+            try {
+                claimTable.closeStatements(databaseManager.getConnection());
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            databaseManager.close();
+        }
 
 
     }
@@ -263,6 +270,8 @@ public final class CoreMain {
         databaseManager.registerTable(deathTable);
 
         try {
+            claimTable.prepareStatements(databaseManager.getConnection()); // Prepares all Statements that are called frequently
+
             claimTable.loadClaimOwners(databaseManager.getConnection());
             ClaimTable.calculateRemainingClaims(databaseManager.getConnection());
         } catch (SQLException e) {

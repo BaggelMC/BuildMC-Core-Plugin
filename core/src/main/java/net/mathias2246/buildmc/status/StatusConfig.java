@@ -49,7 +49,6 @@ public class StatusConfig extends YamlConfigurationManager {
             if (s == null) return;
             var v = s.getValues(false);
             reg.addEntry(StatusInstance.deserialize(v, key.toLowerCase()));
-
         }
     }
 
@@ -78,10 +77,7 @@ public class StatusConfig extends YamlConfigurationManager {
                 }
             }
             Component displayName = MiniMessage.miniMessage().deserializeOr(o.get("display-name").getAsString(), null);
-            if (displayName == null) {
-                CoreMain.plugin.getLogger().log(Level.WARNING, "Status with id '"+ id +"' has an empty display name!");
-                displayName = Component.empty();
-            }
+            if (displayName == null) CoreMain.plugin.getLogger().log(Level.WARNING, "Status with id '"+ id +"' has an empty display name!");
             return new StatusInstance(
                     id,
                     permissions == null ? null : Set.copyOf(permissions),

@@ -43,6 +43,16 @@ public class DeathTable implements DatabaseTable {
         }
     }
 
+    @Override
+    public void prepareStatements(Connection connection) throws SQLException {
+
+    }
+
+    @Override
+    public void closeStatements(Connection connection) {
+
+    }
+
     @SuppressWarnings("UnusedReturnValue")
     public long insertDeath(
             Connection conn,

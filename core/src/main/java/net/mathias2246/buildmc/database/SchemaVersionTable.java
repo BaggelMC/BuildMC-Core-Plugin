@@ -1,10 +1,6 @@
 package net.mathias2246.buildmc.database;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class SchemaVersionTable implements DatabaseTable {
     public static final int INITIAL_VERSION = 1;
@@ -25,6 +21,16 @@ public class SchemaVersionTable implements DatabaseTable {
                 }
             }
         }
+    }
+
+    @Override
+    public void prepareStatements(Connection connection) throws SQLException {
+
+    }
+
+    @Override
+    public void closeStatements(Connection connection) {
+
     }
 
     public int getCurrentVersion(Connection connection) throws SQLException {

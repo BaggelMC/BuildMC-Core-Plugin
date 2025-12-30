@@ -110,6 +110,7 @@ public final class LocationUtil {
         int chunkX2 = pos2.getBlockX() >> 4;
         int chunkZ2 = pos2.getBlockZ() >> 4;
 
+
         return calculateChunkArea(chunkX1, chunkZ1, chunkX2, chunkZ2);
     }
 
