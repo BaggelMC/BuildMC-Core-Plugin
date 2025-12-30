@@ -248,6 +248,7 @@ public final class CoreMain {
         if (plugin.getConfig().getBoolean("claims.enabled", true)) {
             try {
                 claimTable.closeStatements(databaseManager.getConnection());
+                deathTable.closeStatements(databaseManager.getConnection());
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
@@ -271,8 +272,10 @@ public final class CoreMain {
 
         try {
             claimTable.prepareStatements(databaseManager.getConnection()); // Prepares all Statements that are called frequently
-
             claimTable.loadClaimOwners(databaseManager.getConnection());
+
+            deathTable.prepareStatements(databaseManager.getConnection());
+
             ClaimTable.calculateRemainingClaims(databaseManager.getConnection());
         } catch (SQLException e) {
             throw new RuntimeException(e);

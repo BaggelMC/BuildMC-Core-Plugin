@@ -167,18 +167,18 @@ public class ClaimTable implements DatabaseTable {
 
     @Override
     public void closeStatements(Connection connection) throws SQLException {
-        getOverlappingClaimsPs.closeOnCompletion();
-        getClaimOwnerPs.closeOnCompletion();
-        getClaimNameByIdPs.closeOnCompletion();
-        doesOwnerHaveClaimWithNamePs.closeOnCompletion();
-        doesClaimExistInAreaPs.closeOnCompletion();
-        getClaimByIdPs.closeOnCompletion();
-        loadClaimRelationsProtectionsPs.closeOnCompletion();
-        loadClaimRelationsWhitelistPs.closeOnCompletion();
-        insertClaimPs.closeOnCompletion();
+        getOverlappingClaimsPs.close();
+        getClaimOwnerPs.close();
+        getClaimNameByIdPs.close();
+        doesOwnerHaveClaimWithNamePs.close();
+        doesClaimExistInAreaPs.close();
+        getClaimByIdPs.close();
+        loadClaimRelationsProtectionsPs.close();
+        loadClaimRelationsWhitelistPs.close();
+        insertClaimPs.close();
         insertProtectionsPs.close();
         insertWhitelistPs.close();
-        addProtectionPs.closeOnCompletion();
+        addProtectionPs.close();
         removeProtectionPs.close();
     }
 
@@ -363,35 +363,34 @@ public class ClaimTable implements DatabaseTable {
             return cached;
         }
 
-        try (PreparedStatement ps = getClaimByIdPs) {
-            ps.setLong(1, id);
+        PreparedStatement ps = getClaimByIdPs;
+        ps.setLong(1, id);
 
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    // Load related data
-                    List<UUID> whitelistedPlayers = new ArrayList<>();
-                    List<String> protections = new ArrayList<>();
-                    loadClaimRelations(conn, id, whitelistedPlayers, protections);
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                // Load related data
+                List<UUID> whitelistedPlayers = new ArrayList<>();
+                List<String> protections = new ArrayList<>();
+                loadClaimRelations(conn, id, whitelistedPlayers, protections);
 
-                    Claim claim = new Claim(
-                            id,
-                            ClaimType.valueOf(rs.getString("type")),
-                            rs.getString("owner_id"),
-                            (UUID) rs.getObject("world_id"),
-                            rs.getInt("chunk_x1"),
-                            rs.getInt("chunk_z1"),
-                            rs.getInt("chunk_x2"),
-                            rs.getInt("chunk_z2"),
-                            rs.getString("name"),
-                            whitelistedPlayers,
-                            protections
-                    );
+                Claim claim = new Claim(
+                        id,
+                        ClaimType.valueOf(rs.getString("type")),
+                        rs.getString("owner_id"),
+                        (UUID) rs.getObject("world_id"),
+                        rs.getInt("chunk_x1"),
+                        rs.getInt("chunk_z1"),
+                        rs.getInt("chunk_x2"),
+                        rs.getInt("chunk_z2"),
+                        rs.getString("name"),
+                        whitelistedPlayers,
+                        protections
+                );
 
-                    claimCache.put(id, claim);
-                    return claim;
-                } else {
-                    return null;
-                }
+                claimCache.put(id, claim);
+                return claim;
+            } else {
+                return null;
             }
         }
     }
@@ -485,16 +484,15 @@ public class ClaimTable implements DatabaseTable {
         int minZ = Math.min(chunkZ1, chunkZ2);
         int maxZ = Math.max(chunkZ1, chunkZ2);
 
-        try (PreparedStatement ps = doesClaimExistInAreaPs) {
-            ps.setObject(1, worldId);
-            ps.setInt(2, maxX);
-            ps.setInt(3, minX);
-            ps.setInt(4, maxZ);
-            ps.setInt(5, minZ);
+        PreparedStatement ps = doesClaimExistInAreaPs;
+        ps.setObject(1, worldId);
+        ps.setInt(2, maxX);
+        ps.setInt(3, minX);
+        ps.setInt(4, maxZ);
+        ps.setInt(5, minZ);
 
-            try (ResultSet rs = ps.executeQuery()) {
-                return rs.next();
-            }
+        try (ResultSet rs = ps.executeQuery()) {
+            return rs.next();
         }
     }
 
