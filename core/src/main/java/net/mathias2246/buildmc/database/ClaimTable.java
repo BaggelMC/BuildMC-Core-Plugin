@@ -152,6 +152,17 @@ public class ClaimTable implements DatabaseTable {
               AND LEAST(chunk_z1, chunk_z2) <= ?
               AND GREATEST(chunk_z1, chunk_z2) >= ?
         """);
+
+        addProtectionPs = connection.prepareStatement("""
+            MERGE INTO claim_protection_flags (claim_id, flag)
+            KEY (claim_id, flag)
+            VALUES (?, ?)
+        """);
+
+        removeProtectionPs = connection.prepareStatement("""
+            DELETE FROM claim_protection_flags
+            WHERE claim_id = ? AND flag = ?
+        """);
     }
 
     @Override
@@ -165,8 +176,10 @@ public class ClaimTable implements DatabaseTable {
         loadClaimRelationsProtectionsPs.closeOnCompletion();
         loadClaimRelationsWhitelistPs.closeOnCompletion();
         insertClaimPs.closeOnCompletion();
-        insertProtectionsPs.closeOnCompletion();
-        insertWhitelistPs.closeOnCompletion();
+        insertProtectionsPs.close();
+        insertWhitelistPs.close();
+        addProtectionPs.closeOnCompletion();
+        removeProtectionPs.close();
     }
 
     // Inserts entries into tables
@@ -568,16 +581,14 @@ public class ClaimTable implements DatabaseTable {
         }
     }
 
+    private PreparedStatement addProtectionPs;
+
     public void addProtectionFlag(Connection conn, long claimId, @NotNull NamespacedKey protectionKey) throws SQLException {
-        try (PreparedStatement ps = conn.prepareStatement("""
-            MERGE INTO claim_protection_flags (claim_id, flag)
-            KEY (claim_id, flag)
-            VALUES (?, ?)
-        """)) {
-            ps.setLong(1, claimId);
-            ps.setString(2, protectionKey.toString());
-            ps.executeUpdate();
-        }
+        PreparedStatement ps = addProtectionPs;
+        ps.setLong(1, claimId);
+        ps.setString(2, protectionKey.toString());
+        ps.executeUpdate();
+
 
         Claim cached = claimCache.getIfPresent(claimId);
         if (cached != null) {
@@ -586,15 +597,13 @@ public class ClaimTable implements DatabaseTable {
         }
     }
 
+    private PreparedStatement removeProtectionPs;
     public void removeProtectionFlag(Connection conn, long claimId, @NotNull NamespacedKey protectionKey) throws SQLException {
-        try (PreparedStatement ps = conn.prepareStatement("""
-        DELETE FROM claim_protection_flags
-        WHERE claim_id = ? AND flag = ?
-    """)) {
-            ps.setLong(1, claimId);
-            ps.setString(2, protectionKey.toString());
-            ps.executeUpdate();
-        }
+        PreparedStatement ps = removeProtectionPs;
+        ps.setLong(1, claimId);
+        ps.setString(2, protectionKey.toString());
+        ps.executeUpdate();
+
 
         Claim cached = claimCache.getIfPresent(claimId);
         if (cached != null) {

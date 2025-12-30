@@ -48,7 +48,7 @@ public class SpawnElytraUtil {
 
     /**Checks if the player is in survival or adventure mode.*/
     public static boolean isSurvival(@NotNull Player player) {
-        return player.getGameMode() == GameMode.SURVIVAL || player.getGameMode() == GameMode.ADVENTURE;
+        return isSurvival(player.getGameMode());
     }
 
     /**Checks if the gamemode is survival or adventure mode.*/

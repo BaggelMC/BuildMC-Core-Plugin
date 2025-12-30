@@ -98,16 +98,15 @@ public class ClaimSuggestions {
         List<UUID> whitelist = claim.getWhitelistedPlayers();
         boolean isServer = claim.getType() == ClaimType.SERVER;
 
-        for (OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()) {
-            if (offlinePlayer.getName() == null) continue;
-            if (!isServer && offlinePlayer.getUniqueId().equals(player.getUniqueId())) continue;
-            if (whitelist.contains(offlinePlayer.getUniqueId())) continue;
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            if (!isServer && onlinePlayer.getUniqueId().equals(player.getUniqueId())) continue;
+            if (whitelist.contains(onlinePlayer.getUniqueId())) continue;
             if (type.equalsIgnoreCase("team")) {
                 Team team = ClaimManager.getPlayerTeam(player);
-                if (team != null && team.hasEntry(offlinePlayer.getName())) continue;
+                if (team != null && team.hasEntry(onlinePlayer.getName())) continue;
             }
-            if (offlinePlayer.getName().startsWith(builder.getRemaining())) {
-                builder.suggest(offlinePlayer.getName());
+            if (onlinePlayer.getName().startsWith(builder.getRemaining())) {
+                builder.suggest(onlinePlayer.getName());
             }
         }
 
