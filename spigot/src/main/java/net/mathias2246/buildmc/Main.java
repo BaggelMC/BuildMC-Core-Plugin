@@ -105,6 +105,12 @@ public final class Main extends PluginMain {
         apiClaimManager = new ClaimManagerImpl();
         apiEndManager = new EndManagerImpl();
         apiElytraManager = new ElytraManagerImpl(zoneManager);
+
+        CommandRegister.setupCommandAPI();
+        CommandRegister.register(new BuildMcCommand());
+        CommandRegister.register(new BroadcastCommandPlatform());
+        CommandRegister.register(new RulesCommandPLatform());
+        CommandRegister.register(new DeathsCommandPlatform());
     }
 
     @Override
@@ -192,11 +198,7 @@ public final class Main extends PluginMain {
             throw new RuntimeException(e);
         }
 
-        CommandRegister.setupCommandAPI();
-        CommandRegister.register(new BuildMcCommand());
-        CommandRegister.register(new BroadcastCommandPlatform());
-        CommandRegister.register(new RulesCommandPLatform());
-        CommandRegister.register(new DeathsCommandPlatform());
+
 
         getServer().getPluginManager().registerEvents(new EndListener(), this);
 

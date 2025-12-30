@@ -59,7 +59,7 @@ public class ClaimSelectMenu {
             }
         }
 
-        ChestGui gui = new ChestGui(6, ComponentHolder.of(Component.translatable("messages.claims.ui.select-menu.title")));
+        ChestGui gui = new ChestGui(6, ComponentHolder.of(Message.msg(player, "messages.claims.ui.select-menu.title")));
 
         StaticPane background = new StaticPane(0, 0, 9, 5);
         background.setPriority(Pane.Priority.LOW);

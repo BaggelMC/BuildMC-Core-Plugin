@@ -89,10 +89,9 @@ claims:
     # The item used for the claim-tool
     # You are able to define custom item components inside the metadata of the item.
     tool-item:
-      DataVersion: 4556
-      id: minecraft:carrot_on_a_stick
-      count: 1
-      schema_version: 1
+      v: 4556
+      type: CARROT_ON_A_STICK
+      amount: 1
 
     # Custom Serialized data that is applied to the claim tool.
     # Should
