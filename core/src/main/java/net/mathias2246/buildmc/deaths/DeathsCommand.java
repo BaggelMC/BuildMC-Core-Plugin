@@ -56,8 +56,8 @@ public class DeathsCommand {
 
             return 1;
         } catch (Exception e) {
-            e.printStackTrace();
-             CoreMain.plugin.sendMessage(sender, Component.translatable("messages.deaths.error.load-failed"));
+            CoreMain.plugin.getLogger().warning(e.toString());
+            CoreMain.plugin.sendMessage(sender, Component.translatable("messages.deaths.error.load-failed"));
             return 0;
         }
     }
@@ -88,8 +88,8 @@ public class DeathsCommand {
             return 1;
 
         } catch (Exception e) {
-            e.printStackTrace();
-             CoreMain.plugin.sendMessage(sender, Component.translatable("messages.deaths.error.restore-failed"));
+            CoreMain.plugin.getLogger().warning(e.toString());
+            CoreMain.plugin.sendMessage(sender, Component.translatable("messages.deaths.error.restore-failed"));
             return 0;
         }
     }

@@ -6,7 +6,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
-import net.mathias2246.buildmc.api.event.claims.ClaimWhitelistChangeEvent;
 import net.mathias2246.buildmc.claims.ClaimLogger;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.inventoryframework.adventuresupport.ComponentHolder;
@@ -180,15 +179,6 @@ public class WhitelistMenu {
             CoreMain.soundManager.playSound(player, UIUtil.CLICK_SOUND);
 
             OfflinePlayer target = Bukkit.getOfflinePlayer(uuid);
-
-            ClaimWhitelistChangeEvent event = new ClaimWhitelistChangeEvent(
-                    claim,
-                    target,
-                    player,
-                    ClaimWhitelistChangeEvent.ChangeAction.REMOVED
-            );
-            Bukkit.getPluginManager().callEvent(event);
-            if (event.isCancelled()) return;
 
             ClaimManager.removePlayerFromWhitelist(claim.getId(), uuid);
             CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.ui.whitelist-menu.delete-confirm-menu.success"));

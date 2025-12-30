@@ -5,7 +5,6 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.Protection;
-import net.mathias2246.buildmc.api.event.claims.ClaimProtectionChangeEvent;
 import net.mathias2246.buildmc.claims.ClaimLogger;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.inventoryframework.adventuresupport.ComponentHolder;
@@ -106,26 +105,18 @@ public class ProtectionsMenu {
         boolean enabled = claim.hasProtection(protection);
         ItemStack status = createStatusPane(protection.getKey(), enabled, player);
 
-        Long claimId = claim.getId();
-        if (claimId == null) return null;
-
         return new GuiItem(status, event -> {
             event.setCancelled(true);
             CoreMain.soundManager.playSound(player, UIUtil.CLICK_SOUND);
 
             boolean currentlyEnabled = claim.hasProtection(protection);
 
-            // Trigger ClaimProtectionChangeEvent
-            ClaimProtectionChangeEvent.ActiveState newState = currentlyEnabled ? ClaimProtectionChangeEvent.ActiveState.DISABLED : ClaimProtectionChangeEvent.ActiveState.ENABLED;
-            ClaimProtectionChangeEvent changeEvent = new ClaimProtectionChangeEvent(claim, protection, newState, player);
-            if (changeEvent.isCancelled()) return;
-
             // Update claim + log
             if (currentlyEnabled) {
-                ClaimManager.removeProtection(claimId, protection);
+                ClaimManager.removeProtection(claim, protection);
                 ClaimLogger.logProtectionChanged(player, claim.getName(), protection, "disabled");
             } else {
-                ClaimManager.addProtection(claimId, protection);
+                ClaimManager.addProtection(claim, protection);
                 ClaimLogger.logProtectionChanged(player, claim.getName(), protection, "enabled");
             }
 

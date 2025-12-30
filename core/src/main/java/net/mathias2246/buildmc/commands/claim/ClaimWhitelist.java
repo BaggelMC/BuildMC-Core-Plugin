@@ -3,7 +3,6 @@ package net.mathias2246.buildmc.commands.claim;
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
-import net.mathias2246.buildmc.api.event.claims.ClaimWhitelistChangeEvent;
 import net.mathias2246.buildmc.claims.ClaimLogger;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import org.bukkit.Bukkit;
@@ -64,16 +63,6 @@ public class ClaimWhitelist {
                     return 0;
                 }
 
-                ClaimWhitelistChangeEvent event = new ClaimWhitelistChangeEvent(
-                        claim,
-                        target,
-                        player,
-                        ClaimWhitelistChangeEvent.ChangeAction.ADDED
-                );
-                Bukkit.getPluginManager().callEvent(event);
-                if (event.isCancelled()) return 0;
-
-
                 ClaimManager.addPlayerToWhitelist(claimId, targetUUID);
                 CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.whitelist.added"));
                 ClaimLogger.logWhitelistAdded(player, name, targetPlayerName, targetUUID.toString());
@@ -84,15 +73,6 @@ public class ClaimWhitelist {
                     CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.whitelist.not-on-list"));
                     return 0;
                 }
-
-                ClaimWhitelistChangeEvent event = new ClaimWhitelistChangeEvent(
-                        claim,
-                        target,
-                        player,
-                        ClaimWhitelistChangeEvent.ChangeAction.REMOVED
-                );
-                Bukkit.getPluginManager().callEvent(event);
-                if (event.isCancelled()) return 0;
 
                 ClaimManager.removePlayerFromWhitelist(claimId, targetUUID);
                 CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.whitelist.removed"));

@@ -23,25 +23,19 @@ public class ClaimWhitelistChangeEvent extends CustomEvent implements Cancellabl
 
     private final @NotNull OfflinePlayer whitelistedPlayer;
 
-    private final @NotNull CommandSender actor;
 
     private final @NotNull ChangeAction action;
 
     private final long timestamp = System.currentTimeMillis();
 
-    public ClaimWhitelistChangeEvent(@NotNull Claim claim, @NotNull OfflinePlayer whitelistedPlayer, @NotNull CommandSender actor, @NotNull ChangeAction action) {
+    public ClaimWhitelistChangeEvent(@NotNull Claim claim, @NotNull OfflinePlayer whitelistedPlayer, @NotNull ChangeAction action) {
         this.claim = claim;
         this.whitelistedPlayer = whitelistedPlayer;
-        this.actor = actor;
         this.action = action;
     }
 
     public @NotNull ChangeAction getAction() {
         return action;
-    }
-
-    public @NotNull CommandSender getActor() {
-        return actor;
     }
 
     public @NotNull OfflinePlayer getWhitelistedPlayer() {

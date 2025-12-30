@@ -1,11 +1,14 @@
 package net.mathias2246.buildmc.claims;
 
+import com.google.common.base.VerifyException;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.ClaimType;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.event.claims.ClaimCreateEvent;
+import net.mathias2246.buildmc.api.event.claims.ClaimProtectionChangeEvent;
 import net.mathias2246.buildmc.api.event.claims.ClaimRemoveEvent;
+import net.mathias2246.buildmc.api.event.claims.ClaimWhitelistChangeEvent;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
@@ -416,11 +419,11 @@ public class ClaimManager {
             }
         }
 
-        ClaimCreateEvent e = new ClaimCreateEvent(
+        ClaimCreateEvent event = new ClaimCreateEvent(
                 claim
         );
-        Bukkit.getPluginManager().callEvent(e);
-        if (e.isCancelled()) return false;
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return false;
 
         // Update ownership mapping
         switch (type) {
@@ -449,6 +452,10 @@ public class ClaimManager {
 
         if (claim == null) return;
 
+        ClaimWhitelistChangeEvent event = new ClaimWhitelistChangeEvent(claim, Bukkit.getOfflinePlayer(playerID), ClaimWhitelistChangeEvent.ChangeAction.ADDED);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return;
+
         claim.addWhitelistedPlayer(playerID);
 
         try {
@@ -470,6 +477,10 @@ public class ClaimManager {
 
         if (claim == null) return;
 
+        ClaimWhitelistChangeEvent event = new ClaimWhitelistChangeEvent(claim, Bukkit.getOfflinePlayer(playerID), ClaimWhitelistChangeEvent.ChangeAction.REMOVED);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return;
+
         claim.removeWhitelistedPlayer(playerID);
 
         try {
@@ -479,7 +490,51 @@ public class ClaimManager {
         }
     }
 
+    public static void addProtection(@NotNull Claim claim, @NotNull NamespacedKey protectionKey) {
+        Protection protection = CoreMain.protectionsRegistry.get(protectionKey);
+        if (protection == null) {
+            throw new IllegalArgumentException("No protection exists with key " + protectionKey);
+        }
+
+        addProtection(claim, protection);
+    }
+
+    public static void addProtection(@NotNull Claim claim, @NotNull Protection protection) {
+        Long claimId = claim.getId();
+        if (claimId == null) {
+            throw new IllegalArgumentException("Claim has no ID: " + claim.getName());
+        }
+
+        ClaimProtectionChangeEvent event =
+                new ClaimProtectionChangeEvent(
+                        claim,
+                        protection,
+                        ClaimProtectionChangeEvent.ActiveState.ENABLED
+                );
+
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return;
+
+        try {
+            CoreMain.claimTable.addProtectionFlag(
+                    CoreMain.databaseManager.getConnection(),
+                    claimId,
+                    protection.getKey()
+            );
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static void addProtection(long claimId, @NotNull Protection protection) {
+        Claim claim = getClaimByID(claimId);
+        if (claim == null) {
+            throw new IllegalArgumentException("No claim exists with id " + claimId);
+        }
+        ClaimProtectionChangeEvent event = new ClaimProtectionChangeEvent(claim, protection, ClaimProtectionChangeEvent.ActiveState.ENABLED);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return;
+
         try {
             CoreMain.claimTable.addProtectionFlag(CoreMain.databaseManager.getConnection(), claimId, protection.getKey());
         } catch (SQLException e) {
@@ -488,6 +543,20 @@ public class ClaimManager {
     }
 
     public static void addProtection(long claimId, @NotNull NamespacedKey protection) {
+        Claim claim = getClaimByID(claimId);
+        if (claim == null) {
+            throw new IllegalArgumentException("No claim exists with id " + claimId);
+        }
+
+        Protection protectionObject = CoreMain.protectionsRegistry.get(protection);
+        if (protectionObject == null) {
+            throw new IllegalArgumentException("No protection exists with key " + protection);
+        }
+
+        ClaimProtectionChangeEvent event = new ClaimProtectionChangeEvent(claim, protectionObject, ClaimProtectionChangeEvent.ActiveState.ENABLED);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return;
+
         try {
             CoreMain.claimTable.addProtectionFlag(CoreMain.databaseManager.getConnection(), claimId, protection);
         } catch (SQLException e) {
@@ -495,7 +564,52 @@ public class ClaimManager {
         }
     }
 
+    public static void removeProtection(@NotNull Claim claim, @NotNull NamespacedKey protectionKey) {
+        Protection protection = CoreMain.protectionsRegistry.get(protectionKey);
+        if (protection == null) {
+            throw new IllegalArgumentException("No protection exists with key " + protectionKey);
+        }
+
+        removeProtection(claim, protection);
+    }
+
+    public static void removeProtection(@NotNull Claim claim, @NotNull Protection protection) {
+        Long claimId = claim.getId();
+        if (claimId == null) {
+            throw new IllegalArgumentException("Claim has no ID: " + claim.getName());
+        }
+
+        ClaimProtectionChangeEvent event =
+                new ClaimProtectionChangeEvent(
+                        claim,
+                        protection,
+                        ClaimProtectionChangeEvent.ActiveState.DISABLED
+                );
+
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return;
+
+        try {
+            CoreMain.claimTable.removeProtectionFlag(
+                    CoreMain.databaseManager.getConnection(),
+                    claimId,
+                    protection.getKey()
+            );
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static void removeProtection(long claimId, @NotNull Protection protection) {
+        Claim claim = getClaimByID(claimId);
+        if (claim == null) {
+            throw new IllegalArgumentException("No claim exists with id " + claimId);
+        }
+
+        ClaimProtectionChangeEvent event = new ClaimProtectionChangeEvent(claim, protection, ClaimProtectionChangeEvent.ActiveState.DISABLED);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return;
+
         try {
             CoreMain.claimTable.removeProtectionFlag(CoreMain.databaseManager.getConnection(), claimId, protection.getKey());
         } catch (SQLException e) {
@@ -504,6 +618,20 @@ public class ClaimManager {
     }
 
     public static void removeProtection(long claimId, @NotNull NamespacedKey protection) {
+        Claim claim = getClaimByID(claimId);
+        if (claim == null) {
+            throw new IllegalArgumentException("No claim exists with id " + claimId);
+        }
+
+        Protection protectionObject = CoreMain.protectionsRegistry.get(protection);
+        if (protectionObject == null) {
+            throw new IllegalArgumentException("No protection exists with key " + protection);
+        }
+
+        ClaimProtectionChangeEvent event = new ClaimProtectionChangeEvent(claim, protectionObject, ClaimProtectionChangeEvent.ActiveState.ENABLED);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return;
+
         try {
             CoreMain.claimTable.removeProtectionFlag(CoreMain.databaseManager.getConnection(), claimId, protection);
         } catch (SQLException e) {

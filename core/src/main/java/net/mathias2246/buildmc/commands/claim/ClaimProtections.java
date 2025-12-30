@@ -4,7 +4,6 @@ import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.Protection;
-import net.mathias2246.buildmc.api.event.claims.ClaimProtectionChangeEvent;
 import net.mathias2246.buildmc.claims.ClaimLogger;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.util.Message;
@@ -15,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class ClaimProtections {
     
@@ -93,22 +91,12 @@ public class ClaimProtections {
             return 0;
         }
 
-        Protection protection = Objects.requireNonNull(CoreMain.protectionsRegistry.get(flag));
-
-        ClaimProtectionChangeEvent event = new ClaimProtectionChangeEvent(
-                claim,
-                protection,
-                enable ? ClaimProtectionChangeEvent.ActiveState.ENABLED : ClaimProtectionChangeEvent.ActiveState.DISABLED,
-                player
-        );
-        if (event.isCancelled()) return 0;
-
         if (enable) {
-            ClaimManager.addProtection(claimId, flag);
+            ClaimManager.addProtection(claim, flag);
             CoreMain.plugin.sendMessage(player, Message.msg(player, "messages.claims.protections.added", Map.of("flag", flag.toString())));
             ClaimLogger.logProtectionChanged(player, name, flag.toString(), "enabled");
         } else {
-            ClaimManager.removeProtection(claimId, flag);
+            ClaimManager.removeProtection(claim, flag);
             CoreMain.plugin.sendMessage(player, Message.msg(player, "messages.claims.protections.removed", Map.of("flag", flag.toString())));
             ClaimLogger.logProtectionChanged(player, name, flag.toString(), "disabled");
         }
