@@ -1,5 +1,8 @@
 package net.mathias2246.buildmc.ui;
 
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
+import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.item.ItemUtil;
 import net.mathias2246.buildmc.inventoryframework.gui.GuiItem;
 import net.mathias2246.buildmc.inventoryframework.pane.StaticPane;
@@ -21,6 +24,14 @@ public class UIUtil {
     public static final @NotNull GuiItem EXIT_BUTTON;
 
     public static final @NotNull NamespacedKey INVISIBLE_ITEM_KEY = Objects.requireNonNull(NamespacedKey.fromString("buildmc:none"));
+
+    @SuppressWarnings("PatternValidation")
+    public static final @NotNull Sound CLICK_SOUND = Sound.sound(
+            Key.key(CoreMain.plugin.getConfig().getString("sounds.ui.click", "minecraft:ui.button.click")),
+            Sound.Source.UI,
+            1f,
+            1f
+    );
 
     public final static Consumer<InventoryClickEvent> noInteract = event -> event.setCancelled(true);
 

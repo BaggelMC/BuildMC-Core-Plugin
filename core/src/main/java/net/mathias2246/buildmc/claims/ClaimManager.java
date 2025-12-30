@@ -337,11 +337,24 @@ public class ClaimManager {
     }
 
     /**
-     * @throws SQLException If an internal database error occurred.*/
-    @Nullable public static Claim getClaim(Location location) throws SQLException {
-        Chunk chunk = location.getChunk();
+     * @throws SQLException If an internal database error occurred.
+     */
+    @Nullable
+    public static Claim getClaim(@NotNull Location location) throws SQLException {
+        World world = location.getWorld();
+
+        if (world == null) {
+            throw new IllegalArgumentException("Location does not belong to a world.");
+        }
+
+        if (!world.isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4)) {
+            return null;
+        }
+
+        Chunk chunk = location.getChunk(); // safe now
         return getClaim(chunk);
     }
+
 
     public static List<Claim> getAllClaims() throws SQLException {
         return CoreMain.claimTable.getAllClaims(CoreMain.databaseManager.getConnection());

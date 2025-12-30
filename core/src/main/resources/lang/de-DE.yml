@@ -165,7 +165,7 @@ messages:
       team-message: <gold>Dieser Chunk gehört dem Team <white>%owner%</white>.</gold>
       player-message: <gold>Dieser Chunk gehört dem Spieler <white>%owner%</white>.</gold>
       server-message: <gold>Dieser Chunk gehört dem Server.</gold>
-      unclaimed: <gold>Dieser Chunk gehört niemanden.</gold>
+      unclaimed: <gold>Dieser Chunk gehört niemanden oder der Chunk ist nicht geladen.</gold>
     whitelist:
       added: <green>Der Spieler wurde zu der Claim Whitelist hinzugefügt.
       removed: <green>Der Spieler wurde von der Claim Whitelist entfernt.
