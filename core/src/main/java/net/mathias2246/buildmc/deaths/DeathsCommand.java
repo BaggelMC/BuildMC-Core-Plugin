@@ -46,8 +46,6 @@ public class DeathsCommand {
                         .append(Component.text(death.id()).color(NamedTextColor.GREEN))
                         .append(Component.text("] "))
                         .append(Component.text(DATE_FORMAT.format(new Date(death.timestamp())), NamedTextColor.WHITE))
-                        .append(Component.text(" - XP ").color(NamedTextColor.DARK_GRAY))
-                        .append(Component.text(death.xp(), NamedTextColor.RED))
                         .append(Component.text(" - ").color(NamedTextColor.DARK_GRAY))
                         .append(Component.text(death.cause(), NamedTextColor.GRAY));
 
