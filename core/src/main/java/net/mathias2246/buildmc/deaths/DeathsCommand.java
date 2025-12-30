@@ -77,7 +77,7 @@ public class DeathsCommand {
                 return 0;
             }
 
-            if (!record.getPlayerUuid().equals(target.getUniqueId())) {
+            if (!record.playerUuid().equals(target.getUniqueId())) {
                  CoreMain.plugin.sendMessage(sender, Component.translatable("messages.deaths.error.wrong-player"));
                 return 0;
             }

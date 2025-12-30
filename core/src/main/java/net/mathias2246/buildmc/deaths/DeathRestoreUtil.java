@@ -1,5 +1,6 @@
 package net.mathias2246.buildmc.deaths;
 
+import net.mathias2246.buildmc.util.ItemStackSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -12,15 +13,12 @@ public class DeathRestoreUtil {
 
         player.setLevel(0);
         player.setExp(0f);
-        player.giveExp(record.getXp());
+        player.giveExp(record.xp());
 
-        for (Map.Entry<Integer, byte[]> entry : record.getItems().entrySet()) {
+        for (Map.Entry<Integer, byte[]> entry : record.items().entrySet()) {
             int slot = entry.getKey();
             byte[] bytes = entry.getValue();
-
-            String json = new String(bytes, StandardCharsets.UTF_8);
-            Map<String, Object> map = new com.google.gson.Gson().fromJson(json, Map.class);
-            ItemStack item = ItemStack.deserialize(map);
+            ItemStack item = ItemStackSerialization.deserialize(bytes);
 
             if (slot < 36) {
                 ItemStack existing = player.getInventory().getItem(slot);
@@ -44,7 +42,7 @@ public class DeathRestoreUtil {
 
             } else if (slot == 40) {
                 ItemStack offhand = player.getInventory().getItemInOffHand();
-                if (offhand != null && !offhand.getType().isAir()) {
+                if (!offhand.getType().isAir()) {
                     player.getWorld().dropItemNaturally(player.getLocation(), item);
                 } else {
                     player.getInventory().setItemInOffHand(item);

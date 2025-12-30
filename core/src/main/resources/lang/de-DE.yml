@@ -72,6 +72,19 @@ messages:
     successful: "<green>Du wurdest erfolgreich teleportiert!</green>"
     counter: "<white>Bewege dich nicht für %seconds% sekunden...</white>"
 
+  deaths:
+    error:
+      player-not-found: "<red>Der angegebene Spieler wurde nicht gefunden."
+      load-failed: "<red>Tode konnten nicht geladen werden."
+      not-found: "<red>Tod ID konnte nicht gefunden werden."
+      wrong-player: "<red>Dieser Tod gehört nicht zu diesem Spieler."
+      restore-failed: "<red>Tod konnte nicht wiederhergestellt werden."
+
+    none: "<yellow>Keine Tode gefunden für %s"
+    list-part: "<yellow>Tode von "
+
+    restored: "<green>Tode erfolgreich widerhergestellt."
+
   claims:
     tool:
       tool-name: Claim-Ecken auswählen
