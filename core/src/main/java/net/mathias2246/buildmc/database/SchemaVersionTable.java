@@ -23,16 +23,6 @@ public class SchemaVersionTable implements DatabaseTable {
         }
     }
 
-    @Override
-    public void prepareStatements(Connection connection) throws SQLException {
-
-    }
-
-    @Override
-    public void closeStatements(Connection connection) {
-
-    }
-
     public int getCurrentVersion(Connection connection) throws SQLException {
         try (Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT version FROM schema_version")) {

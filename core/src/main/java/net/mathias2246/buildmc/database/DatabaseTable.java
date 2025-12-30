@@ -5,8 +5,4 @@ import java.sql.SQLException;
 
 public interface DatabaseTable {
     void createTable(Connection connection) throws SQLException;
-
-    void prepareStatements(Connection connection) throws SQLException;
-
-    void closeStatements(Connection connection) throws SQLException;
 }
