@@ -10,7 +10,6 @@ import net.mathias2246.buildmc.inventoryframework.adventuresupport.ComponentHold
 import net.mathias2246.buildmc.inventoryframework.gui.GuiItem;
 import net.mathias2246.buildmc.inventoryframework.gui.type.ChestGui;
 import net.mathias2246.buildmc.inventoryframework.pane.StaticPane;
-import net.mathias2246.buildmc.ui.UIUtil;
 import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.SoundUtil;
 import org.bukkit.Material;
@@ -47,7 +46,7 @@ public class ClaimEditMenu {
             pane.addItem(makeButton(Material.SHIELD, Message.msg(player, "messages.claims.ui.edit-menu.protections"),
                     e -> {
                         e.setCancelled(true);
-                        CoreMain.soundManager.playSound(player, UIUtil.CLICK_SOUND);
+                        CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
                         ProtectionsMenu.open(player, claim);
                     }), 2, 1);
         } else {
@@ -61,7 +60,7 @@ public class ClaimEditMenu {
             pane.addItem(makeButton(Material.PLAYER_HEAD, Message.msg(player, "messages.claims.ui.edit-menu.whitelist"),
                     e -> {
                         e.setCancelled(true);
-                        CoreMain.soundManager.playSound(player, UIUtil.CLICK_SOUND);
+                        CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
                         WhitelistMenu.open(player,claim);
                     }), 4, 1);
         } else {
@@ -73,7 +72,7 @@ public class ClaimEditMenu {
         pane.addItem(makeButton(Material.BARRIER, Message.msg(player, "messages.claims.ui.edit-menu.delete"),
                 e -> {
                     e.setCancelled(true);
-                    CoreMain.soundManager.playSound(player, SoundUtil.notification);
+                    CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
                     openDeleteConfirmationMenu(player, claim);
                 }), 6, 1);
 
@@ -81,7 +80,7 @@ public class ClaimEditMenu {
         pane.addItem(makeButton(Material.BARRIER, Message.msg(player, "messages.claims.ui.general.back"),
                 e -> {
                     e.setCancelled(true);
-                    CoreMain.soundManager.playSound(player, UIUtil.CLICK_SOUND);
+                    CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
                     ClaimSelectMenu.open(player);
                 }), 8, 2);
 
@@ -112,7 +111,7 @@ public class ClaimEditMenu {
         pane.addItem(makeButton(Material.GREEN_CONCRETE, Message.msg(player, "messages.claims.ui.general.cancel"),
                 e -> {
                     e.setCancelled(true);
-                    CoreMain.soundManager.playSound(player, UIUtil.CLICK_SOUND);
+                    CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
                     open(player, claim); // reopen edit menu
                 }), 3, 1);
 
@@ -120,7 +119,7 @@ public class ClaimEditMenu {
         pane.addItem(makeButton(Material.RED_CONCRETE, Message.msg(player, "messages.claims.ui.general.confirm"),
                 e -> {
                     e.setCancelled(true);
-                    CoreMain.soundManager.playSound(player, UIUtil.CLICK_SOUND);
+                    CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
                     boolean removed = ClaimManager.removeClaimById(claim.getId());
                     if (removed) {
                         CoreMain.plugin.sendMessage(player,

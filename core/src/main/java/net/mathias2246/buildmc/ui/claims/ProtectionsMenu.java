@@ -15,6 +15,7 @@ import net.mathias2246.buildmc.inventoryframework.pane.PaginatedPane;
 import net.mathias2246.buildmc.inventoryframework.pane.StaticPane;
 import net.mathias2246.buildmc.ui.UIUtil;
 import net.mathias2246.buildmc.util.Message;
+import net.mathias2246.buildmc.util.SoundUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -90,7 +91,7 @@ public class ProtectionsMenu {
         // Back button
         controls.addItem(new GuiItem(createNamedItem(Material.BARRIER, Message.msg(player,"messages.claims.ui.general.back")), e -> {
             e.setCancelled(true);
-            CoreMain.soundManager.playSound(player, UIUtil.CLICK_SOUND);
+            CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
             ClaimEditMenu.open(player, claim);
         }), 8, 0);
 
@@ -111,7 +112,7 @@ public class ProtectionsMenu {
 
         return new GuiItem(status, event -> {
             event.setCancelled(true);
-            CoreMain.soundManager.playSound(player, UIUtil.CLICK_SOUND);
+            CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
 
             boolean currentlyEnabled = claim.hasProtection(protection);
 
@@ -200,7 +201,7 @@ public class ProtectionsMenu {
                     createNamedItem(Material.ARROW, Message.msg(player, "messages.claims.ui.general.previous")),
                     e -> {
                         e.setCancelled(true);
-                        CoreMain.soundManager.playSound(player, UIUtil.CLICK_SOUND);
+                        CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
                         int newPage = pages.getPage() - 1;
                         pages.setPage(newPage);
                         updatePageIndicator(player, controls, newPage + 1, total, pages, gui);
@@ -216,7 +217,7 @@ public class ProtectionsMenu {
                     createNamedItem(Material.ARROW, Message.msg(player, "messages.claims.ui.general.next")),
                     e -> {
                         e.setCancelled(true);
-                        CoreMain.soundManager.playSound(player, UIUtil.CLICK_SOUND);
+                        CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
                         int newPage = pages.getPage() + 1;
                         pages.setPage(newPage);
                         updatePageIndicator(player, controls, newPage + 1, total, pages, gui);

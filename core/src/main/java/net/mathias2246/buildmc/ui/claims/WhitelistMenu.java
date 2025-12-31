@@ -140,7 +140,7 @@ public class WhitelistMenu {
         // Back button
         controls.addItem(new GuiItem(createNamedItem(Material.BARRIER, Message.msg(player,"messages.claims.ui.general.back")), e -> {
             e.setCancelled(true);
-            CoreMain.soundManager.playSound(player, UIUtil.CLICK_SOUND);
+            CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
             ClaimEditMenu.open(player, claim); // Navigate back to Claim Edit Menu
         }), 8, 0);
 
@@ -169,7 +169,7 @@ public class WhitelistMenu {
         // Cancel button
         pane.addItem(new GuiItem(createNamedItem(Material.GREEN_CONCRETE, Message.msg(player,"messages.claims.ui.general.cancel")), e -> {
             e.setCancelled(true);
-            CoreMain.soundManager.playSound(player, UIUtil.CLICK_SOUND);
+            CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
             open(player, claim); // reopen whitelist menu
         }), 3, 1);
 
@@ -177,7 +177,7 @@ public class WhitelistMenu {
         pane.addItem(new GuiItem(createNamedItem(Material.RED_CONCRETE, Message.msg(player,"messages.claims.ui.general.confirm")), e -> {
             e.setCancelled(true);
 
-            CoreMain.soundManager.playSound(player, UIUtil.CLICK_SOUND);
+            CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
 
             OfflinePlayer target = Bukkit.getOfflinePlayer(uuid);
 

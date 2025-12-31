@@ -10,19 +10,25 @@ public class SoundUtil {
     public static void setup() {
         notification = Sound.sound(
                 Key.key(CoreMain.config.getString("sounds.notification", "minecraft:entity.item.pickup")),
-                Sound.Source.MASTER,
+                Sound.Source.UI,
                 1f,
                 1f
         );
         mistake = Sound.sound(
                 Key.key(CoreMain.config.getString("sounds.mistake", "minecraft:block.note_block.snare")),
-                Sound.Source.MASTER,
+                Sound.Source.UI,
                 1f,
                 1f
         );
         success = Sound.sound(
                 Key.key(CoreMain.config.getString("sounds.success", "minecraft:block.note_block.bell")),
-                Sound.Source.MASTER,
+                Sound.Source.UI,
+                1f,
+                1f
+        );
+        uiClick = Sound.sound(
+                Key.key(CoreMain.config.getString("sounds.ui.click", "minecraft:ui.button.click")),
+                Sound.Source.UI,
                 1f,
                 1f
         );
@@ -31,5 +37,6 @@ public class SoundUtil {
     public static Sound notification;
     public static Sound mistake;
     public static Sound success;
+    public static Sound uiClick;
 
 }
