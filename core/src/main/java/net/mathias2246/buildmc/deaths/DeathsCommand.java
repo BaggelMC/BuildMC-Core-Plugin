@@ -3,6 +3,7 @@ package net.mathias2246.buildmc.deaths;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -10,6 +11,7 @@ import org.bukkit.entity.Player;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 import java.util.UUID;
 
 import static net.mathias2246.buildmc.CoreMain.plugin;
@@ -32,7 +34,7 @@ public class DeathsCommand {
             var deaths = CoreMain.deathTable.getDeathsByPlayer(conn, uuid);
 
             if (deaths.isEmpty()) {
-                CoreMain.plugin.sendMessage(sender, Component.translatable("messages.deaths.none", Component.text(playerName)));
+                CoreMain.plugin.sendMessage(sender, Message.msg(sender, "messages.deaths.none", Map.of("player", playerName)));
                 return 1;
             }
 

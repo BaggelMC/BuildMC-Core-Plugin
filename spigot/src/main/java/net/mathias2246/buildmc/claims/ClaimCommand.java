@@ -208,10 +208,13 @@ public class ClaimCommand implements CustomCommand {
                                                     List<String> inputArgs = List.of(info.currentInput().split(" "));
                                                     if (inputArgs.size() < 4)
                                                         return builder.buildFuture();
+                                                    String action = inputArgs.get(1);
+                                                    boolean isRemove = action.equalsIgnoreCase("remove");
                                                     String type = inputArgs.get(2);
                                                     String claimName = inputArgs.get(3);
 
-                                                    return ClaimSuggestions.claimPlayerWhitelistSuggestions(player, type, claimName, builder);
+
+                                                    return ClaimSuggestions.claimPlayerWhitelistSuggestions(player, type, claimName, isRemove, builder);
                                                 })
 
                                 )

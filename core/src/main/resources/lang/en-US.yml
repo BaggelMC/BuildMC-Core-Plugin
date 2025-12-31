@@ -67,7 +67,7 @@ messages:
       wrong-player: "<red>This death does not belong to that player."
       restore-failed: "<red>Failed to restore death."
 
-    none: "<yellow>No deaths recorded for %s"
+    none: "<yellow>No deaths recorded for %player%."
     list-part: "<yellow>Deaths for "
 
     restored: "<green>Death restored successfully."

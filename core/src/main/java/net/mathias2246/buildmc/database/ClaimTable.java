@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import static net.mathias2246.buildmc.claims.ClaimManager.*;
@@ -554,8 +555,8 @@ public class ClaimTable implements DatabaseTable {
 
     public void loadClaimOwners(Connection conn) throws SQLException {
         // Temporary maps to populate
-        Map<String, List<Long>> teamMap = new HashMap<>();
-        Map<UUID, List<Long>> playerMap = new HashMap<>();
+        ConcurrentHashMap<String, List<Long>> teamMap = new ConcurrentHashMap<>();
+        ConcurrentHashMap<UUID, List<Long>> playerMap = new ConcurrentHashMap<>();
         List<Long> serverList = new ArrayList<>();
         List<Long> placeholderList = new ArrayList<>();
 
