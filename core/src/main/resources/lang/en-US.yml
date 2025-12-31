@@ -163,7 +163,7 @@ messages:
       team-message: "<gold>This chunk is owned by team <white>%owner%</white>.</gold>"
       player-message: "<gold>This chunk is owned by player <white>%owner%</white>.</gold>"
       server-message: "<gold>This chunk is owned by the server.</gold>"
-      unclaimed: "<gold>This chunk belongs to nobody.</gold>"
+      unclaimed: "<gold>This chunk belongs to nobody or the chunk isn't loaded.</gold>"
 
     whitelist:
       added: "<green>Player has been added to the claim whitelist."

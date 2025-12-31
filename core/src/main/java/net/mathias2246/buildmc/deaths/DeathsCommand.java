@@ -32,12 +32,12 @@ public class DeathsCommand {
             var deaths = CoreMain.deathTable.getDeathsByPlayer(conn, uuid);
 
             if (deaths.isEmpty()) {
-                plugin.sendMessage(sender, Component.translatable("messages.deaths.none", Component.text(playerName)));
+                CoreMain.plugin.sendMessage(sender, Component.translatable("messages.deaths.none", Component.text(playerName)));
                 return 1;
             }
 
-            plugin.sendMessage(sender, Component.text("------------------------------", NamedTextColor.GRAY));
-            plugin.sendMessage(sender, Component.translatable("messages.deaths.list-part").color(NamedTextColor.GOLD)
+            CoreMain.plugin.sendMessage(sender, Component.text("------------------------------", NamedTextColor.GRAY));
+            CoreMain.plugin.sendMessage(sender, Component.translatable("messages.deaths.list-part").color(NamedTextColor.GOLD)
                     .append(Component.text(playerName).color(NamedTextColor.YELLOW))
                     .append(Component.text(":", NamedTextColor.GOLD)));
 
@@ -48,20 +48,18 @@ public class DeathsCommand {
                         .append(Component.text(death.id()).color(NamedTextColor.GREEN))
                         .append(Component.text("] "))
                         .append(Component.text(DATE_FORMAT.format(new Date(death.timestamp())), NamedTextColor.WHITE))
-                        .append(Component.text(" - XP ").color(NamedTextColor.DARK_GRAY))
-                        .append(Component.text(death.xp(), NamedTextColor.RED))
                         .append(Component.text(" - ").color(NamedTextColor.DARK_GRAY))
                         .append(Component.text(death.cause(), NamedTextColor.GRAY));
 
-                plugin.sendMessage(sender, line);
+                CoreMain.plugin.sendMessage(sender, line);
             }
 
-             plugin.sendMessage(sender, Component.text("------------------------------", NamedTextColor.GRAY));
+             CoreMain.plugin.sendMessage(sender, Component.text("------------------------------", NamedTextColor.GRAY));
 
             return 1;
         } catch (Exception e) {
-            e.printStackTrace();
-             plugin.sendMessage(sender, Component.translatable("messages.deaths.error.load-failed"));
+            CoreMain.plugin.getLogger().warning(e.toString());
+            CoreMain.plugin.sendMessage(sender, Component.translatable("messages.deaths.error.load-failed"));
             return 0;
         }
     }
@@ -69,7 +67,7 @@ public class DeathsCommand {
     public static int restore(CommandSender sender, String playerName, long deathId) {
         Player target = Bukkit.getPlayerExact(playerName);
         if (target == null) {
-             plugin.sendMessage(sender, Component.translatable("messages.deaths.error.player-not-found"));
+             CoreMain.plugin.sendMessage(sender, Component.translatable("messages.deaths.error.player-not-found"));
             return 0;
         }
 
@@ -77,12 +75,12 @@ public class DeathsCommand {
 
             DeathRecord record = CoreMain.deathTable.getDeathById(conn, deathId);
             if (record == null) {
-                 plugin.sendMessage(sender, Component.translatable("messages.deaths.error.not-found"));
+                 CoreMain.plugin.sendMessage(sender, Component.translatable("messages.deaths.error.not-found"));
                 return 0;
             }
 
-            if (!record.getPlayerUuid().equals(target.getUniqueId())) {
-                 plugin.sendMessage(sender, Component.translatable("messages.deaths.error.wrong-player"));
+            if (!record.playerUuid().equals(target.getUniqueId())) {
+                 CoreMain.plugin.sendMessage(sender, Component.translatable("messages.deaths.error.wrong-player"));
                 return 0;
             }
 
@@ -92,8 +90,8 @@ public class DeathsCommand {
             return 1;
 
         } catch (Exception e) {
-            e.printStackTrace();
-             plugin.sendMessage(sender, Component.translatable("messages.deaths.error.restore-failed"));
+            CoreMain.plugin.getLogger().warning(e.toString());
+            CoreMain.plugin.sendMessage(sender, Component.translatable("messages.deaths.error.restore-failed"));
             return 0;
         }
     }
