@@ -66,6 +66,7 @@ messages:
       not-found: "<red>Death ID not found."
       wrong-player: "<red>This death does not belong to that player."
       restore-failed: "<red>Failed to restore death."
+      invalid-id: "<red>Invalid death ID"
 
     none: "<yellow>No deaths recorded for %player%."
     list-part: "<yellow>Deaths for "

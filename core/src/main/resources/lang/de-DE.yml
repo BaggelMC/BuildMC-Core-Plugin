@@ -79,6 +79,7 @@ messages:
       not-found: "<red>Tod ID konnte nicht gefunden werden."
       wrong-player: "<red>Dieser Tod gehört nicht zu diesem Spieler."
       restore-failed: "<red>Tod konnte nicht wiederhergestellt werden."
+      invalid-id: "<red>Invalide Tod ID"
 
     none: "<yellow>Keine Tode gefunden für %s"
     list-part: "<yellow>Tode von "
