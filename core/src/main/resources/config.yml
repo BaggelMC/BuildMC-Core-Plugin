@@ -87,17 +87,9 @@ claims:
   # Settings related to the claim-tool. The claim-tool (if enabled) can be obtained using '/claim claimtool'
   tool:
     # The item used for the claim-tool
-    # You are able to define custom item components inside the metadata of the item.
-    tool-item:
-      v: 4556
-      type: CARROT_ON_A_STICK
-      amount: 1
+    tool-item-material: "CARROT_ON_A_STICK" # Default: CARROT_ON_A_STICK
 
-    # Custom Serialized data that is applied to the claim tool.
-    # Should
-    tool-item-data: null # Default: null
-
-    # If true, players even with permissions can't get the claim-tool using '/claim claimtool'
+    # If false, players even with permissions can't get the claim-tool using '/claim claimtool'
     enable-give-command: true # Default: true
 
     # Limits the maximum size in chunks of the selection

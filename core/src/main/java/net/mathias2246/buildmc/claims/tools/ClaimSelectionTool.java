@@ -9,6 +9,7 @@ import net.mathias2246.buildmc.util.ParticleSpawner;
 import net.mathias2246.buildmc.util.SoundUtil;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -20,8 +21,6 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
 
 @SuppressWarnings({"UnstableApiUsage"})
 public class ClaimSelectionTool extends AbstractSelectionTool {
@@ -47,9 +46,8 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
     @Override
     protected @NotNull ItemStack buildDefaultItemStack() {
 
-        ItemStack claimToolItemstack = ItemStack.deserialize(
-                Objects.requireNonNull(getPlugin().getConfig().getConfigurationSection("claims.tool.tool-item")).getValues(false)
-        );
+        ItemStack claimToolItemstack = new ItemStack(
+                Material.valueOf(getPlugin().getConfig().getString("claims.tool.tool-item-material", "CARROT_ON_A_STICK").toUpperCase()));
 
         ItemMeta m = claimToolItemstack.getItemMeta();
 
