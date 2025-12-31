@@ -13,11 +13,13 @@ import net.mathias2246.buildmc.inventoryframework.pane.StaticPane;
 import net.mathias2246.buildmc.ui.UIUtil;
 import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.SoundUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -28,62 +30,70 @@ public class ClaimSelectMenu {
 
     public static final int SLOTS_PER_PAGE = 45;
 
-    public static void open(Player player) {
-        // Get claims
-        List<Long> playerClaimIds = ClaimManager.playerOwner
-                .getOrDefault(player.getUniqueId(), Collections.emptyList());
+    public static void open(@NotNull Player player) {
 
-        List<Long> teamClaimIds = Optional.ofNullable(ClaimManager.getPlayerTeam(player))
-                .map(t -> ClaimManager.teamOwner.getOrDefault(t.getName(), Collections.emptyList()))
-                .orElse(Collections.emptyList());
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, task -> {
+
+                    // Get claims
+                    List<Long> playerClaimIds = ClaimManager.playerOwner
+                            .getOrDefault(player.getUniqueId(), Collections.emptyList());
+
+                    List<Long> teamClaimIds = Optional.ofNullable(ClaimManager.getPlayerTeam(player))
+                            .map(t -> ClaimManager.teamOwner.getOrDefault(t.getName(), Collections.emptyList()))
+                            .orElse(Collections.emptyList());
 
 
-        List<Claim> claims = new ArrayList<>();
-        for (long id : playerClaimIds) {
-            Claim c = ClaimManager.getClaimByID(id);
-            if (c != null) claims.add(c);
-        }
-        for (long id : teamClaimIds) {
-            Claim c = ClaimManager.getClaimByID(id);
-            if (c != null) claims.add(c);
-        }
+                    List<Claim> claims = new ArrayList<>();
+                    for (long id : playerClaimIds) {
+                        Claim c = ClaimManager.getClaimByID(id);
+                        if (c != null) claims.add(c);
+                    }
+                    for (long id : teamClaimIds) {
+                        Claim c = ClaimManager.getClaimByID(id);
+                        if (c != null) claims.add(c);
+                    }
 
-        if (player.hasPermission("buildmc.admin")) {
-            for (long id : ClaimManager.serverClaims) {
-                Claim c = ClaimManager.getClaimByID(id);
-                if (c != null) claims.add(c);
-            }
+                    if (player.hasPermission("buildmc.admin")) {
+                        for (long id : ClaimManager.serverClaims) {
+                            Claim c = ClaimManager.getClaimByID(id);
+                            if (c != null) claims.add(c);
+                        }
 
-            for (long id : ClaimManager.placeholderClaims) {
-                Claim c = ClaimManager.getClaimByID(id);
-                if (c != null) claims.add(c);
-            }
-        }
+                        for (long id : ClaimManager.placeholderClaims) {
+                            Claim c = ClaimManager.getClaimByID(id);
+                            if (c != null) claims.add(c);
+                        }
+                    }
 
-        List<GuiItem> claimButtons = buildClaimItems(player, claims);
+                    List<GuiItem> claimButtons = buildClaimItems(player, claims);
 
-        ChestGui gui = new ChestGui(6, ComponentHolder.of(Message.msg(player, "messages.claims.ui.select-menu.title")));
+                    ChestGui gui = new ChestGui(6, ComponentHolder.of(Message.msg(player, "messages.claims.ui.select-menu.title")));
 
-        PaginatedPane pages = new PaginatedPane(0, 0, 9, 5);
+                    PaginatedPane pages = new PaginatedPane(0, 0, 9, 5);
 
-        pages.populateWithGuiItems(claimButtons);
+                    pages.populateWithGuiItems(claimButtons);
 
-        StaticPane bottomBar = UIUtil.BOTTOM_BAR.copy();
+                    StaticPane bottomBar = UIUtil.BOTTOM_BAR.copy();
 
-        bottomBar.addItem(UIUtil.EXIT_BUTTON, 0, 0);
+                    bottomBar.addItem(UIUtil.EXIT_BUTTON, 0, 0);
 
-        var pageIndicator = UIUtil.makePageIndicator(gui, player, pages);
+                    var pageIndicator = UIUtil.makePageIndicator(gui, player, pages);
 
-        bottomBar.addItem(
-            pageIndicator, 4, 0
+                    bottomBar.addItem(
+                            pageIndicator, 4, 0
+                    );
+
+                    gui.addPane(pages);
+                    gui.addPane(bottomBar);
+
+                    Bukkit.getScheduler().runTask(plugin, bukkitTask -> {
+                        gui.show(player);
+
+                        UIUtil.updatePageUI(gui, player, pages, bottomBar, pageIndicator);
+                    }
+                    );
+                }
         );
-
-        gui.addPane(pages);
-        gui.addPane(bottomBar);
-
-        gui.show(player);
-
-        UIUtil.updatePageUI(gui, player, pages, bottomBar, pageIndicator);
     }
 
     private static List<GuiItem> buildClaimItems(Player player, List<Claim> claims) {

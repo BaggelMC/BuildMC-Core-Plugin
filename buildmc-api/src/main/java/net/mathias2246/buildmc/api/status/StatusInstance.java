@@ -10,6 +10,7 @@ import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.scoreboard.Team;
+import org.checkerframework.common.value.qual.MatchesRegex;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,7 +52,23 @@ public class StatusInstance implements ConfigurationSerializable, Keyed {
 
     private final @NotNull NamespacedKey namespacedKey;
 
-    public StatusInstance(@NotNull String statusId, @Nullable Set<Permission> permissions, @Nullable Set<Team> teams, @Nullable Component display) {
+    /**
+     * Constructs a new {@link StatusInstance} with optional {@link Team}s and {@link Permission} requirements.
+     *
+     * @param statusId The id of the status. The key of a {@link NamespacedKey} that has to match this pattern <b>"[a-z0-9/._-]+$"</b>.
+     *                 <p>
+     *                 <b>NOTE:</b> You only need the key because the namespace will always be <b>"buildmc:"</b> when using statuses
+     *                 </p>
+     * @param permissions The {@link Permission}s required to use this status, or {@code null} if no permissions should be required.
+     * @param teams The {@link Team}s required to use this status.
+     *              A player needs to be in at least one of the team.
+     *              Use {@code null} if no teams should be required
+     * @param display The display {@link Component} of the Status that is shown before the players name.
+     *                <p>
+     *                When set to {@code null} the status will just display "null" before the players name.
+     *                </p>
+     * **/
+    public StatusInstance(@NotNull @MatchesRegex("[a-z0-9/._-]+$") String statusId, @Nullable Set<Permission> permissions, @Nullable Set<Team> teams, @Nullable Component display) {
         this.statusId = statusId;
         this.namespacedKey = Objects.requireNonNull(NamespacedKey.fromString("buildmc:" + statusId));
         this.permissions = permissions;
@@ -105,7 +122,18 @@ public class StatusInstance implements ConfigurationSerializable, Keyed {
         return map;
     }
 
-    public static StatusInstance deserialize(Map<String, Object> map, @NotNull String statusId) {
+    /** Deserializes a {@link StatusInstance} that is represented using a Map.
+     *
+     * @param statusId The key of a {@link NamespacedKey} that has to match this pattern <b>"[a-z0-9/._-]+$"</b>.
+     *                 <p>
+     *                 <b>NOTE:</b> You only need the key because the namespace will always be <b>"buildmc:"</b> when using statuses
+     *                 </p>
+     * @param map The serialized representation of a {@link StatusInstance}.
+     *            <p>
+     *            You can serialize a Status using {@link StatusInstance#serialize()}
+     *            </p>
+     **/
+    public static StatusInstance deserialize(Map<String, Object> map, @NotNull @MatchesRegex("[a-z0-9/._-]+$") String statusId) {
 
         // Permissions as names -> convert back to Permission objects
         Set<Permission> perms = null;
@@ -143,6 +171,8 @@ public class StatusInstance implements ConfigurationSerializable, Keyed {
         return namespacedKey;
     }
 
+    /** A simple enum to show if a player is allowed to use a {@link StatusInstance},
+     * or if he doesn't fulfill all requirements. **/
     public enum AllowStatus {
         ALLOW,
         NOT_ALLOWED,
