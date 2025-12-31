@@ -18,43 +18,53 @@ public class DeathListener implements Listener {
     @EventHandler
     public void onDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
-
-        Map<Integer, byte[]> items = new HashMap<>();
-
         PlayerInventory inv = player.getInventory();
 
-        for (int i = 0; i < inv.getSize(); i++) {
-            ItemStack item = inv.getItem(i);
-            if (item != null) {
-                items.put(i, ItemStackSerialization.serialize(item));
+        ItemStack[] contents = inv.getContents().clone();
+        ItemStack[] armor = inv.getArmorContents().clone();
+        ItemStack offhand = inv.getItemInOffHand().clone();
+
+        String deathMessage = event.getDeathMessage();
+        int totalExp = player.getTotalExperience();
+        var uuid = player.getUniqueId();
+
+        CoreMain.plugin.getServer().getScheduler().runTaskAsynchronously(CoreMain.plugin, () -> {
+            Map<Integer, byte[]> items = new HashMap<>();
+
+            // inventory
+            for (int i = 0; i < contents.length; i++) {
+                ItemStack item = contents[i];
+                if (item != null && item.getType() != Material.AIR) {
+                    items.put(i, ItemStackSerialization.serialize(item));
+                }
             }
-        }
 
-        // armor
-        for (int i = 0; i < 4; i++) {
-            ItemStack armor = inv.getArmorContents()[i];
-            if (armor != null) {
-                items.put(36 + i, ItemStackSerialization.serialize(armor));
+            // armor slots (36–39)
+            for (int i = 0; i < armor.length; i++) {
+                ItemStack a = armor[i];
+                if (a != null && a.getType() != Material.AIR) {
+                    items.put(36 + i, ItemStackSerialization.serialize(a));
+                }
             }
-        }
 
-        // offhand
-        ItemStack offhand = inv.getItemInOffHand();
-        if (offhand.getType() != Material.AIR) {
-            items.put(40, ItemStackSerialization.serialize(offhand));
-        }
+            // offhand (40)
+            if (offhand.getType() != Material.AIR) {
+                items.put(40, ItemStackSerialization.serialize(offhand));
+            }
 
-        try {
-            CoreMain.deathTable.insertDeath(
-                    CoreMain.databaseManager.getConnection(),
-                    player.getUniqueId(),
-                    player.getTotalExperience(),
-                    event.getDeathMessage(),
-                    items
-            );
-        } catch (Exception e) {
-            CoreMain.plugin.getLogger().severe("Error while adding Death to database: " + e.getMessage());
-        }
-
+            try {
+                CoreMain.deathTable.insertDeath(
+                        CoreMain.databaseManager.getConnection(),
+                        uuid,
+                        totalExp,
+                        deathMessage,
+                        items
+                );
+            } catch (Exception e) {
+                CoreMain.plugin.getLogger().severe(
+                        "Error while adding Death to database: " + e.getMessage()
+                );
+            }
+        });
     }
 }

@@ -1,7 +1,7 @@
 package net.mathias2246.buildmc.spawnElytra;
 
 import org.bukkit.Location;
-import org.bukkit.Tag;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,6 +15,8 @@ public record ElytraJoinListener(boolean boostEnabled, double multiplyValue) imp
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
+
+
         Player player = event.getPlayer();
 
         startElytraStateTask(player);
@@ -42,7 +44,6 @@ public record ElytraJoinListener(boolean boostEnabled, double multiplyValue) imp
         }
     }
 
-
     private void startElytraStateTask(Player player) {
         player.getScheduler().runAtFixedRate(
                 plugin,
@@ -52,11 +53,9 @@ public record ElytraJoinListener(boolean boostEnabled, double multiplyValue) imp
                     Location blockCheck = player.getLocation();
                     blockCheck.setY(blockCheck.getY()-0.2);
 
-                    if (isUsingSpawnElytra(player) &&
-                            !Tag.REPLACEABLE.isTagged(blockCheck.getBlock().getType())) {
-
+                    Material blockType = blockCheck.getBlock().getType();
+                    if (isUsingSpawnElytra(player) && !BLOCK_EXCEPTION_LOOKUP [blockType.ordinal()]) {
                         stopFlying(player);
-
                     } else if (!player.isGliding()) {
 
                         boolean inZone = zoneManager.isInZone(player);

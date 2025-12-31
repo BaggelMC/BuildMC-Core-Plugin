@@ -1,7 +1,8 @@
 package net.mathias2246.buildmc.spawnElytra;
 
 import org.bukkit.Bukkit;
-import org.bukkit.block.BlockFace;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -30,7 +31,11 @@ public class SpawnBoostListener extends BukkitRunnable implements Listener {
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (!isSurvival(player)) continue;
 
-            if (isUsingSpawnElytra(player) && !player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType().isAir()) {
+            Location blockCheck = player.getLocation();
+            blockCheck.setY(blockCheck.getY()-0.2);
+
+            Material blockType = blockCheck.getBlock().getType();
+            if (isUsingSpawnElytra(player) && !BLOCK_EXCEPTION_LOOKUP [blockType.ordinal()]) {
                 stopFlying(player);
             } else if (!player.isGliding()) {
                 boolean inZone = zoneManager.isInZone(player);
