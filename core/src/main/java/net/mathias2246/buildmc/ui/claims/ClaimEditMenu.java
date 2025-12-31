@@ -5,134 +5,167 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.ClaimType;
+import net.mathias2246.buildmc.api.item.ItemUtil;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.inventoryframework.adventuresupport.ComponentHolder;
 import net.mathias2246.buildmc.inventoryframework.gui.GuiItem;
 import net.mathias2246.buildmc.inventoryframework.gui.type.ChestGui;
+import net.mathias2246.buildmc.inventoryframework.pane.Pane;
 import net.mathias2246.buildmc.inventoryframework.pane.StaticPane;
+import net.mathias2246.buildmc.ui.UIUtil;
 import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.SoundUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.function.Consumer;
 
+import static net.mathias2246.buildmc.CoreMain.plugin;
+
 public class ClaimEditMenu {
 
-    public static void open(Player player, Claim claim) {
+    public static final @NotNull StaticPane BACKGROUND;
+    public static final @NotNull StaticPane RED_BACKGROUND;
 
-        boolean isPlaceholderClaim = claim.getType() == ClaimType.PLACEHOLDER;
+    private static final boolean HIDE_ALL_PROTECTIONS;
 
-        ChestGui gui = new ChestGui(3,
-                ComponentHolder.of(Message.msg(player, "messages.claims.ui.edit-menu.title",
-                        Map.of("claim", claim.getName()))));
+    static {
+        BACKGROUND = new StaticPane(9, 3);
+        BACKGROUND.setPriority(Pane.Priority.LOWEST);
 
-        StaticPane pane = new StaticPane(0, 0, 9, 3);
-
-        // Filler
-        ItemStack filler = createGlassPane(Material.LIGHT_GRAY_STAINED_GLASS_PANE);
-        GuiItem fillerItem = new GuiItem(filler, e -> e.setCancelled(true));
         for (int x = 0; x < 9; x++) {
             for (int y = 0; y < 3; y++) {
-                pane.addItem(fillerItem, x, y);
+                BACKGROUND.addItem(UIUtil.INVISIBLE_PANE, x, y);
             }
         }
 
-        // Protections button
-        if (!CoreMain.plugin.getConfig().getBoolean("claims.hide-all-protections") && !isPlaceholderClaim) {
-            pane.addItem(makeButton(Material.SHIELD, Message.msg(player, "messages.claims.ui.edit-menu.protections"),
-                    e -> {
-                        e.setCancelled(true);
-                        CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
-                        ProtectionsMenu.open(player, claim);
-                    }), 2, 1);
-        } else {
-            pane.addItem(makeButton(Material.RED_STAINED_GLASS_PANE, Message.msg(player, "messages.claims.ui.edit-menu.no-protections-available"),
-                    e -> e.setCancelled(true)), 2, 1);
+        ItemStack redPaneItem = new ItemStack(Material.RED_STAINED_GLASS_PANE, 1);
+        ItemUtil.editMeta(redPaneItem, meta ->
+                meta.setHideTooltip(true)
+        );
+        GuiItem redPane = new GuiItem(redPaneItem);
+        RED_BACKGROUND = new StaticPane(9, 3);
+        for (int x = 0; x < 9; x++) {
+            for (int y = 0; y < 3; y++) {
+                RED_BACKGROUND.addItem(redPane, x, y);
+            }
         }
+        RED_BACKGROUND.setPriority(Pane.Priority.LOWEST);
+
+        HIDE_ALL_PROTECTIONS = plugin.getConfig().getBoolean("claims.hide-all-protections");
+    }
 
 
-        // Whitelist button
-        if (!isPlaceholderClaim) {
-            pane.addItem(makeButton(Material.PLAYER_HEAD, Message.msg(player, "messages.claims.ui.edit-menu.whitelist"),
-                    e -> {
-                        e.setCancelled(true);
-                        CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
-                        WhitelistMenu.open(player,claim);
-                    }), 4, 1);
-        } else {
-            pane.addItem(makeButton(Material.RED_STAINED_GLASS_PANE, Message.msg(player, "messages.claims.ui.edit-menu.no-whitelist-available"),
-                    e -> e.setCancelled(true)), 4, 1);
-        }
+    public static void open(@NotNull Player player, @NotNull Claim claim) {
 
-        // Delete button → opens confirmation menu
-        pane.addItem(makeButton(Material.BARRIER, Message.msg(player, "messages.claims.ui.edit-menu.delete"),
-                e -> {
-                    e.setCancelled(true);
-                    CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
-                    openDeleteConfirmationMenu(player, claim);
-                }), 6, 1);
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, task -> {
 
-        // Delete button → opens confirmation menu
-        pane.addItem(makeButton(Material.BARRIER, Message.msg(player, "messages.claims.ui.general.back"),
-                e -> {
-                    e.setCancelled(true);
-                    CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
-                    ClaimSelectMenu.open(player);
-                }), 8, 2);
+                    boolean isPlaceholderClaim = claim.getType() == ClaimType.PLACEHOLDER;
+
+                    ChestGui gui = new ChestGui(3,
+                            ComponentHolder.of(Message.msg(player, "messages.claims.ui.edit-menu.title",
+                                    Map.of("claim", claim.getName()))));
+
+                    StaticPane elements = new StaticPane(9, 3);
+
+                    // Protections button
+                    if (!HIDE_ALL_PROTECTIONS && !isPlaceholderClaim) {
+                        elements.addItem(makeButton(Material.SHIELD, Message.msg(player, "messages.claims.ui.edit-menu.protections"),
+                                e -> {
+                                    e.setCancelled(true);
+                                    CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
+                                    ProtectionsMenu.open(player, claim);
+                                }), 2, 1);
+                    } else {
+                        elements.addItem(makeButton(Material.RED_STAINED_GLASS_PANE, Message.msg(player, "messages.claims.ui.edit-menu.no-protections-available"),
+                                e -> e.setCancelled(true)), 2, 1);
+                    }
+
+                    // Whitelist button
+                    if (!isPlaceholderClaim) {
+                        elements.addItem(makeButton(Material.PLAYER_HEAD, Message.msg(player, "messages.claims.ui.edit-menu.whitelist"),
+                                e -> {
+                                    e.setCancelled(true);
+                                    CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
+                                    WhitelistMenu.open(player, claim);
+                                }), 4, 1);
+                    } else {
+                        elements.addItem(makeButton(Material.RED_STAINED_GLASS_PANE, Message.msg(player, "messages.claims.ui.edit-menu.no-whitelist-available"),
+                                e -> e.setCancelled(true)), 4, 1);
+                    }
+
+                    // Delete button → opens confirmation menu
+                    elements.addItem(makeButton(Material.BARRIER, Message.msg(player, "messages.claims.ui.edit-menu.delete"),
+                            e -> {
+                                e.setCancelled(true);
+                                CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
+                                openDeleteConfirmationMenu(player, claim);
+                            }), 6, 1);
+
+                    // Delete button → opens confirmation menu
+                    elements.addItem(makeButton(Material.BARRIER, Message.msg(player, "messages.claims.ui.general.back"),
+                            e -> {
+                                e.setCancelled(true);
+                                CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
+                                ClaimSelectMenu.open(player);
+                            }), 8, 2);
+
+                    gui.addPane(BACKGROUND);
+                    gui.addPane(elements);
+
+                    Bukkit.getScheduler().runTask(plugin, bukkitTask -> gui.show(player));
+                }
+        );
 
 
-        gui.addPane(pane);
-        gui.show(player);
     }
 
     private static void openDeleteConfirmationMenu(Player player, Claim claim) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, task -> {
+                    if (claim.getId() == null) return;
 
-        if (claim.getId() == null) return;
+                    ChestGui gui = new ChestGui(3,
+                            ComponentHolder.of(Message.msg(player, "messages.claims.ui.edit-menu.delete-confirm-menu.title", Map.of("claim", claim.getName()))));
 
-        ChestGui gui = new ChestGui(3,
-                ComponentHolder.of(Message.msg(player, "messages.claims.ui.edit-menu.delete-confirm-menu.title", Map.of("claim", claim.getName()))));
+                    StaticPane elements = new StaticPane(9, 3);
 
-        StaticPane pane = new StaticPane(0, 0, 9, 3);
+                    // Cancel
+                    elements.addItem(makeButton(Material.GREEN_CONCRETE, Message.msg(player, "messages.claims.ui.general.cancel"),
+                            e -> {
+                                e.setCancelled(true);
+                                CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
+                                open(player, claim); // reopen edit menu
+                            }), 3, 1);
 
-        // Filler
-        ItemStack filler = createGlassPane(Material.RED_STAINED_GLASS_PANE);
-        GuiItem fillerItem = new GuiItem(filler, e -> e.setCancelled(true));
-        for (int x = 0; x < 9; x++) {
-            for (int y = 0; y < 3; y++) {
-                pane.addItem(fillerItem, x, y);
-            }
-        }
+                    // Confirm
+                    elements.addItem(makeButton(Material.RED_CONCRETE, Message.msg(player, "messages.claims.ui.general.confirm"),
+                            e -> {
+                                e.setCancelled(true);
+                                CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
+                                boolean removed = ClaimManager.removeClaimById(claim.getId());
+                                if (removed) {
+                                    plugin.sendMessage(player,
+                                            Component.translatable("messages.claims.ui.edit-menu.delete-confirm-menu.success"));
+                                } else {
+                                    plugin.sendMessage(player,
+                                            Component.translatable("messages.claims.ui.edit-menu.delete-confirm-menu.fail"));
+                                }
+                                player.closeInventory();
+                            }), 5, 1);
 
-        // Cancel
-        pane.addItem(makeButton(Material.GREEN_CONCRETE, Message.msg(player, "messages.claims.ui.general.cancel"),
-                e -> {
-                    e.setCancelled(true);
-                    CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
-                    open(player, claim); // reopen edit menu
-                }), 3, 1);
+                    gui.addPane(RED_BACKGROUND);
+                    gui.addPane(elements);
 
-        // Confirm
-        pane.addItem(makeButton(Material.RED_CONCRETE, Message.msg(player, "messages.claims.ui.general.confirm"),
-                e -> {
-                    e.setCancelled(true);
-                    CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
-                    boolean removed = ClaimManager.removeClaimById(claim.getId());
-                    if (removed) {
-                        CoreMain.plugin.sendMessage(player,
-                                Component.translatable("messages.claims.ui.edit-menu.delete-confirm-menu.success"));
-                    } else {
-                        CoreMain.plugin.sendMessage(player,
-                                Component.translatable("messages.claims.ui.edit-menu.delete-confirm-menu.fail"));
-                    }
-                    player.closeInventory();
-                }), 5, 1);
+                    Bukkit.getScheduler().runTask(plugin, bukkitTask -> gui.show(player));
+                }
+        );
 
-        gui.addPane(pane);
-        gui.show(player);
+
     }
 
     private static GuiItem makeButton(Material material, Component name,

@@ -264,7 +264,7 @@ messages:
         delete: "<red>Delete Claim</red>"
 
         delete-confirm-menu:
-          title: "<red>Confirm Deletion of %claim%</red>"
+          title: "<red>Confirm Deletion of '%claim%'</red>"
 
           success: "<green>Claim deleted successfully.</green>"
           fail: "<red>Error: Failed to delete claim.</red>"
@@ -272,8 +272,8 @@ messages:
       protections-menu:
         title: "<gold>Protections: '%claim%'</gold>"
 
-        enabled: "<green>Enabled</green> <gray>(Click to disable)</gray>"
-        disabled: "<red>Disable</red> <gray>(Click to enable)</gray>"
+        enabled: "<red>Blocked</red> <gray>(Click to allow)</gray>"
+        disabled: "<green>Allowed</green> <gray>(Click to block)</gray>"
 
         toggle-hint: "<dark_gray>Click below to toggle</dark_gray>"
 

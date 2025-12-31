@@ -98,6 +98,9 @@ public final class Main extends PluginMain {
             );
         }
 
+
+        CommandRegister.setupCommandAPI();
+
         audiences = BukkitAudiences.create(plugin);
 
         CoreMain.soundManager = new SoundManagerSpigotImpl();
@@ -105,12 +108,6 @@ public final class Main extends PluginMain {
         apiClaimManager = new ClaimManagerImpl();
         apiEndManager = new EndManagerImpl();
         apiElytraManager = new ElytraManagerImpl(zoneManager);
-
-        CommandRegister.setupCommandAPI();
-        CommandRegister.register(new BuildMcCommand());
-        CommandRegister.register(new BroadcastCommandPlatform());
-        CommandRegister.register(new RulesCommandPLatform());
-        CommandRegister.register(new DeathsCommandPlatform());
     }
 
     @Override
@@ -198,7 +195,10 @@ public final class Main extends PluginMain {
             throw new RuntimeException(e);
         }
 
-
+        CommandRegister.register(new BuildMcCommand());
+        CommandRegister.register(new BroadcastCommandPlatform());
+        CommandRegister.register(new RulesCommandPLatform());
+        CommandRegister.register(new DeathsCommandPlatform());
 
         getServer().getPluginManager().registerEvents(new EndListener(), this);
 

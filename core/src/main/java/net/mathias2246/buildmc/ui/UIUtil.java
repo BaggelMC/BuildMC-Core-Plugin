@@ -128,6 +128,8 @@ public class UIUtil {
         BOTTOM_BAR.addItem(BLOCKED_PANE, 8, 0);
     }
 
+
+
     public static void updatePageUI(Gui gui, Player player, PaginatedPane pages, StaticPane bottomBar, GuiItem pageIndicator) {
         int page = pages.getPage();
         int pagesCount = pages.getPages();
