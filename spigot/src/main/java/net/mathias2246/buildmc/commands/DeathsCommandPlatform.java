@@ -3,6 +3,7 @@ package net.mathias2246.buildmc.commands;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.LongArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
+import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.deaths.DeathsCommand;
 import org.bukkit.Bukkit;
@@ -17,7 +18,6 @@ public class DeathsCommandPlatform implements CustomCommand {
     public CommandAPICommand getCommand() {
         var deathsCmd = new CommandAPICommand("deaths");
 
-        // /deaths list <player>
         var listCmd = new CommandAPICommand("list")
                 .withArguments(new StringArgument("player")
                         .replaceSuggestions((info, builder) -> {
@@ -32,10 +32,9 @@ public class DeathsCommandPlatform implements CustomCommand {
                 })
                 .withRequirement(sender ->
                         sender.hasPermission("buildmc.admin") ||
-                                sender.hasPermission("buildmc.restore-deaths")
+                                sender.hasPermission("buildmc.list-deaths")
                 );
 
-        // /deaths restore <player> <id>
         var restoreCmd = new CommandAPICommand("restore")
                 .withArguments(new StringArgument("player")
                         .replaceSuggestions((info, builder) -> {
@@ -46,6 +45,7 @@ public class DeathsCommandPlatform implements CustomCommand {
                 .withArguments(new LongArgument("id", 1)
                         .replaceSuggestions((info, builder) -> {
                             String playerName = info.previousArgs().getByClass("player", String.class);
+                            if (playerName == null) return builder.buildFuture();
                             Player target = Bukkit.getPlayerExact(playerName);
                             if (target == null) return builder.buildFuture();
 
@@ -60,7 +60,12 @@ public class DeathsCommandPlatform implements CustomCommand {
                 .executes((info) -> {
                     CommandSender sender = info.sender();
                     String playerName = info.args().getByClass("player", String.class);
-                    long id = info.args().getByClass("id", Long.class);
+                    Long id = info.args().getByClass("id", Long.class);
+                    if (id == null) {
+                        CoreMain.plugin.sendMessage(sender, Component.translatable("messages.deaths.error.invalid-id"));
+                        return 0;
+                    }
+
                     return DeathsCommand.restore(sender, playerName, id);
                 })
                 .withRequirement(sender ->
@@ -68,7 +73,6 @@ public class DeathsCommandPlatform implements CustomCommand {
                                 sender.hasPermission("buildmc.restore-deaths")
                 );
 
-        // Attach subcommands
         deathsCmd.withSubcommand(listCmd);
         deathsCmd.withSubcommand(restoreCmd);
 

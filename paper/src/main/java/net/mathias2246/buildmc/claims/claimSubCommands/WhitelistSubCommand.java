@@ -46,7 +46,9 @@ public class WhitelistSubCommand {
                                                     if (!(sender instanceof Player player)) return builder.buildFuture();
                                                     String type = StringArgumentType.getString(ctx, "type");
                                                     String claimName = StringArgumentType.getString(ctx, "claim");
-                                                    return ClaimSuggestions.claimPlayerWhitelistSuggestions(player, type, claimName, builder);
+                                                    String actionName = StringArgumentType.getString(ctx, "action").toLowerCase();
+                                                    boolean isRemove = actionName.equalsIgnoreCase("remove");
+                                                    return ClaimSuggestions.claimPlayerWhitelistSuggestions(player, type, claimName, isRemove, builder);
                                                 })
                                                 .executes(command -> {
                                                     var sender = command.getSource().getSender();

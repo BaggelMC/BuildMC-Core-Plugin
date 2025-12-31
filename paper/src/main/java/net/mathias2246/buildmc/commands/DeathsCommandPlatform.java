@@ -6,11 +6,14 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.deaths.DeathSummary;
 import net.mathias2246.buildmc.deaths.DeathsCommand;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.sql.Connection;
+import java.util.List;
 
 public class DeathsCommandPlatform implements CustomCommand {
 
@@ -18,7 +21,7 @@ public class DeathsCommandPlatform implements CustomCommand {
     public LiteralCommandNode<CommandSourceStack> getCommand() {
 
         var listCmd = Commands.literal("list")
-                .requires(DeathsCommandPlatform::hasRestorePermission)
+                .requires(DeathsCommandPlatform::hasListPermission)
                 .then(Commands.argument("player", StringArgumentType.word())
                         .suggests((ctx, builder) -> {
                             Bukkit.getOnlinePlayers()
@@ -26,7 +29,7 @@ public class DeathsCommandPlatform implements CustomCommand {
                             return builder.buildFuture();
                         })
                         .executes(ctx -> {
-                            var sender = ctx.getSource().getSender();
+                            CommandSender sender = ctx.getSource().getSender();
                             String player = StringArgumentType.getString(ctx, "player");
                             return DeathsCommand.list(sender, player);
                         })
@@ -50,7 +53,7 @@ public class DeathsCommandPlatform implements CustomCommand {
                                     }
 
                                     try (Connection conn = CoreMain.databaseManager.getConnection()) {
-                                        var deaths = CoreMain.deathTable
+                                        List<DeathSummary> deaths = CoreMain.deathTable
                                                 .getDeathsByPlayer(conn, target.getUniqueId());
                                         deaths.forEach(d -> builder.suggest(String.valueOf(d.id())));
                                     } catch (Exception ignored) {}
@@ -58,7 +61,7 @@ public class DeathsCommandPlatform implements CustomCommand {
                                     return builder.buildFuture();
                                 })
                                 .executes(ctx -> {
-                                    var sender = ctx.getSource().getSender();
+                                    CommandSender sender = ctx.getSource().getSender();
                                     String player = StringArgumentType.getString(ctx, "player");
                                     long id = LongArgumentType.getLong(ctx, "id");
                                     return DeathsCommand.restore(sender, player, id);
@@ -73,9 +76,14 @@ public class DeathsCommandPlatform implements CustomCommand {
     }
 
     private static boolean hasRestorePermission(CommandSourceStack source) {
-        var sender = source.getSender();
+        CommandSender sender = source.getSender();
         return sender.hasPermission("buildmc.admin")
                 || sender.hasPermission("buildmc.restore-deaths");
     }
 
+    private static boolean hasListPermission(CommandSourceStack source) {
+        CommandSender sender = source.getSender();
+        return sender.hasPermission("buildmc.admin")
+                || sender.hasPermission("buildmc.list-deaths");
+    }
 }

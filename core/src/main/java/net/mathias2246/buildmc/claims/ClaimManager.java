@@ -19,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.ConcurrentMap;
 
 import static net.mathias2246.buildmc.CoreMain.plugin;
 
@@ -30,10 +31,10 @@ public class ClaimManager {
     public static final @NotNull NamespacedKey CLAIM_PCD_KEY = Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_id"));
 
     /** Map of team names and the claim IDs they own */
-    public static Map<String, List<Long>> teamOwner;
+    public static ConcurrentMap<String, List<Long>> teamOwner;
 
     /** Map of player UUIDs and the claim IDs they own */
-    public static Map<UUID, List<Long>> playerOwner;
+    public static ConcurrentMap<UUID, List<Long>> playerOwner;
 
     /** Map of team names and the remaining claims */
     public static Map<String, Integer> teamRemainingClaims;

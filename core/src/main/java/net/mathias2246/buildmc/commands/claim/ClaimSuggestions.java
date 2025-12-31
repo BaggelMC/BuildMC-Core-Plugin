@@ -21,7 +21,6 @@ public class ClaimSuggestions {
     public static CompletableFuture<Suggestions> claimTypesSuggestions(@NotNull Player player, SuggestionsBuilder builder) {
         List<String> suggestions = new ArrayList<>(List.of("player", "team"));
 
-        // Add admin-only options
         if (player.hasPermission("buildmc.admin")) {
             suggestions.add("server");
             suggestions.add("placeholder");
@@ -36,44 +35,7 @@ public class ClaimSuggestions {
     }
 
     public static CompletableFuture<com.mojang.brigadier.suggestion.Suggestions> claimIdsSuggestions(@NotNull Player player, String type, SuggestionsBuilder builder) {
-
-        if (type.equalsIgnoreCase("player")) {
-            List<Long> claimIds = ClaimManager.playerOwner.getOrDefault(player.getUniqueId(), List.of());
-            for (long id : claimIds) {
-                String name = ClaimManager.getClaimNameById(id);
-                if (name != null && name.toLowerCase().startsWith(builder.getRemaining().toLowerCase())) {
-                    builder.suggest(name);
-                }
-            }
-        } else if (type.equalsIgnoreCase("team")) {
-            Team team = ClaimManager.getPlayerTeam(player);
-            if (team != null) {
-                List<Long> claimIds = ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
-                for (long id : claimIds) {
-                    String name = ClaimManager.getClaimNameById(id);
-                    if (name != null && name.toLowerCase().startsWith(builder.getRemaining().toLowerCase())) {
-                        builder.suggest(name);
-                    }
-                }
-            }
-        } else if (type.equalsIgnoreCase("server")) {
-            if (player.hasPermission("buildmc.admin")) {
-                List<Long> claimIds = ClaimManager.serverClaims;
-                for (long id : claimIds) {
-                    String name = ClaimManager.getClaimNameById(id);
-                    if (name != null && name.toLowerCase().startsWith(builder.getRemaining().toLowerCase())) {
-                        builder.suggest(name);
-                    }
-                }
-            }
-        }
-
-        return builder.buildFuture();
-    }
-
-    public static CompletableFuture<Suggestions> claimPlayerWhitelistSuggestions(@NotNull Player player, String type, String claimName, SuggestionsBuilder builder) {
-        Claim claim = null;
-        List<Long> claimIds = List.of();
+        List<Long> claimIds = new ArrayList<>();
 
         if (type.equalsIgnoreCase("player")) {
             claimIds = ClaimManager.playerOwner.getOrDefault(player.getUniqueId(), List.of());
@@ -86,6 +48,44 @@ public class ClaimSuggestions {
             claimIds = ClaimManager.serverClaims;
         }
 
+        String remaining = builder.getRemainingLowerCase();
+
+        List<Long> finalClaimIds = claimIds;
+        return CompletableFuture.supplyAsync(() -> {
+            for (long id : finalClaimIds) {
+                String name = ClaimManager.getClaimNameById(id);
+                if (name != null && name.toLowerCase().startsWith(remaining)) {
+                    builder.suggest(name);
+                }
+            }
+            return builder.build();
+        });
+    }
+
+    public static CompletableFuture<Suggestions> claimPlayerWhitelistSuggestions(
+            @NotNull Player player,
+            String type,
+            String claimName,
+            boolean isRemove,
+            SuggestionsBuilder builder
+    ) {
+        Team team = null;
+        if (type.equalsIgnoreCase("team")) {
+            team = ClaimManager.getPlayerTeam(player);
+        }
+
+        List<Long> claimIds = switch (type.toLowerCase()) {
+            case "player" -> ClaimManager.playerOwner.getOrDefault(player.getUniqueId(), List.of());
+            case "team" -> team != null
+                    ? ClaimManager.teamOwner.getOrDefault(team.getName(), List.of())
+                    : List.of();
+            case "server" -> player.hasPermission("buildmc.admin")
+                    ? ClaimManager.serverClaims
+                    : List.of();
+            default -> List.of();
+        };
+
+        Claim claim = null;
         for (long id : claimIds) {
             if (claimName.equalsIgnoreCase(ClaimManager.getClaimNameById(id))) {
                 claim = ClaimManager.getClaimByID(id);
@@ -93,23 +93,42 @@ public class ClaimSuggestions {
             }
         }
 
-        if (claim == null) return builder.buildFuture();
-
-        List<UUID> whitelist = claim.getWhitelistedPlayers();
-        boolean isServer = claim.getType() == ClaimType.SERVER;
-
-        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            if (!isServer && onlinePlayer.getUniqueId().equals(player.getUniqueId())) continue;
-            if (whitelist.contains(onlinePlayer.getUniqueId())) continue;
-            if (type.equalsIgnoreCase("team")) {
-                Team team = ClaimManager.getPlayerTeam(player);
-                if (team != null && team.hasEntry(onlinePlayer.getName())) continue;
-            }
-            if (onlinePlayer.getName().startsWith(builder.getRemaining())) {
-                builder.suggest(onlinePlayer.getName());
-            }
+        if (claim == null) {
+            return builder.buildFuture();
         }
 
-        return builder.buildFuture();
+        record PlayerSnapshot(UUID uuid, String name) {}
+        List<PlayerSnapshot> onlinePlayers = Bukkit.getOnlinePlayers().stream()
+                .map(p -> new PlayerSnapshot(p.getUniqueId(), p.getName()))
+                .toList();
+
+        boolean isServer = claim.getType() == ClaimType.SERVER;
+        String remaining = builder.getRemainingLowerCase();
+
+        Team finalTeam = team;
+        Claim finalClaim = claim;
+
+        return CompletableFuture.supplyAsync(() -> {
+            List<UUID> whitelist = finalClaim.getWhitelistedPlayers();
+
+            for (PlayerSnapshot p : onlinePlayers) {
+                boolean isWhitelisted = whitelist.contains(p.uuid());
+
+                if (isRemove && !isWhitelisted) continue;
+                if (!isRemove && isWhitelisted) continue;
+
+                if (!isServer && p.uuid().equals(player.getUniqueId())) continue;
+
+                if (!isRemove && type.equalsIgnoreCase("team") && finalTeam != null) {
+                    if (finalTeam.hasEntry(p.name())) continue;
+                }
+
+                if (p.name().toLowerCase().startsWith(remaining)) {
+                    builder.suggest(p.name());
+                }
+            }
+
+            return builder.build();
+        });
     }
 }

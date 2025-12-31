@@ -38,3 +38,6 @@ permissions:
   buildmc.restore-deaths:
     default: op
     description: Allows to use commands to restore deaths of players
+  buildmc.list-deaths:
+    default: op
+    description: Allows to use commands to list deaths of players
