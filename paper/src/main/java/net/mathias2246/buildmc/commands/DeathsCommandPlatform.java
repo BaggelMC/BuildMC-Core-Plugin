@@ -78,12 +78,12 @@ public class DeathsCommandPlatform implements CustomCommand {
     private static boolean hasRestorePermission(CommandSourceStack source) {
         CommandSender sender = source.getSender();
         return sender.hasPermission("buildmc.admin")
-                || sender.hasPermission("buildmc.restore-deaths");
+                || sender.hasPermission("buildmc.deaths.restore");
     }
 
     private static boolean hasListPermission(CommandSourceStack source) {
         CommandSender sender = source.getSender();
         return sender.hasPermission("buildmc.admin")
-                || sender.hasPermission("buildmc.list-deaths");
+                || sender.hasPermission("buildmc.deaths.list");
     }
 }

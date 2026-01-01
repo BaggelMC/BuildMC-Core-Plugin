@@ -32,7 +32,7 @@ public class DeathsCommandPlatform implements CustomCommand {
                 })
                 .withRequirement(sender ->
                         sender.hasPermission("buildmc.admin") ||
-                                sender.hasPermission("buildmc.list-deaths")
+                                sender.hasPermission("buildmc.deaths.list")
                 );
 
         var restoreCmd = new CommandAPICommand("restore")
@@ -70,7 +70,7 @@ public class DeathsCommandPlatform implements CustomCommand {
                 })
                 .withRequirement(sender ->
                         sender.hasPermission("buildmc.admin") ||
-                                sender.hasPermission("buildmc.restore-deaths")
+                                sender.hasPermission("buildmc.deaths.restore")
                 );
 
         deathsCmd.withSubcommand(listCmd);

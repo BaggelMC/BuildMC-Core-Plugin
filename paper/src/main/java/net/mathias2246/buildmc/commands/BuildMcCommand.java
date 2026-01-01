@@ -18,6 +18,7 @@ import org.bukkit.Bukkit;
 import java.io.IOException;
 
 import static net.mathias2246.buildmc.CoreMain.gson;
+import static net.mathias2246.buildmc.Main.plugin;
 import static net.mathias2246.buildmc.Main.statusConfig;
 
 public class BuildMcCommand implements CustomCommand {
@@ -78,11 +79,15 @@ public class BuildMcCommand implements CustomCommand {
                         .then(
                                 Commands.literal("reload")
                                         .executes(c -> {
-                                            statusConfig.reload();
 
-                                            for (var player : Bukkit.getOnlinePlayers()) {
-                                                PlayerStatusUtil.reloadPlayerStatus(player);
-                                            }
+                                            Bukkit.getScheduler().runTask(plugin, task -> {
+
+                                                statusConfig.reload();
+
+                                                for (var player : Bukkit.getOnlinePlayers()) {
+                                                    PlayerStatusUtil.reloadPlayerStatus(player);
+                                                }
+                                            });
 
                                             return 1;
                                         })
