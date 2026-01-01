@@ -39,6 +39,9 @@ BuildMC-Core provides a solid foundation for any Minecraft project. Designed for
 - 🧱 **Survival-Friendly Chunk Claiming**  
   A secure, intuitive chunk claim system tied into the team system. Built for balance and survival fairness.
 
+- 💀 **Death-Restoring**  
+  Allow Moderators to restore deaths of their players.
+
 - ⚙️ **Easy Setup**  
   Configure the plugin using `/buildmc` or edit the config files directly.
 
@@ -69,73 +72,101 @@ If you're running your own server and want to use BuildMC-Core, here's how to in
     - Or modify the `BuildMC-Core/config.yml` file directly.
 
 ### 💡 Notes
-- Check out our guides for:
-  - [Spawn Elytra](docs/zz - usage/spawn_elytra.md)
-  - [End Event](docs/zz - usage/end_event.md)
-  - [Claims](docs/zz - usage/claim_system.md)
+- Check out our guides on our [website](https://baggel.de/plugins/en/core/).
 - Compatible with most standard Paper/Spigot setups.
 - May require a permission setup for players/admins using permission managers like [LuckPerms](https://luckperms.net/).
 
 ---
 
-# For Developers:
+# For Developers
 
-## 🧑‍💻 Getting Started
+## 🧩 Using the BuildMC API
 
-### 🔧 Setup in IntelliJ IDEA
+BuildMC-Core exposes a public API that allows other plugins to integrate seamlessly with the BuildMC SMP ecosystem.
 
-1. **Download Java 23+**  
-   👉 [OpenJDK 23](https://jdk.java.net/java-se-ri/23)
-
-2. **Get IntelliJ IDEA**  
-   [https://www.jetbrains.com/idea/](https://www.jetbrains.com/idea/)
-
-3. **Clone the Repo**  
-   ```bash
-   git clone https://github.com/BaggelMC/BuildMC-Core-Plugin.git
-    ```
-
-4. **Open in IntelliJ**
-
-    * IntelliJ will auto-detect the Maven project.
-    * Set your **Project SDK** to OpenJDK 23 (or later).
+The API is published as a **separate Maven artifact** and is intended to be used with **`provided` scope**, since the core plugin supplies it at runtime.
 
 ---
 
-## 🐞 Debugging with `dt_socket`
+## 📦 Adding the API as a Dependency
 
-Debug your local server like a pro! Here's how:
+### Maven
 
-### 1️⃣ Start Server with Debug Enabled
+```xml
+<repository>
+    <id>central</id>
+    <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+</repository>
 
-```bash
-java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -jar paper.jar
+<dependency>
+    <groupId>net.mathias2246</groupId>
+    <artifactId>buildmc-api</artifactId>
+    <version>1.1.0-SNAPSHOT</version>
+    <scope>provided</scope>
+</dependency>
 ```
 
-* `address=*:5005` → Accepts debug connections on port 5005
-* `suspend=n` → Server starts immediately (set `y` to wait for debugger)
+> ⚠️ **Important:**
+> Do **not** shade or relocate the API.
+> BuildMC-Core must be installed on the server.
 
 ---
 
-### 2️⃣ Configure IntelliJ
+## 🚀 Getting Started with the API
 
-1. Go to `Run` → `Edit Configurations...`
-2. Click `+` → **Remote JVM Debug**
-3. Fill in:
+### 🔹 Accessing the API Instance
 
-    * **Name:** `Local Server Debug`
-    * **Host:** `localhost`
-    * **Port:** `5005`
-4. Save and apply.
+The API becomes available **after BuildMC-Core has finished loading**.
+To safely access it, listen to the lifecycle event:
+
+```
+net.mathias2246.buildmc.api.event.lifecycle.BuildMcFinishedLoadingEvent
+```
+
+This event provides access to the main API entry point:
+
+```
+net.mathias2246.buildmc.api.BuildMcAPI
+```
+
+### Example Flow
+
+1. Register a listener in your plugin
+2. Listen for `BuildMcFinishedLoadingEvent`
+3. Retrieve and store the `BuildMcAPI` instance
+4. Use the API throughout your plugin
+
+This ensures:
+
+* BuildMC-Core is fully initialized
+* All internal systems (teams, claims, status, etc.) are ready
 
 ---
 
-### 3️⃣ Debug!
+## 🧠 API Entry Points
 
-* Start your server with debug flags
-* In IntelliJ, run the **Local Server Debug** config
-* Set breakpoints and interact with the server
-* IntelliJ will pause on your breakpoints as expected
+The central access point for all integrations is:
+
+```
+net.mathias2246.buildmc.api.BuildMcAPI
+```
+
+From there, you can interact with:
+
+* Team systems
+* Player status handling
+* Chunk claiming logic
+* Lifecycle-aware features provided by BuildMC-Core
+
+(See the JavaDocs or source for details on available managers and services.)
+
+---
+
+## 🔗 Plugin Compatibility
+
+* Requires **BuildMC-Core** to be installed on the server
+* Compatible with **Paper / Spigot 1.21+**
+* Designed for **modular expansion**, not standalone usage
 
 ---
 
