@@ -83,9 +83,7 @@ public class ClaimCommand implements CustomCommand {
                                             return ClaimWho.whoClaimCommand(player, player.getLocation());
                                         }
                                 )
-                                .withArguments(
-                                        new LocationArgument("loc")
-                                )
+                                .withOptionalArguments(new LocationArgument("loc"))
                 )
 
                 .withSubcommand(
