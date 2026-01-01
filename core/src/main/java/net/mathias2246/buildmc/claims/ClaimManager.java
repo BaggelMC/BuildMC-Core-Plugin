@@ -1,6 +1,5 @@
 package net.mathias2246.buildmc.claims;
 
-import com.google.common.base.VerifyException;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.ClaimType;
@@ -489,7 +488,7 @@ public class ClaimManager {
             plugin.getLogger().severe("SQL error while getting claim: " + e);
         }
 
-        if (claim == null) return;
+        if (claim == null || claim.getId() == null) return;
 
         ClaimWhitelistChangeEvent event = new ClaimWhitelistChangeEvent(claim, Bukkit.getOfflinePlayer(playerID), ClaimWhitelistChangeEvent.ChangeAction.REMOVED);
         Bukkit.getPluginManager().callEvent(event);

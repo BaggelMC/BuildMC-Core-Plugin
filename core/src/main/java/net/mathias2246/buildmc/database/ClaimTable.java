@@ -4,8 +4,8 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
-import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.api.claims.ClaimType;
+import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.util.LocationUtil;
 import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.NotNull;
@@ -228,6 +228,8 @@ public class ClaimTable implements DatabaseTable {
             case SERVER -> serverClaims.remove(claimId);
             case PLACEHOLDER -> placeholderClaims.remove(claimId);
         }
+
+        claim.setID(null);
 
         // Update remaining claims (cleanup chunks etc.)
         restoreRemainingClaims(claim);

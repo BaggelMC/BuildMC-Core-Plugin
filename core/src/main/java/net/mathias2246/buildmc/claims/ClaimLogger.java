@@ -5,8 +5,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.io.IOException;
-import java.nio.file.*;
-import java.time.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -102,7 +106,7 @@ public final class ClaimLogger {
 
         LocalDate today = LocalDate.now();
 
-        if (currentLogDate == null || !today.equals(currentLogDate)) {
+        if (!today.equals(currentLogDate)) {
             currentLogDate = today;
             currentLogFile = logDir.resolve(
                     "claims-" + FILE_DATE_FORMAT.format(currentLogDate) + ".log"

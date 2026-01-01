@@ -23,7 +23,7 @@ public class Message {
      * @param sender the command sender
      * @return the locale of the sender
      */
-    private static Locale getLocale(CommandSender sender) {
+    public static Locale getLocale(CommandSender sender) {
         if (sender instanceof Player player) {
             return Locale.forLanguageTag(player.getLocale().replace('_', '-'));
         }

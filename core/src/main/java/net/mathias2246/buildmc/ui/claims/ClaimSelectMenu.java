@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
+import net.mathias2246.buildmc.api.claims.ClaimType;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.inventoryframework.adventuresupport.ComponentHolder;
 import net.mathias2246.buildmc.inventoryframework.gui.GuiItem;
@@ -15,6 +16,7 @@ import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.SoundUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -32,28 +34,37 @@ public class ClaimSelectMenu {
 
     public static void open(@NotNull Player player) {
 
+        boolean showAllClaims = player.hasPermission("buildmc.show-all-claims");
+
         Bukkit.getScheduler().runTaskAsynchronously(plugin, task -> {
 
-                    // Get claims
-                    List<Long> playerClaimIds = ClaimManager.playerOwner
-                            .getOrDefault(player.getUniqueId(), Collections.emptyList());
+            List<Claim> claims = new ArrayList<>();
+            List<Long> claimIds = new ArrayList<>();
 
-                    List<Long> teamClaimIds = Optional.ofNullable(ClaimManager.getPlayerTeam(player))
-                            .map(t -> ClaimManager.teamOwner.getOrDefault(t.getName(), Collections.emptyList()))
-                            .orElse(Collections.emptyList());
+                    if (showAllClaims) {
+                        for (var playerClaims : ClaimManager.playerOwner.values()) {
+                            claimIds.addAll(playerClaims);
+                        }
 
+                        for (var teamClaims : ClaimManager.teamOwner.values()) {
+                            claimIds.addAll(teamClaims);
+                        }
+                    } else {
+                        // Get claims
+                         claimIds.addAll(ClaimManager.playerOwner
+                                .getOrDefault(player.getUniqueId(), Collections.emptyList()));
 
-                    List<Claim> claims = new ArrayList<>();
-                    for (long id : playerClaimIds) {
-                        Claim c = ClaimManager.getClaimByID(id);
-                        if (c != null) claims.add(c);
+                        claimIds.addAll(Optional.ofNullable(ClaimManager.getPlayerTeam(player))
+                                .map(t -> ClaimManager.teamOwner.getOrDefault(t.getName(), Collections.emptyList()))
+                                .orElse(Collections.emptyList()));
                     }
-                    for (long id : teamClaimIds) {
-                        Claim c = ClaimManager.getClaimByID(id);
-                        if (c != null) claims.add(c);
-                    }
 
-                    if (player.hasPermission("buildmc.admin")) {
+                        for (long id : claimIds) {
+                            Claim c = ClaimManager.getClaimByID(id);
+                            if (c != null) claims.add(c);
+                        }
+
+                    if (player.hasPermission("buildmc.admin") || showAllClaims) {
                         for (long id : ClaimManager.serverClaims) {
                             Claim c = ClaimManager.getClaimByID(id);
                             if (c != null) claims.add(c);
@@ -65,7 +76,7 @@ public class ClaimSelectMenu {
                         }
                     }
 
-                    List<GuiItem> claimButtons = buildClaimItems(player, claims);
+                    List<GuiItem> claimButtons = buildClaimItems(player, claims, showAllClaims);
 
                     ChestGui gui = new ChestGui(6, ComponentHolder.of(Message.msg(player, "messages.claims.ui.select-menu.title")));
 
@@ -96,7 +107,7 @@ public class ClaimSelectMenu {
         );
     }
 
-    private static List<GuiItem> buildClaimItems(Player player, List<Claim> claims) {
+    private static List<GuiItem> buildClaimItems(Player player, List<Claim> claims, boolean showOwner) {
         List<GuiItem> items = new ArrayList<>();
 
         for (Claim claim : claims) {
@@ -133,6 +144,8 @@ public class ClaimSelectMenu {
                 default -> typeMessage = LEGACY_COMPONENT_SERIALIZER.serialize(Message.msg(player, "messages.claims.ui.select-menu.unknown-type"));
             }
 
+            lore.add("Owner: "+getOwnerDisplayName(claim));
+
             lore.add(typeMessage);
 
             lore.add(LEGACY_COMPONENT_SERIALIZER.serialize(Message.msg(player,
@@ -152,54 +165,23 @@ public class ClaimSelectMenu {
         return items;
     }
 
-//    private static void updatePageIndicator(Player player,
-//                                            StaticPane controls,
-//                                            int currentPage,
-//                                            int totalPages,
-//                                            PaginatedPane pages,
-//                                            ChestGui gui) {
-//        // Clear old navigation items
-//        controls.removeItem(2, 0);
-//        controls.removeItem(4, 0);
-//        controls.removeItem(6, 0);
-//
-//        // --- Page indicator (middle) ---
-//        ItemStack indicator = makePageIndicator(player, currentPage + 1, totalPages);
-//        controls.addItem(new GuiItem(indicator, e -> e.setCancelled(true)), 4, 0);
-//
-//        // --- Previous Button ---
-//        if (currentPage > 0) {
-//            ItemStack prev = createNavItem(player, "messages.claims.ui.general.previous");
-//            controls.addItem(new GuiItem(prev, e -> {
-//                e.setCancelled(true);
-//                CoreMain.soundManager.playSound(player, UIUtil.CLICK_SOUND);
-//                if (pages.getPage() > 0) {
-//                    pages.setPage(pages.getPage() - 1);
-//                    updatePageIndicator(player, controls, pages.getPage(), totalPages, pages, gui);
-//                    gui.update();
-//                }
-//            }), 2, 0);
-//        } else {
-//            // Replace with gray filler
-//            controls.addItem(new GuiItem(createDisabledNavItem(player), UIUtil.noInteract), 2, 0);
-//        }
-//
-//        // --- Next Button ---
-//        if (currentPage < totalPages - 1) {
-//            ItemStack next = createNavItem(player, "messages.claims.ui.general.next");
-//            controls.addItem(new GuiItem(next, e -> {
-//                e.setCancelled(true);
-//                CoreMain.soundManager.playSound(player, UIUtil.CLICK_SOUND);
-//                if (pages.getPage() < pages.getPages() - 1) {
-//                    pages.setPage(pages.getPage() + 1);
-//                    updatePageIndicator(player, controls, pages.getPage(), totalPages, pages, gui);
-//                    gui.update();
-//                }
-//            }), 6, 0);
-//        } else {
-//            // Replace with gray filler
-//            controls.addItem(new GuiItem(createDisabledNavItem(player), UIUtil.noInteract), 6, 0);
-//        }
-//    }
+    private static String getOwnerDisplayName(Claim claim) {
+        ClaimType claimType = claim.getType();
 
+        if (claimType == ClaimType.TEAM) return claim.getOwnerId();
+        else if (claimType == ClaimType.PLAYER) {
+            UUID ownerId = UUID.fromString(claim.getOwnerId());
+            OfflinePlayer owner = Bukkit.getOfflinePlayer(ownerId);
+            String ownerName = owner.getName();
+
+            if (ownerName == null) {
+                ownerName = "Unknown ("+ownerId+")";
+            }
+
+            return ownerName;
+        } else if (claimType == ClaimType.SERVER || claimType == ClaimType.PLACEHOLDER) {
+            return "Server";
+        }
+        return "Unknown";
+    }
 }

@@ -58,22 +58,30 @@ public class StatusConfig extends YamlConfigurationManager {
         public StatusInstance deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
             JsonObject o = jsonElement.getAsJsonObject();
             String id = o.get("id").getAsString();
-            JsonArray perms = o.get("permissions").getAsJsonArray();
+
             List<Permission> permissions = null;
-            if (perms != null) {
-                permissions = new ArrayList<>();
-                for (var permissionStr : perms) {
-                    permissions.add(new Permission(permissionStr.getAsString()));
+            if (o.has("permissions")) {
+                JsonArray perms = o.get("permissions").getAsJsonArray();
+
+                if (perms != null) {
+                    permissions = new ArrayList<>();
+                    for (var permissionStr : perms) {
+                        permissions.add(new Permission(permissionStr.getAsString()));
+                    }
                 }
             }
-            JsonArray t = o.getAsJsonArray("teams");
+
             List<Team> teams = null;
-            if (t != null) {
-                teams = new ArrayList<>();
-                Scoreboard scoreboard = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard();
-                for (var teamStr : t) {
-                    var ti = scoreboard.getTeam(teamStr.getAsString());
-                    if (ti != null) teams.add(ti);
+            if (o.has("teams")) {
+                JsonArray t = o.getAsJsonArray("teams");
+
+                if (t != null) {
+                    teams = new ArrayList<>();
+                    Scoreboard scoreboard = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard();
+                    for (var teamStr : t) {
+                        var ti = scoreboard.getTeam(teamStr.getAsString());
+                        if (ti != null) teams.add(ti);
+                    }
                 }
             }
             Component displayName = MiniMessage.miniMessage().deserializeOr(o.get("display-name").getAsString(), null);

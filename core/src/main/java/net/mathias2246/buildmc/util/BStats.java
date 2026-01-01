@@ -4,7 +4,6 @@ import net.mathias2246.buildmc.CoreMain;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.MultiLineChart;
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +15,7 @@ public class BStats {
     private static Metrics metrics;
 
     public static void initialize() {
-        metrics = new Metrics((JavaPlugin) CoreMain.plugin, pluginId);
+        metrics = new Metrics(CoreMain.plugin, pluginId);
 
         metrics.addCustomChart(new MultiLineChart("servers_and_players", () -> {
             Map<String, Integer> values = new HashMap<>();

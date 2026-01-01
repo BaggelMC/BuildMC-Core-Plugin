@@ -3,7 +3,6 @@ package net.mathias2246.buildmc;
 import dev.jorel.commandapi.CommandAPI;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.mathias2246.buildmc.api.claims.ClaimManager;
 import net.mathias2246.buildmc.api.endEvent.EndManager;
 import net.mathias2246.buildmc.api.item.CustomItemListener;
@@ -16,6 +15,7 @@ import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.commands.*;
 import net.mathias2246.buildmc.endEvent.EndListener;
 import net.mathias2246.buildmc.endEvent.EndManagerImpl;
+import net.mathias2246.buildmc.platform.BetterBungeeComponentSerializer;
 import net.mathias2246.buildmc.platform.SoundManagerSpigotImpl;
 import net.mathias2246.buildmc.player.PlayerHeadDropDeathListener;
 import net.mathias2246.buildmc.player.PlayerHeadDropModifier;
@@ -24,12 +24,16 @@ import net.mathias2246.buildmc.player.status.PlayerStatus;
 import net.mathias2246.buildmc.player.status.SetStatusCommand;
 import net.mathias2246.buildmc.spawnElytra.*;
 import net.mathias2246.buildmc.status.StatusConfig;
+import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.SoundManager;
 import net.mathias2246.buildmc.util.SoundUtil;
 import net.mathias2246.buildmc.util.config.ConfigurationValidationException;
 import net.mathias2246.buildmc.util.registry.RegistriesHolder;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -68,11 +72,33 @@ public final class Main extends PluginMain {
     public static EndManager apiEndManager;
     private static ElytraManager apiElytraManager;
 
+    private boolean skippedLoad = false;
+
     @Override
     public void onEnable() {
         // Plugin startup logic
         plugin = this;
         logger = this.getLogger();
+
+        if (isPaper()) {
+            //noinspection ExtractMethodRecommender
+            var t = new TextComponent("""
+                            
+                            ===========================================================
+                                 You cannot use the Spigot version of BuildMC-Core
+                                               on a Paper server!
+                                       Please download the paper version:
+                                    https://modrinth.com/plugin/buildmc-core
+                            ===========================================================
+                            """
+            );
+            t.setColor(ChatColor.RED);
+            Bukkit.getConsoleSender().spigot().sendMessage(t);
+            skippedLoad = true;
+            Bukkit.getPluginManager().disablePlugin(this);
+
+            return;
+        }
 
         pluginFolder = plugin.getDataFolder();
         if (!pluginFolder.exists()) {
@@ -98,7 +124,6 @@ public final class Main extends PluginMain {
             );
         }
 
-
         CommandRegister.setupCommandAPI();
 
         audiences = BukkitAudiences.create(plugin);
@@ -112,6 +137,7 @@ public final class Main extends PluginMain {
 
     @Override
     public void onDisable() {
+        if (skippedLoad) return;
         // Plugin shutdown logic
         audiences.close();
         CommandAPI.onDisable();
@@ -125,16 +151,14 @@ public final class Main extends PluginMain {
 
     @Override
     public void sendMessage(CommandSender sender, Component message) {
-        audiences.sender(sender).sendMessage(message);
+        BaseComponent component = BetterBungeeComponentSerializer.serialize(message, Message.getLocale(sender));
+        sender.spigot().sendMessage(component);
     }
 
     @Override
     public void sendPlayerActionBar(Player player, Component message) {
-        // audiences.player(player).sendActionBar(message);
-
-        // This is stupid, but you can't argue with the results
-        BaseComponent[] components = BungeeComponentSerializer.get().serialize(message);
-        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, components);
+        BaseComponent component = BetterBungeeComponentSerializer.serialize(message, Message.getLocale(player));
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, component);
     }
 
     @Override
@@ -230,6 +254,15 @@ public final class Main extends PluginMain {
 
         if (config.getBoolean("player-head.on-death")) {
             getServer().getPluginManager().registerEvents(new PlayerHeadDropDeathListener(new PlayerHeadDropModifier()), this);
+        }
+    }
+
+    public static boolean isPaper() {
+        try {
+            Class.forName("io.papermc.paper.configuration.Configuration");
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
         }
     }
 }

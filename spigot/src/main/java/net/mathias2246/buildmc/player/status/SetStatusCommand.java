@@ -12,7 +12,7 @@ import org.bukkit.help.HelpTopic;
 import org.jetbrains.annotations.NotNull;
 
 import static net.mathias2246.buildmc.CoreMain.soundManager;
-import static net.mathias2246.buildmc.Main.audiences;
+import static net.mathias2246.buildmc.Main.plugin;
 import static net.mathias2246.buildmc.commands.CommandUtil.requiresPlayer;
 
 public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCommand {
@@ -44,7 +44,7 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
                 (command) -> {
                     if (!(requiresPlayer(command.sender()) instanceof Player player)) return;
                     CoreMain.statusManager.removePlayerStatus(player);
-                    audiences.player(player).sendMessage(Component.translatable( "messages.status.successfully-removed"));
+                    plugin.sendMessage(player, Component.translatable( "messages.status.successfully-removed"));
                     soundManager.playSound(player, SoundUtil.success);
                 }
         );

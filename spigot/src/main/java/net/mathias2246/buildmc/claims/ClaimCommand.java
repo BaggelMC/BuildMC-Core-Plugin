@@ -6,7 +6,6 @@ import dev.jorel.commandapi.arguments.NamespacedKeyArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.CoreMain;
-import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.item.AbstractCustomItem;
 import net.mathias2246.buildmc.claims.tool.ClaimToolItemMetaModifier;
@@ -14,7 +13,6 @@ import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.commands.CustomCommand;
 import net.mathias2246.buildmc.commands.claim.*;
 import net.mathias2246.buildmc.ui.claims.ClaimSelectMenu;
-import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
@@ -23,8 +21,8 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.Objects;
 
-import static net.mathias2246.buildmc.Main.audiences;
 import static net.mathias2246.buildmc.Main.config;
+import static net.mathias2246.buildmc.Main.plugin;
 import static net.mathias2246.buildmc.commands.CommandUtil.requiresPlayer;
 
 public class ClaimCommand implements CustomCommand {
@@ -54,13 +52,13 @@ public class ClaimCommand implements CustomCommand {
 
                                 // Check if there is space left in the inventory
                                 if (player.getInventory().firstEmpty() == -1) {
-                                    audiences.sender(player).sendMessage(Message.msg(player, "messages.claims.tool.full-inventory"));
+                                    plugin.sendMessage(player, Component.translatable("messages.claims.tool.full-inventory"));
 
                                     return;
                                 }
 
                                 claimTool.giveToPlayer(player, modifier);
-                                audiences.sender(player).sendMessage(Message.msg(player, "messages.claims.tool.give-success"));
+                                plugin.sendMessage(player, Component.translatable("messages.claims.tool.give-success"));
                             })
                 )
 
@@ -79,26 +77,14 @@ public class ClaimCommand implements CustomCommand {
                                         (command) -> {
                                             if (!(requiresPlayer(command.sender()) instanceof Player player)) return 0;
 
+                                            Location l = command.args().getByClass("loc", Location.class);
+                                            if (l != null) return ClaimWho.whoClaimCommand(player, l);
+
                                             return ClaimWho.whoClaimCommand(player, player.getLocation());
                                         }
                                 )
                                 .withArguments(
                                         new LocationArgument("loc")
-                                                .executes(
-                                                        (command) -> {
-                                                            if (!(requiresPlayer(command.sender()) instanceof Player player)) return 0;
-
-                                                            Claim claim;
-
-                                                            Location l = command.args().getByClass("loc", Location.class);
-                                                            if (l == null) {
-                                                                CoreMain.plugin.sendMessage(player, Component.translatable("messages.error.general"));
-                                                                return 0;
-                                                            }
-
-                                                            return ClaimWho.whoClaimCommand(player, l);
-                                                        }
-                                                )
                                 )
                 )
 
@@ -106,7 +92,7 @@ public class ClaimCommand implements CustomCommand {
                         new CommandAPICommand("help")
                                 .executes((command) -> {
                                     CommandSender sender = command.sender();
-                                    audiences.sender(sender).sendMessage(Component.translatable("messages.claims.help-message"));
+                                    plugin.sendMessage(sender, Component.translatable("messages.claims.help-message"));
                                 })
                 )
 
@@ -128,7 +114,7 @@ public class ClaimCommand implements CustomCommand {
                                     String name = command.args().getByClass("name", String.class);
 
                                     if (type == null || name == null) {
-                                        audiences.player(player).sendMessage(Component.translatable("messages.error.invalid-args"));
+                                        plugin.sendMessage(player, Component.translatable("messages.error.invalid-args"));
                                         return 0;
                                     }
 
@@ -166,7 +152,7 @@ public class ClaimCommand implements CustomCommand {
                                     String claimName = command.args().getByClass("claim", String.class);
 
                                     if (type == null || claimName == null) {
-                                        audiences.player(player).sendMessage(Component.translatable("messages.error.invalid-args"));
+                                        plugin.sendMessage(player, Component.translatable("messages.error.invalid-args"));
                                         return 0;
                                     }
 
@@ -227,7 +213,7 @@ public class ClaimCommand implements CustomCommand {
                                     String targetPlayerName = command.args().getByClass("targetPlayer", String.class);
 
                                     if (action == null || type == null || claimName == null || targetPlayerName == null) {
-                                        audiences.player(player).sendMessage(Component.translatable("messages.error.invalid-args"));
+                                        plugin.sendMessage(player, Component.translatable("messages.error.invalid-args"));
                                         return 0;
                                     }
 
@@ -280,7 +266,7 @@ public class ClaimCommand implements CustomCommand {
 
                                     // Null checks
                                     if (type == null || claimName == null || flag == null || valueStr == null) {
-                                        audiences.player(player).sendMessage(Component.translatable("messages.error.invalid-args"));
+                                        plugin.sendMessage(player, Component.translatable("messages.error.invalid-args"));
                                         return 0;
                                     }
 

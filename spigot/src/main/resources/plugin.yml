@@ -14,6 +14,9 @@ permissions:
   buildmc.admin:
     default: op
     description: The BuildMC admin permission
+  buildmc.show-all-claims:
+    default: false
+    description: Allows you to manage all player, teams, server and placeholder claims. Even player and team claims not owned by you.
   buildmc.allow-spawn-teleport:
     default: true
     description: Allows the player to use the '/spawn' command

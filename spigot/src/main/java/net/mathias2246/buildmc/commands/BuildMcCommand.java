@@ -59,48 +59,45 @@ public class BuildMcCommand implements CustomCommand {
         statusSub.withSubcommand(
                 new CommandAPICommand("write").withArguments(
                         new GreedyStringArgument("status_json")
-                                .executes(
-                                        (command) -> {
-                                            var json = command.args().getByClass("status_json", String.class);
+                ).executes(
+                        (command) -> {
+                            var json = command.args().getByClass("status_json", String.class);
 
-                                            StatusInstance status = gson.fromJson(json, StatusInstance.class);
+                            StatusInstance status = gson.fromJson(json, StatusInstance.class);
 
-                                            statusConfig.configuration.set(
-                                                    status.getStatusId(),
-                                                    status.serialize()
-                                            );
+                            statusConfig.configuration.set(
+                                    status.getStatusId(),
+                                    status.serialize()
+                            );
 
-                                            try {
-                                                statusConfig.save();
-                                            } catch (IOException e) {
-                                                throw new RuntimeException(e);
-                                            }
-
-                                            return 1;
-                                        }
-                                )
+                            try {
+                                statusConfig.save();
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                            return 1;
+                        }
                 )
         );
 
         statusSub.withSubcommand(
                 new CommandAPICommand("remove").withArguments(
                         new StringArgument("status_id")
-                                .executes(
-                                        command -> {
+                ).executes(
+                        command -> {
 
-                                            var status = command.args().getByClass("status_id", String.class);
-                                            if (status == null) return 0;
-                                            if (!statusConfig.configuration.contains(status)) return 0;
-                                            statusConfig.configuration.set(status, null);
-                                            try {
-                                                statusConfig.save();
-                                            } catch (IOException e) {
-                                                throw new RuntimeException(e);
-                                            }
+                            var status = command.args().getByClass("status_id", String.class);
+                            if (status == null) return 0;
+                            if (!statusConfig.configuration.contains(status)) return 0;
+                            statusConfig.configuration.set(status, null);
+                            try {
+                                statusConfig.save();
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
 
-                                            return 1;
-                                        }
-                                )
+                            return 1;
+                        }
                 )
         );
 

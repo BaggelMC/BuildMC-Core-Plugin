@@ -61,7 +61,7 @@ public class StatusInstance implements ConfigurationSerializable, Keyed {
      *                 </p>
      * @param permissions The {@link Permission}s required to use this status, or {@code null} if no permissions should be required.
      * @param teams The {@link Team}s required to use this status.
-     *              A player needs to be in at least one of the team.
+     *              A player needs to be in at least one of the teams.
      *              Use {@code null} if no teams should be required
      * @param display The display {@link Component} of the Status that is shown before the players name.
      *                <p>
@@ -71,7 +71,9 @@ public class StatusInstance implements ConfigurationSerializable, Keyed {
     public StatusInstance(@NotNull @MatchesRegex("[a-z0-9/._-]+$") String statusId, @Nullable Set<Permission> permissions, @Nullable Set<Team> teams, @Nullable Component display) {
         this.statusId = statusId;
         this.namespacedKey = Objects.requireNonNull(NamespacedKey.fromString("buildmc:" + statusId));
+        if (permissions != null && permissions.isEmpty()) permissions = null;
         this.permissions = permissions;
+        if (teams != null && teams.isEmpty()) teams = null;
         this.teams = teams;
         hasRequirements = (permissions != null || teams != null);
         if (display == null) this.display = Component.text("null");

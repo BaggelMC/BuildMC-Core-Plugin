@@ -75,7 +75,6 @@ public class PlayerFriendlyFire extends Protection {
 
         if (protectionEnabled) {
             // Protection flag ON -> do nothing
-            return;
         } else {
             // Protection flag OFF -> allowed players are protected from not-allowed attackers
             boolean victimAllowed = ClaimManager.isPlayerAllowed(victim, getKey(), victim.getLocation());

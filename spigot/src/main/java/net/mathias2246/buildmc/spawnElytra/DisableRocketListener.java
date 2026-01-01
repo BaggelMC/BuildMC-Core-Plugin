@@ -9,7 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-import static net.mathias2246.buildmc.Main.audiences;
+import static net.mathias2246.buildmc.Main.plugin;
 
 public class DisableRocketListener implements Listener {
     // Disables the use of rockets to boost you when using the spawn-elytra to limit the distance you can easily reach
@@ -25,7 +25,7 @@ public class DisableRocketListener implements Listener {
             event.setCancelled(true);
 
             Component text = Message.msg(player, "messages.spawn-elytra.firework-disabled-hint");
-            audiences.player(player).sendActionBar(text);
+            plugin.sendMessage(player, text);
         }
     }
 

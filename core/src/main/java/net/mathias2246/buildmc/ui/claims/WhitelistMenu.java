@@ -1,6 +1,7 @@
 package net.mathias2246.buildmc.ui.claims;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.mathias2246.buildmc.CoreMain;
@@ -38,8 +39,11 @@ public class WhitelistMenu {
 
     private static final @NotNull StaticPane INVISIBLE_BACKGROUND;
     public static final @NotNull StaticPane RED_BACKGROUND;
+    private static final @NotNull ItemStack ADD_BUTTON;
 
     static {
+        ADD_BUTTON = new ItemStack(Material.LIME_STAINED_GLASS_PANE, 1);
+
         SPACER_ROW = new StaticPane(0, 2, 9, 5);
 
         INVISIBLE_BACKGROUND = new StaticPane(9, 6);
@@ -62,7 +66,7 @@ public class WhitelistMenu {
         ItemUtil.editMeta(redPaneItem, meta ->
                 meta.setHideTooltip(true)
         );
-        GuiItem redPane = new GuiItem(redPaneItem);
+        GuiItem redPane = new GuiItem(redPaneItem, event -> event.setCancelled(true));
         RED_BACKGROUND = new StaticPane(9, 3);
         for (int x = 0; x < 9; x++) {
             for (int y = 0; y < 3; y++) {
@@ -78,6 +82,11 @@ public class WhitelistMenu {
                     List<UUID> whitelist = claim.getWhitelistedPlayers();
 
                     ChestGui gui = new ChestGui(6, ComponentHolder.of(Message.msg(player, "messages.claims.ui.whitelist-menu.title", Map.of("claim", claim.getName()))));
+
+                    gui.setOnClose(event -> {
+                        if (ClaimUIs.openUIs.containsKey(claim.getId())) ClaimUIs.openUIs.get(claim.getId()).remove(player);
+                    });
+
                     PaginatedPane pages = new PaginatedPane(0, 0, 9, 5);
 
                     boolean isFirstPage = true;
@@ -91,6 +100,7 @@ public class WhitelistMenu {
 
                     pages.addPane(0, SPACER_ROW);
                     pages.addPane(0, INVISIBLE_BACKGROUND);
+
                     pages.addPane(0, currentPane);
 
                     for (var playerUUID : whitelist) {
@@ -131,8 +141,8 @@ public class WhitelistMenu {
                             } else {
                                 lowerRow = false;
                                 if (!isFirstPage) {
-                                    pages.addPage(currentPane);
 
+                                    pages.addPage(currentPane);
                                 }
                                 isFirstPage = false;
                                 p.add(new StaticPane(9, 5));
@@ -149,10 +159,24 @@ public class WhitelistMenu {
 
                         }
                         pages.addPane(pages.getPages() - 1, SPACER_ROW);
+
                         pages.addPane(pages.getPages() - 1, INVISIBLE_BACKGROUND);
                     }
 
                     gui.addPane(pages);
+                    StaticPane addButton = new StaticPane(4,2,1,1);
+                    ItemStack a = ItemUtil.setItemLegacyComponentName(Material.LIME_STAINED_GLASS_PANE, Message.msg(player, "messages.claims.ui.whitelist-menu.add-button.name"));
+                    addButton.addItem(new GuiItem(a, e -> {
+                        e.setCancelled(true);
+                        CoreMain.soundManager.playSound(player, SoundUtil.notification);
+                        CoreMain.plugin.sendMessage(player,
+                                Component.translatable("messages.claims.ui.whitelist-menu.add-button.click-info")
+                                        .clickEvent(
+                                                ClickEvent.suggestCommand("/claim whitelist add "+claim.getType()+" "+claim.getName()+" ")
+                                        )
+                        );
+                    }), 0, 0);
+                    addButton.setPriority(Pane.Priority.HIGH);
 
                     // Nav bar
                     StaticPane controls = UIUtil.BOTTOM_BAR.copy();
@@ -171,11 +195,22 @@ public class WhitelistMenu {
                     controls.addItem(UIUtil.makePageRightButton(gui, player, pages, controls, pageIndicator), 6, 0);
 
                     gui.addPane(controls);
+                    gui.addPane(addButton);
 
                     Bukkit.getScheduler().runTask(plugin, bukkitTask ->
                             {
                                 gui.show(player);
                                 UIUtil.updatePageUI(gui, player, pages, controls, pageIndicator);
+
+                                Long id = claim.getId();
+                                if (id == null) return;
+
+                                if (!ClaimUIs.openUIs.containsKey(id)) {
+                                    var l = new ArrayList<Player>();
+                                    l.add(player);
+                                    ClaimUIs.openUIs.put(id, l);
+                                }
+                                else ClaimUIs.openUIs.get(id).add(player);
                             }
                     );
                 }
@@ -188,6 +223,10 @@ public class WhitelistMenu {
 
                     ChestGui gui = new ChestGui(3,
                             ComponentHolder.of(Message.msg(player, "messages.claims.ui.whitelist-menu.delete-confirm-menu.title", Map.of("player", String.valueOf(target.getName())))));
+
+                    gui.setOnClose(event -> {
+                        if (ClaimUIs.openUIs.containsKey(claim.getId())) ClaimUIs.openUIs.get(claim.getId()).remove(player);
+                    });
 
                     StaticPane pane = new StaticPane(0, 0, 9, 3);
 
@@ -216,8 +255,17 @@ public class WhitelistMenu {
                     gui.addPane(RED_BACKGROUND);
 
                     Bukkit.getScheduler().runTask(plugin, bukkitTask -> {
-
                         gui.show(player);
+
+                        Long id = claim.getId();
+                        if (id == null) return;
+
+                        if (!ClaimUIs.openUIs.containsKey(id)) {
+                            var l = new ArrayList<Player>();
+                            l.add(player);
+                            ClaimUIs.openUIs.put(id, l);
+                        }
+                        else ClaimUIs.openUIs.get(id).add(player);
                     });
                 }
         );

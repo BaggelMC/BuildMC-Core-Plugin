@@ -60,11 +60,11 @@ public class EndEventCommand implements CustomCommand {
 
                     String senderMessageKey = allowEnd ? "messages.end-event.opened" : "messages.end-event.closed";
                     Component senderMessage = Component.translatable(senderMessageKey);
-                    audiences.sender(command.sender()).sendMessage(senderMessage);
+                    plugin.sendMessage(sender, senderMessage);
 
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         Component msg = Component.translatable(messageKey);
-                        audiences.player(player).sendMessage(msg);
+                        plugin.sendMessage(player, msg);
                     }
                 });
     }
