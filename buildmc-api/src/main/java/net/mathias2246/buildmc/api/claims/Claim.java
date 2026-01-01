@@ -145,7 +145,7 @@ public class Claim {
      * @param id The new claim ID.
      */
     @ApiStatus.Internal
-    public void setID(long id) { this.id = id; }
+    public void setID(Long id) { this.id = id; }
 
     /**
      * Gets the list of whitelisted players in this claim.

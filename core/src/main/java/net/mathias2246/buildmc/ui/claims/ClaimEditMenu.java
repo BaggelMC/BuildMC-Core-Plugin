@@ -22,6 +22,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -48,7 +49,7 @@ public class ClaimEditMenu {
         ItemUtil.editMeta(redPaneItem, meta ->
                 meta.setHideTooltip(true)
         );
-        GuiItem redPane = new GuiItem(redPaneItem);
+        GuiItem redPane = new GuiItem(redPaneItem, event -> event.setCancelled(true));
         RED_BACKGROUND = new StaticPane(9, 3);
         for (int x = 0; x < 9; x++) {
             for (int y = 0; y < 3; y++) {
@@ -63,13 +64,22 @@ public class ClaimEditMenu {
 
     public static void open(@NotNull Player player, @NotNull Claim claim) {
 
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, task -> {
+        if (claim.getId() == null) {
+            plugin.sendMessage(player, Component.translatable("messages.claims.remove.not-found"));
+            plugin.getSoundManager().playSound(player, SoundUtil.mistake);
+            return;
+        }
 
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, task -> {
                     boolean isPlaceholderClaim = claim.getType() == ClaimType.PLACEHOLDER;
 
                     ChestGui gui = new ChestGui(3,
                             ComponentHolder.of(Message.msg(player, "messages.claims.ui.edit-menu.title",
                                     Map.of("claim", claim.getName()))));
+
+                    gui.setOnClose(event -> {
+                        if (ClaimUIs.openUIs.containsKey(claim.getId())) ClaimUIs.openUIs.get(claim.getId()).remove(player);
+                    });
 
                     StaticPane elements = new StaticPane(9, 3);
 
@@ -118,7 +128,20 @@ public class ClaimEditMenu {
                     gui.addPane(BACKGROUND);
                     gui.addPane(elements);
 
-                    Bukkit.getScheduler().runTask(plugin, bukkitTask -> gui.show(player));
+                    Bukkit.getScheduler().runTask(plugin, bukkitTask -> {
+                        gui.show(player);
+
+                        Long id = claim.getId();
+                        if (id == null) return;
+
+                        if (!ClaimUIs.openUIs.containsKey(id)) {
+                            var l = new ArrayList<Player>();
+                            l.add(player);
+                            ClaimUIs.openUIs.put(id, l);
+                        }
+                        else ClaimUIs.openUIs.get(id).add(player);
+                    }
+                    );
                 }
         );
 
@@ -128,9 +151,12 @@ public class ClaimEditMenu {
     private static void openDeleteConfirmationMenu(Player player, Claim claim) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, task -> {
                     if (claim.getId() == null) return;
-
                     ChestGui gui = new ChestGui(3,
                             ComponentHolder.of(Message.msg(player, "messages.claims.ui.edit-menu.delete-confirm-menu.title", Map.of("claim", claim.getName()))));
+
+                    gui.setOnClose(event -> {
+                        if (ClaimUIs.openUIs.containsKey(claim.getId())) ClaimUIs.openUIs.get(claim.getId()).remove(player);
+                    });
 
                     StaticPane elements = new StaticPane(9, 3);
 
@@ -161,7 +187,19 @@ public class ClaimEditMenu {
                     gui.addPane(RED_BACKGROUND);
                     gui.addPane(elements);
 
-                    Bukkit.getScheduler().runTask(plugin, bukkitTask -> gui.show(player));
+                    Bukkit.getScheduler().runTask(plugin, bukkitTask -> {
+                        gui.show(player);
+
+                        Long id = claim.getId();
+                        if (id == null) return;
+
+                        if (!ClaimUIs.openUIs.containsKey(id)) {
+                            var l = new ArrayList<Player>();
+                            l.add(player);
+                            ClaimUIs.openUIs.put(id, l);
+                        }
+                        else ClaimUIs.openUIs.get(id).add(player);
+                    });
                 }
         );
 

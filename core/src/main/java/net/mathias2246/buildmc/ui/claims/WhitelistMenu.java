@@ -66,7 +66,7 @@ public class WhitelistMenu {
         ItemUtil.editMeta(redPaneItem, meta ->
                 meta.setHideTooltip(true)
         );
-        GuiItem redPane = new GuiItem(redPaneItem);
+        GuiItem redPane = new GuiItem(redPaneItem, event -> event.setCancelled(true));
         RED_BACKGROUND = new StaticPane(9, 3);
         for (int x = 0; x < 9; x++) {
             for (int y = 0; y < 3; y++) {
@@ -82,6 +82,11 @@ public class WhitelistMenu {
                     List<UUID> whitelist = claim.getWhitelistedPlayers();
 
                     ChestGui gui = new ChestGui(6, ComponentHolder.of(Message.msg(player, "messages.claims.ui.whitelist-menu.title", Map.of("claim", claim.getName()))));
+
+                    gui.setOnClose(event -> {
+                        if (ClaimUIs.openUIs.containsKey(claim.getId())) ClaimUIs.openUIs.get(claim.getId()).remove(player);
+                    });
+
                     PaginatedPane pages = new PaginatedPane(0, 0, 9, 5);
 
                     boolean isFirstPage = true;
@@ -196,6 +201,16 @@ public class WhitelistMenu {
                             {
                                 gui.show(player);
                                 UIUtil.updatePageUI(gui, player, pages, controls, pageIndicator);
+
+                                Long id = claim.getId();
+                                if (id == null) return;
+
+                                if (!ClaimUIs.openUIs.containsKey(id)) {
+                                    var l = new ArrayList<Player>();
+                                    l.add(player);
+                                    ClaimUIs.openUIs.put(id, l);
+                                }
+                                else ClaimUIs.openUIs.get(id).add(player);
                             }
                     );
                 }
@@ -208,6 +223,10 @@ public class WhitelistMenu {
 
                     ChestGui gui = new ChestGui(3,
                             ComponentHolder.of(Message.msg(player, "messages.claims.ui.whitelist-menu.delete-confirm-menu.title", Map.of("player", String.valueOf(target.getName())))));
+
+                    gui.setOnClose(event -> {
+                        if (ClaimUIs.openUIs.containsKey(claim.getId())) ClaimUIs.openUIs.get(claim.getId()).remove(player);
+                    });
 
                     StaticPane pane = new StaticPane(0, 0, 9, 3);
 
@@ -235,7 +254,19 @@ public class WhitelistMenu {
                     gui.addPane(pane);
                     gui.addPane(RED_BACKGROUND);
 
-                    Bukkit.getScheduler().runTask(plugin, bukkitTask -> gui.show(player));
+                    Bukkit.getScheduler().runTask(plugin, bukkitTask -> {
+                        gui.show(player);
+
+                        Long id = claim.getId();
+                        if (id == null) return;
+
+                        if (!ClaimUIs.openUIs.containsKey(id)) {
+                            var l = new ArrayList<Player>();
+                            l.add(player);
+                            ClaimUIs.openUIs.put(id, l);
+                        }
+                        else ClaimUIs.openUIs.get(id).add(player);
+                    });
                 }
         );
     }

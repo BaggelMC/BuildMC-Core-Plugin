@@ -26,6 +26,7 @@ import net.mathias2246.buildmc.deaths.DeathListener;
 import net.mathias2246.buildmc.event.claims.PlayerCrossClaimBoundariesListener;
 import net.mathias2246.buildmc.status.PlayerStatusUtil;
 import net.mathias2246.buildmc.status.StatusConfig;
+import net.mathias2246.buildmc.ui.claims.ClaimUIs;
 import net.mathias2246.buildmc.util.BStats;
 import net.mathias2246.buildmc.util.SoundManager;
 import net.mathias2246.buildmc.util.config.ConfigHandler;
@@ -104,11 +105,6 @@ public final class CoreMain {
         initializeConfigs();
 
         bukkitAudiences = BukkitAudiences.create(plugin);
-
-        plugin.sendMessage(
-                Bukkit.getConsoleSender(),
-                Component.text("Server version: " + Bukkit.getServer().getVersion())
-        );
 
         BStats.initialize();
 
@@ -211,12 +207,15 @@ public final class CoreMain {
             }
 
             registerListener(new PlayerCrossClaimBoundariesListener());
-            registerListener(new DeathListener());
+
+            registerListener(new ClaimUIs());
 
             customItemsRegistry.initialize();
 
             ClaimLogger.init(plugin);
         }
+
+        registerListener(new DeathListener());
 
         if (config.getBoolean("status.enabled")) {
             registerListener(new PlayerStatusUtil());

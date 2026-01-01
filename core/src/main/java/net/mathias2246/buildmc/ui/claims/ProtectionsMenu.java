@@ -60,6 +60,11 @@ public class ProtectionsMenu {
                     List<Protection> protections = CoreMain.protectionsRegistry.stream().toList();
 
                     ChestGui gui = new ChestGui(6, ComponentHolder.of(Message.msg(player, "messages.claims.ui.protections-menu.title", Map.of("claim", claim.getName()))));
+
+                    gui.setOnClose(event -> {
+                        if (ClaimUIs.openUIs.containsKey(claim.getId())) ClaimUIs.openUIs.get(claim.getId()).remove(player);
+                    });
+
                     PaginatedPane pages = new PaginatedPane(0, 0, 9, 5);
 
                     boolean isFirstPage = true;
@@ -137,7 +142,18 @@ public class ProtectionsMenu {
                     Bukkit.getScheduler().runTask(plugin, bukkitTask ->
                         {
                             gui.show(player);
+                            //ClaimUIs.openUIs.put(claim.getId(), player);
                             UIUtil.updatePageUI(gui, player, pages, controls, pageIndicator);
+
+                            Long id = claim.getId();
+                            if (id == null) return;
+
+                            if (!ClaimUIs.openUIs.containsKey(id)) {
+                                var l = new ArrayList<Player>();
+                                l.add(player);
+                                ClaimUIs.openUIs.put(id, l);
+                            }
+                            else ClaimUIs.openUIs.get(id).add(player);
                         }
                     );
                 }
@@ -156,6 +172,8 @@ public class ProtectionsMenu {
             CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
 
             boolean currentlyEnabled = claim.hasProtection(protection);
+
+            if (claim.getId() == null) return;
 
             // Update claim + log
             if (currentlyEnabled) {

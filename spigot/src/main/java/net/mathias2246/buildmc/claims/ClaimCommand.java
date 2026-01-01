@@ -6,7 +6,6 @@ import dev.jorel.commandapi.arguments.NamespacedKeyArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.CoreMain;
-import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.item.AbstractCustomItem;
 import net.mathias2246.buildmc.claims.tool.ClaimToolItemMetaModifier;
@@ -78,26 +77,14 @@ public class ClaimCommand implements CustomCommand {
                                         (command) -> {
                                             if (!(requiresPlayer(command.sender()) instanceof Player player)) return 0;
 
+                                            Location l = command.args().getByClass("loc", Location.class);
+                                            if (l != null) return ClaimWho.whoClaimCommand(player, l);
+
                                             return ClaimWho.whoClaimCommand(player, player.getLocation());
                                         }
                                 )
                                 .withArguments(
                                         new LocationArgument("loc")
-                                                .executes(
-                                                        (command) -> {
-                                                            if (!(requiresPlayer(command.sender()) instanceof Player player)) return 0;
-
-                                                            Claim claim;
-
-                                                            Location l = command.args().getByClass("loc", Location.class);
-                                                            if (l == null) {
-                                                                CoreMain.plugin.sendMessage(player, Component.translatable("messages.error.general"));
-                                                                return 0;
-                                                            }
-
-                                                            return ClaimWho.whoClaimCommand(player, l);
-                                                        }
-                                                )
                                 )
                 )
 

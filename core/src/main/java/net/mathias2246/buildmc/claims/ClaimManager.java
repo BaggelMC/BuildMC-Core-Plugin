@@ -488,7 +488,7 @@ public class ClaimManager {
             plugin.getLogger().severe("SQL error while getting claim: " + e);
         }
 
-        if (claim == null) return;
+        if (claim == null || claim.getId() == null) return;
 
         ClaimWhitelistChangeEvent event = new ClaimWhitelistChangeEvent(claim, Bukkit.getOfflinePlayer(playerID), ClaimWhitelistChangeEvent.ChangeAction.REMOVED);
         Bukkit.getPluginManager().callEvent(event);

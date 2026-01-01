@@ -29,8 +29,11 @@ import net.mathias2246.buildmc.util.SoundManager;
 import net.mathias2246.buildmc.util.SoundUtil;
 import net.mathias2246.buildmc.util.config.ConfigurationValidationException;
 import net.mathias2246.buildmc.util.registry.RegistriesHolder;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -69,11 +72,33 @@ public final class Main extends PluginMain {
     public static EndManager apiEndManager;
     private static ElytraManager apiElytraManager;
 
+    private boolean skippedLoad = false;
+
     @Override
     public void onEnable() {
         // Plugin startup logic
         plugin = this;
         logger = this.getLogger();
+
+        if (isPaper()) {
+            //noinspection ExtractMethodRecommender
+            var t = new TextComponent("""
+                            
+                            ===========================================================
+                                 You cannot use the Spigot version of BuildMC-Core
+                                               on a Paper server!
+                                       Please download the paper version:
+                                    https://modrinth.com/plugin/buildmc-core
+                            ===========================================================
+                            """
+            );
+            t.setColor(ChatColor.RED);
+            Bukkit.getConsoleSender().spigot().sendMessage(t);
+            skippedLoad = true;
+            Bukkit.getPluginManager().disablePlugin(this);
+
+            return;
+        }
 
         pluginFolder = plugin.getDataFolder();
         if (!pluginFolder.exists()) {
@@ -112,6 +137,7 @@ public final class Main extends PluginMain {
 
     @Override
     public void onDisable() {
+        if (skippedLoad) return;
         // Plugin shutdown logic
         audiences.close();
         CommandAPI.onDisable();
@@ -228,6 +254,15 @@ public final class Main extends PluginMain {
 
         if (config.getBoolean("player-head.on-death")) {
             getServer().getPluginManager().registerEvents(new PlayerHeadDropDeathListener(new PlayerHeadDropModifier()), this);
+        }
+    }
+
+    public static boolean isPaper() {
+        try {
+            Class.forName("io.papermc.paper.configuration.Configuration");
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
         }
     }
 }
