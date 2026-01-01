@@ -34,6 +34,8 @@ public class GuidesCommand extends YamlConfigurationManager {
     }
 
     public static int showGuide(@NotNull CommandSender sender, String key) {
+        if (key == null) return 0;
+
         key = key.toLowerCase();
 
         NamespacedKey n = NamespacedKey.fromString("buildmc:" + key);

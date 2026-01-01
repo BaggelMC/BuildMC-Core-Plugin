@@ -14,7 +14,6 @@ import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.commands.CustomCommand;
 import net.mathias2246.buildmc.commands.claim.*;
 import net.mathias2246.buildmc.ui.claims.ClaimSelectMenu;
-import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
@@ -23,8 +22,7 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.Objects;
 
-import static net.mathias2246.buildmc.Main.audiences;
-import static net.mathias2246.buildmc.Main.config;
+import static net.mathias2246.buildmc.Main.*;
 import static net.mathias2246.buildmc.commands.CommandUtil.requiresPlayer;
 
 public class ClaimCommand implements CustomCommand {
@@ -54,13 +52,13 @@ public class ClaimCommand implements CustomCommand {
 
                                 // Check if there is space left in the inventory
                                 if (player.getInventory().firstEmpty() == -1) {
-                                    audiences.sender(player).sendMessage(Message.msg(player, "messages.claims.tool.full-inventory"));
+                                    plugin.sendMessage(player, Component.translatable("messages.claims.tool.full-inventory"));
 
                                     return;
                                 }
 
                                 claimTool.giveToPlayer(player, modifier);
-                                audiences.sender(player).sendMessage(Message.msg(player, "messages.claims.tool.give-success"));
+                                plugin.sendMessage(player, Component.translatable("messages.claims.tool.give-success"));
                             })
                 )
 

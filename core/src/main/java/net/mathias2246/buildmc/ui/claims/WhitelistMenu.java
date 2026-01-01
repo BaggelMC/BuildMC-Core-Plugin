@@ -1,6 +1,7 @@
 package net.mathias2246.buildmc.ui.claims;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.mathias2246.buildmc.CoreMain;
@@ -38,8 +39,11 @@ public class WhitelistMenu {
 
     private static final @NotNull StaticPane INVISIBLE_BACKGROUND;
     public static final @NotNull StaticPane RED_BACKGROUND;
+    private static final @NotNull ItemStack ADD_BUTTON;
 
     static {
+        ADD_BUTTON = new ItemStack(Material.LIME_STAINED_GLASS_PANE, 1);
+
         SPACER_ROW = new StaticPane(0, 2, 9, 5);
 
         INVISIBLE_BACKGROUND = new StaticPane(9, 6);
@@ -91,6 +95,7 @@ public class WhitelistMenu {
 
                     pages.addPane(0, SPACER_ROW);
                     pages.addPane(0, INVISIBLE_BACKGROUND);
+
                     pages.addPane(0, currentPane);
 
                     for (var playerUUID : whitelist) {
@@ -131,8 +136,8 @@ public class WhitelistMenu {
                             } else {
                                 lowerRow = false;
                                 if (!isFirstPage) {
-                                    pages.addPage(currentPane);
 
+                                    pages.addPage(currentPane);
                                 }
                                 isFirstPage = false;
                                 p.add(new StaticPane(9, 5));
@@ -149,10 +154,24 @@ public class WhitelistMenu {
 
                         }
                         pages.addPane(pages.getPages() - 1, SPACER_ROW);
+
                         pages.addPane(pages.getPages() - 1, INVISIBLE_BACKGROUND);
                     }
 
                     gui.addPane(pages);
+                    StaticPane addButton = new StaticPane(4,2,1,1);
+                    ItemStack a = ItemUtil.setItemLegacyComponentName(Material.LIME_STAINED_GLASS_PANE, Message.msg(player, "messages.claims.ui.whitelist-menu.add-button.name"));
+                    addButton.addItem(new GuiItem(a, e -> {
+                        e.setCancelled(true);
+                        CoreMain.soundManager.playSound(player, SoundUtil.notification);
+                        CoreMain.plugin.sendMessage(player,
+                                Component.translatable("messages.claims.ui.whitelist-menu.add-button.click-info")
+                                        .clickEvent(
+                                                ClickEvent.suggestCommand("/claim whitelist add "+claim.getType()+" "+claim.getName()+" ")
+                                        )
+                        );
+                    }), 0, 0);
+                    addButton.setPriority(Pane.Priority.HIGH);
 
                     // Nav bar
                     StaticPane controls = UIUtil.BOTTOM_BAR.copy();
@@ -171,6 +190,7 @@ public class WhitelistMenu {
                     controls.addItem(UIUtil.makePageRightButton(gui, player, pages, controls, pageIndicator), 6, 0);
 
                     gui.addPane(controls);
+                    gui.addPane(addButton);
 
                     Bukkit.getScheduler().runTask(plugin, bukkitTask ->
                             {
@@ -215,10 +235,7 @@ public class WhitelistMenu {
                     gui.addPane(pane);
                     gui.addPane(RED_BACKGROUND);
 
-                    Bukkit.getScheduler().runTask(plugin, bukkitTask -> {
-
-                        gui.show(player);
-                    });
+                    Bukkit.getScheduler().runTask(plugin, bukkitTask -> gui.show(player));
                 }
         );
     }

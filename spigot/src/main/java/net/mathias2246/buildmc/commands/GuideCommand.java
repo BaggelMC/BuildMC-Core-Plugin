@@ -9,22 +9,16 @@ public class GuideCommand implements CustomCommand {
         var cmd = new CommandAPICommand("guide");
 
         cmd.executes(
-                command -> {
-                    command.sender().sendMessage("/guide <args>");
-                    return 0;
+                (command) -> {
+                    return GuidesCommand.showGuide(
+                            command.sender(),
+                            command.args().getByClass("guide_id", String.class)
+                    );
                 }
         );
 
         cmd.withArguments(
                 new GreedyStringArgument("guide_id")
-                        .executes(
-                                (command) -> {
-                                    return GuidesCommand.showGuide(
-                                            command.sender(),
-                                            command.args().getByClass("guide_id", String.class)
-                                    );
-                                }
-                        )
                         .replaceSuggestions(
                                 (ctx, builder) -> GuidesCommand.buildSuggestions(builder)
                         )

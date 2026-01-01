@@ -3,7 +3,6 @@ package net.mathias2246.buildmc;
 import dev.jorel.commandapi.CommandAPI;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.mathias2246.buildmc.api.claims.ClaimManager;
 import net.mathias2246.buildmc.api.endEvent.EndManager;
 import net.mathias2246.buildmc.api.item.CustomItemListener;
@@ -16,6 +15,7 @@ import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.commands.*;
 import net.mathias2246.buildmc.endEvent.EndListener;
 import net.mathias2246.buildmc.endEvent.EndManagerImpl;
+import net.mathias2246.buildmc.platform.BetterBungeeComponentSerializer;
 import net.mathias2246.buildmc.platform.SoundManagerSpigotImpl;
 import net.mathias2246.buildmc.player.PlayerHeadDropDeathListener;
 import net.mathias2246.buildmc.player.PlayerHeadDropModifier;
@@ -24,6 +24,7 @@ import net.mathias2246.buildmc.player.status.PlayerStatus;
 import net.mathias2246.buildmc.player.status.SetStatusCommand;
 import net.mathias2246.buildmc.spawnElytra.*;
 import net.mathias2246.buildmc.status.StatusConfig;
+import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.SoundManager;
 import net.mathias2246.buildmc.util.SoundUtil;
 import net.mathias2246.buildmc.util.config.ConfigurationValidationException;
@@ -98,7 +99,6 @@ public final class Main extends PluginMain {
             );
         }
 
-
         CommandRegister.setupCommandAPI();
 
         audiences = BukkitAudiences.create(plugin);
@@ -125,16 +125,14 @@ public final class Main extends PluginMain {
 
     @Override
     public void sendMessage(CommandSender sender, Component message) {
-        audiences.sender(sender).sendMessage(message);
+        BaseComponent component = BetterBungeeComponentSerializer.serialize(message, Message.getLocale(sender));
+        sender.spigot().sendMessage(component);
     }
 
     @Override
     public void sendPlayerActionBar(Player player, Component message) {
-        // audiences.player(player).sendActionBar(message);
-
-        // This is stupid, but you can't argue with the results
-        BaseComponent[] components = BungeeComponentSerializer.get().serialize(message);
-        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, components);
+        BaseComponent component = BetterBungeeComponentSerializer.serialize(message, Message.getLocale(player));
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, component);
     }
 
     @Override
