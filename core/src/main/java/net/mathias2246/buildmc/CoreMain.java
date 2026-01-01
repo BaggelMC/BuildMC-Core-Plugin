@@ -105,6 +105,11 @@ public final class CoreMain {
 
         bukkitAudiences = BukkitAudiences.create(plugin);
 
+        plugin.sendMessage(
+                Bukkit.getConsoleSender(),
+                Component.text("Server version: " + Bukkit.getServer().getVersion())
+        );
+
         BStats.initialize();
 
         LanguageManager.init();
