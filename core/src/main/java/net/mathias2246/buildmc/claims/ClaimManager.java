@@ -1,6 +1,5 @@
 package net.mathias2246.buildmc.claims;
 
-import com.google.common.base.VerifyException;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.ClaimType;

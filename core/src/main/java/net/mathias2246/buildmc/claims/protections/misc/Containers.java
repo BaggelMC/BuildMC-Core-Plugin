@@ -146,10 +146,7 @@ public class Containers extends Protection {
         var player = event.getPlayer();
         Material type = block.getType();
 
-        if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-        } else {
-            return;
-        }
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 
         boolean isChiseledBookshelf = type == Material.CHISELED_BOOKSHELF;
         boolean isDecoratedPot = type == Material.DECORATED_POT;

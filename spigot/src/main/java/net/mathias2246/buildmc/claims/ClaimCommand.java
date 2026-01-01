@@ -22,7 +22,8 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.Objects;
 
-import static net.mathias2246.buildmc.Main.*;
+import static net.mathias2246.buildmc.Main.config;
+import static net.mathias2246.buildmc.Main.plugin;
 import static net.mathias2246.buildmc.commands.CommandUtil.requiresPlayer;
 
 public class ClaimCommand implements CustomCommand {
@@ -104,7 +105,7 @@ public class ClaimCommand implements CustomCommand {
                         new CommandAPICommand("help")
                                 .executes((command) -> {
                                     CommandSender sender = command.sender();
-                                    audiences.sender(sender).sendMessage(Component.translatable("messages.claims.help-message"));
+                                    plugin.sendMessage(sender, Component.translatable("messages.claims.help-message"));
                                 })
                 )
 
@@ -126,7 +127,7 @@ public class ClaimCommand implements CustomCommand {
                                     String name = command.args().getByClass("name", String.class);
 
                                     if (type == null || name == null) {
-                                        audiences.player(player).sendMessage(Component.translatable("messages.error.invalid-args"));
+                                        plugin.sendMessage(player, Component.translatable("messages.error.invalid-args"));
                                         return 0;
                                     }
 
@@ -164,7 +165,7 @@ public class ClaimCommand implements CustomCommand {
                                     String claimName = command.args().getByClass("claim", String.class);
 
                                     if (type == null || claimName == null) {
-                                        audiences.player(player).sendMessage(Component.translatable("messages.error.invalid-args"));
+                                        plugin.sendMessage(player, Component.translatable("messages.error.invalid-args"));
                                         return 0;
                                     }
 
@@ -225,7 +226,7 @@ public class ClaimCommand implements CustomCommand {
                                     String targetPlayerName = command.args().getByClass("targetPlayer", String.class);
 
                                     if (action == null || type == null || claimName == null || targetPlayerName == null) {
-                                        audiences.player(player).sendMessage(Component.translatable("messages.error.invalid-args"));
+                                        plugin.sendMessage(player, Component.translatable("messages.error.invalid-args"));
                                         return 0;
                                     }
 
@@ -278,7 +279,7 @@ public class ClaimCommand implements CustomCommand {
 
                                     // Null checks
                                     if (type == null || claimName == null || flag == null || valueStr == null) {
-                                        audiences.player(player).sendMessage(Component.translatable("messages.error.invalid-args"));
+                                        plugin.sendMessage(player, Component.translatable("messages.error.invalid-args"));
                                         return 0;
                                     }
 

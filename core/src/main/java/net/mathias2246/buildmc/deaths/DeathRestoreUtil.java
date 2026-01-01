@@ -4,7 +4,6 @@ import net.mathias2246.buildmc.util.ItemStackSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 public class DeathRestoreUtil {
