@@ -3,7 +3,6 @@ package net.mathias2246.buildmc.api.event.claims;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.event.CustomEvent;
-import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -25,15 +24,12 @@ public class ClaimProtectionChangeEvent extends CustomEvent implements Cancellab
 
     private final @NotNull ActiveState newState;
 
-    private final @NotNull CommandSender actor;
-
     private final long timestamp = System.currentTimeMillis();
 
-    public ClaimProtectionChangeEvent(@NotNull Claim claim, @NotNull Protection protection, @NotNull ActiveState newState, @NotNull CommandSender actor) {
+    public ClaimProtectionChangeEvent(@NotNull Claim claim, @NotNull Protection protection, @NotNull ActiveState newState) {
         this.claim = claim;
         this.protection = protection;
         this.newState = newState;
-        this.actor = actor;
     }
 
     public @NotNull Claim getClaim() {
@@ -46,10 +42,6 @@ public class ClaimProtectionChangeEvent extends CustomEvent implements Cancellab
 
     public @NotNull ActiveState getNewState() {
         return newState;
-    }
-
-    private @NotNull CommandSender getActor() {
-        return actor;
     }
 
     public long getTimestamp() {

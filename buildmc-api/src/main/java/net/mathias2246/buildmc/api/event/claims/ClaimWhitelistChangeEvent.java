@@ -3,7 +3,6 @@ package net.mathias2246.buildmc.api.event.claims;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.event.CustomEvent;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -23,25 +22,19 @@ public class ClaimWhitelistChangeEvent extends CustomEvent implements Cancellabl
 
     private final @NotNull OfflinePlayer whitelistedPlayer;
 
-    private final @NotNull CommandSender actor;
 
     private final @NotNull ChangeAction action;
 
     private final long timestamp = System.currentTimeMillis();
 
-    public ClaimWhitelistChangeEvent(@NotNull Claim claim, @NotNull OfflinePlayer whitelistedPlayer, @NotNull CommandSender actor, @NotNull ChangeAction action) {
+    public ClaimWhitelistChangeEvent(@NotNull Claim claim, @NotNull OfflinePlayer whitelistedPlayer, @NotNull ChangeAction action) {
         this.claim = claim;
         this.whitelistedPlayer = whitelistedPlayer;
-        this.actor = actor;
         this.action = action;
     }
 
     public @NotNull ChangeAction getAction() {
         return action;
-    }
-
-    public @NotNull CommandSender getActor() {
-        return actor;
     }
 
     public @NotNull OfflinePlayer getWhitelistedPlayer() {

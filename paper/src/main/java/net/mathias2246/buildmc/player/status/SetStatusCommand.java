@@ -1,15 +1,21 @@
 package net.mathias2246.buildmc.player.status;
 
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.suggestion.Suggestions;
+import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
+import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.commands.CustomCommand;
-import net.mathias2246.buildmc.platform.SoundManagerPaperImpl;
 import net.mathias2246.buildmc.status.StatusConfig;
+import net.mathias2246.buildmc.util.SoundUtil;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.CompletableFuture;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.string;
 import static net.mathias2246.buildmc.CoreMain.soundManager;
@@ -43,9 +49,9 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
                 (command) -> {
                     if (!(requiresPlayer(command.getSource().getSender()) instanceof Player player)) return 0;
 
-                    PlayerStatus.removePlayerStatus(player);
+                    CoreMain.statusManager.removePlayerStatus(player);
                     player.sendMessage(Component.translatable( "messages.status.successfully-removed"));
-                    soundManager.playSound(player, SoundManagerPaperImpl.success);
+                    soundManager.playSound(player, SoundUtil.success);
                     return 1;
                 }
         );
@@ -66,24 +72,14 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
                         (command) -> {
                             if (!(requiresPlayer(command.getSource().getSender()) instanceof Player player)) return 0;
 
-                            PlayerStatus.setPlayerStatus(player, command.getArgument("status_id", String.class), false);
+                            CoreMain.statusManager.setPlayerStatus(player, command.getArgument("status_id", String.class), false);
 
                             return 1;
                         }
                 );
 
         setSubArg.suggests(
-                (ctx, builder) -> {
-                    String remaining = builder.getRemaining().toLowerCase();
-
-                    for (var statusId : StatusConfig.loadedStatuses.keySet()) {
-                        if (statusId.toLowerCase().startsWith(remaining)) {
-                            builder.suggest(statusId);
-                        }
-                    }
-
-                    return builder.buildFuture();
-                }
+                SetStatusCommand::getStatusesIdSuggestion
         );
 
         setSub.then(setSubArg);
@@ -92,5 +88,18 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
         cmd.then(setSub);
 
         return cmd.build();
+    }
+
+    public static CompletableFuture<Suggestions> getStatusesIdSuggestion(CommandContext<CommandSourceStack> ctx, SuggestionsBuilder builder) {
+        String remaining = builder.getRemaining().toLowerCase();
+
+        for (var si : CoreMain.statusesRegistry.keySet()) {
+            var statusId = si.toString().replace("buildmc:", "");
+            if (statusId.toLowerCase().startsWith(remaining)) {
+                builder.suggest(statusId);
+            }
+        }
+
+        return builder.buildFuture();
     }
 }

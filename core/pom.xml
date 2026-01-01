@@ -22,6 +22,11 @@
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>minecraft-libraries</id>
+            <name>Minecraft Libraries</name>
+            <url>https://libraries.minecraft.net</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -33,9 +38,19 @@
         </dependency>
         <!-- Shared dependencies -->
         <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.13.2</version>
+        </dependency>
+        <dependency>
             <groupId>net.mathias2246</groupId>
             <artifactId>buildmc-api</artifactId>
             <version>1.1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mojang</groupId>
+            <artifactId>brigadier</artifactId>
+            <version>1.0.18</version>
         </dependency>
         <dependency>
             <groupId>net.kyori</groupId>
@@ -140,10 +155,6 @@
                             <minimizeJar>false</minimizeJar>
                             <relocations>
                                 <relocation>
-                                    <pattern>com.github.stefvanschie.inventoryframework</pattern>
-                                    <shadedPattern>net.mathias2246.buildmc.inventoryframework</shadedPattern>
-                                </relocation>
-                                <relocation>
                                     <pattern>org.bstats</pattern>
                                     <shadedPattern>net.mathias2246.buildmc.bstats</shadedPattern>
                                 </relocation>
@@ -151,9 +162,6 @@
 
                             <!-- Filters to exclude duplicates that cause warnings -->
                             <filters>
-                                <!-- Exclude classes that are already in BuildMC-Core -->
-
-
                                 <!-- Exclude redundant META-INF and module-info -->
                                 <filter>
                                     <artifact>*:*</artifact>

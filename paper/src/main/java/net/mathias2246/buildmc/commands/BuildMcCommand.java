@@ -7,9 +7,18 @@ import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.mathias2246.buildmc.Main;
+import net.mathias2246.buildmc.api.status.StatusInstance;
+import net.mathias2246.buildmc.player.status.SetStatusCommand;
+import net.mathias2246.buildmc.status.PlayerStatusUtil;
+import org.bukkit.Bukkit;
+
+import java.io.IOException;
+
+import static net.mathias2246.buildmc.CoreMain.gson;
+import static net.mathias2246.buildmc.Main.statusConfig;
 
 public class BuildMcCommand implements CustomCommand {
 
@@ -69,9 +78,61 @@ public class BuildMcCommand implements CustomCommand {
                         .then(
                                 Commands.literal("reload")
                                         .executes(c -> {
-                                            Main.statusConfig.reload();
+                                            statusConfig.reload();
+
+                                            for (var player : Bukkit.getOnlinePlayers()) {
+                                                PlayerStatusUtil.reloadPlayerStatus(player);
+                                            }
+
                                             return 1;
                                         })
+                        )
+                        .then(
+                                Commands.literal("remove")
+                                        .then(
+                                                Commands.argument("status_id", StringArgumentType.string())
+                                                        .suggests(SetStatusCommand::getStatusesIdSuggestion)
+                                                        .executes(
+                                                                command -> {
+
+                                                                    var status = command.getArgument("status_id", String.class);
+                                                                    if (!statusConfig.configuration.contains(status)) return 0;
+                                                                    statusConfig.configuration.set(status, null);
+                                                                    try {
+                                                                        statusConfig.save();
+                                                                    } catch (IOException e) {
+                                                                        throw new RuntimeException(e);
+                                                                    }
+
+                                                                    return 1;
+                                                                }
+                                                        )
+                                        )
+                        )
+                        .then(
+                                Commands.literal("write")
+                                                .then(
+                                                        Commands.argument("status_json", StringArgumentType.greedyString())
+                                                                .executes(
+                                                                        (command) -> {
+                                                                            var json = command.getArgument("status_json", String.class);
+
+                                                                            StatusInstance status = gson.fromJson(json, StatusInstance.class);
+
+                                                                            statusConfig.configuration.set(
+                                                                                    status.getStatusId(),
+                                                                                    status.serialize()
+                                                                            );
+                                                                            try {
+                                                                                statusConfig.save();
+                                                                            } catch (IOException e) {
+                                                                                throw new RuntimeException(e);
+                                                                            }
+
+                                                                            return 1;
+                                                                        }
+                                                                )
+                                                )
                         );
         cmd.then(statusSub);
 
@@ -80,6 +141,21 @@ public class BuildMcCommand implements CustomCommand {
 
         var elytraSub = new net.mathias2246.buildmc.spawnElytra.ElytraZoneCommand().getSubCommand();
         cmd.then(elytraSub);
+
+        var versionSub = Commands.literal("version")
+                .executes(ctx -> {
+                    var sender = ctx.getSource().getSender();
+
+                    String version = Main.plugin.getPluginMeta().getVersion();
+
+                    Component msg = Component.text("BuildMC-Core ", NamedTextColor.AQUA)
+                            .append(Component.text("v" + version, NamedTextColor.GREEN));
+
+                    sender.sendMessage(msg);
+                    return 1;
+                });
+
+        cmd.then(versionSub);
 
         return cmd.build();
     }

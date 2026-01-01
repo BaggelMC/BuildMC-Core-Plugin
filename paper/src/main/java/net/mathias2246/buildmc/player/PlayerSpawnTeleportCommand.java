@@ -3,11 +3,8 @@ package net.mathias2246.buildmc.player;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
-import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.CoreMain;
-import net.mathias2246.buildmc.api.event.player.PlayerSpawnTeleportPreConditionEvent;
 import net.mathias2246.buildmc.commands.CustomCommand;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import static net.mathias2246.buildmc.commands.CommandUtil.requiresPlayer;
@@ -31,18 +28,7 @@ public class PlayerSpawnTeleportCommand implements CustomCommand {
                     Player player = requiresPlayer(command.getSource().getSender());
                     if (player == null) return 0;
 
-                    PlayerSpawnTeleportPreConditionEvent e = new PlayerSpawnTeleportPreConditionEvent(player, player.getWorld().getSpawnLocation());
-                    Bukkit.getPluginManager().callEvent(e);
-                    if (e.isCancelled()) {
-                        CoreMain.mainClass.sendMessage(player, Component.translatable("messages.spawn-teleport.not-working"));
-                        return 0;
-                    }
-
-                    var timer = new TeleportTimer(player, e.getTo());
-
-                    timer.start(0);
-
-                    return 1;
+                    return TeleportTimer.teleportCommandLogic(player);
                 }
         );
 

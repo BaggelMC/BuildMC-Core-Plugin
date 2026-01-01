@@ -2,6 +2,7 @@ package net.mathias2246.buildmc.api.item;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
@@ -37,6 +38,35 @@ public class ItemUtil {
                     else meta.setItemName(LegacyComponentSerializer.legacySection().serialize(newName));
                 }
         );
+    }
+    /**Will create an {@link ItemStack} with the given {@link Component} name.
+     * @param newName The new name of the item. When null, the name will be removed from the item.*/
+    public static @NotNull ItemStack setItemLegacyComponentName(@NotNull Material material, @Nullable Component newName) {
+        ItemStack i = new ItemStack(material);
+        editMeta(
+                i,
+                (meta) -> {
+                    if (newName == null) meta.setItemName(null);
+
+                    else meta.setItemName(LegacyComponentSerializer.legacySection().serialize(newName));
+                }
+        );
+        return i;
+    }
+
+
+    /**Will try to get a {@link AbstractCustomItem} from an {@link ItemStack} if it is a custom item.
+     * @return The {@link AbstractCustomItem}, or {@code null} if not a custom item.
+     * */
+    public static @Nullable AbstractCustomItem getCustomItemFromItemStack(@NotNull ItemStack itemStack) {
+        ItemMeta meta = itemStack.getItemMeta();
+        if (meta == null) return null;
+
+        var customItemKey = AbstractCustomItem.getCustomItemKey(itemStack);
+
+        if (customItemKey == null) return null;
+
+        return AbstractCustomItem.customItemsRegistry.get(customItemKey);
     }
 
 }

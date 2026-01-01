@@ -5,11 +5,10 @@ import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.ClaimType;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.event.claims.ClaimCreateEvent;
+import net.mathias2246.buildmc.api.event.claims.ClaimProtectionChangeEvent;
 import net.mathias2246.buildmc.api.event.claims.ClaimRemoveEvent;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
+import net.mathias2246.buildmc.api.event.claims.ClaimWhitelistChangeEvent;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scoreboard.Team;
@@ -19,6 +18,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.ConcurrentMap;
+
+import static net.mathias2246.buildmc.CoreMain.plugin;
 
 @SuppressWarnings({"unused", "BooleanMethodIsAlwaysInverted"})
 @ApiStatus.Internal
@@ -28,10 +30,10 @@ public class ClaimManager {
     public static final @NotNull NamespacedKey CLAIM_PCD_KEY = Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_id"));
 
     /** Map of team names and the claim IDs they own */
-    public static Map<String, List<Long>> teamOwner;
+    public static ConcurrentMap<String, List<Long>> teamOwner;
 
     /** Map of player UUIDs and the claim IDs they own */
-    public static Map<UUID, List<Long>> playerOwner;
+    public static ConcurrentMap<UUID, List<Long>> playerOwner;
 
     /** Map of team names and the remaining claims */
     public static Map<String, Integer> teamRemainingClaims;
@@ -44,6 +46,17 @@ public class ClaimManager {
 
     /** List of claim IDs of placeholder claims */
     public static List<Long> placeholderClaims;
+
+    public static boolean isDimensionBlacklist = true;
+
+    public final static @NotNull List<World> dimensionList = new ArrayList<>();
+
+    public static boolean isWorldAllowed(@NotNull World world) {
+        if (isDimensionBlacklist) {
+            return !dimensionList.contains(world);
+        }
+        return dimensionList.contains(world);
+    }
 
     /** Gets the player's team
      * @return the team the player is currently on, or null if they have no team */
@@ -61,7 +74,7 @@ public class ClaimManager {
         try {
             claim = ClaimManager.getClaim(location);
         } catch (SQLException e) {
-            CoreMain.plugin.getLogger().severe("SQL Error while getting claim: " + e);
+            plugin.getLogger().severe("SQL Error while getting claim: " + e);
             return true; // Allow by default on error. Not sure what to do here.
         }
 
@@ -175,7 +188,7 @@ public class ClaimManager {
         try {
             claim = ClaimManager.getClaim(location);
         } catch (SQLException e) {
-            CoreMain.plugin.getLogger().severe("SQL Error while getting claim: " + e);
+            plugin.getLogger().severe("SQL Error while getting claim: " + e);
             return true; // Allow by default on error. Not sure what to do here.
         }
 
@@ -207,6 +220,33 @@ public class ClaimManager {
             default:
                 return true;
         }
+    }
+
+    public static boolean isPlayerAllowedInClaim(@Nullable Claim claim, @NotNull Player player) {
+        if (player.hasPermission("buildmc.bypass-claims")) return true;
+
+        // Allow if no claim found
+        if (claim == null) return true;
+
+        ClaimType type = claim.getType();
+
+        // Allow if claim is a placeholder
+        if (type == ClaimType.PLACEHOLDER || type == ClaimType.SERVER) return true;
+
+        // Allow if player is explicitly whitelisted
+        if (claim.getWhitelistedPlayers().contains(player.getUniqueId())) return true;
+
+
+        String playerId = player.getUniqueId().toString();
+
+        return switch (type) {
+            case PLAYER -> Objects.equals(claim.getOwnerId(), playerId);
+            case TEAM -> {
+                Team playerTeam = getPlayerTeam(player);
+                yield (playerTeam != null && Objects.equals(playerTeam.getName(), claim.getOwnerId()));
+            }
+            default -> true;
+        };
     }
 
     public static boolean hasAnyProtection(Claim claim, Collection<NamespacedKey> protections) {
@@ -291,17 +331,30 @@ public class ClaimManager {
         try {
             return CoreMain.claimTable.getClaimById(CoreMain.databaseManager.getConnection(), claimID);
         } catch (SQLException e) {
-            CoreMain.plugin.getLogger().severe("SQL Error while trying to get a claim by ID: " + e);
+            plugin.getLogger().severe("SQL Error while trying to get a claim by ID: " + e);
         }
         return null;
     }
 
     /**
-     * @throws SQLException If an internal database error occurred.*/
-    @Nullable public static Claim getClaim(Location location) throws SQLException {
-        Chunk chunk = location.getChunk();
+     * @throws SQLException If an internal database error occurred.
+     */
+    @Nullable
+    public static Claim getClaim(@NotNull Location location) throws SQLException {
+        World world = location.getWorld();
+
+        if (world == null) {
+            throw new IllegalArgumentException("Location does not belong to a world.");
+        }
+
+        if (!world.isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4)) {
+            return null;
+        }
+
+        Chunk chunk = location.getChunk(); // safe now
         return getClaim(chunk);
     }
+
 
     public static List<Claim> getAllClaims() throws SQLException {
         return CoreMain.claimTable.getAllClaims(CoreMain.databaseManager.getConnection());
@@ -327,8 +380,10 @@ public class ClaimManager {
         return tryClaimArea(ClaimType.PLACEHOLDER, "server", claimName, pos1, pos2);
     }
 
-    private static boolean tryClaimArea(@NotNull ClaimType type, @NotNull String ownerId, @NotNull String claimName, @NotNull Location pos1, @NotNull Location pos2) {
+    public static boolean tryClaimArea(@NotNull ClaimType type, @NotNull String ownerId, @NotNull String claimName, @NotNull Location pos1, @NotNull Location pos2) {
         if (pos1.getWorld() == null || pos2.getWorld() == null) return false;
+
+        if (pos1.getWorld() != pos2.getWorld()) return false;
 
         UUID worldId = pos1.getWorld().getUID();
 
@@ -355,7 +410,7 @@ public class ClaimManager {
         try {
             claimId = CoreMain.claimTable.insertClaim(CoreMain.databaseManager.getConnection(), claim);
         } catch (SQLException e) {
-            CoreMain.plugin.getLogger().severe("Failed to insert claim into database: " + e);
+            plugin.getLogger().severe("Failed to insert claim into database: " + e);
             return false;
         }
 
@@ -377,11 +432,11 @@ public class ClaimManager {
             }
         }
 
-        ClaimCreateEvent e = new ClaimCreateEvent(
+        ClaimCreateEvent event = new ClaimCreateEvent(
                 claim
         );
-        Bukkit.getPluginManager().callEvent(e);
-        if (e.isCancelled()) return false;
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return false;
 
         // Update ownership mapping
         switch (type) {
@@ -405,10 +460,14 @@ public class ClaimManager {
         try {
             claim = CoreMain.claimTable.getClaimById(CoreMain.databaseManager.getConnection(), claimID);
         } catch (SQLException e) {
-            CoreMain.plugin.getLogger().severe("SQL error while getting claim: " + e);
+            plugin.getLogger().severe("SQL error while getting claim: " + e);
         }
 
         if (claim == null) return;
+
+        ClaimWhitelistChangeEvent event = new ClaimWhitelistChangeEvent(claim, Bukkit.getOfflinePlayer(playerID), ClaimWhitelistChangeEvent.ChangeAction.ADDED);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return;
 
         claim.addWhitelistedPlayer(playerID);
 
@@ -426,10 +485,14 @@ public class ClaimManager {
         try {
             claim = CoreMain.claimTable.getClaimById(CoreMain.databaseManager.getConnection(), claimID);
         } catch (SQLException e) {
-            CoreMain.plugin.getLogger().severe("SQL error while getting claim: " + e);
+            plugin.getLogger().severe("SQL error while getting claim: " + e);
         }
 
-        if (claim == null) return;
+        if (claim == null || claim.getId() == null) return;
+
+        ClaimWhitelistChangeEvent event = new ClaimWhitelistChangeEvent(claim, Bukkit.getOfflinePlayer(playerID), ClaimWhitelistChangeEvent.ChangeAction.REMOVED);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return;
 
         claim.removeWhitelistedPlayer(playerID);
 
@@ -440,7 +503,51 @@ public class ClaimManager {
         }
     }
 
+    public static void addProtection(@NotNull Claim claim, @NotNull NamespacedKey protectionKey) {
+        Protection protection = CoreMain.protectionsRegistry.get(protectionKey);
+        if (protection == null) {
+            throw new IllegalArgumentException("No protection exists with key " + protectionKey);
+        }
+
+        addProtection(claim, protection);
+    }
+
+    public static void addProtection(@NotNull Claim claim, @NotNull Protection protection) {
+        Long claimId = claim.getId();
+        if (claimId == null) {
+            throw new IllegalArgumentException("Claim has no ID: " + claim.getName());
+        }
+
+        ClaimProtectionChangeEvent event =
+                new ClaimProtectionChangeEvent(
+                        claim,
+                        protection,
+                        ClaimProtectionChangeEvent.ActiveState.ENABLED
+                );
+
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return;
+
+        try {
+            CoreMain.claimTable.addProtectionFlag(
+                    CoreMain.databaseManager.getConnection(),
+                    claimId,
+                    protection.getKey()
+            );
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static void addProtection(long claimId, @NotNull Protection protection) {
+        Claim claim = getClaimByID(claimId);
+        if (claim == null) {
+            throw new IllegalArgumentException("No claim exists with id " + claimId);
+        }
+        ClaimProtectionChangeEvent event = new ClaimProtectionChangeEvent(claim, protection, ClaimProtectionChangeEvent.ActiveState.ENABLED);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return;
+
         try {
             CoreMain.claimTable.addProtectionFlag(CoreMain.databaseManager.getConnection(), claimId, protection.getKey());
         } catch (SQLException e) {
@@ -449,6 +556,20 @@ public class ClaimManager {
     }
 
     public static void addProtection(long claimId, @NotNull NamespacedKey protection) {
+        Claim claim = getClaimByID(claimId);
+        if (claim == null) {
+            throw new IllegalArgumentException("No claim exists with id " + claimId);
+        }
+
+        Protection protectionObject = CoreMain.protectionsRegistry.get(protection);
+        if (protectionObject == null) {
+            throw new IllegalArgumentException("No protection exists with key " + protection);
+        }
+
+        ClaimProtectionChangeEvent event = new ClaimProtectionChangeEvent(claim, protectionObject, ClaimProtectionChangeEvent.ActiveState.ENABLED);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return;
+
         try {
             CoreMain.claimTable.addProtectionFlag(CoreMain.databaseManager.getConnection(), claimId, protection);
         } catch (SQLException e) {
@@ -456,7 +577,52 @@ public class ClaimManager {
         }
     }
 
+    public static void removeProtection(@NotNull Claim claim, @NotNull NamespacedKey protectionKey) {
+        Protection protection = CoreMain.protectionsRegistry.get(protectionKey);
+        if (protection == null) {
+            throw new IllegalArgumentException("No protection exists with key " + protectionKey);
+        }
+
+        removeProtection(claim, protection);
+    }
+
+    public static void removeProtection(@NotNull Claim claim, @NotNull Protection protection) {
+        Long claimId = claim.getId();
+        if (claimId == null) {
+            throw new IllegalArgumentException("Claim has no ID: " + claim.getName());
+        }
+
+        ClaimProtectionChangeEvent event =
+                new ClaimProtectionChangeEvent(
+                        claim,
+                        protection,
+                        ClaimProtectionChangeEvent.ActiveState.DISABLED
+                );
+
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return;
+
+        try {
+            CoreMain.claimTable.removeProtectionFlag(
+                    CoreMain.databaseManager.getConnection(),
+                    claimId,
+                    protection.getKey()
+            );
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static void removeProtection(long claimId, @NotNull Protection protection) {
+        Claim claim = getClaimByID(claimId);
+        if (claim == null) {
+            throw new IllegalArgumentException("No claim exists with id " + claimId);
+        }
+
+        ClaimProtectionChangeEvent event = new ClaimProtectionChangeEvent(claim, protection, ClaimProtectionChangeEvent.ActiveState.DISABLED);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return;
+
         try {
             CoreMain.claimTable.removeProtectionFlag(CoreMain.databaseManager.getConnection(), claimId, protection.getKey());
         } catch (SQLException e) {
@@ -465,6 +631,20 @@ public class ClaimManager {
     }
 
     public static void removeProtection(long claimId, @NotNull NamespacedKey protection) {
+        Claim claim = getClaimByID(claimId);
+        if (claim == null) {
+            throw new IllegalArgumentException("No claim exists with id " + claimId);
+        }
+
+        Protection protectionObject = CoreMain.protectionsRegistry.get(protection);
+        if (protectionObject == null) {
+            throw new IllegalArgumentException("No protection exists with key " + protection);
+        }
+
+        ClaimProtectionChangeEvent event = new ClaimProtectionChangeEvent(claim, protectionObject, ClaimProtectionChangeEvent.ActiveState.ENABLED);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return;
+
         try {
             CoreMain.claimTable.removeProtectionFlag(CoreMain.databaseManager.getConnection(), claimId, protection);
         } catch (SQLException e) {
@@ -480,7 +660,7 @@ public class ClaimManager {
         try {
             name = CoreMain.claimTable.getClaimNameById(CoreMain.databaseManager.getConnection(), claimId);
         } catch (SQLException e) {
-            CoreMain.plugin.getLogger().severe("SQL Error while trying to get name by ID " + e);
+            plugin.getLogger().severe("SQL Error while trying to get name by ID " + e);
         }
         return name;
     }
@@ -493,7 +673,7 @@ public class ClaimManager {
         try {
             CoreMain.claimTable.deleteClaimById(CoreMain.databaseManager.getConnection(), claimId);
         } catch (SQLException e) {
-            CoreMain.plugin.getLogger().severe("Failed to remove claim from database: " + e);
+            plugin.getLogger().severe("Failed to remove claim from database: " + e);
             return false;
         }
         return true;

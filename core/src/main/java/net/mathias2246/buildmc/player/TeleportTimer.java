@@ -1,49 +1,37 @@
 package net.mathias2246.buildmc.player;
 
-import net.kyori.adventure.key.Key;
-import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.api.event.player.PlayerSpawnTeleportPreConditionEvent;
 import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.PlayerTimer;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+import static net.mathias2246.buildmc.util.SoundUtil.*;
+
 public class TeleportTimer extends PlayerTimer {
-
-    static final Sound notification;
-    static final Sound mistake;
-    static final Sound success;
-
-
-    static {
-        //noinspection PatternValidation
-        notification = Sound.sound(
-                Key.key(CoreMain.plugin.getConfig().getString("sounds.notification", "minecraft:entity.item.pickup")),
-                Sound.Source.MASTER,
-                1f,
-                1f
-        );
-        //noinspection PatternValidation
-        mistake = Sound.sound(
-                Key.key(CoreMain.plugin.getConfig().getString("sounds.mistake", "minecraft:block.note_block.snare")),
-                Sound.Source.MASTER,
-                1f,
-                1f
-        );
-        //noinspection PatternValidation
-        success = Sound.sound(
-                Key.key(CoreMain.plugin.getConfig().getString("sounds.success", "minecraft:block.note_block.bell")),
-                Sound.Source.MASTER,
-                1f,
-                1f
-        );
-    }
-
         public static final int seconds = CoreMain.plugin.getConfig().getInt("spawn-teleport.wait-for");
+
+        public static int teleportCommandLogic(@NotNull Player player) {
+            PlayerSpawnTeleportPreConditionEvent e = new PlayerSpawnTeleportPreConditionEvent(player, Bukkit.getWorlds().getFirst().getSpawnLocation());
+            Bukkit.getPluginManager().callEvent(e);
+            if (e.isCancelled()) {
+                CoreMain.plugin.sendMessage(player, Component.translatable("messages.spawn-teleport.not-working"));
+                return 0;
+            }
+
+            var timer = new TeleportTimer(player, e.getTo());
+
+            timer.start(0);
+
+            return 1;
+        }
 
         private Vector previousPosition;
 
@@ -56,8 +44,8 @@ public class TeleportTimer extends PlayerTimer {
 
         @Override
         public void onExit() {
-            CoreMain.mainClass.sendMessage(player, Component.translatable("messages.teleport.successful"));
-            player.teleport(to);
+            CoreMain.plugin.sendMessage(player, Component.translatable("messages.teleport.successful"));
+            player.teleport(to, PlayerTeleportEvent.TeleportCause.PLUGIN);
             CoreMain.soundManager.playSound(player, success);
         }
 
@@ -75,7 +63,7 @@ public class TeleportTimer extends PlayerTimer {
 
         @Override
         protected void onCancel() {
-            CoreMain.mainClass.sendMessage(player, Component.translatable("messages.teleport.cancelled"));
+            CoreMain.plugin.sendMessage(player, Component.translatable("messages.teleport.cancelled"));
             CoreMain.soundManager.playSound(player, mistake);
         }
 
@@ -84,7 +72,7 @@ public class TeleportTimer extends PlayerTimer {
 
             TextReplacementConfig r = TextReplacementConfig.builder().matchLiteral("%seconds%").replacement(String.valueOf(steps-currentStep)).build();
 
-            CoreMain.mainClass.sendPlayerActionBar(
+            CoreMain.plugin.sendPlayerActionBar(
                     player,
                     Message.msg(player,"messages.teleport.counter").replaceText(r)
             );

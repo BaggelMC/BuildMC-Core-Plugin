@@ -1,4 +1,24 @@
 messages:
+  rules: "<gray>==============================</gray>\n\n<gold>Check out the full rules <blue><click:open_url:'https://baggel.de/projects/buildmc/rules/'>[HERE]</click></blue>!</gold>\n\n<gray>==============================</gray>"
+
+  guides:
+
+    guide-not-found: "<red>This guide doesn't exist!</red>"
+
+    commands: |-
+      ==================== <blue>Commands</blue> ====================
+      <gray>Here is a list of custom commands you can use:</gray>
+      
+      <gray>- </gray><gold>/rules</gold>  | Gives you the rules of the server
+      <gray>- </gray><gold>/spawn</gold> | Teleports you to the worldspawn
+      <gray>- </gray><gold>/claim</gold>   | Manage your claims
+      <gray>- </gray><gold>/status</gold> | Set or Remove your status
+    spawn-elytra: |-
+      ==================== <blue>Spawn-Elytra</blue> ====================
+      When you are in an area where the spawn-elytra is enabled.
+      You can <gold>double jump to glide</gold>,
+      and press <gold><key:key.swapOffhand> to boost</gold> yourself of the ground.
+
   spawn-elytra:
     boost-hint: "Press <key:key.swapOffhand> to boost!"
     firework-disabled-hint: "<red>Firework boost is disabled for spawn elytra.</red>"
@@ -39,6 +59,20 @@ messages:
     successful: "<green>Successfully teleported you!</green>"
     counter: "<white>Don't move for %seconds% seconds...</white>"
 
+  deaths:
+    error:
+      player-not-found: "<red>The specified player was not found."
+      load-failed: "<red>Failed to load deaths."
+      not-found: "<red>Death ID not found."
+      wrong-player: "<red>This death does not belong to that player."
+      restore-failed: "<red>Failed to restore death."
+      invalid-id: "<red>Invalid death ID"
+
+    none: "<yellow>No deaths recorded for %player%."
+    list-part: "<yellow>Deaths for "
+
+    restored: "<green>Death restored successfully."
+
   claims:
     tool:
       tool-name: "Select Claim Corners"
@@ -50,7 +84,7 @@ messages:
 
       tool-cooldown: "<red>You need to wait!</red>"
 
-      give-success: "<green>Success! Type '/claim help' to get help.</green>"
+      give-success: "<green>Success! Click <blue><click:run_command:/claim help>[HERE]</click></blue> to get help.</green>"
       full-inventory: "<red>Your inventory is full! Please make space for the claim tool.</red>"
 
       selection-too-large: "<red>Your selection cannot be wider or longer than %selection_limit% chunks!</red>"
@@ -108,6 +142,8 @@ messages:
       success-server: "<blue>------------------------</blue>\n<green>Successfully claimed server area!</green>\n<blue>------------------------</blue>"
       success-placeholder: "<blue>------------------------</blue>\n<green>Successfully claimed placeholder area!</green>\n<blue>------------------------</blue>"
 
+      world-not-allowed: "<red>You cannot create a claim in this dimension!</red>"
+
       invalid-type: "<red>Error: Argument 'type' must be either 'player' or 'team'.</red>"
       different-worlds: "<red>Error: Both positions must be in the same world.</red>"
       no-remaining-claims: "<red>You do not have enough chunks left to claim.\nChunks left: %remaining_claims%</red>"
@@ -128,7 +164,7 @@ messages:
       team-message: "<gold>This chunk is owned by team <white>%owner%</white>.</gold>"
       player-message: "<gold>This chunk is owned by player <white>%owner%</white>.</gold>"
       server-message: "<gold>This chunk is owned by the server.</gold>"
-      unclaimed: "<gold>This chunk belongs to nobody.</gold>"
+      unclaimed: "<gold>This chunk belongs to nobody or the chunk isn't loaded.</gold>"
 
     whitelist:
       added: "<green>Player has been added to the claim whitelist."
@@ -228,7 +264,7 @@ messages:
         delete: "<red>Delete Claim</red>"
 
         delete-confirm-menu:
-          title: "<red>Confirm Deletion of %claim%</red>"
+          title: "<red>Confirm Deletion of '%claim%'</red>"
 
           success: "<green>Claim deleted successfully.</green>"
           fail: "<red>Error: Failed to delete claim.</red>"
@@ -236,8 +272,8 @@ messages:
       protections-menu:
         title: "<gold>Protections: '%claim%'</gold>"
 
-        enabled: "<green>Enabled</green> <gray>(Click to disable)</gray>"
-        disabled: "<red>Disable</red> <gray>(Click to enable)</gray>"
+        enabled: "<red>Blocked</red> <gray>(Click to allow)</gray>"
+        disabled: "<green>Allowed</green> <gray>(Click to block)</gray>"
 
         toggle-hint: "<dark_gray>Click below to toggle</dark_gray>"
 
@@ -250,7 +286,7 @@ messages:
           name: "<green>Add Player</green>"
           lore-line1: "<gray>Use the <gold>/claim whitelist add</gold> command</gray>"
           lore-line2: "<gray>to whitelist someone.</gray>"
-          click-info: "<gray><italic>Shift-click this to insert the whitelist command</italic></gray>"
+          click-info: "<gray><italic>> Click this to insert the whitelist command <</italic></gray>"
 
         delete-confirm-menu:
           title: "Remove %player%?"
@@ -260,9 +296,10 @@ messages:
     successfully-removed: "<green>Successfully removed your status!</green>"
     join-doesn't-exist: "<red>Your status has been removed.</red>"
     not-found: "<red>Seems like this status doesn't exist.</red>"
-    successfully-set: "<green>Successfully set status!</green>"
+    successfully-set: "<green>Successfully set status! <gray><click:run_command:/status remove>[Click here to remove]</click></gray></green>"
     not-in-team: "<red>You are not in the required team for this status!</red>"
     no-permission: "<red>You don't have the required permissions for this status!</red>"
+    cannot-set: "<red>Your status can't be set!</red>"
 
 claims:
   flags:

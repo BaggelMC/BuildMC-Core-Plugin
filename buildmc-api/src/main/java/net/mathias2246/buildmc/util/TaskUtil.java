@@ -2,6 +2,7 @@ package net.mathias2246.buildmc.util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -21,7 +22,12 @@ import org.jetbrains.annotations.NotNull;
  *     }
  * });
  * }</pre>
+ *
+ * <p>
+ *     May god protect you if you use this Class. LOL
+ * </p>
  */
+@ApiStatus.Internal
 public final class TaskUtil {
 
     private TaskUtil() {

@@ -2,6 +2,9 @@ name: BuildMC-Core
 version: '${project.buildVersion}'
 main: net.mathias2246.buildmc.Main
 api-version: '${minecraft.bukkitApiVersion}'
+
+folia-supported: false
+
 prefix: BuildMC
 load: POSTWORLD
 authors: [ Mathias2246, Darkyl ]
@@ -14,6 +17,9 @@ permissions:
   buildmc.admin:
     default: op
     description: The BuildMC admin permission
+  buildmc.show-all-claims:
+      default: false
+      description: Allows you to manage all player, teams, server and placeholder claims. Even player and team claims not owned by you.
   buildmc.allow-spawn-teleport:
     default: true
     description: Allows the player to use the '/spawn' command
@@ -26,3 +32,15 @@ permissions:
   buildmc.broadcast:
     default: op
     description: Allows to use the '/broadcast' command
+  buildmc.bypass-claim-dimension-list:
+    default: op
+    description: Allows players to bypass the dimension whitelist / blacklist
+  buildmc.allow-edit-statuses:
+    default: op
+    description: Allows players to add, change or remove statuses using '/buildmc status ...'
+  buildmc.restore-deaths:
+    default: op
+    description: Allows to use commands to restore deaths of players
+  buildmc.list-deaths:
+    default: op
+    description: Allows to use commands to list deaths of players

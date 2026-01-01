@@ -145,7 +145,7 @@ public class Claim {
      * @param id The new claim ID.
      */
     @ApiStatus.Internal
-    public void setID(long id) { this.id = id; }
+    public void setID(Long id) { this.id = id; }
 
     /**
      * Gets the list of whitelisted players in this claim.
@@ -164,9 +164,12 @@ public class Claim {
 
     /**
      * Adds a player to the whitelist of this claim.
+     * <p>
+     * This method is intended for internal use only. Use ClaimManager to add a player to the whitelist.
      *
      * @param playerId The UUID of the player to add.
      */
+    @ApiStatus.Internal
     public void addWhitelistedPlayer(@NotNull UUID playerId) {
         if (!whitelistedPlayers.contains(playerId)) {
             whitelistedPlayers.add(playerId);
@@ -175,9 +178,12 @@ public class Claim {
 
     /**
      * Removes a player from the whitelist of this claim.
+     * <p>
+     * This method is intended for internal use only. Use ClaimManager to remove a player from the whitelist.
      *
      * @param playerId The UUID of the player to remove.
      */
+    @ApiStatus.Internal
     public void removeWhitelistedPlayer(@NotNull UUID playerId) {
         whitelistedPlayers.remove(playerId);
     }
@@ -208,15 +214,23 @@ public class Claim {
     /**
      * Adds a protection to this claim.
      *
+     * <p>
+     * This method is intended for internal use only. Use ClaimManager to add protections.
+     *
      * @param protection The {@link NamespacedKey} of the protection to add.
      */
+    @ApiStatus.Internal
     public void addProtection(@NotNull NamespacedKey protection) { protections.add(protection.toString()); }
 
     /**
      * Removes a protection from this claim.
      *
+     * <p>
+     * This method is intended for internal use only. Use ClaimManager to remove protections.
+     *
      * @param protection The {@link NamespacedKey} of the protection to remove.
      */
+    @ApiStatus.Internal
     public void removeProtection(@NotNull NamespacedKey protection) { protections.remove(protection.toString()); }
 
     /**

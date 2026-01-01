@@ -1,0 +1,15 @@
+# BuildMC-Core-Plugin Guides Configuration
+# Join our discord server https://discord.gg/p8wBMZXAfb
+
+# Here you can set guides for players to read.
+# Players can use '/guide ...' to show a simple guide about a certain topic.
+
+# If true, players can use the '/guide' command
+enabled: true # Default: true
+
+guides:
+  # This is a basic example for a guide with a translation.
+  # You can add MiniMessage text directly, but just using a translation is recommended.
+  commands: "<lang:messages.guides.commands>"
+
+  spawn-elytra: "<lang:messages.guides.spawn-elytra>"

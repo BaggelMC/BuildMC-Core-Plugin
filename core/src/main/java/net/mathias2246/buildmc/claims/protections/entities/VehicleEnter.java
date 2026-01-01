@@ -1,13 +1,13 @@
 package net.mathias2246.buildmc.claims.protections.entities;
 
-import com.github.stefvanschie.inventoryframework.gui.GuiItem;
-import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.item.ItemUtil;
 import net.mathias2246.buildmc.claims.ClaimManager;
+import net.mathias2246.buildmc.inventoryframework.gui.GuiItem;
+import net.mathias2246.buildmc.inventoryframework.gui.type.util.Gui;
 import net.mathias2246.buildmc.ui.UIUtil;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Material;
@@ -29,6 +29,7 @@ import java.util.Objects;
 
 public class VehicleEnter extends Protection {
     public VehicleEnter(@Nullable ConfigurationSection section) {
+        //noinspection SimplifiableConditionalExpression
         super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:vehicle_enter")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 
@@ -66,7 +67,7 @@ public class VehicleEnter extends Protection {
 
         if (!(entered instanceof Player player)) return;
         if (!ClaimManager.isPlayerAllowed(player, getKey(), vehicle.getLocation())) {
-            CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.vehicle"));
+            CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.vehicle"));
             event.setCancelled(true);
         }
     }

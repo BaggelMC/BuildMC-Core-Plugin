@@ -1,4 +1,24 @@
 messages:
+  rules: "<gray>==============================</gray>\n\n<gold>Schau dir die vollständigen Regeln <blue><click:open_url:'https://baggel.de/projects/buildmc/rules/'>[HIER]</click></blue> an!</gold>\n\n<gray>==============================</gray>"
+
+  guides:
+
+    guide-not-found: "<red>Diesen Guide gibt es nicht!</red>"
+
+    commands: |-
+      ===================== <blue>Commands</blue> =====================
+      <gray>Hier ist eine Liste an neuen Befehlen die du nutzen kannst:</gray>
+
+      <gray>- </gray><gold>/rules</gold>  | Gibt dir die Regeln des Servers
+      <gray>- </gray><gold>/spawn</gold> | Teleportiert dich zum Weltspawn
+      <gray>- </gray><gold>/claim</gold>   | Verwalte deine Claims
+      <gray>- </gray><gold>/status</gold> | Setze oder entferne deinen Status
+    spawn-elytra: |-
+      ==================== <blue>Spawn-Elytra</blue> ====================
+      Wenn du in einem Bereich bist indem die Spawn-Elytra aktiv ist
+      kannst du mit einem <gold>doppel Sprung fliegen</gold>, und wenn 
+      du <gold><key:key.swapOffhand> drückst wirst du geboostet</gold>.
+
   spawn-elytra:
     boost-hint: Drücke <key:key.swapOffhand> um zu beschleunigen!
     firework-disabled-hint: <red>Raketen sind für Spawn-Elytren deaktiviert.</red>
@@ -25,6 +45,16 @@ messages:
 
       <gold>--------------------------------</gold>'
     closed-message: <red>Das Ende ist derzeit geschlossen.
+
+  status:
+    successfully-removed: <green>Status erfolgreich entfernt.</green>
+    join-doesn't-exist: <red>Dein Status wurde entfernt.</red>
+    not-found: <red>Dieser Status existiert nicht.</red>
+    successfully-set: <green>Status erfolgreich gesetzt! <gray><click:run_command:/status remove>[Klicke hier zum entfernen]</click></gray></green>
+    not-in-team: <red>Du bist nicht in dem richtigen Team für diesen Status.</red>
+    no-permission: <red>Du hast nicht die benötigten Berechtigungen für diesen Status.</red>
+    cannot-set: "<red>Dein Status kann nicht gesetzt werden!</red>"
+
   error:
     general: '<red>Ein Fehler ist aufgetreten: <red>%error_message%'
     general-str: 'Ein Fehler ist aufgetreten: %error_message%'
@@ -32,9 +62,30 @@ messages:
     no-permission-str: Du hast keine Berechtigung, dies zu tun.
     not-a-player: <red>Dieser Befehl kann nur von Spielern verwendet werden.</red>
     not-a-player-str: Dieser Befehl kann nur von Spielern verwendet werden.
-    not-in-a-team: <red>You need to be in a team to perform this action.</red>
-    command-disabled: <red>Du musst in einem Team sein, um dies zu tun.</red>
-    sql: <red>Dieser Befehl wurde deaktiviert.</red>
+    not-in-a-team: <red>Du musst in einem Team sein, um dies zu tun.</red>
+    command-disabled: <red>Dieser Befehl wurde deaktiviert.</red>
+    sql: <red>Ein SQL Fehler ist aufgetretten.</red>
+
+  teleport:
+    not-working: "<red>Du kannst gerade '/spawn' nicht verwenden!</red>"
+    cancelled: "<red>Dein teleport wurde abgebrochen.</red>"
+    successful: "<green>Du wurdest erfolgreich teleportiert!</green>"
+    counter: "<white>Bewege dich nicht für %seconds% sekunden...</white>"
+
+  deaths:
+    error:
+      player-not-found: "<red>Der angegebene Spieler wurde nicht gefunden."
+      load-failed: "<red>Tode konnten nicht geladen werden."
+      not-found: "<red>Tod ID konnte nicht gefunden werden."
+      wrong-player: "<red>Dieser Tod gehört nicht zu diesem Spieler."
+      restore-failed: "<red>Tod konnte nicht wiederhergestellt werden."
+      invalid-id: "<red>Invalide Tod ID"
+
+    none: "<yellow>Keine Tode gefunden für %s"
+    list-part: "<yellow>Tode von "
+
+    restored: "<green>Tode erfolgreich widerhergestellt."
+
   claims:
     tool:
       tool-name: Claim-Ecken auswählen
@@ -43,8 +94,8 @@ messages:
       tool-tooltip-line3: ''
       tool-tooltip-line4: ''
       tool-cooldown: <red>Warte Kurz!</red>
-      give-success: <green>Erfolg! Gib '/claim help' ein, um Hilfe zu erhalten.</green>
-      full-inventory: <red>Dein Inventar ist voll! Bitte schaffe Platz für das Claim-Tool.</red>
+      give-success: <green>Erfolg! Klick <blue><click:run_command:/claim help>[HIER]</click></blue> für hilfe!</green>
+      full-inventory: <red>Dein Inventar ist vol>l! Bitte schaffe Platz für das Claim-Tool.</red>
       selection-too-large: <red>Deine Auswahl darf nicht breiter oder länger als %selection_limit%
         sein!</red>
       no-first-selection: <red>Du musst zuerst die andere Ecke auswählen!</red>
@@ -111,6 +162,9 @@ messages:
       no-remaining-claims: '<red>Du hast nicht genug Chunks übrig
 
         Übrige Chunks: %remaining_claims%</red>'
+
+      world-not-allowed: "<red>Du kannst in dieser Dimension keine Claims erstellen!</red>"
+
       duplicate-name: <red>Ein Claim mit diesem Namen existiert bereits.</red>
       error-database: <red>Ein Datenbank Fehler ist aufgetreten.</red>
       protected-server: <red>Das ausgewählte Gebiet enthält einen Schutz vom Server.</red>
@@ -125,7 +179,7 @@ messages:
       team-message: <gold>Dieser Chunk gehört dem Team <white>%owner%</white>.</gold>
       player-message: <gold>Dieser Chunk gehört dem Spieler <white>%owner%</white>.</gold>
       server-message: <gold>Dieser Chunk gehört dem Server.</gold>
-      unclaimed: <gold>Dieser Chunk gehört niemanden.</gold>
+      unclaimed: <gold>Dieser Chunk gehört niemanden oder der Chunk ist nicht geladen.</gold>
     whitelist:
       added: <green>Der Spieler wurde zu der Claim Whitelist hinzugefügt.
       removed: <green>Der Spieler wurde von der Claim Whitelist entfernt.
@@ -222,7 +276,7 @@ messages:
           name: "<green>Spieler Hinzufügen</green>"
           lore-line1: "<gray>Verwende <gold>/claim whitelist add</gold> </gray>"
           lore-line2: "<gray>um jemanden zu whitelisten.</gray>"
-          click-info: "<gray><italic>Shift-Klick hier um whitelist Befehl einzufügen.</italic></gray>"
+          click-info: "<gray><italic>Klick hier um whitelist Befehl einzufügen.</italic></gray>"
         delete-confirm-menu:
           title: player% entfernen??
           success: <green>Spieler erfolgreich von der Whitelist entfernt.</green>
@@ -347,10 +401,3 @@ claims:
     entity-modifications:
       name: <green>Entity Block Änderungen</green>
       lore: <gray>Verhindert das Endermänner, Verwüster oder Wither Blöcke abbauen können.</gray>
-  status:
-    successfully-removed: <green>Status erfolgreich entfernt.</green>
-    join-doesn't-exist: <red>Dein Status wurde entfernt.</red>
-    not-found: <red>Dieser Status existiert nicht.</red>
-    successfully-set: <green>Status erfolgreich gesetzt!</green>
-    not-in-team: <red>Du bist nicht in dem richtigen Team für diesen Status.</red>
-    no-permission: <red>Du hast nicht die benötigten Berechtigungen für diesen Status.</red>

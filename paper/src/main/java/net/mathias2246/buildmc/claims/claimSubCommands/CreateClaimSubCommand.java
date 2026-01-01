@@ -4,8 +4,8 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
-import net.mathias2246.buildmc.claims.ClaimCommand;
 import net.mathias2246.buildmc.commands.claim.ClaimCreate;
+import net.mathias2246.buildmc.commands.claim.ClaimSuggestions;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -17,7 +17,11 @@ public final class CreateClaimSubCommand {
         return Commands.literal("create")
                 .then(
                         Commands.argument("type", StringArgumentType.word())
-                                .suggests(ClaimCommand::claimTypesSuggestions)
+                                .suggests((ctx, builder) -> {
+                                    if (ctx.getSource().getSender() instanceof Player player)
+                                        return ClaimSuggestions.claimTypesSuggestions(player, builder);
+                                    return builder.buildFuture();
+                                })
                                 .then(
                                         Commands.argument("name", StringArgumentType.word()) // name of claim
                                                 .executes(command -> {

@@ -2,8 +2,10 @@ package net.mathias2246.buildmc.commands.claim;
 
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.claims.ClaimLogger;
 import net.mathias2246.buildmc.claims.ClaimManager;
+import net.mathias2246.buildmc.util.LocationUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +30,7 @@ public class ClaimRemove {
             case "team" -> {
                 Team team = ClaimManager.getPlayerTeam(player);
                 if (team == null) {
-                    CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.error.not-in-a-team"));
+                    CoreMain.plugin.sendMessage(player, Component.translatable("messages.error.not-in-a-team"));
                     return 0;
                 }
                 List<Long> ids = ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
@@ -42,7 +44,7 @@ public class ClaimRemove {
             }
             case "server", "placeholder" -> {
                 if (!player.hasPermission("buildmc.admin")) {
-                    CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.error.no-permission"));
+                    CoreMain.plugin.sendMessage(player, Component.translatable("messages.error.no-permission"));
                     return 0;
                 }
                 List<Long> ids = type.equals("server") ? ClaimManager.serverClaims : ClaimManager.placeholderClaims;
@@ -55,23 +57,47 @@ public class ClaimRemove {
                 }
             }
             default -> {
-                CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.remove.invalid-type"));
+                CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.remove.invalid-type"));
                 return 0;
             }
         }
 
         if (claimId == -1) {
-            CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.remove.not-found"));
+            CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.remove.not-found"));
             return 0;
         }
 
+        Claim claim = ClaimManager.getClaimByID(claimId);
+        if (claim == null) {
+            CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.remove.failed"));
+            return 0;
+        }
+
+        int restoredChunks = LocationUtil.calculateChunkArea(claim.getChunkX1(), claim.getChunkZ1(), claim.getChunkX2(), claim.getChunkZ2());
+
+        switch (claim.getType()) {
+            case PLAYER -> {
+                String ownerUUID = claim.getOwnerId();
+                int max = CoreMain.plugin.getConfig().getInt("claims.player-max-chunk-claim-amount");
+                int current = ClaimManager.playerRemainingClaims.getOrDefault(ownerUUID, max);
+                ClaimManager.playerRemainingClaims.put(ownerUUID, current + restoredChunks);
+            }
+            case TEAM -> {
+                String teamName = claim.getOwnerId();
+                int max = CoreMain.plugin.getConfig().getInt("claims.team-max-chunk-claim-amount");
+                int current = ClaimManager.teamRemainingClaims.getOrDefault(teamName, max);
+                ClaimManager.teamRemainingClaims.put(teamName, current + restoredChunks);
+            }
+        }
+
         boolean success = ClaimManager.removeClaimById(claimId);
+
         if (success) {
-            CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.remove.success"));
+            CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.remove.success"));
             ClaimLogger.logClaimDeleted(player, claimName);
             return 1;
         }
-        CoreMain.pluginMain.sendMessage(player, Component.translatable("messages.claims.remove.failed"));
+        CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.remove.failed"));
         return 0;
     }
     

@@ -6,6 +6,7 @@ import net.mathias2246.buildmc.api.claims.Protection;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
@@ -23,8 +24,19 @@ public class ClaimManagerImpl implements ClaimManager {
     }
 
     @Override
+    public boolean isWorldAllowed(@NotNull World world) {
+        return net.mathias2246.buildmc.claims.ClaimManager.isWorldAllowed(world);
+    }
+
+    @Override
+    public boolean isPlayerAllowedInClaim(@Nullable Claim claim, @NotNull Player player) {
+        return net.mathias2246.buildmc.claims.ClaimManager.isPlayerAllowedInClaim(claim, player);
+    }
+
+    @Override
     public boolean isPlayerAllowed(@NotNull Player player, @NotNull Collection<NamespacedKey> protections, Location location) {
         return net.mathias2246.buildmc.claims.ClaimManager.isPlayerAllowed(player, protections, location);
+
     }
 
     @Override
@@ -181,6 +193,16 @@ public class ClaimManagerImpl implements ClaimManager {
     }
 
     @Override
+    public void addProtection(@NotNull Claim claim, @NotNull NamespacedKey protection) {
+        net.mathias2246.buildmc.claims.ClaimManager.addProtection(claim, protection);
+    }
+
+    @Override
+    public void addProtection(@NotNull Claim claim, @NotNull Protection protection) {
+        net.mathias2246.buildmc.claims.ClaimManager.addProtection(claim, protection);
+    }
+
+    @Override
     public void addProtection(long claimId, @NotNull Protection protection) {
         net.mathias2246.buildmc.claims.ClaimManager.addProtection(claimId, protection);
     }
@@ -188,6 +210,16 @@ public class ClaimManagerImpl implements ClaimManager {
     @Override
     public void addProtection(long claimId, @NotNull NamespacedKey protection) {
         net.mathias2246.buildmc.claims.ClaimManager.addProtection(claimId, protection);
+    }
+
+    @Override
+    public void removeProtection(@NotNull Claim claim, @NotNull NamespacedKey protection) {
+        net.mathias2246.buildmc.claims.ClaimManager.removeProtection(claim, protection);
+    }
+
+    @Override
+    public void removeProtection(@NotNull Claim claim, @NotNull Protection protection) {
+        net.mathias2246.buildmc.claims.ClaimManager.removeProtection(claim, protection);
     }
 
     @Override

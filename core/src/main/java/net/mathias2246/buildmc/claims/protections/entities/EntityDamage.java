@@ -1,14 +1,14 @@
 package net.mathias2246.buildmc.claims.protections.entities;
 
-import com.github.stefvanschie.inventoryframework.gui.GuiItem;
-import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.item.ItemUtil;
-import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.claims.ClaimManager;
+import net.mathias2246.buildmc.inventoryframework.gui.GuiItem;
+import net.mathias2246.buildmc.inventoryframework.gui.type.util.Gui;
 import net.mathias2246.buildmc.ui.UIUtil;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Material;
@@ -33,6 +33,7 @@ import java.util.Objects;
 public class EntityDamage extends Protection {
 
     public EntityDamage(@Nullable ConfigurationSection section) {
+        //noinspection SimplifiableConditionalExpression
         super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:entity_damage")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 
@@ -46,6 +47,7 @@ public class EntityDamage extends Protection {
         Entity victim = event.getEntity();
         Entity damager = event.getDamageSource().getCausingEntity();
 
+        if ((victim instanceof Player a)) return;
         if (!(damager instanceof Player attacker)) return;
 
         Claim claim = null;
@@ -62,7 +64,7 @@ public class EntityDamage extends Protection {
         NamespacedKey k = getKey();
 
         if (claim.hasProtection(k) && !ClaimManager.isPlayerAllowed(attacker, k, claim)) {
-            CoreMain.mainClass.sendPlayerActionBar(attacker, Component.translatable("messages.claims.not-accessible.entity-damage"));
+            CoreMain.plugin.sendPlayerActionBar(attacker, Component.translatable("messages.claims.not-accessible.entity-damage"));
             event.setCancelled(true);
         }
     }
@@ -75,7 +77,7 @@ public class EntityDamage extends Protection {
         if (!(damager instanceof Player attacker)) return;
 
         if (!ClaimManager.isPlayerAllowed(attacker, getKey(), victim.getLocation())) {
-            CoreMain.mainClass.sendPlayerActionBar(attacker, Component.translatable("messages.claims.not-accessible.entity-damage"));
+            CoreMain.plugin.sendPlayerActionBar(attacker, Component.translatable("messages.claims.not-accessible.entity-damage"));
             event.setCancelled(true);
         }
     }

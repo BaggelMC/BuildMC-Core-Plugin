@@ -3,84 +3,71 @@ package net.mathias2246.buildmc.player.status;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.mathias2246.buildmc.CoreMain;
-import net.mathias2246.buildmc.platform.SoundManagerSpigotImpl;
-import net.mathias2246.buildmc.status.StatusConfig;
-import net.mathias2246.buildmc.status.StatusInstance;
+import net.mathias2246.buildmc.api.event.player.StatusChangeEvent;
+import net.mathias2246.buildmc.api.status.StatusInstance;
+import net.mathias2246.buildmc.api.status.StatusManager;
+import net.mathias2246.buildmc.status.PlayerStatusUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-import static net.mathias2246.buildmc.Main.audiences;
+import static net.mathias2246.buildmc.status.PlayerStatusUtil.PLAYER_STATUS_PDC;
 
-public class PlayerStatus implements Listener {
+public class PlayerStatus implements Listener, StatusManager {
 
-    public static final @NotNull NamespacedKey PLAYER_STATUS_PDC = Objects.requireNonNull(NamespacedKey.fromString("buildmc:player_status"));
-
-    private static boolean hasStatus(@NotNull Player player) {
-        return player.getPersistentDataContainer().has(PLAYER_STATUS_PDC);
+    public void setPlayerStatus(@NotNull Player player, String status, boolean join) {
+        PlayerStatusUtil.setPlayerStatus(player, status, join);
     }
 
-    public static boolean doesStatusExist(String status) {
-        if (status == null) return false;
-        return StatusConfig.loadedStatuses.containsKey(status);
-    }
-
-    public static void setPlayerStatus(@NotNull Player player, String status, boolean join) {
-        if (!doesStatusExist(status)) {
-            if (join) {
-                audiences.player(player).sendMessage(Component.translatable("messages.status.join-doesn't-exist"));
-                player.getPersistentDataContainer().remove(PLAYER_STATUS_PDC);
-            } else {
-                audiences.player(player).sendMessage(Component.translatable("messages.status.not-found"));
-                CoreMain.soundManager.playSound(player, SoundManagerSpigotImpl.mistake);
-            }
-            return;
-        }
-
-        StatusInstance s = StatusConfig.loadedStatuses.get(status);
-        var allowed = s.allowPlayer(player);
-        if (!allowed.equals(StatusInstance.AllowStatus.ALLOW)) {
-            switch (allowed) {
-                case NOT_IN_TEAM ->
-                        audiences.player(player).sendMessage(Component.translatable("messages.status.not-in-team"));
-                case MISSING_PERMISSION ->
-                        audiences.player(player).sendMessage(Component.translatable("messages.status.no-permission"));
-            }
-            if (join) {
-                player.getPersistentDataContainer().remove(PLAYER_STATUS_PDC);
-                return;
-            }
-            CoreMain.soundManager.playSound(player, SoundManagerSpigotImpl.mistake);
-            return;
-        }
-
-        Component c = s.getDisplay().asComponent().append(Component.text(player.getName()));
-
-        String legacy = LegacyComponentSerializer.legacySection().serialize(c);
-
+    @Override
+    public void setPlayerName(@NotNull Player player, @Nullable Component component) {
+        String legacy = (component == null) ? null : LegacyComponentSerializer.legacySection().serialize(component);
         player.setPlayerListName(legacy);
         player.setDisplayName(legacy);
         player.setCustomName(legacy);
         player.setCustomNameVisible(true);
-
-        player.getPersistentDataContainer().set(
-                PLAYER_STATUS_PDC,
-                PersistentDataType.STRING,
-                status
-        );
-
-        if (join) return;
-        audiences.player(player).sendMessage(Component.translatable("messages.status.successfully-set"));
-        CoreMain.soundManager.playSound(player, SoundManagerSpigotImpl.success);
     }
 
-    public static void removePlayerStatus(@NotNull Player player) {
+    @Override
+    public void resetPlayerName(@NotNull Player player) {
+        player.setPlayerListName(null);
+        player.setDisplayName(null);
+        player.setCustomName(null);
+        player.setCustomNameVisible(true);
+    }
+
+    @SuppressWarnings("UnusedReturnValue")
+    public boolean removePlayerStatus(@NotNull Player player) {
+        @Nullable StatusInstance old = CoreMain.statusesRegistry.get(Objects.requireNonNull(NamespacedKey.fromString("buildmc:" + player.getPersistentDataContainer().get(PLAYER_STATUS_PDC, PersistentDataType.STRING))));
+
+        StatusChangeEvent e = new StatusChangeEvent(player, old, null);
+        Bukkit.getPluginManager().callEvent(e);
+        if (e.isCancelled()) {
+            return false;
+        }
+
+        player.getPersistentDataContainer().remove(PLAYER_STATUS_PDC);
+
+        player.setPlayerListName(null);
+        player.setDisplayName(null);
+        player.setCustomName(null);
+        player.setCustomNameVisible(false);
+
+        return true;
+    }
+
+    public void forceRemovePlayerStatus(@NotNull Player player) {
+        @Nullable StatusInstance old = CoreMain.statusesRegistry.get(Objects.requireNonNull(NamespacedKey.fromString("buildmc:" + player.getPersistentDataContainer().get(PLAYER_STATUS_PDC, PersistentDataType.STRING))));
+
+        StatusChangeEvent e = new StatusChangeEvent(player, old, null);
+        Bukkit.getPluginManager().callEvent(e);
+
         player.getPersistentDataContainer().remove(PLAYER_STATUS_PDC);
 
         player.setPlayerListName(null);
@@ -89,16 +76,6 @@ public class PlayerStatus implements Listener {
         player.setCustomNameVisible(false);
     }
 
-    @EventHandler
-    public static void onPlayerJoin(PlayerJoinEvent event) {
-        if (hasStatus(event.getPlayer())) {
-            Player player = event.getPlayer();
-            setPlayerStatus(
-                    player,
-                    player.getPersistentDataContainer().get(PLAYER_STATUS_PDC, PersistentDataType.STRING),
-                    true
-            );
-        }
-    }
+
 
 }

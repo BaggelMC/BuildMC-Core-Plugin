@@ -1,14 +1,14 @@
 package net.mathias2246.buildmc.claims.protections.misc;
 
-import com.github.stefvanschie.inventoryframework.gui.GuiItem;
-import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.item.ItemUtil;
-import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.claims.ClaimManager;
+import net.mathias2246.buildmc.inventoryframework.gui.GuiItem;
+import net.mathias2246.buildmc.inventoryframework.gui.type.util.Gui;
 import net.mathias2246.buildmc.ui.UIUtil;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Location;
@@ -21,8 +21,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTakeLecternBookEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +37,7 @@ import java.util.Objects;
 public class Containers extends Protection {
 
     public Containers(@Nullable ConfigurationSection section) {
+        //noinspection SimplifiableConditionalExpression
         super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:containers")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 
@@ -95,20 +98,20 @@ public class Containers extends Protection {
         if (event.getInventory().getHolder() instanceof BlockState block) {
 
             if (!ClaimManager.isPlayerAllowed(player, getKey(), claim)) {
-                CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.container"));
+                CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.container"));
                 event.setCancelled(true);
             }
 
         } else if (event.getInventory().getHolder() instanceof Entity entity) {
 
             if (!ClaimManager.isPlayerAllowed(player, getKey(), claim)) {
-                CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.entity-container"));
+                CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.entity-container"));
                 event.setCancelled(true);
             }
 
         } else {
             if (!ClaimManager.isPlayerAllowed(player, getKey(), claim)) {
-                CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.container"));
+                CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.container"));
                 event.setCancelled(true);
             }
 
@@ -131,7 +134,46 @@ public class Containers extends Protection {
 
         if (!ClaimManager.isPlayerAllowed(player, getKey(), claim)) {
             event.setCancelled(true);
-            CoreMain.mainClass.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.interact"));
+            CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.interact"));
         }
     }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onBlockInteract(PlayerInteractEvent event) {
+        if (event.getClickedBlock() == null) return;
+
+        var block = event.getClickedBlock();
+        var player = event.getPlayer();
+        Material type = block.getType();
+
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+
+        boolean isChiseledBookshelf = type == Material.CHISELED_BOOKSHELF;
+        boolean isDecoratedPot = type == Material.DECORATED_POT;
+        boolean isShelf = type.name().endsWith("_SHELF") || type.name().equals("SHELF");
+
+        if (!isChiseledBookshelf && !isDecoratedPot && !isShelf)
+            return;
+
+        Claim claim;
+        try {
+            claim = ClaimManager.getClaim(block.getLocation());
+        } catch (SQLException e) {
+            CoreMain.plugin.getLogger().severe("SQL error while getting claim: " + e);
+            return;
+        }
+
+        if (claim == null) return;
+
+        if (claim.getWhitelistedPlayers().contains(player.getUniqueId())) return;
+
+        if (!ClaimManager.isPlayerAllowed(player, getKey(), claim)) {
+            event.setCancelled(true);
+            CoreMain.plugin.sendPlayerActionBar(
+                    player,
+                    Component.translatable("messages.claims.not-accessible.container")
+            );
+        }
+    }
+
 }

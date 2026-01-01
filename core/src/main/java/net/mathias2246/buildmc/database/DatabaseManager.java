@@ -74,8 +74,8 @@ public class DatabaseManager {
 
         String databaseFilePath = new File(databaseFolder, "database").getAbsolutePath();
         String url = config.isServerMode()
-                ? config.getServerUrl()
-                : "jdbc:h2:file:" + databaseFilePath;
+                ? config.getServerUrl() + ";" + config.getH2Args()
+                : "jdbc:h2:file:" + databaseFilePath + ";" + config.getH2Args();
 
         try {
             Class.forName("org.h2.Driver");

@@ -4,8 +4,8 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
-import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.api.claims.ClaimType;
+import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.util.LocationUtil;
 import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.NotNull;
@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import static net.mathias2246.buildmc.claims.ClaimManager.*;
@@ -228,6 +229,8 @@ public class ClaimTable implements DatabaseTable {
             case PLACEHOLDER -> placeholderClaims.remove(claimId);
         }
 
+        claim.setID(null);
+
         // Update remaining claims (cleanup chunks etc.)
         restoreRemainingClaims(claim);
     }
@@ -424,7 +427,13 @@ public class ClaimTable implements DatabaseTable {
         }
     }
 
-    public List<Claim> getOverlappingClaimsInArea(Connection conn, UUID worldId, int x1, int z1, int x2, int z2) throws SQLException {
+    public List<Claim> getOverlappingClaimsInArea(
+            Connection conn,
+            UUID worldId,
+            int x1, int z1,
+            int x2, int z2
+    ) throws SQLException {
+
         int minX = Math.min(x1, x2);
         int maxX = Math.max(x1, x2);
         int minZ = Math.min(z1, z2);
@@ -432,22 +441,24 @@ public class ClaimTable implements DatabaseTable {
 
         List<Claim> overlappingClaims = new ArrayList<>();
 
-        try (PreparedStatement ps = conn.prepareStatement("""
-        SELECT id, type, owner_id, world_id, chunk_x1, chunk_z1, chunk_x2, chunk_z2, name
+        String sql = """
+        SELECT id, type, owner_id, world_id,
+               chunk_x1, chunk_z1, chunk_x2, chunk_z2, name
         FROM claims
         WHERE world_id = ?
-          AND NOT (
-            chunk_x2 < ? OR
-            chunk_x1 > ? OR
-            chunk_z2 < ? OR
-            chunk_z1 > ?
-          )
-    """)) {
+          AND LEAST(chunk_x1, chunk_x2) <= ?
+          AND GREATEST(chunk_x1, chunk_x2) >= ?
+          AND LEAST(chunk_z1, chunk_z2) <= ?
+          AND GREATEST(chunk_z1, chunk_z2) >= ?
+    """;
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setObject(1, worldId);
-            ps.setInt(2, minX);
-            ps.setInt(3, maxX);
-            ps.setInt(4, minZ);
-            ps.setInt(5, maxZ);
+
+            ps.setInt(2, maxX); // existing.minX <= new.maxX
+            ps.setInt(3, minX); // existing.maxX >= new.minX
+            ps.setInt(4, maxZ); // existing.minZ <= new.maxZ
+            ps.setInt(5, minZ); // existing.maxZ >= new.minZ
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -546,8 +557,8 @@ public class ClaimTable implements DatabaseTable {
 
     public void loadClaimOwners(Connection conn) throws SQLException {
         // Temporary maps to populate
-        Map<String, List<Long>> teamMap = new HashMap<>();
-        Map<UUID, List<Long>> playerMap = new HashMap<>();
+        ConcurrentHashMap<String, List<Long>> teamMap = new ConcurrentHashMap<>();
+        ConcurrentHashMap<UUID, List<Long>> playerMap = new ConcurrentHashMap<>();
         List<Long> serverList = new ArrayList<>();
         List<Long> placeholderList = new ArrayList<>();
 
