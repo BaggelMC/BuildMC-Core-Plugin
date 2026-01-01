@@ -9,6 +9,7 @@ import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.api.status.StatusInstance;
 import net.mathias2246.buildmc.player.status.SetStatusCommand;
 import net.mathias2246.buildmc.status.PlayerStatusUtil;
@@ -140,6 +141,21 @@ public class BuildMcCommand implements CustomCommand {
 
         var elytraSub = new net.mathias2246.buildmc.spawnElytra.ElytraZoneCommand().getSubCommand();
         cmd.then(elytraSub);
+
+        var versionSub = Commands.literal("version")
+                .executes(ctx -> {
+                    var sender = ctx.getSource().getSender();
+
+                    String version = Main.plugin.getPluginMeta().getVersion();
+
+                    Component msg = Component.text("BuildMC-Core ", NamedTextColor.AQUA)
+                            .append(Component.text("v" + version, NamedTextColor.GREEN));
+
+                    sender.sendMessage(msg);
+                    return 1;
+                });
+
+        cmd.then(versionSub);
 
         return cmd.build();
     }

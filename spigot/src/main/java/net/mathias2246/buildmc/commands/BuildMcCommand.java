@@ -3,6 +3,9 @@ package net.mathias2246.buildmc.commands;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.GreedyStringArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.api.status.StatusInstance;
 import net.mathias2246.buildmc.endEvent.EndEventCommand;
@@ -13,6 +16,7 @@ import org.bukkit.permissions.Permission;
 import java.io.IOException;
 
 import static net.mathias2246.buildmc.CoreMain.gson;
+import static net.mathias2246.buildmc.Main.plugin;
 import static net.mathias2246.buildmc.Main.statusConfig;
 
 public class BuildMcCommand implements CustomCommand {
@@ -110,6 +114,18 @@ public class BuildMcCommand implements CustomCommand {
         cmd.withSubcommand(
                 debugSub
         );
+
+        var versionSub = new CommandAPICommand("version")
+                .executes(command -> {
+                    String version = plugin.getDescription().getVersion();
+                    Component msg = Component.text("BuildMC-Core ", NamedTextColor.AQUA)
+                            .append(Component.text("v" + version, NamedTextColor.GREEN));
+                    CoreMain.plugin.sendMessage(command.sender(), msg);
+                    return 1;
+                });
+
+        cmd.withSubcommand(versionSub);
+
 
         return cmd;
     }
