@@ -1,6 +1,5 @@
 package net.mathias2246.buildmc;
 
-import com.google.gson.FormattingStyle;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -81,7 +80,6 @@ public final class CoreMain {
     public static BaseRegistry<KeyHolder<Component>> guides;
 
     public final static Gson gson = new GsonBuilder()
-            .setFormattingStyle(FormattingStyle.PRETTY)
             .serializeNulls()
             .registerTypeAdapter(StatusInstance.class, new StatusConfig.StatusInstanceJsonDeserializer())
             .create();

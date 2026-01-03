@@ -61,7 +61,6 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
             m.setUnbreakable(true);
             m.setRarity(ItemRarity.UNCOMMON);
             m.setEnchantmentGlintOverride(true);
-            m.setEnchantable(null);
             claimToolItemstack.setItemMeta(m);
         }
 

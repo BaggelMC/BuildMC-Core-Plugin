@@ -60,6 +60,7 @@ public class PlayerStatusUtil implements Listener {
     }
 
     public static void setPlayerStatus(@NotNull Player player, String status, boolean join) {
+        status = status.toLowerCase();
         if (!doesStatusExist(status)) {
             if (join) {
                 CoreMain.plugin.sendMessage(player, Component.translatable("messages.status.join-doesn't-exist"));

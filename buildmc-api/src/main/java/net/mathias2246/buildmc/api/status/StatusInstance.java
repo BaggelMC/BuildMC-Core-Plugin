@@ -136,6 +136,8 @@ public class StatusInstance implements ConfigurationSerializable, Keyed {
      *            </p>
      **/
     public static StatusInstance deserialize(Map<String, Object> map, @NotNull @MatchesRegex("[a-z0-9/._-]+$") String statusId) {
+        statusId = statusId.toLowerCase();
+
         // Permissions as names -> convert back to Permission objects
         Set<Permission> perms = null;
         if (map.containsKey("permissions")) {
@@ -149,9 +151,11 @@ public class StatusInstance implements ConfigurationSerializable, Keyed {
         if (map.containsKey("teams")) {
             if ((map.get("teams") instanceof List<?> teamNames)) {
                 teams = teamNames.stream()
-                        .map(name -> Objects.requireNonNull(
-                                Objects.requireNonNull(org.bukkit.Bukkit.getScoreboardManager())
-                                        .getMainScoreboard().getTeam((String) name)))
+                        .map((name) -> {
+                            var manager = org.bukkit.Bukkit.getScoreboardManager();
+                            if (manager == null) return null;
+                            return manager.getMainScoreboard().getTeam(((String) name).toLowerCase());
+                        })
                         .collect(Collectors.toSet());
             }
         }

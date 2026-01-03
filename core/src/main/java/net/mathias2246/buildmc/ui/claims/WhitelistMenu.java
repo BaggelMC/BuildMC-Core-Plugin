@@ -26,10 +26,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static net.mathias2246.buildmc.CoreMain.plugin;
 
@@ -109,9 +106,7 @@ public class WhitelistMenu {
                         OfflinePlayer target = Bukkit.getOfflinePlayer(playerUUID);
 
                         currentPane.addItem(
-                                new GuiItem(createPlayerHead(
-                                        target,
-                                        target.getName()),
+                                new GuiItem(createPlayerHead(target),
                                         event -> event.setCancelled(true)
                                 ),
                                 column,
@@ -271,12 +266,12 @@ public class WhitelistMenu {
         );
     }
 
-    private static ItemStack createPlayerHead(OfflinePlayer offlinePlayer, String name) {
+    private static ItemStack createPlayerHead(OfflinePlayer offlinePlayer) {
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) head.getItemMeta();
         if (meta != null) {
             meta.setOwningPlayer(offlinePlayer);
-            meta.setDisplayName(LegacyComponentSerializer.legacySection().serialize(Component.text(name, NamedTextColor.WHITE)));
+            meta.setDisplayName(LegacyComponentSerializer.legacySection().serialize(Component.text(Objects.requireNonNull(offlinePlayer.getName()), NamedTextColor.WHITE)));
             head.setItemMeta(meta);
         }
         return head;
