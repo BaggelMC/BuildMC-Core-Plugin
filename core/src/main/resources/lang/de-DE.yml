@@ -278,7 +278,7 @@ messages:
           lore-line2: "<gray>um jemanden zu whitelisten.</gray>"
           click-info: "<gray><italic>Klick hier um whitelist Befehl einzufügen.</italic></gray>"
         delete-confirm-menu:
-          title: %player% entfernen?
+          title: "%player% entfernen?"
           success: <green>Spieler erfolgreich von der Whitelist entfernt.</green>
 claims:
   flags:
