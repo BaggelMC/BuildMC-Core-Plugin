@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
  * This object can then be used for storing a non-{@link Keyed} instance inside a {@link org.bukkit.Registry}.
  * </p>
  * **/
+@SuppressWarnings("ClassCanBeRecord")
 public class KeyHolder<T> implements Keyed {
 
     private final @NotNull T value;

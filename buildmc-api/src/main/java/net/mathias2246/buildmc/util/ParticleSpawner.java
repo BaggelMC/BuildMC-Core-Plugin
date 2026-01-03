@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 /**A class for defining custom per-player particle spawners.
  * <p>These particles are only visible to the given player,
  * and are spawned a set amount of times with a certain delay.</p>*/
+
 public abstract class ParticleSpawner extends BukkitRunnable {
 
     /**The builder used to create a certain type of ParticleSpawner.

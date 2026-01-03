@@ -9,99 +9,81 @@
     <artifactId>core</artifactId>
     <name>BuildMC-Core</name>
 
+    <properties>
+        <java.version>21</java.version>
+    </properties>
+
     <repositories>
         <repository>
             <id>central</id>
             <url>https://repo1.maven.org/maven2/</url>
         </repository>
         <repository>
-            <id>spigotmc-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>
-        <repository>
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
-        </repository>
-        <repository>
-            <id>minecraft-libraries</id>
-            <name>Minecraft Libraries</name>
-            <url>https://libraries.minecraft.net</url>
         </repository>
     </repositories>
 
     <dependencies>
         <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.21.10-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <!-- Shared dependencies -->
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.13.2</version>
-        </dependency>
-        <dependency>
             <groupId>net.mathias2246</groupId>
             <artifactId>buildmc-api</artifactId>
             <version>1.1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!--suppress MavenDuplicateDependenciesInspection -->
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-bukkit</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.mojang</groupId>
-            <artifactId>brigadier</artifactId>
-            <version>1.0.18</version>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-base</artifactId>
         </dependency>
-        <dependency>
-            <groupId>net.kyori</groupId>
-            <artifactId>adventure-api</artifactId>
-            <version>4.25.0</version>
-        </dependency>
-        <dependency>
-            <groupId>net.kyori</groupId>
-            <artifactId>adventure-platform-bukkit</artifactId>
-            <version>4.4.0</version>
-        </dependency>
-        <dependency>
-            <groupId>net.kyori</groupId>
-            <artifactId>adventure-text-minimessage</artifactId>
-            <version>4.25.0</version>
-        </dependency>
+
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>2.3.232</version>
+            <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>33.4.8-jre</version>
         </dependency>
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>6.0.0-M2</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>5.19.0</version>
             <scope>test</scope>
         </dependency>
-
-
-        <dependency>
-            <groupId>org.bstats</groupId>
-            <artifactId>bstats-bukkit</artifactId>
-            <version>3.0.2</version>
-            <scope>compile</scope>
-        </dependency>
     </dependencies>
 
     <build>
-
         <finalName>BuildMC-Core-${project.buildVersion}_${minecraft.supportedVersions}</finalName>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
 
         <plugins>
             <plugin>
@@ -156,24 +138,32 @@
                             <relocations>
                                 <relocation>
                                     <pattern>org.bstats</pattern>
-                                    <shadedPattern>net.mathias2246.buildmc.bstats</shadedPattern>
+                                    <shadedPattern>net.mathias2246.commons.org.bstats</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.h2</pattern>
+                                    <shadedPattern>net.mathias2246.commons.org.h2</shadedPattern>
                                 </relocation>
                             </relocations>
+                            <artifactSet>
+                                <includes>
+                                    <include>net.mathias2246:buildmc-api</include>
+                                    <include>net.mathias2246.commons.com.github.stefvanschie.inventoryframework:IF</include>
+                                    <include>net.kyori:adventure-platform-api</include>
+                                    <include>net.kyori:adventure-platform-bukkit</include>
+                                    <include>net.kyori:adventure-platform-facet</include>
+                                    <include>org.bstats:bstats-bukkit</include>
+                                    <include>org.bstats:bstats-base</include>
+                                    <include>com.h2database:h2</include>
+                                </includes>
+                            </artifactSet>
 
-                            <!-- Filters to exclude duplicates that cause warnings -->
+                            <!-- Remove overlapping META-INF files -->
                             <filters>
-                                <!-- Exclude redundant META-INF and module-info -->
                                 <filter>
                                     <artifact>*:*</artifact>
                                     <excludes>
-                                        <exclude>META-INF/*.MF</exclude>
-                                        <exclude>META-INF/LICENSE*</exclude>
-                                        <exclude>META-INF/NOTICE*</exclude>
-                                        <exclude>META-INF/services/**</exclude>
-                                        <exclude>META-INF/versions/**</exclude>
-                                        <exclude>META-INF/maven/**</exclude>
-                                        <exclude>module-info.class</exclude>
-                                        <exclude>**/module-info.class</exclude>
+                                        <exclude>META-INF/*</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
@@ -181,10 +171,18 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
-    <properties>
-        <java.version>21</java.version>
-    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>net.mathias2246</groupId>
+                <artifactId>BuildMC-Parent</artifactId>
+                <version>1.1.0-beta</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>

@@ -24,7 +24,6 @@ public final class ClaimLogger {
     private static int retentionDays;
 
     private static Path logDir;
-    private static LocalTime rotationTime;
 
     private static LocalDate currentLogDate;
     private static Path currentLogFile;
@@ -58,7 +57,7 @@ public final class ClaimLogger {
         String rotationTimeStr =
                 plugin.getConfig().getString("claims.logs.rotation-time", "00:00");
 
-        rotationTime = LocalTime.parse(rotationTimeStr);
+        LocalTime rotationTime = LocalTime.parse(rotationTimeStr);
         logDir = plugin.getDataFolder().toPath().resolve("logs/claims");
 
         if (!enabled) return;

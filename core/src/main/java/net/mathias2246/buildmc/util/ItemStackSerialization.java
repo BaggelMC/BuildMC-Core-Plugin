@@ -18,7 +18,7 @@ public class ItemStackSerialization {
 
     public static ItemStack deserialize(byte[] bytes) throws IllegalArgumentException {
         String json = new String(bytes, java.nio.charset.StandardCharsets.UTF_8);
-        Map<String, Object> map = gson.fromJson(json, new TypeToken<Map<String, Object>>() {});
+        Map<String, Object> map = gson.fromJson(json, new TypeToken<>() {});
         return ItemStack.deserialize(map);
     }
 }

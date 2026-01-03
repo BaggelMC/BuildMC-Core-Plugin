@@ -9,19 +9,14 @@
     <artifactId>BuildMC-Core-Paper</artifactId>
     <name>BuildMC-Paper</name>
 
+    <properties>
+        <java.version>21</java.version>
+    </properties>
+
     <repositories>
         <repository>
             <id>papermc-repo</id>
             <url>https://repo.papermc.io/repository/maven-public/</url>
-        </repository>
-        <repository>
-            <id>sonatype</id>
-            <url>https://oss.sonatype.org/content/groups/public/</url>
-        </repository>
-        <repository>
-            <id>minecraft-libraries</id>
-            <name>Minecraft Libraries</name>
-            <url>https://libraries.minecraft.net</url>
         </repository>
         <repository>
             <id>central</id>
@@ -43,23 +38,27 @@
             <version>1.21.10-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>net.kyori</groupId>
-            <artifactId>adventure-text-minimessage</artifactId>
-            <version>4.25.0</version>
-        </dependency>
     </dependencies>
 
     <build>
-
         <finalName>BuildMC-Core-Paper-${project.buildVersion}_${minecraft.supportedVersions}</finalName>
 
         <resources>
-            <resource>
+            <resource> <!-- Paper platform resources -->
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
             </resource>
+            <resource> <!-- Core resources -->
+                <directory>../core/src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+            <resource> <!-- Other resources -->
+                <directory>../src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
         </resources>
+
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -98,58 +97,43 @@
                 </executions>
                 <configuration>
                     <minimizeJar>false</minimizeJar>
+
                     <relocations>
-                        <relocation>
-                            <pattern>net.mathias2246</pattern>
-                            <shadedPattern>net.mathias2246</shadedPattern>
-                        </relocation>
+
                     </relocations>
+
+                    <artifactSet>
+                        <includes>
+                            <include>net.mathias2246:core</include>
+                        </includes>
+                    </artifactSet>
+
                     <!-- Filters to exclude duplicates that cause warnings -->
                     <filters>
-                        <!-- Exclude classes that are already in BuildMC-Core -->
+                        <!-- A list of compiled core or api classes that are overwritten in the paper version -->
+                        <filter>
+                            <artifact>net.mathias2246:core</artifact>
+                            <excludes>
+                                <exclude>net/mathias2246/buildmc/util/ParticleSpawner.class</exclude>
+                                <exclude>net/mathias2246/buildmc/util/ParticleSpawner$Builder.class</exclude>
+                                <exclude>net/mathias2246/buildmc/util/PlayerTimer.class</exclude>
+                                <exclude>net/mathias2246/buildmc/util/TaskUtil.class</exclude>
+                                <exclude>net/mathias2246/buildmc/api/item/AbstractCustomItem.class</exclude>
+                                <exclude>net/mathias2246/buildmc/api/item/ItemDropTracker.class</exclude>
+                                <exclude>net/mathias2246/buildmc/claims/tools/ClaimSelectionTool.class</exclude>
+                            </excludes>
+                        </filter>
 
-
-                        <!-- Exclude redundant META-INF and module-info -->
+                        <!-- Remove overlapping META-INF files -->
                         <filter>
                             <artifact>*:*</artifact>
                             <excludes>
-                                <exclude>META-INF/*.MF</exclude>
-                                <exclude>META-INF/LICENSE*</exclude>
-                                <exclude>META-INF/NOTICE*</exclude>
-                                <exclude>META-INF/services/**</exclude>
-                                <exclude>META-INF/versions/**</exclude>
-                                <exclude>module-info.class</exclude>
-                                <exclude>**/module-info.class</exclude>
+                                <exclude>META-INF/*</exclude>
                             </excludes>
                         </filter>
                     </filters>
                 </configuration>
             </plugin>
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.3.1</version>
-                <executions>
-                    <execution>
-                        <id>copy-core-resources</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${project.parent.basedir}/core/src/main/resources</directory>
-                                    <filtering>false</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
-    <properties>
-        <java.version>21</java.version>
-    </properties>
 </project>

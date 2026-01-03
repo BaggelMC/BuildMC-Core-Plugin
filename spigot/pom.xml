@@ -11,18 +11,11 @@
 
     <properties>
         <java.version>21</java.version>
+
         <minecraft.supportedVersions>1.21.4-1.21.10</minecraft.supportedVersions>
     </properties>
 
     <repositories>
-        <repository>
-            <id>spigotmc-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>
-        <repository>
-            <id>sonatype</id>
-            <url>https://oss.sonatype.org/content/groups/public/</url>
-        </repository>
         <repository>
             <id>central</id>
             <url>https://repo1.maven.org/maven2/</url>
@@ -35,31 +28,16 @@
             <artifactId>core</artifactId>
             <version>${project.buildVersion}</version>
         </dependency>
+
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.21.10-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>net.kyori</groupId>
-            <artifactId>adventure-platform-bukkit</artifactId>
-            <version>4.4.1</version>
-        </dependency>
-        <dependency>
-            <groupId>net.kyori</groupId>
-            <artifactId>adventure-text-minimessage</artifactId>
-            <version>4.26.1</version>
-        </dependency>
+
         <dependency>
             <groupId>dev.jorel</groupId>
             <artifactId>commandapi-spigot-shade</artifactId>
             <version>11.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>net.kyori</groupId>
-            <artifactId>adventure-text-serializer-legacy</artifactId>
-            <version>4.26.1</version>
         </dependency>
     </dependencies>
 
@@ -68,11 +46,21 @@
         <finalName>BuildMC-Core-Spigot-${project.buildVersion}_${minecraft.supportedVersions}</finalName>
 
         <resources>
-            <resource>
+            <resource> <!-- Spigot platform resources -->
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
             </resource>
+            <resource> <!-- Core resources -->
+                <directory>../core/src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+            <resource> <!-- Other resources -->
+                <directory>../src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
         </resources>
+
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -116,56 +104,46 @@
                             <pattern>dev.jorel.commandapi</pattern>
                             <shadedPattern>net.mathias2246.buildmc.commandAPI</shadedPattern>
                         </relocation>
-                        <relocation>
-                            <pattern>net.mathias2246</pattern>
-                            <shadedPattern>net.mathias2246</shadedPattern>
-                        </relocation>
-                    </relocations>
-                    <!-- Filters to exclude duplicates that cause warnings -->
-                    <filters>
-                        <!-- Exclude classes that are already in BuildMC-Core -->
 
-                        <!-- Exclude redundant META-INF and module-info -->
+                    </relocations>
+
+                    <artifactSet>
+                        <includes>
+                            <include>net.mathias2246:core</include>
+                            <include>net.kyori:examination-api</include>
+                            <include>net.kyori:examination-string</include>
+                            <include>net.kyori:examination-api</include>
+                            <include>net.kyori:option</include>
+                            <include>net.kyori:adventure-api</include>
+                            <include>net.kyori:adventure-key</include>
+                            <include>net.kyori:adventure-text-serializer-legacy</include>
+                            <include>net.kyori:adventure-text-minimessage</include>
+                            <include>net.kyori:adventure-text-serializer-gson</include>
+                            <include>net.kyori:adventure-text-serializer-json</include>
+                            <include>net.kyori:adventure-text-serializer-bungeecord</include>
+                            <include>net.kyori:adventure-text-serializer-plain</include>
+                            <include>dev.jorel:commandapi-spigot-shade</include>
+                        </includes>
+                    </artifactSet>
+
+                    <!-- Remove overlapping META-INF files -->
+                    <filters>
+                        <filter>
+                            <artifact>dev.jorel:commandapi-spigot-shade</artifact>
+                            <excludes>
+                                <exclude>LICENSE</exclude>
+                            </excludes>
+                        </filter>
                         <filter>
                             <artifact>*:*</artifact>
                             <excludes>
-                                <exclude>META-INF/*.MF</exclude>
-                                <exclude>META-INF/LICENSE*</exclude>
-                                <exclude>META-INF/NOTICE*</exclude>
-                                <exclude>META-INF/services/**</exclude>
-                                <exclude>META-INF/versions/**</exclude>
-                                <exclude>META-INF/maven/**</exclude>
-                                <exclude>module-info.class</exclude>
-                                <exclude>**/module-info.class</exclude>
+                                <exclude>META-INF/*</exclude>
+                                <exclude>META-INF*</exclude>
                             </excludes>
                         </filter>
                     </filters>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.3.1</version>
-                <executions>
-                    <execution>
-                        <id>copy-core-resources</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${project.parent.basedir}/core/src/main/resources</directory>
-                                    <filtering>false</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
         </plugins>
     </build>
 </project>

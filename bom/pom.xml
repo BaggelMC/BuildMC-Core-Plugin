@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+
+    <modelVersion>4.0.0</modelVersion>
+    <packaging>pom</packaging>
+
+<!--    -->
+<!--    This is the so called BOM or 'Bill of Materials' of BuildMC-Core.-->
+<!--    This is a special maven pom.xml containing a 'dependencyManagement' tag.-->
+<!--    Here is the central management for dependency versions over multiple modules.-->
+<!--    -->
+
+    <artifactId>BuildMC-BOM</artifactId>
+    <version>1.0.0</version>
+    <name>- BOM -</name>
+    <groupId>net.mathias2246</groupId>
+
+    <properties>
+        <!-- Custom properties for easily changing versions that should always stay the same for multiply dependencies -->
+        <bom.adventure-platform-version>4.4.1</bom.adventure-platform-version>
+        <bom.bstats-version>3.0.2</bom.bstats-version>
+        <bom.examination-version>1.3.0</bom.examination-version>
+    </properties>
+
+    <dependencyManagement>
+        <!-- Put maven dependencies here for better version control -->
+        <!-- Don't forget to put a required repository into the repositories list below -->
+        <dependencies>
+            <dependency>
+                <groupId>org.jetbrains</groupId>
+                <artifactId>annotations</artifactId>
+                <version>24.0.0</version>
+                <scope>compile</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>2.13.2</version>
+            </dependency>
+
+            <!-- The main spigot API version shared across all modules -->
+            <dependency>
+                <groupId>org.spigotmc</groupId>
+                <artifactId>spigot-api</artifactId>
+                <version>1.21.10-R0.1-SNAPSHOT</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.stefvanschie.inventoryframework</groupId>
+                <artifactId>IF</artifactId>
+                <version>0.11.5</version>
+                <scope>compile</scope>
+            </dependency>
+
+            <!-- net.kyori dependencies that are not included inside the adventure-bom -->
+            <dependency>
+                <groupId>net.kyori</groupId>
+                <artifactId>adventure-platform-bukkit</artifactId>
+                <version>${bom.adventure-platform-version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>net.kyori</groupId>
+                <artifactId>adventure-platform-facet</artifactId>
+                <version>${bom.adventure-platform-version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>net.kyori</groupId>
+                <artifactId>adventure-platform-api</artifactId>
+                <version>${bom.adventure-platform-version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>net.kyori</groupId>
+                <artifactId>examination-api</artifactId>
+                <version>${bom.examination-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.kyori</groupId>
+                <artifactId>examination-string</artifactId>
+                <version>${bom.examination-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.bstats</groupId>
+                <artifactId>bstats-bukkit</artifactId>
+                <version>${bom.bstats-version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.bstats</groupId>
+                <artifactId>bstats-base</artifactId>
+                <version>${bom.bstats-version}</version>
+                <scope>compile</scope>
+            </dependency>
+
+            <!-- Imports a list of all adventure API modules for the current version of Adventure -->
+            <dependency>
+                <groupId>net.kyori</groupId>
+                <artifactId>adventure-bom</artifactId>
+                <version>4.26.1</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <repositories>
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
+        </repository>
+        <repository>
+            <id>sonatype</id>
+            <url>https://oss.sonatype.org/content/groups/public/</url>
+        </repository>
+        <repository>
+            <id>central</id>
+            <url>https://repo1.maven.org/maven2/</url>
+        </repository>
+    </repositories>
+</project>

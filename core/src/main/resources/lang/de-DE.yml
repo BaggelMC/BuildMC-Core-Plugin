@@ -265,8 +265,8 @@ messages:
           fail: '<red>Fehler: Claim konnte nicht gelöscht werden.</red>'
       protections-menu:
         title: '<gold>Schutz: ''%claim%''</gold>'
-        enabled: <green>Angeschaltet</green> <gray>(Drücke zum Ausschalten)</gray>
-        disabled: <red>Ausgeschaltet</red> <gray>(Drücke zum Anschalten)</gray>
+        enabled: <green>Erlaubt</green> <gray>(Drücke zum Blockieren)</gray>
+        disabled: <red>Blockiert</red> <gray>(Drücke zum Erlauben)</gray>
         toggle-hint: <dark_gray>Klicke unten, um umzuschalten</dark_gray>
       whitelist-menu:
         title: <gold>Whitelist für '%claim%'</gold>

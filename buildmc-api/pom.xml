@@ -3,19 +3,22 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>net.mathias2246</groupId>
+        <artifactId>BuildMC-Parent</artifactId>
+        <version>1.1.0-beta</version>
+    </parent>
+
+    <artifactId>buildmc-api</artifactId>
+    <name>BuildMC-API</name>
+    <description>The BuildMC-Core API module for Minecraft plugin development.</description>
+    <url>https://baggel.de/plugins/en/core/</url>
+    <version>1.1.0-SNAPSHOT</version>
 
     <properties>
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
-    <groupId>net.mathias2246</groupId>
-    <artifactId>buildmc-api</artifactId>
-    <name>net.mathias2246:buildmc</name>
-    <description>The BuildMC-Core API module for Minecraft plugin development.</description>
-    <url>https://github.com/BaggelMC/BuildMC-Core-Plugin</url>
-
-    <version>1.1.0-SNAPSHOT</version>
 
     <developers>
         <developer>
@@ -31,67 +34,53 @@
     <licenses>
         <license>
             <name>Apache-2.0 license</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <url>https://github.com/BaggelMC/BuildMC-Core-Plugin/blob/master/LICENSE</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
 
-    <scm>
-        <connection>scm:git:git://github.com/baggelmc/buildmc-core-plugin.git</connection>
-        <developerConnection>scm:git:ssh://github.com:baggelmc/buildmc-core-plugin.git</developerConnection>
-        <url>https://github.com/baggelmc/buildmc-core-plugin/tree/master</url>
-    </scm>
-
-
     <repositories>
         <repository>
             <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>
-        <repository>
-            <id>central</id>
-            <url>https://repo1.maven.org/maven2/</url>
+            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
         </repository>
     </repositories>
-
 
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.21.10-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.github.stefvanschie.inventoryframework</groupId>
             <artifactId>IF</artifactId>
-            <version>0.11.5</version>
-        </dependency>
-
-        <dependency>
-            <groupId>net.kyori</groupId>
-            <artifactId>adventure-api</artifactId>
-            <version>4.25.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>net.kyori</groupId>
-            <artifactId>adventure-text-minimessage</artifactId>
-            <version>4.25.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>net.kyori</groupId>
-            <artifactId>adventure-text-serializer-legacy</artifactId>
-            <version>4.25.0</version>
         </dependency>
     </dependencies>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>net.mathias2246</groupId>
+                <artifactId>BuildMC-BOM</artifactId>
+                <version>1.0.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <distributionManagement>
+        <!-- Deploy the BuildMC-API to maven-central -->
+        <snapshotRepository>
+            <id>central</id>
+            <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <build>
         <plugins>
-            <!-- Compile using Java 21 -->
+            <!-- Compile -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -114,7 +103,7 @@
                     </execution>
                 </executions>
             </plugin>
-
+            <!-- Creating Javadocs page -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -151,7 +140,7 @@
                     </execution>
                 </executions>
             </plugin>
-
+            <!-- Publishing to maven-central -->
             <plugin>
                 <groupId>org.sonatype.central</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
@@ -180,44 +169,19 @@
                             <relocations>
                                 <relocation>
                                     <pattern>com.github.stefvanschie.inventoryframework</pattern>
-                                    <shadedPattern>net.mathias2246.buildmc.inventoryframework</shadedPattern>
+                                    <shadedPattern>net.mathias2246.commons.com.github.stefvanschie.inventoryframework</shadedPattern>
                                 </relocation>
                             </relocations>
-                            <!-- Filters to exclude duplicates that cause warnings -->
-                            <filters>
-                                <!-- Exclude classes that are already in BuildMC-Core -->
-
-
-                                <!-- Exclude redundant META-INF and module-info -->
-                                <filter>
-                                    <artifact>*:*</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/*.MF</exclude>
-                                        <exclude>META-INF/LICENSE*</exclude>
-                                        <exclude>META-INF/NOTICE*</exclude>
-                                        <exclude>META-INF/services/**</exclude>
-                                        <exclude>META-INF/versions/**</exclude>
-                                        <exclude>module-info.class</exclude>
-                                        <exclude>**/module-info.class</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
+                            <!-- Rules / Filters to only include what is required -->
+                            <artifactSet>
+                                <includes>
+                                    <include>com.github.stefvanschie.inventoryframework:IF</include>
+                                </includes>
+                            </artifactSet>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>central</id>
-            <url>https://central.sonatype.com/repository/maven-snapshots/</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
-
 </project>
