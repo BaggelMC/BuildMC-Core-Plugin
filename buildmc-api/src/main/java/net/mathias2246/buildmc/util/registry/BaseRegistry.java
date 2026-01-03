@@ -29,6 +29,14 @@ public class BaseRegistry<T extends Keyed> implements Registry<T>, Iterable<T> {
         registry.remove(key);
     }
 
+    /**
+     * Removes all the entries from this registry.
+     * The registry will be empty after this.
+     */
+    public void clear() {
+        registry.clear();
+    }
+
     /**Registers a new entry under a certain key.
      *
      * @param entry The entry to add

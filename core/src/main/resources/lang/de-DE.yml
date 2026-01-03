@@ -260,7 +260,7 @@ messages:
         no-whitelist-available: <red>Dieser Claim Typ ermöglicht keine Whitelist.</red>
         delete: <red>Claim Löschen</red>
         delete-confirm-menu:
-          title: <red>Löschung von %claim% bestätigen.</red>
+          title: <red>Löschung von '%claim%' bestätigen.</red>
           success: <green>Claim erfolgreich gelöscht.</green>
           fail: '<red>Fehler: Claim konnte nicht gelöscht werden.</red>'
       protections-menu:
@@ -278,7 +278,7 @@ messages:
           lore-line2: "<gray>um jemanden zu whitelisten.</gray>"
           click-info: "<gray><italic>Klick hier um whitelist Befehl einzufügen.</italic></gray>"
         delete-confirm-menu:
-          title: player% entfernen??
+          title: %player% entfernen?
           success: <green>Spieler erfolgreich von der Whitelist entfernt.</green>
 claims:
   flags:

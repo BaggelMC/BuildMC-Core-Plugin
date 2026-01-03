@@ -9,7 +9,6 @@ import net.mathias2246.buildmc.util.config.YamlConfigurationManager;
 import net.mathias2246.buildmc.util.registry.BaseRegistry;
 import net.mathias2246.buildmc.util.registry.DefaultRegistries;
 import org.bukkit.Bukkit;
-import org.bukkit.NamespacedKey;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scoreboard.Scoreboard;
@@ -37,10 +36,7 @@ public class StatusConfig extends YamlConfigurationManager {
     public void setupConfiguration() {
 
         var reg = ((BaseRegistry<StatusInstance>) Objects.requireNonNull(CoreMain.registriesHolder.get(DefaultRegistries.STATUSES.toString())));
-        Set<NamespacedKey> keys = reg.keySet();
-        for (var key : keys) {
-            reg.removeEntry(key);
-        }
+        reg.clear();
 
         for (var key : configuration.getKeys(false)) {
             //if (!configuration.isConfigurationSection(key)) return;

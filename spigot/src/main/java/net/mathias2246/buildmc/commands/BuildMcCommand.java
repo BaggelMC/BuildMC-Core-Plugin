@@ -51,11 +51,13 @@ public class BuildMcCommand implements CustomCommand {
         statusSub.withSubcommand(
                 new CommandAPICommand("reload").executes(
                         (command) -> {
-                            Main.statusConfig.reload();
+                            Bukkit.getScheduler().runTask(CoreMain.plugin, task -> {
+                                Main.statusConfig.reload();
 
-                            for (var player : Bukkit.getOnlinePlayers()) {
-                                PlayerStatusUtil.reloadPlayerStatus(player);
-                            }
+                                for (var player : Bukkit.getOnlinePlayers()) {
+                                    PlayerStatusUtil.reloadPlayerStatus(player);
+                                }
+                            });
                         }
                 )
         );
