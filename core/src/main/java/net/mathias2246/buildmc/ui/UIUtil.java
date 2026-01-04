@@ -37,6 +37,7 @@ public class UIUtil {
 
     public final static Consumer<InventoryClickEvent> exitButton = event -> {
         event.setCancelled(true);
+        if (event.getWhoClicked() instanceof Player player)CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
         event.getWhoClicked().closeInventory();
     };
 

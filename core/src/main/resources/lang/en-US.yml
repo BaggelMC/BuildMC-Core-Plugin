@@ -29,7 +29,7 @@ messages:
     success: "<green>Elytra zone created.</green>"
 
     error:
-      different-worlds: "<red>Error: Positions must be in the same world.</red>"
+      different-worlds: "<red>Positions must be in the same world!</red>"
 
   end-event:
     opened: "<green>The end is now 'open'."

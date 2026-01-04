@@ -26,7 +26,7 @@ messages:
     pos2-set: <green>Position 2 gesetzt.</green>
     success: <green>Elytra-Zone erstellt.</green>
     error:
-      different-worlds: '<red>Fehler: Positionen müssen in der gleichen Welt sein.</red>'
+      different-worlds: '<red>Positionen müssen in der gleichen Welt sein!</red>'
   end-event:
     opened: <green>Das Ende ist jetzt 'geöffnet'.</green>
     closed: <green>Das Ende ist jetzt 'geschlossen'.</green>
