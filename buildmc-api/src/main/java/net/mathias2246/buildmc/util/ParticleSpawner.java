@@ -44,6 +44,7 @@ public abstract class ParticleSpawner extends BukkitRunnable {
 
     /**Extra logic to be executed when the BukkitRunnable stops.
      * <p>E.g. removing metadata, or similar</p>*/
+    @SuppressWarnings("EmptyMethod")
     protected abstract void onStop();
 
     protected final @NotNull Player source;

@@ -245,6 +245,7 @@ public final class CoreMain {
         plugin.getServer().getPluginManager().registerEvents(event, plugin);
     }
 
+    @SuppressWarnings("EmptyMethod")
     @ApiStatus.Internal
     public static void stop() {
     }

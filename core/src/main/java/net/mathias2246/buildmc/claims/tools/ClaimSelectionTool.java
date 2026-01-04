@@ -70,6 +70,7 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
         return claimToolItemstack;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isSelectionInSameWorld(@NotNull Location from, @NotNull Location to) {
         return Objects.equals(from.getWorld(), to.getWorld());
     }

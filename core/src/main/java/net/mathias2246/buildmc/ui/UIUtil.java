@@ -1,14 +1,14 @@
 package net.mathias2246.buildmc.ui;
 
+import com.github.stefvanschie.inventoryframework.gui.GuiItem;
+import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
+import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
+import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.item.ItemUtil;
 import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.SoundUtil;
-import net.mathias2246.commons.com.github.stefvanschie.inventoryframework.gui.GuiItem;
-import net.mathias2246.commons.com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
-import net.mathias2246.commons.com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
-import net.mathias2246.commons.com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;

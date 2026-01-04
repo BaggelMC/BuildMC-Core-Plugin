@@ -138,23 +138,27 @@
                             <relocations>
                                 <relocation>
                                     <pattern>org.bstats</pattern>
-                                    <shadedPattern>net.mathias2246.commons.org.bstats</shadedPattern>
+                                    <shadedPattern>net.mathias2246.buildmc.libs.org.bstats</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.h2</pattern>
-                                    <shadedPattern>net.mathias2246.commons.org.h2</shadedPattern>
+                                    <shadedPattern>net.mathias2246.buildmc.libs.org.h2</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.github.stefvanschie.inventoryframework</pattern>
+                                    <shadedPattern>net.mathias2246.buildmc.libs.com.github.stefvanschie.inventoryframework</shadedPattern>
                                 </relocation>
                             </relocations>
                             <artifactSet>
                                 <includes>
                                     <include>net.mathias2246:buildmc-api</include>
-                                    <include>net.mathias2246.commons.com.github.stefvanschie.inventoryframework:IF</include>
                                     <include>net.kyori:adventure-platform-api</include>
                                     <include>net.kyori:adventure-platform-bukkit</include>
                                     <include>net.kyori:adventure-platform-facet</include>
                                     <include>org.bstats:bstats-bukkit</include>
                                     <include>org.bstats:bstats-base</include>
                                     <include>com.h2database:h2</include>
+                                    <include>com.github.stefvanschie.inventoryframework:IF</include>
                                 </includes>
                             </artifactSet>
 
@@ -164,6 +168,12 @@
                                     <artifact>*:*</artifact>
                                     <excludes>
                                         <exclude>META-INF/*</exclude>
+                                    </excludes>
+                                </filter>
+                                <filter>
+                                    <artifact>com.github.stefvanschie.inventoryframework:IF</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/MANIFEST.MF</exclude>
                                     </excludes>
                                 </filter>
                             </filters>

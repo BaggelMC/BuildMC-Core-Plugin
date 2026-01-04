@@ -102,7 +102,7 @@
                     <relocations>
                         <relocation>
                             <pattern>dev.jorel.commandapi</pattern>
-                            <shadedPattern>net.mathias2246.buildmc.commandAPI</shadedPattern>
+                            <shadedPattern>net.mathias2246.buildmc.libs.commandAPI</shadedPattern>
                         </relocation>
 
                     </relocations>
@@ -126,7 +126,7 @@
                         </includes>
                     </artifactSet>
 
-                    <!-- Remove overlapping META-INF files -->
+                    <!-- Remove overlapping resource files -->
                     <filters>
                         <filter>
                             <artifact>dev.jorel:commandapi-spigot-shade</artifact>
@@ -137,8 +137,14 @@
                         <filter>
                             <artifact>*:*</artifact>
                             <excludes>
-                                <exclude>META-INF/*</exclude>
-                                <exclude>META-INF*</exclude>
+                                <exclude>META-INF/**</exclude>
+                            </excludes>
+                        </filter>
+                        <!-- Do not shade already existing core resources twice -->
+                        <filter>
+                            <artifact>net.mathias2246:core</artifact>
+                            <excludes>
+                                <exclude>/**</exclude>
                             </excludes>
                         </filter>
                     </filters>

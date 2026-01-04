@@ -70,6 +70,7 @@ public class BuildMcCommand implements CustomCommand {
                             var json = command.args().getByClass("status_json", String.class);
 
                             StatusInstance status = gson.fromJson(json, StatusInstance.class);
+                            if (status == null) return 1;
 
                             statusConfig.configuration.set(
                                     status.getStatusId(),

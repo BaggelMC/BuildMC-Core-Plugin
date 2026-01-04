@@ -1,5 +1,11 @@
 package net.mathias2246.buildmc.ui.claims;
 
+import com.github.stefvanschie.inventoryframework.adventuresupport.ComponentHolder;
+import com.github.stefvanschie.inventoryframework.gui.GuiItem;
+import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
+import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
+import com.github.stefvanschie.inventoryframework.pane.Pane;
+import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.Protection;
@@ -9,12 +15,6 @@ import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.ui.UIUtil;
 import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.SoundUtil;
-import net.mathias2246.commons.com.github.stefvanschie.inventoryframework.adventuresupport.ComponentHolder;
-import net.mathias2246.commons.com.github.stefvanschie.inventoryframework.gui.GuiItem;
-import net.mathias2246.commons.com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
-import net.mathias2246.commons.com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
-import net.mathias2246.commons.com.github.stefvanschie.inventoryframework.pane.Pane;
-import net.mathias2246.commons.com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

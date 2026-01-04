@@ -128,7 +128,14 @@
                         <filter>
                             <artifact>*:*</artifact>
                             <excludes>
-                                <exclude>META-INF/*</exclude>
+                                <exclude>META-INF/**</exclude>
+                            </excludes>
+                        </filter>
+                        <!-- Do not shade already existing core resources twice -->
+                        <filter>
+                            <artifact>net.mathias2246:core</artifact>
+                            <excludes>
+                                <exclude>/**</exclude>
                             </excludes>
                         </filter>
                     </filters>
