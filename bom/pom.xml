@@ -43,14 +43,14 @@
             <dependency>
                 <groupId>org.spigotmc</groupId>
                 <artifactId>spigot-api</artifactId>
-                <version>1.21.10-R0.1-SNAPSHOT</version>
+                <version>1.21.11-R0.1-SNAPSHOT</version>
                 <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>com.github.stefvanschie.inventoryframework</groupId>
                 <artifactId>IF</artifactId>
-                <version>0.11.5</version>
+                <version>0.11.6</version>
                 <scope>compile</scope>
             </dependency>
 

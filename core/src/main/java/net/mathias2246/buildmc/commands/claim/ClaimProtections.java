@@ -7,6 +7,7 @@ import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.claims.ClaimLogger;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.util.Message;
+import net.mathias2246.buildmc.util.SoundUtil;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
@@ -30,11 +31,13 @@ public class ClaimProtections {
             enable = false;
         } else {
             CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.protections.invalid-value"));
+            CoreMain.soundManager.playSound(player, SoundUtil.mistake);
             return 0;
         }
 
         if (Protection.isHiddenProtection(CoreMain.protectionsRegistry, flag)) {
             CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.protections.invalid-flag"));
+            CoreMain.soundManager.playSound(player, SoundUtil.mistake);
             return 0;
         }
 
@@ -56,6 +59,7 @@ public class ClaimProtections {
                 Team team = ClaimManager.getPlayerTeam(player);
                 if (team == null) {
                     CoreMain.plugin.sendMessage(player, Component.translatable("messages.error.not-in-a-team"));
+                    CoreMain.soundManager.playSound(player, SoundUtil.mistake);
                     return 0;
                 }
                 List<Long> ids = ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
@@ -70,6 +74,7 @@ public class ClaimProtections {
             case "server" -> {
                 if (!player.hasPermission("buildmc.admin")) {
                     CoreMain.plugin.sendMessage(player, Component.translatable("messages.error.no-permission"));
+                    CoreMain.soundManager.playSound(player, SoundUtil.mistake);
                     return 0;
                 }
                 for (long id : ClaimManager.serverClaims) {
@@ -82,22 +87,26 @@ public class ClaimProtections {
             }
             default -> {
                 CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.protections.invalid-type"));
+                CoreMain.soundManager.playSound(player, SoundUtil.mistake);
                 return 0;
             }
         }
 
         if (claim == null || claimId == -1) {
             CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.remove.not-found"));
+            CoreMain.soundManager.playSound(player, SoundUtil.mistake);
             return 0;
         }
 
         if (enable) {
             ClaimManager.addProtection(claim, flag);
             CoreMain.plugin.sendMessage(player, Message.msg(player, "messages.claims.protections.added", Map.of("flag", flag.toString())));
+            CoreMain.soundManager.playSound(player, SoundUtil.success);
             ClaimLogger.logProtectionChanged(player, name, flag.toString(), "enabled");
         } else {
             ClaimManager.removeProtection(claim, flag);
             CoreMain.plugin.sendMessage(player, Message.msg(player, "messages.claims.protections.removed", Map.of("flag", flag.toString())));
+            CoreMain.soundManager.playSound(player, SoundUtil.success);
             ClaimLogger.logProtectionChanged(player, name, flag.toString(), "disabled");
         }
 

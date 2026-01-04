@@ -6,6 +6,7 @@ import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.ClaimType;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.util.Message;
+import net.mathias2246.buildmc.util.SoundUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -26,11 +27,13 @@ public class ClaimWho {
         } catch (SQLException e) {
             CoreMain.plugin.getLogger().severe("An error occurred while getting a claim from the database: " + e.getMessage());
             CoreMain.plugin.sendMessage(player, Component.translatable("messages.error.sql"));
+            CoreMain.soundManager.playSound(player, SoundUtil.mistake);
             return 0;
         }
 
         if (claim == null) {
             CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.who.unclaimed"));
+            CoreMain.soundManager.playSound(player, SoundUtil.notification);
             return 1;
         }
 
@@ -51,6 +54,7 @@ public class ClaimWho {
         } else if (claimType == ClaimType.SERVER || claimType == ClaimType.PLACEHOLDER) {
             CoreMain.plugin.sendMessage(player, Message.msg(player, "messages.claims.who.server-message"));
         }
+        CoreMain.soundManager.playSound(player, SoundUtil.notification);
 
         return 1;
     }

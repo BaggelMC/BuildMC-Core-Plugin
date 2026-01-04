@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
+import net.mathias2246.buildmc.api.BuildMcAPI;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.event.lifecycle.BuildMcFinishedLoadingEvent;
 import net.mathias2246.buildmc.api.event.lifecycle.BuildMcRegistryEvent;
@@ -38,6 +39,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerLoadEvent;
+import org.bukkit.plugin.ServicePriority;
 import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -109,6 +111,8 @@ public final class CoreMain {
         LanguageManager.init();
 
         config = plugin.getConfig();
+
+        Bukkit.getServicesManager().register(BuildMcAPI.class, plugin, plugin, ServicePriority.High);
 
         guides = (BaseRegistry<KeyHolder<Component>>) registriesHolder.addRegistry(DefaultRegistries.GUIDES.toString(), new BaseRegistry<KeyHolder<Component>>());
 

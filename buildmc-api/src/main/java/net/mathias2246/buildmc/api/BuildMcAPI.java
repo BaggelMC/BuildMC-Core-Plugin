@@ -7,9 +7,11 @@ import net.mathias2246.buildmc.api.spawnEyltra.ElytraManager;
 import net.mathias2246.buildmc.api.status.StatusManager;
 import net.mathias2246.buildmc.util.SoundManager;
 import net.mathias2246.buildmc.util.registry.RegistriesHolder;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
@@ -21,6 +23,18 @@ import java.util.function.Consumer;
  * </p>
  */
 public interface BuildMcAPI {
+
+    /** Tries to get the BuildMcAPI service from Bukkit.
+     * <p>
+     * This is required to merge the classpath of the API with our plugin to use our API in your plugin.
+     * </p>
+     * This will crash your plugin if the BuildMC-Core is not loaded before your extension.
+     *
+     * @return The {@link BuildMcAPI} instance or {@code null} if not loaded.
+     * **/
+    static @Nullable BuildMcAPI tryLoadAPI() {
+        return Bukkit.getServicesManager().load(BuildMcAPI.class);
+    }
 
     /**
      * Gets the Bukkit plugin instance of BuildMC.
