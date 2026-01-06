@@ -24,11 +24,11 @@ public class Claim {
     private Long id;
 
     private final ClaimType type;
-    private final String ownerId;
+    private String ownerId;
     private final UUID worldId;
     private final int chunkX1, chunkZ1;
     private final int chunkX2, chunkZ2;
-    private final String name;
+    private String name;
 
     private final List<UUID> whitelistedPlayers;
 
@@ -39,13 +39,13 @@ public class Claim {
      *
      * @param id                 The database ID of this claim, or {@code null} if not yet persisted.
      * @param type               The {@link ClaimType} of this claim.
-     * @param ownerId            The ID of the owner (usually a player UUID as string or a team name depending on the {@link ClaimType}).
+     * @param ownerId            The ID of the owner (usually a player UUID as string, a team name or "server" depending on the {@link ClaimType}).
      * @param worldId            The UUID of the world where this claim is located.
      * @param chunkX1            The X-coordinate of the first chunk corner.
      * @param chunkZ1            The Z-coordinate of the first chunk corner.
      * @param chunkX2            The X-coordinate of the opposite chunk corner.
      * @param chunkZ2            The Z-coordinate of the opposite chunk corner.
-     * @param name               The display name of this claim, or {@code null} if unnamed.
+     * @param name               The display name of this claim.
      * @param whitelistedPlayers The list of players who are whitelisted in this claim.
      * @param protections        The list of protections (as string keys).
      *                           If empty and the Claim is not a placeholder, the default protections will be applied.
@@ -90,9 +90,22 @@ public class Claim {
     /**
      * Gets the owner ID of this claim.
      *
-     * @return The owner ID (usually a player UUID as string or a team name depending on the {@link ClaimType}).
+     * @return The owner ID (usually a player UUID as string, a team name or "server" depending on the {@link ClaimType}).
      */
     public String getOwnerId() { return ownerId; }
+
+    /**
+     * Sets the owner ID of this claim.
+     * <p>
+     * This method is intended for internal use only. Use ClaimManager to set the Owner ID. (usually a player UUID as string, a team name or "server" depending on the {@link ClaimType})
+     * </p>
+     *
+     * @param ownerId The new owner ID.
+     */
+    @ApiStatus.Internal
+    public void setOwnerId(@NotNull String ownerId) {
+        this.ownerId = ownerId;
+    }
 
     /**
      * Gets the world UUID where this claim exists.
@@ -135,6 +148,19 @@ public class Claim {
      * @return The name of the claim
      */
     public String getName() { return name; }
+
+    /**
+     * Sets the claim name of this claim.
+     * <p>
+     * This method is intended for internal use only. Use ClaimManager to change claim name.
+     * </p>
+     *
+     * @param name The new claim name.
+     */
+    @ApiStatus.Internal
+    public void setName(@NotNull String name) {
+        this.name = name;
+    }
 
     /**
      * Sets the database ID of this claim.

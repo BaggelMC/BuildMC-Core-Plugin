@@ -20,6 +20,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ConcurrentMap;
 
+import static net.mathias2246.buildmc.CoreMain.claimTable;
 import static net.mathias2246.buildmc.CoreMain.plugin;
 
 @SuppressWarnings({"unused", "BooleanMethodIsAlwaysInverted"})
@@ -713,6 +714,30 @@ public class ClaimManager {
 
     public static void setRemainingPlayerClaims(UUID playerUUID, @Nullable Integer remainingClaims) {
         setRemainingPlayerClaims(playerUUID.toString(), remainingClaims);
+    }
+
+    public static void updateClaimName(@NotNull Claim claim,  @NotNull String newName) throws SQLException, IllegalArgumentException {
+        Long claimId = claim.getId();
+        if (claimId == null) {
+            throw new IllegalArgumentException("Claim has no ID: " + claim.getName());
+        }
+        updateClaimName(claimId, newName);
+    }
+
+    public static void updateClaimName(long claimId,  @NotNull String newName) throws SQLException {
+        claimTable.updateClaimName(CoreMain.databaseManager.getConnection(), claimId, newName);
+    }
+
+    public static void updateClaimOwner(@NotNull Claim claim, @NotNull String newOwnerId) throws SQLException, IllegalArgumentException {
+        Long claimId = claim.getId();
+        if (claimId == null) {
+            throw new IllegalArgumentException("Claim has no ID: " + claim.getName());
+        }
+        updateClaimOwner(claimId, newOwnerId);
+    }
+
+    public static void updateClaimOwner(long claimId, @NotNull String newOwnerId) throws SQLException {
+        claimTable.updateClaimName(CoreMain.databaseManager.getConnection(), claimId, newOwnerId);
     }
 
 }

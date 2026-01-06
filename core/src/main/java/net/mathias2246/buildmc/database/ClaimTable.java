@@ -678,6 +678,64 @@ public class ClaimTable implements DatabaseTable {
         }
     }
 
+    public void updateClaimName(Connection conn, long claimId, @NotNull String newName) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement("""
+            UPDATE claims
+            SET name = ?
+            WHERE id = ?
+        """)) {
+            ps.setString(1, newName);
+            ps.setLong(2, claimId);
+            ps.executeUpdate();
+        }
+
+        Claim cached = claimCache.getIfPresent(claimId);
+        if (cached != null) {
+            cached.setName(newName);
+            claimCache.put(claimId, cached);
+        }
+    }
+
+    public void updateClaimOwner(Connection conn, long claimId, @NotNull String newOwnerId) throws SQLException {
+        Claim claim = getClaimById(conn, claimId);
+        if (claim == null) {
+            throw new SQLException("Claim not found: " + claimId);
+        }
+
+        String oldOwnerId = claim.getOwnerId();
+        ClaimType type = claim.getType();
+
+        try (PreparedStatement ps = conn.prepareStatement("""
+            UPDATE claims
+            SET owner_id = ?
+            WHERE id = ?
+        """)) {
+            ps.setString(1, newOwnerId);
+            ps.setLong(2, claimId);
+            ps.executeUpdate();
+        }
+
+        switch (type) {
+            case PLAYER -> {
+                UUID oldUuid = UUID.fromString(oldOwnerId);
+                UUID newUuid = UUID.fromString(newOwnerId);
+
+                playerOwner.getOrDefault(oldUuid, new ArrayList<>()).remove(claimId);
+                playerOwner.computeIfAbsent(newUuid, k -> new ArrayList<>()).add(claimId);
+            }
+            case TEAM -> {
+                teamOwner.getOrDefault(oldOwnerId, new ArrayList<>()).remove(claimId);
+                teamOwner.computeIfAbsent(newOwnerId, k -> new ArrayList<>()).add(claimId);
+            }
+            default -> {}
+        }
+
+        restoreRemainingClaims(claim);
+        claim.setOwnerId(newOwnerId);
+        updateRemainingClaims(claim);
+
+        claimCache.put(claimId, claim);
+    }
 
 
 }

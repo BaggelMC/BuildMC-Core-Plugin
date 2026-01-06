@@ -436,4 +436,41 @@ public interface ClaimManager {
      */
     void setRemainingPlayerClaims(UUID playerUUID, @Nullable Integer remainingClaims);
 
+    /**
+     * Update the name of a Claim
+     *
+     * @param claim   the claim
+     * @param newName the new claim name
+     * @throws SQLException if a database error occurs
+     * @throws IllegalArgumentException if the claim has no ID
+     */
+    void updateClaimName(@NotNull Claim claim,  @NotNull String newName) throws SQLException, IllegalArgumentException;
+
+    /**
+     * Update the name of a Claim
+     *
+     * @param claimId the claim ID
+     * @param newName the new claim name
+     * @throws SQLException if a database error occurs
+     */
+    void updateClaimName(long claimId,  @NotNull String newName) throws SQLException;
+
+    /**
+     * Update the owner of a Claim
+     *
+     * @param claim   the claim
+     * @param newOwnerId the new owner ID (usually a player UUID as string, a team name or "server" depending on the {@link ClaimType})
+     * @throws SQLException if a database error occurs
+     * @throws IllegalArgumentException if the claim has no ID
+     */
+    void updateClaimOwner(@NotNull Claim claim, @NotNull String newOwnerId) throws SQLException, IllegalArgumentException;
+
+    /**
+     * Update the owner of a Claim
+     *
+     * @param claimId   the claim ID
+     * @param newOwnerId the new owner ID (usually a player UUID as string, a team name or "server" depending on the {@link ClaimType})
+     * @throws SQLException if a database error occurs
+     */
+    void updateClaimOwner(long claimId, @NotNull String newOwnerId) throws SQLException;
 }

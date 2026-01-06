@@ -276,4 +276,24 @@ public class ClaimManagerImpl implements ClaimManager {
     public void setRemainingPlayerClaims(UUID playerUUID, @Nullable Integer remainingClaims) {
         net.mathias2246.buildmc.claims.ClaimManager.setRemainingPlayerClaims(playerUUID, remainingClaims);
     }
+
+    @Override
+    public void updateClaimName(@NotNull Claim claim, @NotNull String newName) throws SQLException, IllegalArgumentException {
+        net.mathias2246.buildmc.claims.ClaimManager.updateClaimName(claim, newName);
+    }
+
+    @Override
+    public void updateClaimName(long claimId, @NotNull String newName) throws SQLException {
+        net.mathias2246.buildmc.claims.ClaimManager.updateClaimName(claimId, newName);
+    }
+
+    @Override
+    public void updateClaimOwner(@NotNull Claim claim, @NotNull String newOwnerId) throws SQLException, IllegalArgumentException {
+        net.mathias2246.buildmc.claims.ClaimManager.updateClaimOwner(claim, newOwnerId);
+    }
+
+    @Override
+    public void updateClaimOwner(long claimId, @NotNull String newOwnerId) throws SQLException {
+        net.mathias2246.buildmc.claims.ClaimManager.updateClaimOwner(claimId, newOwnerId);
+    }
 }
