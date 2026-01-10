@@ -32,7 +32,6 @@
             <scope>compile</scope>
         </dependency>
 
-        <!--suppress MavenDuplicateDependenciesInspection -->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>

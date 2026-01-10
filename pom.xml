@@ -46,7 +46,7 @@
         <!-- Custom properties -->
         <project.buildVersion>1.1.0-beta</project.buildVersion>
 
-        <minecraft.supportedVersions>1.21.4-1.21.10</minecraft.supportedVersions>
+        <minecraft.supportedVersions>1.21.4-1.21.11</minecraft.supportedVersions>
         <minecraft.bukkitApiVersion>1.21</minecraft.bukkitApiVersion>
     </properties>
 
@@ -125,6 +125,10 @@
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-platform-facet</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
         </dependency>
         <dependency>
             <groupId>com.mojang</groupId>
