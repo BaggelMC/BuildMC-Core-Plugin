@@ -3,14 +3,11 @@ package net.mathias2246.buildmc.claims.protections.blocks;
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.Protection;
-import net.mathias2246.buildmc.api.item.ItemUtil;
 import net.mathias2246.buildmc.claims.ClaimManager;
-import net.mathias2246.buildmc.ui.UIUtil;
-import net.mathias2246.buildmc.util.Message;
+import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
@@ -21,12 +18,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.SQLException;
-import java.util.List;
 import java.util.Objects;
 
 public class DoorInteractions extends Protection {
@@ -41,18 +35,7 @@ public class DoorInteractions extends Protection {
 
         String t = getTranslationBaseKey();
 
-        ItemStack displayBase = new ItemStack(Material.OAK_DOOR);
-        ItemUtil.editMeta(displayBase, (meta) -> {
-            meta.setItemName(LegacyComponentSerializer.legacySection().serialize(
-                    Message.msg(uiHolder, t+".name")
-            ));
-            meta.setLore(List.of(LegacyComponentSerializer.legacySection().serialize(Message.msg(uiHolder, t + ".lore")).split("\n")));
-        });
-
-        return new GuiItem(
-                displayBase,
-                UIUtil.noInteract
-        );
+        return ProtectionUtil.createDisplayItem(uiHolder, Material.OAK_DOOR, t);
     }
 
     @Override
@@ -72,13 +55,7 @@ public class DoorInteractions extends Protection {
 
         Player player = event.getPlayer();
 
-        Claim claim;
-        try {
-            claim = ClaimManager.getClaim(Objects.requireNonNull(block).getLocation());
-        } catch (SQLException e) {
-            CoreMain.plugin.getLogger().severe("SQL error while getting claim: " + e);
-            return;
-        }
+        Claim claim = ClaimManager.getClaim(Objects.requireNonNull(block).getLocation());
         if (claim == null) return;
 
         var t = block.getType();

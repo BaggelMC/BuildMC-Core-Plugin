@@ -1,6 +1,5 @@
 package net.mathias2246.buildmc.api.claims;
 
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
@@ -162,29 +161,21 @@ public interface ClaimManager {
     List<Claim> getClaimsInArea(Location pos1, Location pos2) throws SQLException, IllegalArgumentException;
 
     /**
-     * Checks if a {@link Chunk} is claimed.
+     * Checks if a {@link Location} is claimed.
      *
-     * @param chunk the chunk
+     * @param loc a location
      * @return {@code true} if the chunk is claimed
      */
-    boolean isClaimed(Chunk chunk);
+    boolean isClaimed(@NotNull Location loc);
 
     /**
-     * Gets the claim ID of a claimed {@link Chunk}.
+     * Gets the claim ID of a claimed {@link Location}.
      *
-     * @param chunk the chunk
+     * @param loc a location
      * @return the claim ID, or {@code null} if unclaimed
      */
-    @Nullable Long getClaimId(Chunk chunk);
+    @Nullable Long getClaimId(@NotNull Location loc);
 
-    /**
-     * Gets the claim associated with a {@link Chunk}.
-     *
-     * @param chunk the chunk
-     * @return the claim
-     * @throws SQLException if a database error occurs
-     */
-    @Nullable Claim getClaim(Chunk chunk) throws SQLException;
 
     /**
      * Gets a claim by its ID.
@@ -197,10 +188,10 @@ public interface ClaimManager {
     /**
      * Gets the claim at a given location.
      *
-     * @param location the location
+     * @param location a location
      * @return the claim, or {@code null} if unclaimed
      */
-    @Nullable Claim getClaim(Location location) throws SQLException;
+    @Nullable Claim getClaim(@NotNull Location location);
 
     /**
      * Retrieves all {@link Claim} entries stored in the database.
@@ -221,10 +212,10 @@ public interface ClaimManager {
      * @param claimName the claim name
      * @param pos1      first corner location
      * @param pos2      opposite corner location
-     * @return {@code true} if the claim was created successfully
+     * @return The ID of the claim. Or {@code null} if the claim was not created successfully
      * @throws IllegalArgumentException  if any of the {@link Location}s are null, or they're not in the same world.
      */
-    boolean tryClaimPlayerArea(@NotNull Player player, String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
+    Long tryClaimPlayerArea(@NotNull Player player, String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
 
     /**
      * Attempts to create a claim for a {@link Team} between two positions.
@@ -233,10 +224,10 @@ public interface ClaimManager {
      * @param claimName the claim name
      * @param pos1      first corner location
      * @param pos2      opposite corner location
-     * @return {@code true} if the claim was created successfully
+     * @return The ID of the claim. Or {@code null} if the claim was not created successfully
      * @throws IllegalArgumentException  if any of the {@link Location}s are null, or they're not in the same world.
      */
-    boolean tryClaimTeamArea(@NotNull Team team, String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
+    Long tryClaimTeamArea(@NotNull Team team, String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
 
     /**
      * Attempts to create a claim owned by the server between two positions.
@@ -244,10 +235,10 @@ public interface ClaimManager {
      * @param claimName the claim name
      * @param pos1      first corner location
      * @param pos2      opposite corner location
-     * @return {@code true} if the claim was created successfully
+     * @return The ID of the claim. Or {@code null} if the claim was not created successfully
      * @throws IllegalArgumentException if any of the {@link Location}s are null, or they're not in the same world
      */
-    boolean tryClaimServerArea(String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
+    Long tryClaimServerArea(String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
 
     /**
      * Attempts to create a placeholder claim between two positions.
@@ -259,10 +250,10 @@ public interface ClaimManager {
      * @param claimName the claim name
      * @param pos1      first corner location
      * @param pos2      opposite corner location
-     * @return {@code true} if the claim was created successfully
+     * @return The ID of the claim. Or {@code null} if the claim was not created successfully
      * @throws IllegalArgumentException if any of the {@link Location}s are null, or they're not in the same world
      */
-    boolean tryClaimPlaceholderArea(String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
+    Long tryClaimPlaceholderArea(String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
 
     /**
      * Adds a player to a claim's whitelist.

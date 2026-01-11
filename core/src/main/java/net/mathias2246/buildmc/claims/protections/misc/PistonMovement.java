@@ -2,14 +2,10 @@ package net.mathias2246.buildmc.claims.protections.misc;
 
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.Protection;
-import net.mathias2246.buildmc.api.item.ItemUtil;
 import net.mathias2246.buildmc.claims.ClaimManager;
-import net.mathias2246.buildmc.ui.UIUtil;
-import net.mathias2246.buildmc.util.Message;
+import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
@@ -19,12 +15,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
-import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 
@@ -43,50 +36,30 @@ public class PistonMovement extends Protection {
     public @NotNull GuiItem getDisplay(@NotNull Player uiHolder, @NotNull Gui gui) {
         String t = getTranslationBaseKey();
 
-        ItemStack displayBase = new ItemStack(Material.PISTON);
-        ItemUtil.editMeta(displayBase, (meta) -> {
-            meta.setItemName(LegacyComponentSerializer.legacySection().serialize(
-                    Message.msg(uiHolder, t+".name")
-            ));
-            meta.addItemFlags(
-                    ItemFlag.HIDE_ATTRIBUTES,
-                    ItemFlag.HIDE_ADDITIONAL_TOOLTIP
-            );
-            meta.setLore(List.of(LegacyComponentSerializer.legacySection().serialize(Message.msg(uiHolder, t + ".lore")).split("\n")));
-        });
-
-        return new GuiItem(
-                displayBase,
-                UIUtil.noInteract
-        );
+        return ProtectionUtil.createDisplayItem(uiHolder, Material.PISTON, t);
     }
 
     @EventHandler
     public void onPistonExtend(BlockPistonExtendEvent event) {
-        try {
-            Block piston = event.getBlock();
-            Claim pistonClaim = ClaimManager.getClaim(piston.getChunk());
-            BlockFace direction = event.getDirection();
+        Block piston = event.getBlock();
+        Claim pistonClaim = ClaimManager.getClaim(piston.getLocation());
+        BlockFace direction = event.getDirection();
 
-            List<Block> movedBlocks = event.getBlocks();
-            for (Block movedBlock : movedBlocks) {
-                Block destinationBlock = movedBlock.getRelative(direction);
+        List<Block> movedBlocks = event.getBlocks();
+        for (Block movedBlock : movedBlocks) {
+            Block destinationBlock = movedBlock.getRelative(direction);
 
-                Claim fromClaim = ClaimManager.getClaim(movedBlock.getChunk());
-                Claim toClaim = ClaimManager.getClaim(destinationBlock.getChunk());
+            Claim fromClaim = ClaimManager.getClaim(movedBlock.getLocation());
+            Claim toClaim = ClaimManager.getClaim(destinationBlock.getLocation());
 
-                if (pistonClaim != null && toClaim == null) {
-                    continue;
-                }
-
-                if (!isPistonMoveAllowed(pistonClaim, fromClaim, toClaim)) {
-                    event.setCancelled(true);
-                    return;
-                }
+            if (pistonClaim != null && toClaim == null) {
+                continue;
             }
-        } catch (SQLException e) {
-            CoreMain.plugin.getLogger().severe("An SQLException occurred in ClaimPistonMovementListener in onPistonExtend: " + e);
-            event.setCancelled(true);
+
+            if (!isPistonMoveAllowed(pistonClaim, fromClaim, toClaim)) {
+                event.setCancelled(true);
+                return;
+            }
         }
     }
 
@@ -95,39 +68,34 @@ public class PistonMovement extends Protection {
     public void onPistonRetract(BlockPistonRetractEvent event) {
         if (!event.isSticky()) return;
 
-        try {
-            Block piston = event.getBlock();
-            Claim pistonClaim = ClaimManager.getClaim(piston.getChunk());
-            BlockFace direction = event.getDirection();
+        Block piston = event.getBlock();
+        Claim pistonClaim = ClaimManager.getClaim(piston.getLocation());
+        BlockFace direction = event.getDirection();
 
-            List<Block> movedBlocks = event.getBlocks();
-            for (Block movedBlock : movedBlocks) {
-                Block destinationBlock = movedBlock.getRelative(direction);
+        List<Block> movedBlocks = event.getBlocks();
+        for (Block movedBlock : movedBlocks) {
+            Block destinationBlock = movedBlock.getRelative(direction);
 
-                Claim fromClaim = ClaimManager.getClaim(movedBlock.getChunk());
-                Claim toClaim = ClaimManager.getClaim(destinationBlock.getChunk());
+            Claim fromClaim = ClaimManager.getClaim(movedBlock.getLocation());
+            Claim toClaim = ClaimManager.getClaim(destinationBlock.getLocation());
 
-                if (pistonClaim != null && !requiresProtection(fromClaim)) {
-                    continue;
-                }
+            if (pistonClaim != null && !requiresProtection(fromClaim)) {
+                continue;
+            }
 
-                // Optimization: Skip extra checks if staying in same chunk
-                if (movedBlock.getChunk().equals(destinationBlock.getChunk())) {
-                    if (!isPistonMoveAllowed(pistonClaim, fromClaim, fromClaim)) {
-                        event.setCancelled(true);
-                        return;
-                    }
-                    continue;
-                }
-
-                if (!isPistonMoveAllowed(pistonClaim, fromClaim, toClaim)) {
+            // Optimization: Skip extra checks if staying in same chunk
+            if (movedBlock.getChunk().equals(destinationBlock.getChunk())) {
+                if (!isPistonMoveAllowed(pistonClaim, fromClaim, fromClaim)) {
                     event.setCancelled(true);
                     return;
                 }
+                continue;
             }
-        } catch (SQLException e) {
-            CoreMain.plugin.getLogger().severe("An SQLException occurred in ClaimPistonMovementListener in onPistonRetract: " + e);
-            event.setCancelled(true);
+
+            if (!isPistonMoveAllowed(pistonClaim, fromClaim, toClaim)) {
+                event.setCancelled(true);
+                return;
+            }
         }
     }
 

@@ -138,25 +138,25 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- Creating Javadocs page -->
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-javadoc-plugin</artifactId>-->
-<!--                <version>3.6.3</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>attach-javadocs</id>-->
-<!--                        <goals><goal>jar</goal></goals>-->
+<!--             Creating Javadocs page -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.6.3</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals><goal>jar</goal></goals>
 
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--                <configuration>-->
-<!--                    <additionalJOption>-Xdoclint:none</additionalJOption>-->
-<!--                    <doctitle>BuildMC-Core API Documentation</doctitle>-->
-<!--                    <windowtitle>BuildMC-Core API</windowtitle>-->
-<!--                    <encoding>UTF-8</encoding>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
+                    </execution>
+                </executions>
+                <configuration>
+                    <additionalJOption>-Xdoclint:none</additionalJOption>
+                    <doctitle>BuildMC-Core API Documentation</doctitle>
+                    <windowtitle>BuildMC-Core API</windowtitle>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

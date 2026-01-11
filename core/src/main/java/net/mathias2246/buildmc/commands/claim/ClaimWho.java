@@ -13,23 +13,13 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.SQLException;
 import java.util.Map;
 import java.util.UUID;
 
 public class ClaimWho {
 
     public static int whoClaimCommand(@NotNull Player player, @NotNull Location location) {
-        Claim claim;
-
-        try {
-            claim = ClaimManager.getClaim(location);
-        } catch (SQLException e) {
-            CoreMain.plugin.getLogger().severe("An error occurred while getting a claim from the database: " + e.getMessage());
-            CoreMain.plugin.sendMessage(player, Component.translatable("messages.error.sql"));
-            CoreMain.soundManager.playSound(player, SoundUtil.mistake);
-            return 0;
-        }
+        Claim claim = ClaimManager.getClaim(location);
 
         if (claim == null) {
             CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.who.unclaimed"));

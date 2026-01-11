@@ -8,14 +8,17 @@ import net.mathias2246.buildmc.api.event.claims.ClaimCreateEvent;
 import net.mathias2246.buildmc.api.event.claims.ClaimProtectionChangeEvent;
 import net.mathias2246.buildmc.api.event.claims.ClaimRemoveEvent;
 import net.mathias2246.buildmc.api.event.claims.ClaimWhitelistChangeEvent;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ConcurrentMap;
@@ -71,13 +74,7 @@ public class ClaimManager {
     public static boolean isPlayerAllowed(@NotNull Player player, @NotNull Collection<NamespacedKey> protections, Location location) {
         if (player.hasPermission("buildmc.bypass-claims")) return true;
 
-        Claim claim;
-        try {
-            claim = ClaimManager.getClaim(location);
-        } catch (SQLException e) {
-            plugin.getLogger().severe("SQL Error while getting claim: " + e);
-            return true; // Allow by default on error. Not sure what to do here.
-        }
+        Claim claim = ClaimManager.getClaim(location);
 
         // Allow if no claim found
         if (claim == null) return true;
@@ -185,13 +182,7 @@ public class ClaimManager {
     public static boolean isPlayerAllowed(@NotNull Player player, @NotNull NamespacedKey protection, Location location) {
         if (player.hasPermission("buildmc.bypass-claims")) return true;
 
-        Claim claim;
-        try {
-            claim = ClaimManager.getClaim(location);
-        } catch (SQLException e) {
-            plugin.getLogger().severe("SQL Error while getting claim: " + e);
-            return true; // Allow by default on error. Not sure what to do here.
-        }
+        Claim claim = getClaim(location);
 
         // Allow if no claim found
         if (claim == null) return true;
@@ -310,22 +301,25 @@ public class ClaimManager {
     }
 
     /**@return True if, the given chunk is claimed*/
-    public static boolean isClaimed(Chunk chunk) {
-        return chunk.getPersistentDataContainer().has(CLAIM_PCD_KEY);
+    public static boolean isClaimed(@NotNull Location loc) {
+        return claimTable.isInsideClaim(CoreMain.databaseManager.getConnection(), loc);
     }
 
     /**@return The id of the claim, or null if not claimed.*/
-    @Nullable public static Long getClaimId(Chunk chunk) {
-        return chunk.getPersistentDataContainer().get(CLAIM_PCD_KEY, PersistentDataType.LONG);
+    @Nullable public static Long getClaimId(@NotNull Location loc) {
+        return claimTable.getClaimIdAt(CoreMain.databaseManager.getConnection(), loc);
     }
 
-    /**@return The claim on this chunk, or null if not claimed.
-     * @throws SQLException If an internal database error occurred.*/
-    @Nullable public static Claim getClaim(Chunk chunk) throws SQLException {
-        var claimId = getClaimId(chunk);
-        if (claimId == null) return null;
-
-        return CoreMain.claimTable.getClaimById(CoreMain.databaseManager.getConnection(), claimId);
+    @Nullable public static Claim getClaim(@NotNull Location loc) {
+        Connection conn = CoreMain.databaseManager.getConnection();
+        Long id = claimTable.getClaimIdAt(conn, loc);
+        if (id == null) return null;
+        try {
+            return claimTable.getClaimById(conn, id);
+        } catch (SQLException e) {
+            plugin.getLogger().severe("SQL Error while trying to get a claim by ID: " + e);
+        }
+        return null;
     }
 
     @Nullable public static Claim getClaimByID(long claimID) {
@@ -337,54 +331,34 @@ public class ClaimManager {
         return null;
     }
 
-    /**
-     * @throws SQLException If an internal database error occurred.
-     */
-    @Nullable
-    public static Claim getClaim(@NotNull Location location) throws SQLException {
-        World world = location.getWorld();
-
-        if (world == null) {
-            throw new IllegalArgumentException("Location does not belong to a world.");
-        }
-
-        if (!world.isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4)) {
-            return null;
-        }
-
-        Chunk chunk = location.getChunk(); // safe now
-        return getClaim(chunk);
-    }
-
-
     public static List<Claim> getAllClaims() throws SQLException {
         return CoreMain.claimTable.getAllClaims(CoreMain.databaseManager.getConnection());
     }
 
     /**Tries to claim the given area for the given player.
      * @return True, if successfully claimed the area.*/
-    public static boolean tryClaimPlayerArea(@NotNull Player player, String claimName, Location pos1, Location pos2) {
+    public static Long tryClaimPlayerArea(@NotNull Player player, String claimName, Location pos1, Location pos2) {
         return tryClaimArea(ClaimType.PLAYER, player.getUniqueId().toString(), claimName, pos1, pos2);
     }
 
     /**Tries to claim the given area for the given team.
      * @return True, if successfully claimed the area.*/
-    public static boolean tryClaimTeamArea(@NotNull Team team, String claimName, Location pos1, Location pos2) {
+    public static Long tryClaimTeamArea(@NotNull Team team, String claimName, Location pos1, Location pos2) {
         return tryClaimArea(ClaimType.TEAM, team.getName(), claimName, pos1, pos2);
     }
 
-    public static boolean tryClaimServerArea(String claimName, Location pos1, Location pos2) {
+    public static Long tryClaimServerArea(String claimName, Location pos1, Location pos2) {
         return tryClaimArea(ClaimType.SERVER, "server", claimName, pos1, pos2);
     }
 
-    public static boolean tryClaimPlaceholderArea(String claimName, Location pos1, Location pos2) {
+    public static Long tryClaimPlaceholderArea(String claimName, Location pos1, Location pos2) {
         return tryClaimArea(ClaimType.PLACEHOLDER, "server", claimName, pos1, pos2);
     }
 
-    public static boolean tryClaimArea(@NotNull ClaimType type, @NotNull String ownerId, @NotNull String claimName, @NotNull Location pos1, @NotNull Location pos2) {
-        if (pos1.getWorld() == null || pos2.getWorld() == null) return false;
+    public static Long tryClaimArea(@NotNull ClaimType type, @NotNull String ownerId, @NotNull String claimName, @NotNull Location pos1, @NotNull Location pos2) {
+        if (pos1.getWorld() == null || pos2.getWorld() == null) return null;
 
-        if (pos1.getWorld() != pos2.getWorld()) return false;
+        if (pos1.getWorld() != pos2.getWorld()) return null;
 
         UUID worldId = pos1.getWorld().getUID();
 
@@ -407,37 +381,23 @@ public class ClaimManager {
                 new ArrayList<>()
         );
 
+        ClaimCreateEvent event = new ClaimCreateEvent(
+                claim
+        );
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return null;
+
         long claimId;
         try {
             claimId = CoreMain.claimTable.insertClaim(CoreMain.databaseManager.getConnection(), claim);
         } catch (SQLException e) {
             plugin.getLogger().severe("Failed to insert claim into database: " + e);
-            return false;
+            return null;
         }
 
-        if (claimId == -1) return false;
+        if (claimId == -1) return null;
 
         claim.setID(claimId);
-
-        // Set persistent chunk data
-        var startX = Math.min(chunkX1, chunkX2);
-        var endX = Math.max(chunkX1, chunkX2);
-        var startZ = Math.min(chunkZ1, chunkZ2);
-        var endZ = Math.max(chunkZ1, chunkZ2);
-
-        for (int x = startX; x <= endX; x++) {
-            for (int z = startZ; z <= endZ; z++) {
-                var chunk = pos1.getWorld().getChunkAt(x, z);
-                var pdc = chunk.getPersistentDataContainer();
-                pdc.set(CLAIM_PCD_KEY, PersistentDataType.LONG, claimId);
-            }
-        }
-
-        ClaimCreateEvent event = new ClaimCreateEvent(
-                claim
-        );
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) return false;
 
         // Update ownership mapping
         switch (type) {
@@ -451,7 +411,7 @@ public class ClaimManager {
             case PLACEHOLDER -> placeholderClaims.add(claimId);
         }
 
-        return true;
+        return claimId;
     }
 
     /**Adds a player to a Claim whitelist by claimID.*/

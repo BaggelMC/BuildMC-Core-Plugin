@@ -3,7 +3,7 @@ package net.mathias2246.buildmc.event.claims;
 import net.mathias2246.buildmc.api.event.claims.PlayerEnterClaimEvent;
 import net.mathias2246.buildmc.api.event.claims.PlayerLeaveClaimEvent;
 import net.mathias2246.buildmc.claims.ClaimManager;
-import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -25,16 +25,16 @@ public class PlayerCrossClaimBoundariesListener implements Listener {
     public void onPlayerMove(PlayerMoveEvent event) {
         if (event.getTo() == null) return;
 
-        Chunk oldChunk = event.getFrom().getChunk();
-        Chunk newChunk = event.getTo().getChunk();
+        Location oldLoc = event.getFrom();
+        Location newLoc = event.getTo();
 
         // Ignore movement within the same chunk
-        if (oldChunk.equals(newChunk)) return;
+        if (oldLoc.equals(newLoc)) return;
 
         Player player = event.getPlayer();
 
-        Long oldClaim = ClaimManager.getClaimId(oldChunk);
-        Long newClaim = ClaimManager.getClaimId(newChunk);
+        Long oldClaim = ClaimManager.getClaimId(oldLoc);
+        Long newClaim = ClaimManager.getClaimId(newLoc);
 
         // If claim status hasn’t changed, ignore
         if (Objects.equals(oldClaim, newClaim)) return;

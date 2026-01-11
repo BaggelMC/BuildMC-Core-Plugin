@@ -101,7 +101,7 @@ public class ClaimCreate {
                     return 0;
                 }
 
-                boolean success = ClaimManager.tryClaimPlayerArea(player, name, pos1, pos2);
+                boolean success = ClaimManager.tryClaimPlayerArea(player, name, pos1, pos2) != null;
                 if (success) {
                     CoreMain.plugin.sendMessage(player, Message.msg(player, "messages.claims.create.success", Map.of("remaining_claims", String.valueOf(remainingChunks - newClaimChunks))));
                     CoreMain.soundManager.playSound(player, SoundUtil.success);
@@ -145,7 +145,7 @@ public class ClaimCreate {
                     return 0;
                 }
 
-                boolean success = ClaimManager.tryClaimTeamArea(team, name, pos1, pos2);
+                boolean success = ClaimManager.tryClaimTeamArea(team, name, pos1, pos2) != null;
                 if (success) {
                     CoreMain.plugin.sendMessage(player, Message.msg(player, "messages.claims.create.success", Map.of("remaining_claims", String.valueOf(remainingChunks - newClaimChunks))));
                     removeSelectionData(player);
@@ -180,8 +180,8 @@ public class ClaimCreate {
                 }
 
                 boolean success = switch (type.toLowerCase()) {
-                    case "server" -> ClaimManager.tryClaimServerArea(name, pos1, pos2);
-                    case "placeholder" -> ClaimManager.tryClaimPlaceholderArea(name, pos1, pos2);
+                    case "server" -> ClaimManager.tryClaimServerArea(name, pos1, pos2) != null;
+                    case "placeholder" -> ClaimManager.tryClaimPlaceholderArea(name, pos1, pos2) != null;
                     default -> false;
                 };
 

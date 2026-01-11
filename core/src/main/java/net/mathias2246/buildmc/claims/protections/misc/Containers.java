@@ -3,14 +3,11 @@ package net.mathias2246.buildmc.claims.protections.misc;
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.Protection;
-import net.mathias2246.buildmc.api.item.ItemUtil;
 import net.mathias2246.buildmc.claims.ClaimManager;
-import net.mathias2246.buildmc.ui.UIUtil;
-import net.mathias2246.buildmc.util.Message;
+import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -26,12 +23,9 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTakeLecternBookEvent;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.SQLException;
-import java.util.List;
 import java.util.Objects;
 
 public class Containers extends Protection {
@@ -50,18 +44,7 @@ public class Containers extends Protection {
     public @NotNull GuiItem getDisplay(@NotNull Player uiHolder, @NotNull Gui gui) {
         String t = getTranslationBaseKey();
 
-        ItemStack displayBase = new ItemStack(Material.CHEST);
-        ItemUtil.editMeta(displayBase, (meta) -> {
-            meta.setItemName(LegacyComponentSerializer.legacySection().serialize(
-                    Message.msg(uiHolder, t+".name")
-            ));
-            meta.setLore(List.of(LegacyComponentSerializer.legacySection().serialize(Message.msg(uiHolder, t + ".lore")).split("\n")));
-        });
-
-        return new GuiItem(
-                displayBase,
-                UIUtil.noInteract
-        );
+        return ProtectionUtil.createDisplayItem(uiHolder, Material.CHEST, t);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -72,13 +55,7 @@ public class Containers extends Protection {
 
         if (loc == null) return;
 
-        Claim claim;
-        try {
-            claim = ClaimManager.getClaim(loc);
-        } catch (SQLException e) {
-            CoreMain.plugin.getLogger().severe("SQL error while getting claim: " + e);
-            return;
-        }
+        Claim claim = ClaimManager.getClaim(loc);
         if (claim == null) return;
 
         if (claim.getWhitelistedPlayers().contains(player.getUniqueId())) return;
@@ -123,13 +100,7 @@ public class Containers extends Protection {
         var block = event.getLectern();
         var player = event.getPlayer();
 
-        Claim claim;
-        try {
-            claim = ClaimManager.getClaim(block.getLocation());
-        } catch (SQLException e) {
-            CoreMain.plugin.getLogger().severe("SQL error while getting claim: " + e);
-            return;
-        }
+        Claim claim = ClaimManager.getClaim(block.getLocation());
         if (claim == null) return;
 
         if (!ClaimManager.isPlayerAllowed(player, getKey(), claim)) {
@@ -155,13 +126,7 @@ public class Containers extends Protection {
         if (!isChiseledBookshelf && !isDecoratedPot && !isShelf)
             return;
 
-        Claim claim;
-        try {
-            claim = ClaimManager.getClaim(block.getLocation());
-        } catch (SQLException e) {
-            CoreMain.plugin.getLogger().severe("SQL error while getting claim: " + e);
-            return;
-        }
+        Claim claim = ClaimManager.getClaim(block.getLocation());
 
         if (claim == null) return;
 
