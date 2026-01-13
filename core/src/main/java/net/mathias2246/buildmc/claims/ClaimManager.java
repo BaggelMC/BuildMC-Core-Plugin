@@ -697,7 +697,7 @@ public class ClaimManager {
     }
 
     public static void updateClaimOwner(long claimId, @NotNull String newOwnerId) throws SQLException {
-        claimTable.updateClaimName(CoreMain.databaseManager.getConnection(), claimId, newOwnerId);
+        claimTable.updateClaimOwner(CoreMain.databaseManager.getConnection(), claimId, newOwnerId);
     }
 
 }
