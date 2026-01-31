@@ -8,10 +8,7 @@ import net.mathias2246.buildmc.api.event.claims.ClaimCreateEvent;
 import net.mathias2246.buildmc.api.event.claims.ClaimProtectionChangeEvent;
 import net.mathias2246.buildmc.api.event.claims.ClaimRemoveEvent;
 import net.mathias2246.buildmc.api.event.claims.ClaimWhitelistChangeEvent;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.ApiStatus;
@@ -66,6 +63,29 @@ public class ClaimManager {
      * @return the team the player is currently on, or null if they have no team */
     public static @Nullable Team getPlayerTeam(@NotNull Player player) {
         return player.getScoreboard().getEntryTeam(player.getName());
+    }
+
+    public static @NotNull String getOwnerName(@NotNull Claim claim) {
+        ClaimType claimType = claim.getType();
+
+        switch (claimType) {
+            case TEAM:
+                return claim.getOwnerId();
+            case PLAYER:
+                UUID ownerId = UUID.fromString(claim.getOwnerId());
+                OfflinePlayer owner = Bukkit.getOfflinePlayer(ownerId);
+                String ownerName = owner.getName();
+
+                if (ownerName == null) {
+                    ownerName = "Unknown ("+ownerId+")";
+                }
+
+                return ownerName;
+            case SERVER, PLACEHOLDER:
+                return "Server";
+            default:
+                return "Unknown";
+        }
     }
 
     /**Checks if the given player is allowed on this claim.

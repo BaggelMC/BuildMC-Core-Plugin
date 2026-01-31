@@ -31,6 +31,14 @@ public interface ClaimManager {
     @Nullable Team getPlayerTeam(@NotNull Player player);
 
     /**
+     * Gets the name of the owner of the given claim.
+     *
+     * @param claim the claim to get the owners name from.
+     * @return the name of the claim owner
+     */
+    @NotNull String getOwnerName(@NotNull Claim claim);
+
+    /**
      * Checks whether a player is allowed to create a claim in a specific world.
      * <p>
      *     Players can bypass this by using the <i>'buildmc.bypass-claim-dimension-list'</i> permission.

@@ -23,6 +23,11 @@ public class ClaimManagerImpl implements ClaimManager {
     }
 
     @Override
+    public @NotNull String getOwnerName(@NotNull Claim claim) {
+        return net.mathias2246.buildmc.claims.ClaimManager.getOwnerName(claim);
+    }
+
+    @Override
     public boolean isWorldAllowed(@NotNull World world) {
         return net.mathias2246.buildmc.claims.ClaimManager.isWorldAllowed(world);
     }

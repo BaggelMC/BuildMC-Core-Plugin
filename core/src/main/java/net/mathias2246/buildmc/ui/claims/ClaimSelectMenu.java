@@ -9,14 +9,12 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
-import net.mathias2246.buildmc.api.claims.ClaimType;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.ui.UIUtil;
 import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.SoundUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -144,7 +142,7 @@ public class ClaimSelectMenu {
                 default -> typeMessage = LEGACY_COMPONENT_SERIALIZER.serialize(Message.msg(player, "messages.claims.ui.select-menu.unknown-type"));
             }
 
-            lore.add("Owner: "+getOwnerDisplayName(claim));
+            lore.add("Owner: "+ClaimManager.getOwnerName(claim));
 
             lore.add(typeMessage);
 
@@ -163,25 +161,5 @@ public class ClaimSelectMenu {
         }
 
         return items;
-    }
-
-    private static String getOwnerDisplayName(Claim claim) {
-        ClaimType claimType = claim.getType();
-
-        if (claimType == ClaimType.TEAM) return claim.getOwnerId();
-        else if (claimType == ClaimType.PLAYER) {
-            UUID ownerId = UUID.fromString(claim.getOwnerId());
-            OfflinePlayer owner = Bukkit.getOfflinePlayer(ownerId);
-            String ownerName = owner.getName();
-
-            if (ownerName == null) {
-                ownerName = "Unknown ("+ownerId+")";
-            }
-
-            return ownerName;
-        } else if (claimType == ClaimType.SERVER || claimType == ClaimType.PLACEHOLDER) {
-            return "Server";
-        }
-        return "Unknown";
     }
 }
