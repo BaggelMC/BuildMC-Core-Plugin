@@ -3,4 +3,4 @@ database:
   serverUrl: "jdbc:h2:tcp://localhost/./database" # DO NOT TOUCH IF YOU DON'T KNOW WHAT YOU'RE DOING! JDBC URL for H2 server mode.
   serverPort: 9092 # Make sure the port is free to use
 
-  h2Args: "TRACE_LEVEL_FILE=0;TRACE_LEVEL_SYSTEM_OUT=0" # DO NOT TOUCH IF YOU DON'T KNOW WHAT YOU'RE DOING! Args for H2 DB, appended to server and file URL.
+  h2Args: "TRACE_LEVEL_FILE=0;TRACE_LEVEL_SYSTEM_OUT=0;WRITE_DELAY=500;DB_CLOSE_DELAY=-1" # DO NOT TOUCH IF YOU DON'T KNOW WHAT YOU'RE DOING! Args for H2 DB, appended to server and file URL.
