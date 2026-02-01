@@ -297,9 +297,6 @@ disabled-commands:
   # Seed command. This is done to prevent the seed from being accessible, even to admins.
   - "minecraft:seed"
 
-  # Dangerous server control
-  - "minecraft:save-off"
-
 player-head:
   # When true, players will drop their head on death.
   on-death: true # Default: true

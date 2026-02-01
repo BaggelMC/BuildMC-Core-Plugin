@@ -52,7 +52,7 @@ public class ClaimRemoveEvent extends CustomEvent {
      * Convenience method for single-claim operations.
      * <p>
      * If multiple claims are present, this returns the first one.
-     * Plugins that care about bulk operations should use {@link #getClaims()}.
+     * Plugins that care about bulk operations (BulkMC-Core xD) should use {@link #getClaims()}.
      *
      * @return the first claim in the list
      */

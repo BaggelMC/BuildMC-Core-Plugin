@@ -450,12 +450,36 @@ public class ClaimManager {
     }
 
     public static Map<Claim, Long> registerClaims(List<Claim> claims) throws SQLException {
+        Map<Claim, Long> claimIDs = claimTable.insertClaims(CoreMain.databaseManager.getConnection(), claims);
+
+        for (Map.Entry<Claim, Long> entry : claimIDs.entrySet()) {
+            Claim claim = entry.getKey();
+            Long id = entry.getValue();
+
+            if (id == null) continue;
+
+            claim.setID(id);
+
+            switch (claim.getType()) {
+                case PLAYER -> {
+                    UUID uuid = UUID.fromString(claim.getOwnerId());
+                    playerOwner.computeIfAbsent(uuid, k -> new ArrayList<>()).add(id);
+                }
+                case TEAM -> teamOwner
+                        .computeIfAbsent(claim.getOwnerId(), k -> new ArrayList<>())
+                        .add(id);
+                case SERVER -> serverClaims.add(id);
+                case PLACEHOLDER -> placeholderClaims.add(id);
+            }
+        }
+
         ClaimCreateEvent event = new ClaimCreateEvent(
                 claims
         );
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) return null;
-        return claimTable.insertClaims(CoreMain.databaseManager.getConnection(), claims);
+
+        return claimIDs;
     }
 
     public static void deleteClaims(Collection<Claim> claims) throws SQLException, IllegalArgumentException {
@@ -476,6 +500,18 @@ public class ClaimManager {
                 throw new IllegalArgumentException("Claim has no ID: " + claim.getName());
             }
             ids.add(id);
+
+            switch (claim.getType()) {
+                case PLAYER -> {
+                    UUID uuid = UUID.fromString(claim.getOwnerId());
+                    playerOwner.computeIfAbsent(uuid, k -> new ArrayList<>()).add(id);
+                }
+                case TEAM -> teamOwner
+                        .computeIfAbsent(claim.getOwnerId(), k -> new ArrayList<>())
+                        .add(id);
+                case SERVER -> serverClaims.add(id);
+                case PLACEHOLDER -> placeholderClaims.add(id);
+            }
         }
 
         claimTable.deleteClaims(CoreMain.databaseManager.getConnection(), ids);
