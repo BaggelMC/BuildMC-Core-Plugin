@@ -375,7 +375,7 @@ public class ClaimManager {
         return tryClaimArea(ClaimType.PLACEHOLDER, "server", claimName, pos1, pos2);
     }
 
-    public static Long tryClaimArea(@NotNull ClaimType type, @NotNull String ownerId, @NotNull String claimName, @NotNull Location pos1, @NotNull Location pos2) {
+    public static @Nullable Long tryClaimArea(@NotNull ClaimType type, @NotNull String ownerId, @NotNull String claimName, @NotNull Location pos1, @NotNull Location pos2) {
         if (pos1.getWorld() == null || pos2.getWorld() == null) return null;
 
         if (pos1.getWorld() != pos2.getWorld()) return null;
@@ -401,9 +401,24 @@ public class ClaimManager {
                 new ArrayList<>()
         );
 
+        return tryClaimArea(claim);
+    }
+
+    public static @Nullable Long tryClaimArea(@NotNull Claim claim) {
+
+        Location pos1 = new Location(Bukkit.getWorld(claim.getWorldId()), claim.getChunkX1() << 4, 0, claim.getChunkZ1() << 4);
+        Location pos2 = new Location(Bukkit.getWorld(claim.getWorldId()), claim.getChunkX2() << 4, 0, claim.getChunkZ2() << 4);
+
+        if (pos1.getWorld() == null || pos2.getWorld() == null) return null;
+
+        if (pos1.getWorld() != pos2.getWorld()) return null;
+
+        UUID worldId = pos1.getWorld().getUID();
+
         ClaimCreateEvent event = new ClaimCreateEvent(
                 claim
         );
+
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) return null;
 
@@ -420,12 +435,12 @@ public class ClaimManager {
         claim.setID(claimId);
 
         // Update ownership mapping
-        switch (type) {
+        switch (claim.getType()) {
             case PLAYER -> {
-                UUID uuid = UUID.fromString(ownerId);
+                UUID uuid = UUID.fromString(claim.getOwnerId());
                 playerOwner.computeIfAbsent(uuid, k -> new ArrayList<>()).add(claimId);
             }
-            case TEAM -> teamOwner.computeIfAbsent(ownerId, k -> new ArrayList<>()).add(claimId);
+            case TEAM -> teamOwner.computeIfAbsent(claim.getOwnerId(), k -> new ArrayList<>()).add(claimId);
 
             case SERVER -> serverClaims.add(claimId);
             case PLACEHOLDER -> placeholderClaims.add(claimId);

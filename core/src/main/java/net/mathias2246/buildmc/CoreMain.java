@@ -191,6 +191,7 @@ public final class CoreMain {
                 }
             }
 
+
             var hideAllProtections = CoreMain.plugin.getConfig().getBoolean("claims.hide-all-protections");
             for (Protection protection : protectionsRegistry) {
                 var def = protection.isDefaultEnabled();

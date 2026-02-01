@@ -2,6 +2,7 @@ package net.mathias2246.buildmc.claims;
 
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.ClaimManager;
+import net.mathias2246.buildmc.api.claims.ClaimType;
 import net.mathias2246.buildmc.api.claims.Protection;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -10,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.sql.SQLException;
 import java.util.Collection;
@@ -115,7 +117,29 @@ public class ClaimManagerImpl implements ClaimManager {
     }
 
     @Override
-    public Long tryClaimPlayerArea(@NotNull Player player, String claimName, Location pos1, Location pos2) throws IllegalArgumentException {
+    public @Nullable Long tryClaimArea(@NotNull ClaimType type, @NotNull String claimOwner, @NotNull String claimName, Location pos1, Location pos2) throws IllegalArgumentException {
+        if (pos1 == null || pos2 == null) {
+            throw new IllegalArgumentException("Positions cannot be null.");
+        }
+
+        if (pos1.getWorld() == null || pos2.getWorld() == null) {
+            throw new IllegalArgumentException("Both locations must have a world.");
+        }
+
+        if (!pos1.getWorld().equals(pos2.getWorld())) {
+            throw new IllegalArgumentException("Locations must be in the same world.");
+        }
+
+        return net.mathias2246.buildmc.claims.ClaimManager.tryClaimArea(type, claimOwner, claimName, pos1, pos2);
+    }
+
+    @Override
+    public @Nullable Long tryClaimArea(@NotNull Claim claim) {
+        return net.mathias2246.buildmc.claims.ClaimManager.tryClaimArea(claim);
+    }
+
+    @Override
+    public Long tryClaimPlayerArea(@NotNull Player player, @NotNull String claimName, Location pos1, Location pos2) throws IllegalArgumentException {
         if (pos1 == null || pos2 == null) {
             throw new IllegalArgumentException("Positions cannot be null.");
         }
@@ -132,7 +156,7 @@ public class ClaimManagerImpl implements ClaimManager {
     }
 
     @Override
-    public Long tryClaimTeamArea(@NotNull Team team, String claimName, Location pos1, Location pos2) throws IllegalArgumentException {
+    public Long tryClaimTeamArea(@NotNull Team team, @NonNull String claimName, Location pos1, Location pos2) throws IllegalArgumentException {
         if (pos1 == null || pos2 == null) {
             throw new IllegalArgumentException("Positions cannot be null.");
         }
@@ -149,7 +173,7 @@ public class ClaimManagerImpl implements ClaimManager {
     }
 
     @Override
-    public Long tryClaimServerArea(String claimName, Location pos1, Location pos2) throws IllegalArgumentException {
+    public Long tryClaimServerArea(@NotNull String claimName, Location pos1, Location pos2) throws IllegalArgumentException {
         if (pos1 == null || pos2 == null) {
             throw new IllegalArgumentException("Positions cannot be null.");
         }
@@ -166,7 +190,7 @@ public class ClaimManagerImpl implements ClaimManager {
     }
 
     @Override
-    public Long tryClaimPlaceholderArea(String claimName, Location pos1, Location pos2) throws IllegalArgumentException {
+    public Long tryClaimPlaceholderArea(@NotNull String claimName, @NotNull Location pos1, @NotNull Location pos2) throws IllegalArgumentException {
         if (pos1 == null || pos2 == null) {
             throw new IllegalArgumentException("Positions cannot be null.");
         }
