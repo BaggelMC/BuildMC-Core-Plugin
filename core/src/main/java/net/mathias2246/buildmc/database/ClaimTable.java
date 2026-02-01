@@ -31,72 +31,72 @@ public class ClaimTable implements DatabaseTable {
     public void createTable(Connection conn) throws SQLException {
         try (Statement stmt = conn.createStatement()) {
             stmt.execute("""
-            CREATE TABLE IF NOT EXISTS claims (
-                id IDENTITY PRIMARY KEY,
-                type VARCHAR(16) NOT NULL,
-                owner_id VARCHAR(64) NOT NULL,
-                world_id UUID NOT NULL,
-                chunk_x1 INT NOT NULL,
-                chunk_z1 INT NOT NULL,
-                chunk_x2 INT NOT NULL,
-                chunk_z2 INT NOT NULL,
-                name VARCHAR(100)
-            );
-        """);
+                CREATE TABLE IF NOT EXISTS claims (
+                    id IDENTITY PRIMARY KEY,
+                    type VARCHAR(16) NOT NULL,
+                    owner_id VARCHAR(64) NOT NULL,
+                    world_id UUID NOT NULL,
+                    chunk_x1 INT NOT NULL,
+                    chunk_z1 INT NOT NULL,
+                    chunk_x2 INT NOT NULL,
+                    chunk_z2 INT NOT NULL,
+                    name VARCHAR(100)
+                );
+            """);
 
             stmt.execute("""
-            CREATE TABLE IF NOT EXISTS claim_whitelisted_players (
-                claim_id BIGINT NOT NULL,
-                player_uuid UUID NOT NULL,
-                PRIMARY KEY (claim_id, player_uuid),
-                FOREIGN KEY (claim_id) REFERENCES claims(id) ON DELETE CASCADE
-            );
-        """);
+                CREATE TABLE IF NOT EXISTS claim_whitelisted_players (
+                    claim_id BIGINT NOT NULL,
+                    player_uuid UUID NOT NULL,
+                    PRIMARY KEY (claim_id, player_uuid),
+                    FOREIGN KEY (claim_id) REFERENCES claims(id) ON DELETE CASCADE
+                );
+            """);
 
             stmt.execute("""
-            CREATE TABLE IF NOT EXISTS claim_protection_flags (
-                claim_id BIGINT NOT NULL,
-                flag VARCHAR(64) NOT NULL,
-                PRIMARY KEY (claim_id, flag),
-                FOREIGN KEY (claim_id) REFERENCES claims(id) ON DELETE CASCADE
-            );
-        """);
+                CREATE TABLE IF NOT EXISTS claim_protection_flags (
+                    claim_id BIGINT NOT NULL,
+                    flag VARCHAR(64) NOT NULL,
+                    PRIMARY KEY (claim_id, flag),
+                    FOREIGN KEY (claim_id) REFERENCES claims(id) ON DELETE CASCADE
+                );
+            """);
 
             stmt.execute("""
-            CREATE INDEX IF NOT EXISTS idx_claims_owner_id\s
-            ON claims(owner_id);
-       \s""");
+                CREATE INDEX IF NOT EXISTS idx_claims_owner_id\s
+                ON claims(owner_id);
+           \s""");
 
             stmt.execute("""
-            CREATE INDEX IF NOT EXISTS idx_claims_world_id\s
-            ON claims(world_id);
-       \s""");
+                CREATE INDEX IF NOT EXISTS idx_claims_world_id\s
+                ON claims(world_id);
+           \s""");
 
             stmt.execute("""
-            CREATE INDEX IF NOT EXISTS idx_claims_chunks\s
-            ON claims(world_id, chunk_x1, chunk_z1, chunk_x2, chunk_z2);
-       \s""");
+                CREATE INDEX IF NOT EXISTS idx_claims_chunks\s
+                ON claims(world_id, chunk_x1, chunk_z1, chunk_x2, chunk_z2);
+           \s""");
             stmt.execute("""
-            CREATE INDEX IF NOT EXISTS idx_whitelisted_claim_id\s
-            ON claim_whitelisted_players(claim_id);
-       \s""");
+                CREATE INDEX IF NOT EXISTS idx_whitelisted_claim_id\s
+                ON claim_whitelisted_players(claim_id);
+           \s""");
             // Index for reverse lookups by player (optional, but useful if you search claims by player)
             stmt.execute("""
-            CREATE INDEX IF NOT EXISTS idx_whitelisted_player_uuid\s
-            ON claim_whitelisted_players(player_uuid);
-       \s""");
+                CREATE INDEX IF NOT EXISTS idx_whitelisted_player_uuid\s
+                ON claim_whitelisted_players(player_uuid);
+           \s""");
             stmt.execute("""
-            CREATE INDEX IF NOT EXISTS idx_flags_claim_id\s
-            ON claim_protection_flags(claim_id);
-       \s""");
+                CREATE INDEX IF NOT EXISTS idx_flags_claim_id\s
+                ON claim_protection_flags(claim_id);
+           \s""");
         }
     }
 
     public long insertClaim(Connection conn, Claim claim) throws SQLException {
         try (PreparedStatement ps = conn.prepareStatement("""
-        INSERT INTO claims (type, owner_id, world_id, chunk_x1, chunk_z1, chunk_x2, chunk_z2, name)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    """, Statement.RETURN_GENERATED_KEYS)) {
+            INSERT INTO claims (type, owner_id, world_id, chunk_x1, chunk_z1, chunk_x2, chunk_z2, name)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """, Statement.RETURN_GENERATED_KEYS)) {
 
             ps.setString(1, claim.getType().name());
             ps.setString(2, claim.getOwnerId());
@@ -188,6 +188,132 @@ public class ClaimTable implements DatabaseTable {
 
     public boolean isInsideClaim(@NotNull Connection conn, @NotNull Location location) {
         return getClaimIdAt(conn, location) != null;
+    }
+
+    public Map<Claim, Long> insertClaims(Connection conn, List<Claim> claims) throws SQLException {
+        if (claims.isEmpty()) return Collections.emptyMap();
+
+        String sql = """
+            INSERT INTO claims (type, owner_id, world_id, chunk_x1, chunk_z1, chunk_x2, chunk_z2, name)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """;
+
+        Map<Claim, Long> generatedIds = new LinkedHashMap<>();
+
+        boolean oldAutoCommit = conn.getAutoCommit();
+        conn.setAutoCommit(false);
+
+        try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            for (Claim claim : claims) {
+                ps.setString(1, claim.getType().name());
+                ps.setString(2, claim.getOwnerId());
+                ps.setObject(3, claim.getWorldId());
+                ps.setInt(4, claim.getChunkX1());
+                ps.setInt(5, claim.getChunkZ1());
+                ps.setInt(6, claim.getChunkX2());
+                ps.setInt(7, claim.getChunkZ2());
+                ps.setString(8, claim.getName());
+                ps.addBatch();
+            }
+
+            ps.executeBatch();
+
+            try (ResultSet keys = ps.getGeneratedKeys()) {
+                int index = 0;
+                while (keys.next()) {
+                    long id = keys.getLong(1);
+                    Claim claim = claims.get(index++);
+                    generatedIds.put(claim, id);
+                    claim.setID(id);
+                    claimCache.put(id, claim);
+                }
+            }
+
+            insertWhitelistsBulk(conn, generatedIds);
+            insertProtectionsBulk(conn, generatedIds);
+
+            for (Claim claim : claims) {
+                updateRemainingClaims(claim);
+            }
+
+            conn.commit();
+        } catch (SQLException ex) {
+            conn.rollback();
+            throw ex;
+        } finally {
+            conn.setAutoCommit(oldAutoCommit);
+        }
+
+        return generatedIds;
+    }
+
+    public void deleteClaims(Connection conn, Collection<Long> ids) throws SQLException {
+        if (ids.isEmpty()) return;
+
+        String sql = "DELETE FROM claims WHERE id = ?";
+
+        boolean oldAutoCommit = conn.getAutoCommit();
+        conn.setAutoCommit(false);
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            for (Long id : ids) {
+                ps.setLong(1, id);
+                ps.addBatch();
+
+                Claim cached = claimCache.getIfPresent(id);
+                if (cached != null) {
+                    restoreRemainingClaims(cached);
+                    claimCache.invalidate(id);
+                }
+            }
+
+            ps.executeBatch();
+            conn.commit();
+        } catch (SQLException ex) {
+            conn.rollback();
+            throw ex;
+        } finally {
+            conn.setAutoCommit(oldAutoCommit);
+        }
+    }
+
+    private void insertWhitelistsBulk(Connection conn, Map<Claim, Long> claims) throws SQLException {
+        String sql = """
+            INSERT INTO claim_whitelisted_players (claim_id, player_uuid)
+            VALUES (?, ?)
+        """;
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            for (var entry : claims.entrySet()) {
+                long claimId = entry.getValue();
+                for (UUID uuid : entry.getKey().getWhitelistedPlayers()) {
+                    ps.setLong(1, claimId);
+                    ps.setObject(2, uuid);
+                    ps.addBatch();
+                }
+            }
+            ps.executeBatch();
+        }
+    }
+
+    private void insertProtectionsBulk(Connection conn, Map<Claim, Long> claims) throws SQLException {
+        String sql = """
+            INSERT INTO claim_protection_flags (claim_id, flag)
+            VALUES (?, ?)
+        """;
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            for (var entry : claims.entrySet()) {
+                long claimId = entry.getValue();
+                for (String flag : entry.getKey().getProtections()) {
+                    ps.setLong(1, claimId);
+                    ps.setString(2, flag);
+                    ps.addBatch();
+                }
+            }
+            ps.executeBatch();
+        }
     }
 
     private void updateRemainingClaims(Claim claim) {
@@ -355,13 +481,14 @@ public class ClaimTable implements DatabaseTable {
         }
     }
 
+    // TODO: Try to find a way to make this only one request every time
     private void loadClaimRelations(Connection conn, long claimId,
                                     Collection<UUID> whitelistedPlayers,
                                     Collection<String> protections) throws SQLException {
         // Whitelist
         try (PreparedStatement ps = conn.prepareStatement("""
-        SELECT player_uuid FROM claim_whitelisted_players WHERE claim_id = ?
-    """)) {
+            SELECT player_uuid FROM claim_whitelisted_players WHERE claim_id = ?
+        """)) {
             ps.setLong(1, claimId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -372,8 +499,8 @@ public class ClaimTable implements DatabaseTable {
 
         // Protection Flags
         try (PreparedStatement ps = conn.prepareStatement("""
-        SELECT flag FROM claim_protection_flags WHERE claim_id = ?
-    """)) {
+            SELECT flag FROM claim_protection_flags WHERE claim_id = ?
+        """)) {
             ps.setLong(1, claimId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -776,6 +903,4 @@ public class ClaimTable implements DatabaseTable {
 
         claimCache.put(claimId, claim);
     }
-
-
 }

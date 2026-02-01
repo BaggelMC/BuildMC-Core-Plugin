@@ -8,10 +8,9 @@ import java.util.Map;
 
 public class DeathRestoreUtil {
 
-    public static void restore(Player player, DeathRecord record) {
+    // TODO: Try make async
 
-        player.setLevel(0);
-        player.setExp(0f);
+    public static void restore(Player player, DeathRecord record) {
         player.giveExp(record.xp());
 
         for (Map.Entry<Integer, byte[]> entry : record.items().entrySet()) {
