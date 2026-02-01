@@ -254,6 +254,13 @@ messages:
         empty: <red>Du hast noch keine Claims.</red>
       edit-menu:
         title: '<gold>Claim bearbeiten: ''%claim%''</gold>'
+
+        info-name: "<aqua>Claim Info</aqua>"
+        info: |-
+          <gray>Von:</gray>  <green>X <blue>%minX%</blue> | Z <blue>%minZ%</blue></green>
+          <gray>Zu:</gray>   <green>X <blue>%maxX%</blue> | Z <blue>%maxZ%</blue></green>
+          <gray>In:</gray>    <green>%dimension%</green>
+
         protections: <green>Schutz</green>
         no-protections-available: <red>Dieser Claim Typ ermöglicht keinen Schutz.</red>
         whitelist: <aqua>Whitelist</aqua>

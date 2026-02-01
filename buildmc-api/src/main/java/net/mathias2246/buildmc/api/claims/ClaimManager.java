@@ -1,5 +1,7 @@
 package net.mathias2246.buildmc.api.claims;
 
+import net.mathias2246.buildmc.api.event.claims.ClaimCreateEvent;
+import net.mathias2246.buildmc.api.event.claims.ClaimRemoveEvent;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
@@ -11,10 +13,11 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
- * The {@code ClaimAPI} provides methods to interact with land claims,
+ * The {@link ClaimManager} provides methods to interact with land claims,
  * protections, and whitelists within the BuildMC plugin.
  * <p>
  * It allows checking claim ownership, player permissions, protections, and
@@ -262,6 +265,50 @@ public interface ClaimManager {
      * @throws IllegalArgumentException if any of the {@link Location}s are null, or they're not in the same world
      */
     Long tryClaimPlaceholderArea(String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
+
+    /**
+     * Registers multiple {@link Claim} objects in the system and persists them to the database.
+     * <p>
+     * This method will first fire a {@link ClaimCreateEvent} containing all provided claims.
+     * If the event is cancelled by any listener, the registration process is aborted
+     * and {@code null} is returned.
+     * </p>
+     * <p>
+     * If not cancelled, all claims are inserted into the database in a batch operation.
+     * The returned map links each {@link Claim} to its newly assigned database ID.
+     * </p>
+     * <p><b>Important:</b> You are responsible for supplying fully initialized {@link Claim}
+     * instances. This method only handles persistence and cache registration; it does not
+     * validate claim boundaries, ownership rules, or overlap constraints.</p>
+     *
+     * @param claims the list of claims to register
+     * @return a map of each claim to its generated database ID, or {@code null} if the creation event was cancelled
+     * @throws SQLException if a database access error occurs during insertion
+     */
+    Map<Claim, Long> registerClaims(List<Claim> claims) throws SQLException;
+
+    /**
+     * Deletes multiple {@link Claim} objects from the system and removes them from the database.
+     * <p>
+     * If the provided collection is {@code null} or empty, the method returns immediately
+     * without performing any action.
+     * </p>
+     * <p>
+     * A {@link ClaimRemoveEvent} is fired before deletion, allowing listeners to react
+     * to or track the removal. This event is informational and does not prevent deletion.
+     * </p>
+     * <p>
+     * Each claim must already have a valid database ID. If any claim has a {@code null}
+     * ID, an {@link IllegalArgumentException} is thrown and no database operation is performed.
+     * </p>
+     * <p><b>Important:</b> You are responsible for ensuring the claims are valid and should
+     * be removed. This method only handles persistence and cache removal.</p>
+     *
+     * @param claims the collection of claims to delete
+     * @throws SQLException if a database access error occurs during deletion
+     * @throws IllegalArgumentException if any claim does not have a valid ID
+     */
+    void deleteClaims(Collection<Claim> claims) throws SQLException, IllegalArgumentException;
 
     /**
      * Adds a player to a claim's whitelist.

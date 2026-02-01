@@ -17,12 +17,15 @@ import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.SoundUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -82,6 +85,8 @@ public class ClaimEditMenu {
                     });
 
                     StaticPane elements = new StaticPane(9, 3);
+
+                    addClaimInfoItem(elements, player, claim, 0, 0);
 
                     // Protections button
                     if (!HIDE_ALL_PROTECTIONS && !isPlaceholderClaim) {
@@ -225,5 +230,40 @@ public class ClaimEditMenu {
             pane.setItemMeta(meta);
         }
         return pane;
+    }
+
+    private static void addClaimInfoItem(@NotNull StaticPane pane, @NotNull Player player, @NotNull Claim claim, int x, int y) {
+        Vector[] corners = net.mathias2246.buildmc.util.LocationUtil.getBlockCorners(claim);
+        Vector min = corners[0];
+        Vector max = corners[1];
+
+        World world = Bukkit.getServer().getWorld(claim.getWorldId());
+        String dimension = (world != null) ? world.getName() : "UNKNOWN";
+
+        // Item name
+        Component nameComponent = Message.msg(player, "messages.claims.ui.edit-menu.info-name");
+        String displayName = LegacyComponentSerializer.legacySection().serialize(nameComponent);
+
+        // Item lore (multi-line info)
+        Component loreComponent = Message.msg(player, "messages.claims.ui.edit-menu.info",
+                Map.of(
+                        "minX", String.valueOf(min.getBlockX()),
+                        "minZ", String.valueOf(min.getBlockZ()),
+                        "maxX", String.valueOf(max.getBlockX()),
+                        "maxZ", String.valueOf(max.getBlockZ()),
+                        "dimension", dimension
+                )
+        );
+        String[] loreLines = LegacyComponentSerializer.legacySection().serialize(loreComponent).split("\n");
+
+        ItemStack infoItem = new ItemStack(Material.PAPER);
+        ItemMeta meta = infoItem.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(displayName);
+            meta.setLore(Arrays.asList(loreLines));
+            infoItem.setItemMeta(meta);
+        }
+
+        pane.addItem(new GuiItem(infoItem, e -> e.setCancelled(true)), x, y);
     }
 }

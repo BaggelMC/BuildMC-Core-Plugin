@@ -1,8 +1,10 @@
 package net.mathias2246.buildmc.util;
 
+import net.mathias2246.buildmc.api.claims.Claim;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -119,5 +121,28 @@ public final class LocationUtil {
         int height = Math.abs(chunkZ2 - chunkZ1) + 1;
 
         return width * height;
+    }
+
+    /**
+     * Returns the min and max block coordinates of a claim.
+     * Always sorted: x1 <= x2, z1 <= z2
+     *
+     * @param claim The claim
+     * @return Vector array: [minCorner, maxCorner]
+     */
+    public static Vector[] getBlockCorners(Claim claim) {
+        int minChunkX = Math.min(claim.getChunkX1(), claim.getChunkX2());
+        int maxChunkX = Math.max(claim.getChunkX1(), claim.getChunkX2());
+        int minChunkZ = Math.min(claim.getChunkZ1(), claim.getChunkZ2());
+        int maxChunkZ = Math.max(claim.getChunkZ1(), claim.getChunkZ2());
+
+        int x1 = minChunkX * 16;
+        int z1 = minChunkZ * 16;
+        int x2 = (maxChunkX + 1) * 16 - 1;
+        int z2 = (maxChunkZ + 1) * 16 - 1;
+
+        Vector minCorner = new Vector(x1, 0, z1);
+        Vector maxCorner = new Vector(x2, 0 , z2);
+        return new Vector[]{minCorner, maxCorner};
     }
 }

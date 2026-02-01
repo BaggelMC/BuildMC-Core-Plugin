@@ -434,6 +434,38 @@ public class ClaimManager {
         return claimId;
     }
 
+    public static Map<Claim, Long> registerClaims(List<Claim> claims) throws SQLException {
+        ClaimCreateEvent event = new ClaimCreateEvent(
+                claims
+        );
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return null;
+        return claimTable.insertClaims(CoreMain.databaseManager.getConnection(), claims);
+    }
+
+    public static void deleteClaims(Collection<Claim> claims) throws SQLException, IllegalArgumentException {
+
+        if (claims == null || claims.isEmpty()) {
+            return;
+        }
+
+        List<Claim> claimList = List.copyOf(claims);
+
+        ClaimRemoveEvent event = new ClaimRemoveEvent(claimList);
+        Bukkit.getPluginManager().callEvent(event);
+
+        List<Long> ids = new ArrayList<>(claimList.size());
+        for (Claim claim : claimList) {
+            Long id = claim.getId();
+            if (id == null) {
+                throw new IllegalArgumentException("Claim has no ID: " + claim.getName());
+            }
+            ids.add(id);
+        }
+
+        claimTable.deleteClaims(CoreMain.databaseManager.getConnection(), ids);
+    }
+
     /**Adds a player to a Claim whitelist by claimID.*/
     public static void addPlayerToWhitelist(long claimID, UUID playerID) {
         Claim claim = null;

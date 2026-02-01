@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class ClaimManagerImpl implements ClaimManager {
@@ -179,6 +180,16 @@ public class ClaimManagerImpl implements ClaimManager {
         }
 
         return net.mathias2246.buildmc.claims.ClaimManager.tryClaimPlaceholderArea(claimName, pos1, pos2);
+    }
+
+    @Override
+    public Map<Claim, Long> registerClaims(List<Claim> claims) throws SQLException {
+        return net.mathias2246.buildmc.claims.ClaimManager.registerClaims(claims);
+    }
+
+    @Override
+    public void deleteClaims(Collection<Claim> claims) throws SQLException, IllegalArgumentException {
+        net.mathias2246.buildmc.claims.ClaimManager.deleteClaims(claims);
     }
 
     @Override

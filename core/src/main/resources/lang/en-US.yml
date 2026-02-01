@@ -257,6 +257,12 @@ messages:
       edit-menu:
         title: "<gold>Edit Claim: '%claim%'</gold>"
 
+        info-name: "<aqua>Claim Info</aqua>"
+        info: |-
+          <gray>From:</gray> <green>X <blue>%minX%</blue> | Z <blue>%minZ%</blue></green>
+          <gray>To:</gray>    <green>X <blue>%maxX%</blue> | Z <blue>%maxZ%</blue></green>
+          <gray>In:</gray>    <green>%dimension%</green>
+
         protections: "<green>Protections</green>"
         no-protections-available: "<red>No available protections.</red>"
         whitelist: "<aqua>Whitelist</aqua>"

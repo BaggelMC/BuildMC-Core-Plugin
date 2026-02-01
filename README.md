@@ -139,7 +139,7 @@ From there, you can interact with:
 * Chunk claiming logic
 * Lifecycle-aware features provided by BuildMC-Core
 
-(See the JavaDocs or source for details on available managers and services.)
+(See the Javadocs or source for details on available managers and services.)
 
 ---
 
