@@ -11,6 +11,9 @@ permissions:
   buildmc.player:
     default: true
     description: The default permission every player gets, no matter what.
+  buildmc.debug:
+      default: false
+      description: Allows users to use debug commands.
   buildmc.admin:
     default: op
     description: The BuildMC admin permission

@@ -11,6 +11,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.api.status.StatusInstance;
+import net.mathias2246.buildmc.commands.debug.BenchmarkClaims;
 import net.mathias2246.buildmc.player.status.SetStatusCommand;
 import net.mathias2246.buildmc.status.PlayerStatusUtil;
 import org.bukkit.Bukkit;
@@ -33,11 +34,18 @@ public class BuildMcCommand implements CustomCommand {
         });
 
         var debugSub = Commands.literal("debug")
-                .requires(c -> c.getSender().hasPermission("buildmc.admin"))
+                .requires(c -> c.getSender().hasPermission("buildmc.debug"))
                 .executes(ctx -> {
                     ctx.getSource().getSender().sendMessage("/buildmc debug <args>");
                     return 1;
                 });
+
+        debugSub.then(
+                Commands.literal("1000-claims-benchmark")
+                        .executes(
+                                (command) -> BenchmarkClaims.benchmark1000Claims()
+                        )
+        );
 
         // --- MiniMessage debug command ---
         var miniMsgSub = Commands.literal("minimessage")

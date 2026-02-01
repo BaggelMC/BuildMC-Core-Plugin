@@ -8,6 +8,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.api.status.StatusInstance;
+import net.mathias2246.buildmc.commands.debug.BenchmarkClaims;
 import net.mathias2246.buildmc.endEvent.EndEventCommand;
 import net.mathias2246.buildmc.status.PlayerStatusUtil;
 import org.bukkit.Bukkit;
@@ -40,8 +41,17 @@ public class BuildMcCommand implements CustomCommand {
                 }
         );
         debugSub.setRequirements(
-                        (c) -> c.hasPermission(new Permission("buildmc.admin"))
+                        (c) -> c.hasPermission(new Permission("buildmc.debug"))
                 );
+
+        debugSub.withSubcommand(
+                new CommandAPICommand("1000-claims-benchmark")
+                        .executes(
+                                (command) -> {
+                                    return BenchmarkClaims.benchmark1000Claims();
+                                }
+                        )
+        );
 
         var statusSub = new CommandAPICommand("status");
         statusSub.setRequirements(
