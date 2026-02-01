@@ -214,6 +214,33 @@ public interface ClaimManager {
     List<Claim> getAllClaims() throws SQLException;
 
     /**
+     * Attempts to create a claim of some {@link ClaimType} between two positions.
+     *
+     * @param type    the {@link ClaimType} of the claim
+     * @param claimOwner the id of the claim owner.
+     *                   <p>
+     *                   "Server" for {@link ClaimType#SERVER} or {@link ClaimType#PLACEHOLDER}.
+     *                   </p>
+     *                   <p>
+     *                   The team id for {@link ClaimType#TEAM}, or the player {@link UUID} for {@link ClaimType#PLAYER}.
+     *                   </p>
+     * @param claimName the claim name
+     * @param pos1      first corner location
+     * @param pos2      opposite corner location
+     * @return The ID of the claim. Or {@code null} if the claim was not created successfully
+     * @throws IllegalArgumentException  if any of the {@link Location}s are null, or they're not in the same world.
+     */
+    @Nullable Long tryClaimArea(@NotNull ClaimType type, @NotNull String claimOwner, @NotNull String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
+
+    /**
+     * Attempts to register a {@link Claim} instance.
+     *
+     * @param claim The {@link Claim} to register. All values of the claim are validated.
+     * @return The ID of the claim. Or {@code null} if the claim was not registered successfully
+     */
+    @Nullable Long tryClaimArea(@NotNull Claim claim);
+
+    /**
      * Attempts to create a claim for a player between two positions.
      *
      * @param player    the player
@@ -223,7 +250,7 @@ public interface ClaimManager {
      * @return The ID of the claim. Or {@code null} if the claim was not created successfully
      * @throws IllegalArgumentException  if any of the {@link Location}s are null, or they're not in the same world.
      */
-    Long tryClaimPlayerArea(@NotNull Player player, String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
+    @Nullable Long tryClaimPlayerArea(@NotNull Player player, @NotNull String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
 
     /**
      * Attempts to create a claim for a {@link Team} between two positions.
@@ -235,7 +262,7 @@ public interface ClaimManager {
      * @return The ID of the claim. Or {@code null} if the claim was not created successfully
      * @throws IllegalArgumentException  if any of the {@link Location}s are null, or they're not in the same world.
      */
-    Long tryClaimTeamArea(@NotNull Team team, String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
+    @Nullable Long tryClaimTeamArea(@NotNull Team team, @NotNull String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
 
     /**
      * Attempts to create a claim owned by the server between two positions.
@@ -246,7 +273,7 @@ public interface ClaimManager {
      * @return The ID of the claim. Or {@code null} if the claim was not created successfully
      * @throws IllegalArgumentException if any of the {@link Location}s are null, or they're not in the same world
      */
-    Long tryClaimServerArea(String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
+    @Nullable Long tryClaimServerArea(@NotNull String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
 
     /**
      * Attempts to create a placeholder claim between two positions.
@@ -261,7 +288,7 @@ public interface ClaimManager {
      * @return The ID of the claim. Or {@code null} if the claim was not created successfully
      * @throws IllegalArgumentException if any of the {@link Location}s are null, or they're not in the same world
      */
-    Long tryClaimPlaceholderArea(String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
+    @Nullable Long tryClaimPlaceholderArea(@NotNull String claimName, @NotNull Location pos1, @NotNull Location pos2) throws IllegalArgumentException;
 
     /**
      * Adds a player to a claim's whitelist.
