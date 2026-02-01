@@ -863,10 +863,10 @@ public class ClaimTable implements DatabaseTable {
         }
     }
 
-    public void updateClaimOwner(Connection conn, long claimId, @NotNull String newOwnerId) throws SQLException {
-        Claim claim = getClaimById(conn, claimId);
-        if (claim == null) {
-            throw new SQLException("Claim not found: " + claimId);
+    public void updateClaimOwner(Connection conn, @NotNull Claim claim, @NotNull String newOwnerId) throws SQLException {
+        Long claimId = claim.getId();
+        if (claimId == null) {
+            throw new IllegalArgumentException("Claim has no ID: " + claim.getName());
         }
 
         String oldOwnerId = claim.getOwnerId();

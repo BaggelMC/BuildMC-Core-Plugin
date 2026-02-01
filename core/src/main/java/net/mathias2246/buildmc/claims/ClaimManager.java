@@ -4,10 +4,7 @@ import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.ClaimType;
 import net.mathias2246.buildmc.api.claims.Protection;
-import net.mathias2246.buildmc.api.event.claims.ClaimCreateEvent;
-import net.mathias2246.buildmc.api.event.claims.ClaimProtectionChangeEvent;
-import net.mathias2246.buildmc.api.event.claims.ClaimRemoveEvent;
-import net.mathias2246.buildmc.api.event.claims.ClaimWhitelistChangeEvent;
+import net.mathias2246.buildmc.api.event.claims.*;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
@@ -796,11 +793,24 @@ public class ClaimManager {
         if (claimId == null) {
             throw new IllegalArgumentException("Claim has no ID: " + claim.getName());
         }
-        updateClaimOwner(claimId, newOwnerId);
+
+        ClaimOwnerChangeEvent event = new ClaimOwnerChangeEvent(claim, claim.getOwnerId(), newOwnerId);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return;
+
+        claimTable.updateClaimOwner(CoreMain.databaseManager.getConnection(), claim, newOwnerId);
     }
 
     public static void updateClaimOwner(long claimId, @NotNull String newOwnerId) throws SQLException {
-        claimTable.updateClaimOwner(CoreMain.databaseManager.getConnection(), claimId, newOwnerId);
-    }
+        Claim claim = getClaimByID(claimId);
+        if (claim == null) {
+            throw new IllegalArgumentException("No claim exists with id " + claimId);
+        }
 
+        ClaimOwnerChangeEvent event = new ClaimOwnerChangeEvent(claim, claim.getOwnerId(), newOwnerId);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return;
+
+        claimTable.updateClaimOwner(CoreMain.databaseManager.getConnection(), claim, newOwnerId);
+    }
 }
