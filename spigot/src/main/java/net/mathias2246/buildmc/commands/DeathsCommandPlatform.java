@@ -5,12 +5,15 @@ import dev.jorel.commandapi.arguments.LongArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.deaths.DeathSummary;
 import net.mathias2246.buildmc.deaths.DeathsCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
 
 public class DeathsCommandPlatform implements CustomCommand {
 
@@ -50,9 +53,12 @@ public class DeathsCommandPlatform implements CustomCommand {
                             if (target == null) return builder.buildFuture();
 
                             try (Connection conn = CoreMain.databaseManager.getConnection()) {
-                                CoreMain.deathTable.getDeathsByPlayer(conn, target.getUniqueId())
-                                        .forEach(d -> builder.suggest(String.valueOf(d.id())));
-                            } catch (Exception ignored) {}
+                                List<DeathSummary> deaths =
+                                        CoreMain.deathTable.getDeathsByPlayer(conn, target.getUniqueId());
+                                deaths.forEach(d -> builder.suggest(String.valueOf(d.id())));
+                            } catch (SQLException e) {
+                                throw new RuntimeException(e);
+                            }
 
                             return builder.buildFuture();
                         })
