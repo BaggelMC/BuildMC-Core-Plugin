@@ -43,6 +43,11 @@ end-event:
     - TNT_MINECART
     - CREEPER
 
+# Change behavior when players join for the first time
+first-time-join:
+  # Display a message for the player, when joining for the first time.
+  # The translation key is 'messages.first-time-join.message'.
+  show-first-join-message: false # Default: false
 
 # Some sounds that are used generally
 sounds:

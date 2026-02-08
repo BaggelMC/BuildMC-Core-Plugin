@@ -1,6 +1,10 @@
 messages:
   rules: "<gray>==============================</gray>\n\n<gold>Check out the full rules <blue><click:open_url:'https://baggel.de/projects/buildmc/rules/'>[HERE]</click></blue>!</gold>\n\n<gray>==============================</gray>"
 
+  first-time-join:
+    # Use %player_name% as a placeholder for the name of the player.
+    message: "<green>Welcome %player_name%!</green>"
+
   guides:
 
     guide-not-found: "<red>This guide doesn't exist!</red>"

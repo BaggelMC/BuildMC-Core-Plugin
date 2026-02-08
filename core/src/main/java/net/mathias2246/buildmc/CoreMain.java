@@ -23,6 +23,7 @@ import net.mathias2246.buildmc.database.DatabaseConfig;
 import net.mathias2246.buildmc.database.DatabaseManager;
 import net.mathias2246.buildmc.database.DeathTable;
 import net.mathias2246.buildmc.deaths.DeathListener;
+import net.mathias2246.buildmc.player.FirstTimeJoinListener;
 import net.mathias2246.buildmc.status.PlayerStatusUtil;
 import net.mathias2246.buildmc.status.StatusConfig;
 import net.mathias2246.buildmc.ui.claims.ClaimUIs;
@@ -216,6 +217,11 @@ public final class CoreMain {
 
             ClaimLogger.init(plugin);
         }
+
+        registerListener(new FirstTimeJoinListener());
+
+        String firstJoinMessage = config.getString("first-time-join.first-join-message", "");
+        if (!firstJoinMessage.isBlank()) registerListener(new FirstTimeJoinListener());
 
         registerListener(new DeathListener());
 
