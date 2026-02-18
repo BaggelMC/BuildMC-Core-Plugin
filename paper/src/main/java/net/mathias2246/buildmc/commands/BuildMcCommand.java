@@ -12,9 +12,11 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.api.status.StatusInstance;
 import net.mathias2246.buildmc.commands.debug.BenchmarkClaims;
+import net.mathias2246.buildmc.commands.debug.OpenSign;
 import net.mathias2246.buildmc.player.status.SetStatusCommand;
 import net.mathias2246.buildmc.status.PlayerStatusUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.io.IOException;
 
@@ -44,6 +46,18 @@ public class BuildMcCommand implements CustomCommand {
                 Commands.literal("1000-claims-benchmark")
                         .executes(
                                 (command) -> BenchmarkClaims.benchmark1000Claims()
+                        )
+        );
+
+        debugSub.then(
+                Commands.literal("open-fake-sign")
+                        .executes(
+                                (command) -> {
+                                    if (command.getSource().getSender() instanceof Player player) {
+                                        OpenSign.openFakeSign(player);
+                                    }
+                                    return 0;
+                                }
                         )
         );
 

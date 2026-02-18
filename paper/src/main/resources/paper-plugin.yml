@@ -5,6 +5,12 @@ api-version: '${minecraft.bukkitApiVersion}'
 
 folia-supported: false
 
+dependencies:
+  server:
+    ProtocolLib:
+      load: BEFORE
+      required: true
+
 prefix: BuildMC
 load: POSTWORLD
 authors: [ Mathias2246, Darkyl ]
