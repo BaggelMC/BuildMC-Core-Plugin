@@ -1,29 +1,29 @@
-# 🌍 BuildMC-Core
+# BuildMC-Core
 
 *A powerful, core plugin for the BuildMC SMP project. Made for modern Minecraft development, crafted with care for 1.21.*\*
 
 ---
 
-## ✨ Features
+## Features
 
 BuildMC-Core provides a solid foundation for any Minecraft project. Designed for the **BuildMC SMP**, it bundles essential features every project might need:
 
-- 🧑‍🤝‍🧑 **Teams & Player Status**  
+- **Teams & Player Status**  
   Create and manage teams and let players set their status.
 
-- 🪂 **Spawn Elytra Boost**  
+- **Spawn Elytra Boost**  
   Launch yourself from spawn with a built-in Elytra boost system. Rocket usage is blocked to prevent abuse.
 
-- 🌀 **Toggle The End**  
+- **Toggle The End**  
   Enable or disable the End dimension **dynamically**. No restarts required. Broadcasts the change to all players.
 
-- 🧱 **Survival-Friendly Chunk Claiming**  
+- **Survival-Friendly Chunk Claiming**  
   A secure, intuitive chunk claim system tied into the team system. Built for balance and survival fairness.
 
-- 💀 **Death-Restoring**  
+- **Death-Restoring**  
   Allow Moderators to restore deaths of their players.
 
-- ⚙️ **Easy Setup**  
+- **Easy Setup**  
   Configure the plugin using `/buildmc` or edit the config files directly.
 
 ---
@@ -32,13 +32,13 @@ BuildMC-Core provides a solid foundation for any Minecraft project. Designed for
 
 If you're running your own server and want to use BuildMC-Core, here's how to install it:
 
-### ✅ Requirements
+### Requirements
 
 - A **Minecraft 1.21.**\* server (Paper is recommended or Spigot)
 - Java **17+** (Java 23 recommended)
 - BuildMC-Core plugin `.jar` file
 
-### 📥 Installation Steps
+### Installation Steps
 
 1. **Download the Plugin**
     - Head to the [Releases](https://github.com/BaggelMC/BuildMC-Core-Plugin/releases) page.
@@ -52,7 +52,7 @@ If you're running your own server and want to use BuildMC-Core, here's how to in
     - Run `/buildmc` in-game for setup options.
     - Or modify the `BuildMC-Core/config.yml` file directly.
 
-### 💡 Notes
+### Notes
 - Check out our guides on our [website](https://baggel.de/plugins/en/core/).
 - Compatible with most standard Paper/Spigot setups.
 - May require a permission setup for players/admins using permission managers like [LuckPerms](https://luckperms.net/).
@@ -61,7 +61,7 @@ If you're running your own server and want to use BuildMC-Core, here's how to in
 
 # For Developers
 
-## 🧩 Using the BuildMC API
+## Using the BuildMC API
 
 BuildMC-Core exposes a public API that allows other plugins to integrate seamlessly with the BuildMC SMP ecosystem.
 
@@ -69,7 +69,7 @@ The API is published as a **separate Maven artifact** and is intended to be used
 
 ---
 
-## 📦 Adding the API as a Dependency
+## Adding the API as a Dependency
 
 ### Maven
 
@@ -87,15 +87,15 @@ The API is published as a **separate Maven artifact** and is intended to be used
 </dependency>
 ```
 
-> ⚠️ **Important:**
+> **Important:**
 > Do **not** shade or relocate the API.
 > BuildMC-Core must be installed on the server.
 
 ---
 
-## 🚀 Getting Started with the API
+## Getting Started with the API
 
-### 🔹 Accessing the API Instance
+### Accessing the API Instance
 
 The API becomes available **after BuildMC-Core has finished loading**.
 To safely access it, listen to the lifecycle event:
@@ -124,7 +124,7 @@ This ensures:
 
 ---
 
-## 🧠 API Entry Points
+## API Entry Points
 
 The central access point for all integrations is:
 
@@ -143,7 +143,7 @@ From there, you can interact with:
 
 ---
 
-## 🔗 Plugin Compatibility
+## Plugin Compatibility
 
 * Requires **BuildMC-Core** to be installed on the server
 * Compatible with **Paper / Spigot 1.21+**
@@ -151,7 +151,7 @@ From there, you can interact with:
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 We welcome **issues**, **pull requests**, and thoughtful contributions.
 
@@ -163,7 +163,7 @@ If you'd like to expand or adapt it, feel free to **fork the repository**.
 
 ---
 
-## 👥 Authors
+## Authors
 
 * **Mathias2246**
 * **Darkyl**
@@ -171,16 +171,16 @@ If you'd like to expand or adapt it, feel free to **fork the repository**.
 
 ---
 
-## ⚖️ License
+## License
 
 This project is licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
 
 ---
 
-## 📌 Repository
+## Repository
 
-👉 [GitHub – BaggelMC/BuildMC-Core-Plugin](https://github.com/BaggelMC/BuildMC-Core-Plugin)
+- [GitHub – BaggelMC/BuildMC-Core-Plugin](https://github.com/BaggelMC/BuildMC-Core-Plugin)
 
 ---
 
-*Thanks for building with us! 🧱✨*
+*Thanks for building with us!*
