@@ -9,9 +9,11 @@ import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.api.status.StatusInstance;
 import net.mathias2246.buildmc.commands.debug.BenchmarkClaims;
+import net.mathias2246.buildmc.commands.debug.OpenSign;
 import net.mathias2246.buildmc.endEvent.EndEventCommand;
 import net.mathias2246.buildmc.status.PlayerStatusUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 
 import java.io.IOException;
@@ -49,6 +51,18 @@ public class BuildMcCommand implements CustomCommand {
                         .executes(
                                 (command) -> {
                                     return BenchmarkClaims.benchmark1000Claims();
+                                }
+                        )
+        );
+
+        debugSub.withSubcommand(
+                new CommandAPICommand("open-fake-sign")
+                        .executes(
+                                (command) -> {
+                                    if (command.sender() instanceof Player player) {
+                                        return OpenSign.openFakeSign(player);
+                                    }
+                                    return 0;
                                 }
                         )
         );

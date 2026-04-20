@@ -7,7 +7,6 @@ import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
 import com.github.stefvanschie.inventoryframework.pane.Pane;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.mathias2246.buildmc.CoreMain;
@@ -15,6 +14,7 @@ import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.item.ItemUtil;
 import net.mathias2246.buildmc.claims.ClaimLogger;
 import net.mathias2246.buildmc.claims.ClaimManager;
+import net.mathias2246.buildmc.ui.SignInputScreen;
 import net.mathias2246.buildmc.ui.UIUtil;
 import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.SoundUtil;
@@ -164,12 +164,24 @@ public class WhitelistMenu {
                     addButton.addItem(new GuiItem(a, e -> {
                         e.setCancelled(true);
                         CoreMain.soundManager.playSound(player, SoundUtil.notification);
-                        CoreMain.plugin.sendMessage(player,
-                                Component.translatable("messages.claims.ui.whitelist-menu.add-button.click-info")
-                                        .clickEvent(
-                                                ClickEvent.suggestCommand("/claim whitelist add "+claim.getType()+" "+claim.getName()+" ")
-                                        )
-                        );
+
+                        var sign = new SignInputScreen((signKey, input) -> {
+                            if (input.isBlank()) return;
+
+                            var targetPlayer = Bukkit.getPlayer(input);
+                            if (targetPlayer == null) {
+                                CoreMain.soundManager.playSound(player, SoundUtil.mistake);
+                                plugin.sendMessage(player, Component.translatable("messages.claims.whitelist.player-not-found"));
+                                return;
+                            }
+
+                            ClaimManager.addPlayerToWhitelist(claim, targetPlayer.getUniqueId());
+
+                            CoreMain.soundManager.playSound(player, SoundUtil.success);
+                            plugin.sendMessage(player, Component.translatable("messages.claims.whitelist.added"));
+                        });
+
+                        sign.openSignInput(player, "  Player Name:  ", "whitelist_player_for_claim");
                     }), 0, 0);
                     addButton.setPriority(Pane.Priority.HIGH);
 

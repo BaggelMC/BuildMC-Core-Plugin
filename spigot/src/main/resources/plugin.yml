@@ -6,6 +6,7 @@ prefix: BuildMC
 load: POSTWORLD
 authors: [ Mathias2246, Darkyl ]
 description: The Core plugin for the BuildMC SMP. This plugin provides basic functionality to the server.
+depend: [ ProtocolLib ]
 website: https://discord.gg/p8wBMZXAfb
 permissions:
   buildmc.player:

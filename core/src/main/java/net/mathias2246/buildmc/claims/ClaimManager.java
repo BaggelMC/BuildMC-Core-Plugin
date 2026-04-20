@@ -526,6 +526,13 @@ public class ClaimManager {
 
         if (claim == null) return;
 
+        addPlayerToWhitelist(claim, playerID);
+    }
+
+    /**Adds a player to a Claim whitelist.*/
+    public static void addPlayerToWhitelist(@NotNull Claim claim, UUID playerID) {
+        if (claim.getId() == null) return;
+
         ClaimWhitelistChangeEvent event = new ClaimWhitelistChangeEvent(claim, Bukkit.getOfflinePlayer(playerID), ClaimWhitelistChangeEvent.ChangeAction.ADDED);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) return;
@@ -533,7 +540,7 @@ public class ClaimManager {
         claim.addWhitelistedPlayer(playerID);
 
         try {
-            CoreMain.claimTable.addWhitelistedPlayer(CoreMain.databaseManager.getConnection(), claimID, playerID);
+            CoreMain.claimTable.addWhitelistedPlayer(CoreMain.databaseManager.getConnection(), claim.getId(), playerID);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

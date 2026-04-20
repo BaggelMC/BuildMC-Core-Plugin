@@ -36,7 +36,6 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
         super(plugin, key);
 
         this.particles = particles;
-        maxSelectionSize = plugin.getConfig().getInt("claims.tool.limit-selection", 8);
     }
 
     @Override
@@ -44,7 +43,8 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
         return !event.getPlayer().hasCooldown(item);
     }
 
-    private final int maxSelectionSize;
+    public static final int maxSelectionSize = CoreMain.plugin.getConfig().getInt("claims.tool.limit-selection", 8);
+
 
     @Override
     protected @NotNull ItemStack buildDefaultItemStack() {
@@ -97,22 +97,12 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
                 return false;
             }
 
-            if (isSelectionToLarge(at, second, player)) {
-                var msg = Message.msg(player, "messages.claims.tool.selection-too-large");
-                msg = msg.replaceText(
-                        TextReplacementConfig.builder().matchLiteral("%selection_limit%").replacement(Integer.toString(maxSelectionSize)).build()
-                );
-
-                CoreMain.plugin.sendMessage(player, msg);
-                CoreMain.soundManager.playSound(player, SoundUtil.mistake);
-                return false;
-            }
         }
 
         return true;
     }
 
-    public boolean isSelectionToLarge(@NotNull Location from, @NotNull Location to, @NotNull Player player) {
+    public static boolean isSelectionToLarge(@NotNull Location from, @NotNull Location to, @NotNull Player player) {
         if (maxSelectionSize < 0) return false;
 
         var fx = from.getChunk().getX();

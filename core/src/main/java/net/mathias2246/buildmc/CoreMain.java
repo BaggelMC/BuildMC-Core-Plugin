@@ -1,5 +1,7 @@
 package net.mathias2246.buildmc;
 
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -249,10 +251,19 @@ public final class CoreMain {
         isInitialized = true;
 
         Bukkit.getPluginManager().callEvent(new BuildMcFinishedLoadingEvent(plugin));
+
     }
 
     public static void registerListener(@NotNull Listener event) {
         plugin.getServer().getPluginManager().registerEvents(event, plugin);
+    }
+
+    public static ProtocolManager protocolManager;
+
+    public static void onLoad() {
+        protocolManager = ProtocolLibrary.getProtocolManager();
+
+
     }
 
     @SuppressWarnings("EmptyMethod")

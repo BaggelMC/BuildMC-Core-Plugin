@@ -128,6 +128,11 @@ public final class Main extends PluginMain {
     }
 
     @Override
+    public void onLoad() {
+        CoreMain.onLoad();
+    }
+
+    @Override
     public void onDisable() {
         // Plugin shutdown logic
 
