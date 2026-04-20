@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * Represents a type of {@code Protection} that can be applied to claims.
  * <p>
- * Protections define specific behaviors, rules, or restrictions within a claim (e.g., blocking explosions,
+ * Protections define specific behaviours, rules, or restrictions within a claim (e.g., blocking explosions,
  * preventing PVP, etc.). Each protection is uniquely identified by a {@link NamespacedKey} and can be
  * enabled/disabled by default when a claim is created.
  * </p>

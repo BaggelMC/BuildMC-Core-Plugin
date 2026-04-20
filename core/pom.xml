@@ -132,50 +132,19 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <minimizeJar>false</minimizeJar>
-                            <relocations>
-                                <relocation>
-                                    <pattern>org.bstats</pattern>
-                                    <shadedPattern>net.mathias2246.buildmc.libs.org.bstats</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>org.h2</pattern>
-                                    <shadedPattern>net.mathias2246.buildmc.libs.org.h2</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>com.github.stefvanschie.inventoryframework</pattern>
-                                    <shadedPattern>net.mathias2246.buildmc.libs.com.github.stefvanschie.inventoryframework</shadedPattern>
-                                </relocation>
-                            </relocations>
-                            <artifactSet>
-                                <includes>
-                                    <include>net.mathias2246:buildmc-api</include>
-                                    <include>net.kyori:adventure-platform-api</include>
-                                    <include>net.kyori:adventure-platform-bukkit</include>
-                                    <include>net.kyori:adventure-platform-facet</include>
-                                    <include>org.bstats:bstats-bukkit</include>
-                                    <include>org.bstats:bstats-base</include>
-                                    <include>com.h2database:h2</include>
-                                    <include>com.github.stefvanschie.inventoryframework:IF</include>
-                                </includes>
-                            </artifactSet>
-
-                            <!-- Remove overlapping META-INF files -->
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>
                                     <excludes>
-                                        <exclude>META-INF/*</exclude>
-                                    </excludes>
-                                </filter>
-                                <filter>
-                                    <artifact>com.github.stefvanschie.inventoryframework:IF</artifact>
-                                    <excludes>
+                                        <exclude>META-INF/versions/*/module-info.class</exclude>
+                                        <exclude>module-info.class</exclude>
                                         <exclude>META-INF/MANIFEST.MF</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheLicenseResourceTransformer"/>
+                            </transformers>
                         </configuration>
                     </execution>
                 </executions>

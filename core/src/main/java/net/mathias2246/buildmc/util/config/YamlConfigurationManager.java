@@ -14,11 +14,6 @@ public abstract class YamlConfigurationManager {
 
     private final Plugin plugin;
 
-    /**Gets the plugin that owns this configuration*/
-    public Plugin getPlugin() {
-        return plugin;
-    }
-
     private File configFile;
 
     private final @NotNull String resourceName;
@@ -36,11 +31,6 @@ public abstract class YamlConfigurationManager {
         saveFromResource();
         configuration = YamlConfiguration.loadConfiguration(configFile);
         setupConfiguration();
-    }
-
-    /**The configuration file*/
-    public File getConfigFile() {
-        return configFile;
     }
 
     /**Sets the file that this ConfigurationManager accesses.

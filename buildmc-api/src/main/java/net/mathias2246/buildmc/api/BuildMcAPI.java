@@ -19,7 +19,7 @@ import java.util.function.Consumer;
  * The primary API interface for BuildMC.
  * <p>
  * External plugins can use this interface to interact with BuildMC's core systems,
- * access registries, modify behavior, and hook into extension points.
+ * access registries, modify behaviour, and hook into extension points.
  * </p>
  */
 public interface BuildMcAPI {

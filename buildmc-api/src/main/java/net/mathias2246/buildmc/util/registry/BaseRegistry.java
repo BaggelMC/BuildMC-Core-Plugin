@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Stream;
 
-/// An implementation of bukkits {@link Registry} that is mutable.
+/// An implementation of Bukkit's {@link Registry} that is mutable.
 /// <p>
 /// You have to keep in mind that this registry type can be modified at any given time at runtime.
 /// </p>

@@ -232,6 +232,8 @@ public class ClaimEditMenu {
         return pane;
     }
 
+
+    @SuppressWarnings("SameParameterValue") // Suppress only because currently param. x and y aren't implemented fully
     private static void addClaimInfoItem(@NotNull StaticPane pane, @NotNull Player player, @NotNull Claim claim, int x, int y) {
         Vector[] corners = net.mathias2246.buildmc.util.LocationUtil.getBlockCorners(claim);
         Vector min = corners[0];

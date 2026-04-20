@@ -191,12 +191,10 @@ public class ClaimManagerImpl implements ClaimManager {
 
     @Override
     public Long tryClaimPlaceholderArea(@NotNull String claimName, @NotNull Location pos1, @NotNull Location pos2) throws IllegalArgumentException {
-        if (pos1 == null || pos2 == null) {
-            throw new IllegalArgumentException("Positions cannot be null.");
-        }
-
-        if (pos1.getWorld() == null || pos2.getWorld() == null) {
+        if (pos1.getWorld() == null) {
             throw new IllegalArgumentException("Both locations must have a world.");
+        } else {
+            pos2.getWorld();
         }
 
         if (!pos1.getWorld().equals(pos2.getWorld())) {

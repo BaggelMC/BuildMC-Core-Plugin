@@ -1,11 +1,11 @@
 package net.mathias2246.buildmc.api.event.claims;
 
+import com.google.common.collect.ImmutableList;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.event.CustomEvent;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -44,8 +44,8 @@ public class ClaimRemoveEvent extends CustomEvent {
      *
      * @return all claims included in this removal operation
      */
-    public @NotNull List<@NotNull Claim> getClaims() {
-        return Collections.unmodifiableList(claims);
+    public @NotNull ImmutableList<@NotNull Claim> getClaims() {
+        return ImmutableList.copyOf(claims);
     }
 
     /**

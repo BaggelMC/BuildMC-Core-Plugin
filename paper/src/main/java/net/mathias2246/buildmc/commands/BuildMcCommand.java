@@ -48,7 +48,7 @@ public class BuildMcCommand implements CustomCommand {
         );
 
         // --- MiniMessage debug command ---
-        var miniMsgSub = Commands.literal("minimessage")
+         var miniMsgSub = Commands.literal("minimessage")
                 .then(
                         Commands.argument("message", StringArgumentType.greedyString())
                                 .executes(ctx -> {

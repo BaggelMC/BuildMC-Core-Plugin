@@ -125,7 +125,7 @@ public final class LocationUtil {
 
     /**
      * Returns the min and max block coordinates of a claim.
-     * Always sorted: x1 <= x2, z1 <= z2
+     * Always sorted: x1 &lt;= x2, z1 &lt;= z2
      *
      * @param claim The claim
      * @return Vector array: [minCorner, maxCorner]

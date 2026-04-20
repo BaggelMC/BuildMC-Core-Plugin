@@ -31,7 +31,9 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +45,7 @@ import java.util.logging.Logger;
 
 import static net.mathias2246.buildmc.CoreMain.registriesHolder;
 
-public final class Main extends PluginMain {
+public final class Main extends PluginMain implements Listener {
 
     public static Logger logger;
 
@@ -198,6 +200,8 @@ public final class Main extends PluginMain {
 
         SoundUtil.setup();
 
+        registerEvent(this);
+
         getServer().getPluginManager().registerEvents(new CustomItemListener(), this);
 
         getServer().getPluginManager().registerEvents(new EndListener(), this);
@@ -217,5 +221,14 @@ public final class Main extends PluginMain {
         if (config.getBoolean("player-head.on-death")) {
             getServer().getPluginManager().registerEvents(new PlayerHeadDropDeathListener(new PlayerHeadDropModifier()), this);
         }
+    }
+
+    // Is called here, because on paper non-persistent Metadata was replaced with PDC for safety.
+    // So as a safety check, all the non-persisting values stored inside the players PDC are removed here.
+    @EventHandler
+    private void onPlayerDisconnect(PlayerQuitEvent event) {
+        var pdc = event.getPlayer().getPersistentDataContainer();
+
+        pdc.remove(ClaimSelectionTool.SELECTION_EFFECT_KEY);
     }
 }

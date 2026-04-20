@@ -20,6 +20,11 @@ public class DatabaseManager {
     private Connection connection;
     private final Logger logger;
     private final File databaseFolder;
+
+    public List<DatabaseTable> getRegisteredTables() {
+        return registeredTables;
+    }
+
     private final List<DatabaseTable> registeredTables = new ArrayList<>();
     private final List<Migration> migrations = List.of(new MigrationV1());
 
@@ -127,10 +132,6 @@ public class DatabaseManager {
         } catch (SQLException e) {
             logger.severe("Failed to create table: " + table.getClass().getSimpleName() + " - " + e);
         }
-    }
-
-    public List<DatabaseTable> getRegisteredTables() {
-        return registeredTables;
     }
 
     public void close() {

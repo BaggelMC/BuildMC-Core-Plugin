@@ -99,32 +99,35 @@
                 </executions>
                 <configuration>
                     <minimizeJar>false</minimizeJar>
+
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
+
                     <relocations>
                         <relocation>
-                            <pattern>dev.jorel.commandapi</pattern>
-                            <shadedPattern>net.mathias2246.buildmc.libs.commandAPI</shadedPattern>
+                            <pattern>org.bstats</pattern>
+                            <shadedPattern>net.mathias2246.buildmc.libs.org.bstats</shadedPattern>
                         </relocation>
-
+                        <relocation>
+                            <pattern>org.h2</pattern>
+                            <shadedPattern>net.mathias2246.buildmc.libs.org.h2</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.github.stefvanschie.inventoryframework</pattern>
+                            <shadedPattern>net.mathias2246.buildmc.libs.com.github.stefvanschie.inventoryframework</shadedPattern>
+                        </relocation>
                     </relocations>
 
                     <artifactSet>
                         <includes>
                             <include>net.mathias2246:core</include>
-                            <include>net.kyori:examination-api</include>
-                            <include>net.kyori:examination-string</include>
-                            <include>net.kyori:examination-api</include>
-                            <include>net.kyori:option</include>
-                            <include>net.kyori:adventure-api</include>
-                            <include>net.kyori:adventure-key</include>
-                            <include>net.kyori:adventure-text-serializer-legacy</include>
-                            <include>net.kyori:adventure-text-minimessage</include>
-                            <include>net.kyori:adventure-text-serializer-gson</include>
-                            <include>net.kyori:adventure-text-serializer-json</include>
-                            <include>net.kyori:adventure-text-serializer-bungeecord</include>
-                            <include>net.kyori:adventure-text-serializer-plain</include>
                             <include>dev.jorel:commandapi-spigot-shade</include>
                         </includes>
                     </artifactSet>
+
+                    <transformers>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer"/>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheLicenseResourceTransformer"/>
+                    </transformers>
 
                     <!-- Remove overlapping resource files -->
                     <filters>
@@ -140,11 +143,22 @@
                                 <exclude>META-INF/**</exclude>
                             </excludes>
                         </filter>
-                        <!-- Do not shade already existing core resources twice -->
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/versions/*/module-info.class</exclude>
+                                <exclude>module-info.class</exclude>
+                            </excludes>
+                        </filter>
+                        <!-- Do not shade resources from core twice -->
                         <filter>
                             <artifact>net.mathias2246:core</artifact>
                             <excludes>
-                                <exclude>/**</exclude>
+                                <exclude>config.yml</exclude>
+                                <exclude>database.yml</exclude>
+                                <exclude>guides.yml</exclude>
+                                <exclude>status.yml</exclude>
+                                <exclude>lang/**</exclude>
                             </excludes>
                         </filter>
                     </filters>

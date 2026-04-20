@@ -18,7 +18,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemRarity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -166,6 +166,9 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
         return true;
     }
 
+    // PDC data Key. Needed in the paper implementation because Metadata is deprecated
+    public static final @NotNull NamespacedKey SELECTION_EFFECT_KEY = Objects.requireNonNull(NamespacedKey.fromString("nations:show_claim_selection"));
+
     @Override
     public void onSuccessfulFirstSelection(@NotNull ItemStack item, @NotNull Location at, @NotNull PlayerInteractEvent event) {
         Player player = event.getPlayer();
@@ -175,8 +178,10 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
 
         player.setCooldown(item, 60);
 
-        if (!player.hasMetadata("claim_selection_particles")) {
-            player.setMetadata("claim_selection_particles", new FixedMetadataValue(getPlugin(), null));
+        var pdc = player.getPersistentDataContainer();
+
+        if (!pdc.has(SELECTION_EFFECT_KEY)) {
+            pdc.set(SELECTION_EFFECT_KEY, PersistentDataType.BOOLEAN, true);
             var p = particles.build(player);
             p.run();
         }

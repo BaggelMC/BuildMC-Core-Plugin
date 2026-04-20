@@ -1,19 +1,19 @@
 package net.mathias2246.buildmc.api.event.claims;
 
+import com.google.common.collect.ImmutableList;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.event.CustomEvent;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
  * Called when one or more claims are created.
  * <p>
  * This event is fired synchronously on the main server thread.
- * If the event is canceled, <b>none</b> of the claims should be created.
+ * If the event is cancelled, <b>none</b> of the claims should be created.
  * <p>
  * Plugins may attach optional metadata to this event via
  * {@link #putMetadata(String, Object)}.
@@ -49,8 +49,8 @@ public class ClaimCreateEvent extends CustomEvent implements Cancellable {
      *
      * @return all claims included in this creation operation
      */
-    public @NotNull List<@NotNull Claim> getClaims() {
-        return Collections.unmodifiableList(claims);
+    public @NotNull ImmutableList<@NotNull Claim> getClaims() {
+        return ImmutableList.copyOf(claims);
     }
 
     /**

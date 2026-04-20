@@ -71,6 +71,8 @@ public final class CoreMain {
 
     private static boolean isInitialized = false;
 
+    public static boolean isInitialized() { return isInitialized; }
+
     public static final RegistriesHolder registriesHolder = new RegistriesHolder.Builder().build();
 
     public static DeferredRegistry<Protection> protectionsRegistry;
@@ -89,10 +91,6 @@ public final class CoreMain {
     public static GuidesCommand guideCommand;
 
     public static StatusManager statusManager;
-
-    public static boolean isInitialized() {
-        return isInitialized;
-    }
 
     @ApiStatus.Internal
     public static void initialize(@NotNull PluginMain plugin) {

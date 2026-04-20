@@ -1,7 +1,7 @@
 package net.mathias2246.buildmc.claims.tool;
 
 import com.destroystokyo.paper.ParticleBuilder;
-import net.mathias2246.buildmc.Main;
+import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.util.LocationUtil;
 import net.mathias2246.buildmc.util.ParticleSpawner;
 import org.bukkit.Chunk;
@@ -120,7 +120,7 @@ public class ClaimToolParticles extends ParticleSpawner {
 
     @Override
     protected boolean shouldStop() {
-        return !source.hasMetadata("claim_selection_particles");
+        return !source.getPersistentDataContainer().has(ClaimSelectionTool.SELECTION_EFFECT_KEY);
     }
 
     @Override
@@ -134,6 +134,6 @@ public class ClaimToolParticles extends ParticleSpawner {
 
     @Override
     protected void onStop() {
-        source.removeMetadata("claim_selection_particles", Main.plugin);
+        source.getPersistentDataContainer().remove(ClaimSelectionTool.SELECTION_EFFECT_KEY);
     }
 }

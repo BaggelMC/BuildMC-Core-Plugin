@@ -23,16 +23,7 @@ public class DiscordEmbed {
         this.author = builder.author;
     }
 
-    public static class Field {
-        public final String name;
-        public final String value;
-        public final boolean inline;
-
-        public Field(String name, String value, boolean inline) {
-            this.name = name;
-            this.value = value;
-            this.inline = inline;
-        }
+    public record Field(String name, String value, boolean inline) {
     }
 
     public static class Builder {
