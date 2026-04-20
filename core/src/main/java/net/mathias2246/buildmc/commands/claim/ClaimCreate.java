@@ -6,6 +6,7 @@ import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.ClaimType;
 import net.mathias2246.buildmc.claims.ClaimLogger;
 import net.mathias2246.buildmc.claims.ClaimManager;
+import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.util.LocationUtil;
 import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.SoundUtil;
@@ -43,6 +44,13 @@ public class ClaimCreate {
             CoreMain.soundManager.playSound(player, SoundUtil.notification);
             return 0;
         }
+
+        if (ClaimSelectionTool.isSelectionToLarge(pos1, pos2, player)) {
+            CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.tool.selection-too-large"));
+            CoreMain.soundManager.playSound(player, SoundUtil.notification);
+            return 0;
+        }
+
         if (!player.hasPermission("buildmc.bypass-claim-dimension-list")) {
             if (!ClaimManager.isWorldAllowed(Objects.requireNonNull(pos1.getWorld()))) {
                 CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.create.world-not-allowed"));

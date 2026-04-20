@@ -130,6 +130,11 @@ public final class Main extends PluginMain implements Listener {
     }
 
     @Override
+    public void onLoad() {
+        CoreMain.onLoad();
+    }
+
+    @Override
     public void onDisable() {
         // Plugin shutdown logic
 
