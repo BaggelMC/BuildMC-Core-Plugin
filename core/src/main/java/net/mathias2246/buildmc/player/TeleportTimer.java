@@ -3,7 +3,7 @@ package net.mathias2246.buildmc.player;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.mathias2246.buildmc.CoreMain;
-import net.mathias2246.buildmc.api.event.player.PlayerSpawnTeleportPreConditionEvent;
+import net.mathias2246.buildmc.api.event.player.PlayerSpawnTeleportEvent;
 import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.PlayerTimer;
 import org.bukkit.Bukkit;
@@ -19,7 +19,7 @@ public class TeleportTimer extends PlayerTimer {
         public static final int seconds = CoreMain.plugin.getConfig().getInt("spawn-teleport.wait-for");
 
         public static int teleportCommandLogic(@NotNull Player player) {
-            PlayerSpawnTeleportPreConditionEvent e = new PlayerSpawnTeleportPreConditionEvent(player, Bukkit.getWorlds().getFirst().getSpawnLocation());
+            PlayerSpawnTeleportEvent e = new PlayerSpawnTeleportEvent(player, Bukkit.getWorlds().getFirst().getSpawnLocation());
             Bukkit.getPluginManager().callEvent(e);
             if (e.isCancelled()) {
                 CoreMain.plugin.sendMessage(player, Component.translatable("messages.spawn-teleport.not-working"));

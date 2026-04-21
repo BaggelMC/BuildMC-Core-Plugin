@@ -179,9 +179,13 @@ public class StatusInstance implements ConfigurationSerializable, Keyed {
     /** A simple enum to show if a player is allowed to use a {@link StatusInstance},
      * or if he doesn't fulfill all requirements. **/
     public enum AllowStatus {
+        /// The player is allowed to use this status
         ALLOW,
+        /// The player is not allowed to use this status
         NOT_ALLOWED,
+        /// The player is missing a {@link Permission} to use this status
         MISSING_PERMISSION,
+        /// The player not in one of the required {@link Team}s
         NOT_IN_TEAM
     }
 }

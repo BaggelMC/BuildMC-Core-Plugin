@@ -10,10 +10,6 @@ import java.util.List;
 
 /**
  * Called when one or more claims were removed.
- * <p>
- * This event is fired synchronously on the main server thread.
- * Plugins can attach optional metadata to this event via
- * {@link #putMetadata(String, Object)}.
  */
 public class ClaimRemoveEvent extends CustomEvent {
 

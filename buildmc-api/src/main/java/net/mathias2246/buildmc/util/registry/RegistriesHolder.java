@@ -19,6 +19,7 @@ import java.util.*;
  */
 public class RegistriesHolder implements Iterable<Registry<? extends Keyed>> {
 
+    /// The internal {@link Map} that stores all registers
     private final @NotNull Map<String, Registry<? extends Keyed>> registries = new HashMap<>();
 
     /**@return A {@link Collection} containing all registries in this holder.*/

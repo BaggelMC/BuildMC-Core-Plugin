@@ -15,7 +15,10 @@ import java.util.stream.Stream;
 /**A {@link DeferredRegistry} is an implementation of bukkits {@link Registry} interface.
  * <p>A {@link DeferredRegistry} stays mutable before all plugins are loaded.
  * You can change the contents of the registry while BuildMC-Core is un-initialized.
- * After initializing using {@code initialize();}, the register will be made immutable for safety.</p>*/
+ * After initializing using {@code initialize();}, the register will be made immutable for safety.</p>
+ *
+ * @see BaseRegistry
+ * */
 public class DeferredRegistry<T extends Keyed> implements Registry<T> {
 
     private final Map<NamespacedKey, T> map = new HashMap<>();

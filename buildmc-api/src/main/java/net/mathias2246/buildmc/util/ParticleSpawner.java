@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
 public abstract class ParticleSpawner extends BukkitRunnable {
 
     /**The builder used to create a certain type of ParticleSpawner.
-     *
-     * @implNote This should always be implemented in a subclass of your own custom ParticleSpawner,
+     * <p>
+     * This should always be implemented in a subclass of your own custom ParticleSpawner,
      * so that your particle spawner is more dynamically usable.*/
     @FunctionalInterface
     public interface Builder<T extends ParticleSpawner> {

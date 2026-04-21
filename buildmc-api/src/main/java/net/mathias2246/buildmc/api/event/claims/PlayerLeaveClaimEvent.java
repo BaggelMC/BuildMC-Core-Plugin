@@ -16,9 +16,6 @@ import org.jetbrains.annotations.Nullable;
  *   <li>{@code toClaim} may be {@code null} if the player is leaving a claim and entering unclaimed land.</li>
  * </ul>
  * <p>
- * This event is fired synchronously on the main server thread.
- * <br><br>
- * Plugins can attach optional metadata to this event via {@link #putMetadata(String, Object)}.
  */
 public class PlayerLeaveClaimEvent extends CustomPlayerEvent {
 

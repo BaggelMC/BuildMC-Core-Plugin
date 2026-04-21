@@ -9,14 +9,17 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Stream;
 
-/// An implementation of Bukkit's {@link Registry} that is mutable.
+/// An implementation of Bukkit's {@link Registry} that is permanently mutable.
 /// <p>
-/// You have to keep in mind that this registry type can be modified at any given time at runtime.
+/// You have to keep in mind that entries in this registry type can be modified at after plugin initialization.
 /// </p>
+///
+/// @see DeferredRegistry
 public class BaseRegistry<T extends Keyed> implements Registry<T>, Iterable<T> {
 
     private final HashMap<NamespacedKey, T> registry;
 
+    /// Initializes a new empty register
     public BaseRegistry() {
         this.registry = new HashMap<>();
     }

@@ -116,6 +116,9 @@ public final class LocationUtil {
         return calculateChunkArea(chunkX1, chunkZ1, chunkX2, chunkZ2);
     }
 
+    /**Calculates the Area in chunks between these chunk coordinates.
+     *
+     * @return The Area in chunks**/
     public static int calculateChunkArea(int chunkX1, int chunkZ1, int chunkX2, int chunkZ2) {
         int width = Math.abs(chunkX2 - chunkX1) + 1;
         int height = Math.abs(chunkZ2 - chunkZ1) + 1;

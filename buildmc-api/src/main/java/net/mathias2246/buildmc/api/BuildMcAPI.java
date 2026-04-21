@@ -52,7 +52,7 @@ public interface BuildMcAPI {
     void editConfiguration(@NotNull Consumer<FileConfiguration> consumer);
 
     /**
-     * Gets the main class instance of BuildMC.
+     * Gets the {@link MainClass} instance of BuildMC.
      *
      * @return the main class instance
      */
@@ -60,7 +60,7 @@ public interface BuildMcAPI {
     MainClass getMainClass();
 
     /**
-     * Gets the SoundManager used by BuildMC.
+     * Gets the {@link SoundManager}
      *
      * @return the SoundManager instance
      */
@@ -68,28 +68,41 @@ public interface BuildMcAPI {
     SoundManager getSoundManager();
 
     /**
-     * Gets the ClaimManager
+     * Gets the {@link ClaimManager}
      *
      * @return the ClaimManager instance
      */
     ClaimManager getClaimManager();
 
     /**
-     * Gets the EndManager
+     * Gets the {@link EndManager}
      *
      * @return the EndManager instance
      */
     EndManager getEndManager();
 
     /**
-     * Gets the ElytraManager
+     * Gets the {@link ElytraManager}
      *
      * @return the ElytraManager instance
      */
     ElytraManager getElytraManager();
 
+    /**
+     * Gets the {@link StatusManager}
+     *
+     * @return the ElytraManager instance
+     */
     StatusManager getStatusManager();
 
+    /**
+     * Gets the shared {@link RegistriesHolder} that contains all custom registries shared over all plugins that use the BuildMC-API.
+     * <p>
+     *     This can be used to store a reference to any type that implements Bukkit's {@link org.bukkit.Registry} interface.
+     * </p>
+     *
+     * @return The shared {@link RegistriesHolder} instance of the Core
+     */
     @NotNull
     RegistriesHolder getRegistriesHolder();
 }

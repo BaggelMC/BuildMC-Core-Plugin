@@ -4,6 +4,7 @@ import net.mathias2246.buildmc.util.TaskUtil;
 import net.mathias2246.buildmc.util.registry.DeferredRegistry;
 import org.bukkit.Keyed;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
@@ -21,9 +22,10 @@ import java.util.Objects;
 
 /**An abstract-class that can be used to define custom-item types for your plugin.
  * Custom items are defined by some data that is stored inside the ItemStack PDC.
- * This doesn't actually define a new item type.*/
+ * <p>This doesn't actually define a new item type or {@link Material}.</p>*/
 public abstract class AbstractCustomItem implements Keyed {
 
+    /// Shared registry instance for {@link AbstractCustomItem} instances
     public static final @NotNull DeferredRegistry<AbstractCustomItem> customItemsRegistry = new DeferredRegistry<>();
 
     private final @NotNull NamespacedKey key;
