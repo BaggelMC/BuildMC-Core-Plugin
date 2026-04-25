@@ -1,5 +1,9 @@
 package net.mathias2246.buildmc.player;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.mathias2246.buildmc.CoreMain;
@@ -10,8 +14,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static net.mathias2246.buildmc.util.SoundUtil.*;
 
@@ -33,7 +39,8 @@ public class TeleportTimer extends PlayerTimer {
             return 1;
         }
 
-        private Vector previousPosition;
+        private boolean playerInputReceived = false;
+        private PacketAdapter inputListener;
 
         private final @NotNull Location to;
 
@@ -44,6 +51,7 @@ public class TeleportTimer extends PlayerTimer {
 
         @Override
         public void onExit() {
+            unregisterInputListener();
             CoreMain.plugin.sendMessage(player, Component.translatable("messages.teleport.successful"));
             player.teleport(to, PlayerTeleportEvent.TeleportCause.PLUGIN);
             CoreMain.soundManager.playSound(player, success);
@@ -51,18 +59,17 @@ public class TeleportTimer extends PlayerTimer {
 
         @Override
         protected void init() {
-            previousPosition = player.getLocation().toVector();
+            registerInputListener();
         }
 
         @Override
         protected boolean shouldCancel() {
-            // TODO: If possible, cancel when the player inputs a movement
-            //  so that he can teleport when being pushed around by other players or redstone contraptions, etc.
-            return !player.isOnline() || !player.getLocation().toVector().equals(previousPosition);
+            return !player.isOnline() || playerInputReceived;
         }
 
         @Override
         protected void onCancel() {
+            unregisterInputListener();
             CoreMain.plugin.sendMessage(player, Component.translatable("messages.teleport.cancelled"));
             CoreMain.soundManager.playSound(player, mistake);
         }
@@ -70,12 +77,41 @@ public class TeleportTimer extends PlayerTimer {
         @Override
         protected void onStep() {
 
-            TextReplacementConfig r = TextReplacementConfig.builder().matchLiteral("%seconds%").replacement(String.valueOf(steps-currentStep)).build();
+            TextReplacementConfig secondsReplacement =
+                    TextReplacementConfig.builder()
+                            .matchLiteral("%seconds%")
+                            .replacement(String.valueOf(steps - currentStep))
+                            .build();
 
             CoreMain.plugin.sendPlayerActionBar(
                     player,
-                    Message.msg(player,"messages.teleport.counter").replaceText(r)
+                    Message.msg(player,"messages.teleport.counter").replaceText(secondsReplacement)
             );
             CoreMain.soundManager.playSound(player, notification);
         }
+
+    private void registerInputListener() {
+        List<PacketType> packets = new ArrayList<>(List.of(
+                PacketType.Play.Client.POSITION,
+                PacketType.Play.Client.POSITION_LOOK
+        ));
+
+        inputListener = new PacketAdapter(CoreMain.plugin, packets) {
+            @Override
+            public void onPacketReceiving(PacketEvent event) {
+                if (event.getPlayer().getUniqueId().equals(player.getUniqueId())) {
+                    playerInputReceived = true;
+                }
+            }
+        };
+
+        ProtocolLibrary.getProtocolManager().addPacketListener(inputListener);
+    }
+
+    private void unregisterInputListener() {
+        if (inputListener != null) {
+            ProtocolLibrary.getProtocolManager().removePacketListener(inputListener);
+            inputListener = null;
+        }
+    }
 }

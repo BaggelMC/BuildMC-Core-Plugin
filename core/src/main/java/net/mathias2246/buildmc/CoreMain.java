@@ -25,6 +25,7 @@ import net.mathias2246.buildmc.database.DatabaseConfig;
 import net.mathias2246.buildmc.database.DatabaseManager;
 import net.mathias2246.buildmc.database.DeathTable;
 import net.mathias2246.buildmc.deaths.DeathListener;
+import net.mathias2246.buildmc.event.claims.PlayerCrossClaimBoundariesListener;
 import net.mathias2246.buildmc.player.FirstTimeJoinListener;
 import net.mathias2246.buildmc.status.PlayerStatusUtil;
 import net.mathias2246.buildmc.status.StatusConfig;
@@ -209,7 +210,7 @@ public final class CoreMain {
                 if (def) Protection.defaultProtections.add(protection.getKey().toString());
             }
 
-            // FIXME: Makes player movement lag: registerListener(new PlayerCrossClaimBoundariesListener());
+            registerListener(new PlayerCrossClaimBoundariesListener());
 
             registerListener(new ClaimUIs());
 
@@ -260,8 +261,6 @@ public final class CoreMain {
 
     public static void onLoad() {
         protocolManager = ProtocolLibrary.getProtocolManager();
-
-
     }
 
     @SuppressWarnings("EmptyMethod")
