@@ -3,6 +3,7 @@ package net.mathias2246.buildmc.deaths;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.util.AudienceUtil;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -14,8 +15,6 @@ import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 
-import static net.mathias2246.buildmc.CoreMain.plugin;
-
 public class DeathsCommand {
 
     private static final SimpleDateFormat DATE_FORMAT =
@@ -24,7 +23,7 @@ public class DeathsCommand {
     public static int list(CommandSender sender, String playerName) {
         Player target = Bukkit.getPlayerExact(playerName);
         if (target == null) {
-            plugin.sendMessage(sender, Component.translatable("messages.deaths.error.player-not-found"));
+            AudienceUtil.sendMessage(sender, Component.translatable("messages.deaths.error.player-not-found"));
             return 0;
         }
 
@@ -34,12 +33,12 @@ public class DeathsCommand {
             var deaths = CoreMain.deathTable.getDeathsByPlayer(conn, uuid);
 
             if (deaths.isEmpty()) {
-                CoreMain.plugin.sendMessage(sender, Message.msg(sender, "messages.deaths.none", Map.of("player", playerName)));
+                 AudienceUtil.sendMessage(sender, Message.msg(sender, "messages.deaths.none", Map.of("player", playerName)));
                 return 1;
             }
 
-            CoreMain.plugin.sendMessage(sender, Component.text("------------------------------", NamedTextColor.GRAY));
-            CoreMain.plugin.sendMessage(sender, Component.translatable("messages.deaths.list-part").color(NamedTextColor.GOLD)
+             AudienceUtil.sendMessage(sender, Component.text("------------------------------", NamedTextColor.GRAY));
+             AudienceUtil.sendMessage(sender, Component.translatable("messages.deaths.list-part").color(NamedTextColor.GOLD)
                     .append(Component.text(playerName).color(NamedTextColor.YELLOW))
                     .append(Component.text(":", NamedTextColor.GOLD)));
 
@@ -53,15 +52,15 @@ public class DeathsCommand {
                         .append(Component.text(" - ").color(NamedTextColor.DARK_GRAY))
                         .append(Component.text(death.cause(), NamedTextColor.GRAY));
 
-                CoreMain.plugin.sendMessage(sender, line);
+                 AudienceUtil.sendMessage(sender, line);
             }
 
-             CoreMain.plugin.sendMessage(sender, Component.text("------------------------------", NamedTextColor.GRAY));
+              AudienceUtil.sendMessage(sender, Component.text("------------------------------", NamedTextColor.GRAY));
 
             return 1;
         } catch (Exception e) {
             CoreMain.plugin.getLogger().warning(e.toString());
-            CoreMain.plugin.sendMessage(sender, Component.translatable("messages.deaths.error.load-failed"));
+             AudienceUtil.sendMessage(sender, Component.translatable("messages.deaths.error.load-failed"));
             return 0;
         }
     }
@@ -69,7 +68,7 @@ public class DeathsCommand {
     public static int restore(CommandSender sender, String playerName, long deathId) {
         Player target = Bukkit.getPlayerExact(playerName);
         if (target == null) {
-             CoreMain.plugin.sendMessage(sender, Component.translatable("messages.deaths.error.player-not-found"));
+              AudienceUtil.sendMessage(sender, Component.translatable("messages.deaths.error.player-not-found"));
             return 0;
         }
 
@@ -77,23 +76,23 @@ public class DeathsCommand {
 
             DeathRecord record = CoreMain.deathTable.getDeathById(conn, deathId);
             if (record == null) {
-                 CoreMain.plugin.sendMessage(sender, Component.translatable("messages.deaths.error.not-found"));
+                  AudienceUtil.sendMessage(sender, Component.translatable("messages.deaths.error.not-found"));
                 return 0;
             }
 
             if (!record.playerUuid().equals(target.getUniqueId())) {
-                 CoreMain.plugin.sendMessage(sender, Component.translatable("messages.deaths.error.wrong-player"));
+                  AudienceUtil.sendMessage(sender, Component.translatable("messages.deaths.error.wrong-player"));
                 return 0;
             }
 
             DeathRestoreUtil.restore(target, record);
-            plugin.sendMessage(sender, Component.translatable("messages.deaths.restored"));
+            AudienceUtil.sendMessage(sender, Component.translatable("messages.deaths.restored"));
 
             return 1;
 
         } catch (Exception e) {
             CoreMain.plugin.getLogger().warning(e.toString());
-            CoreMain.plugin.sendMessage(sender, Component.translatable("messages.deaths.error.restore-failed"));
+             AudienceUtil.sendMessage(sender, Component.translatable("messages.deaths.error.restore-failed"));
             return 0;
         }
     }

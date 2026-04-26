@@ -4,8 +4,9 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.util.AudienceUtil;
 import net.mathias2246.buildmc.util.SoundUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
 public class BroadcastCommand {
@@ -20,7 +21,7 @@ public class BroadcastCommand {
         try {
             component = mm.deserialize(input);
         } catch (Exception e) {
-            CoreMain.plugin.sendMessage(sender, Component.text(
+             AudienceUtil.sendMessage(sender, Component.text(
                     "Failed to parse MiniMessage: " + e.getMessage(),
                     NamedTextColor.RED
             ));
@@ -28,7 +29,8 @@ public class BroadcastCommand {
             return 0;
         }
 
-        Audience audience = CoreMain.bukkitAudiences.players();
+        // The Server is a forwarding audience that contains every player and ConsoleSender
+        Audience audience = Bukkit.getServer();
 
         // If you can find a better solution go ahead, but I can't be fucked to deal with the newlines rn
         audience.sendMessage(Component.empty());
@@ -41,7 +43,7 @@ public class BroadcastCommand {
 
         audience.playSound(SoundUtil.notification);
 
-        CoreMain.plugin.sendMessage(sender, Component.text(
+         AudienceUtil.sendMessage(sender, Component.text(
                 "Broadcast sent!",
                 NamedTextColor.GREEN
         ));

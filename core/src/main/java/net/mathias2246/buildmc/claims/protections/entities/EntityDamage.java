@@ -3,11 +3,11 @@ package net.mathias2246.buildmc.claims.protections.entities;
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
 import net.kyori.adventure.text.Component;
-import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
+import net.mathias2246.buildmc.util.AudienceUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
@@ -52,7 +52,7 @@ public class EntityDamage extends Protection {
         NamespacedKey k = getKey();
 
         if (claim.hasProtection(k) && !ClaimManager.isPlayerAllowed(attacker, k, claim)) {
-            CoreMain.plugin.sendPlayerActionBar(attacker, Component.translatable("messages.claims.not-accessible.entity-damage"));
+            AudienceUtil.sendMessage(attacker, Component.translatable("messages.claims.not-accessible.entity-damage"));
             event.setCancelled(true);
         }
     }
@@ -65,7 +65,7 @@ public class EntityDamage extends Protection {
         if (!(damager instanceof Player attacker)) return;
 
         if (!ClaimManager.isPlayerAllowed(attacker, getKey(), victim.getLocation())) {
-            CoreMain.plugin.sendPlayerActionBar(attacker, Component.translatable("messages.claims.not-accessible.entity-damage"));
+            AudienceUtil.sendMessage(attacker, Component.translatable("messages.claims.not-accessible.entity-damage"));
             event.setCancelled(true);
         }
     }

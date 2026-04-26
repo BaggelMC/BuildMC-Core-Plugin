@@ -8,7 +8,6 @@ import com.github.stefvanschie.inventoryframework.pane.Pane;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.item.ItemUtil;
@@ -16,6 +15,7 @@ import net.mathias2246.buildmc.claims.ClaimLogger;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.ui.SignInputScreen;
 import net.mathias2246.buildmc.ui.UIUtil;
+import net.mathias2246.buildmc.util.AudienceUtil;
 import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.SoundUtil;
 import org.bukkit.Bukkit;
@@ -112,10 +112,13 @@ public class WhitelistMenu {
                                 column,
                                 row
                         );
+                        ItemStack paneItem = new ItemStack(Material.RED_STAINED_GLASS_PANE);
+                        ItemUtil.setName(paneItem, Message.msg(player, "messages.claims.ui.whitelist-menu.remove"));
                         currentPane.addItem(
+
                                 new GuiItem
                                         (
-                                                ItemUtil.setItemLegacyComponentName(Material.RED_STAINED_GLASS_PANE, Message.msg(player, "messages.claims.ui.whitelist-menu.remove")),
+                                                paneItem,
                                                 event -> {
                                                     event.setCancelled(true);
                                                     CoreMain.soundManager.playSound(player, SoundUtil.notification);
@@ -160,8 +163,9 @@ public class WhitelistMenu {
 
                     gui.addPane(pages);
                     StaticPane addButton = new StaticPane(4,2,1,1);
-                    ItemStack a = ItemUtil.setItemLegacyComponentName(Material.LIME_STAINED_GLASS_PANE, Message.msg(player, "messages.claims.ui.whitelist-menu.add-button.name"));
-                    addButton.addItem(new GuiItem(a, e -> {
+                    ItemStack addPaneItem = new ItemStack(Material.LIME_STAINED_GLASS_PANE);
+                    ItemUtil.setName(addPaneItem, Message.msg(player, "messages.claims.ui.whitelist-menu.add-button.name"));
+                    addButton.addItem(new GuiItem(addPaneItem, e -> {
                         e.setCancelled(true);
                         CoreMain.soundManager.playSound(player, SoundUtil.notification);
 
@@ -171,14 +175,14 @@ public class WhitelistMenu {
                             var targetPlayer = Bukkit.getPlayer(input);
                             if (targetPlayer == null) {
                                 CoreMain.soundManager.playSound(player, SoundUtil.mistake);
-                                plugin.sendMessage(player, Component.translatable("messages.claims.whitelist.player-not-found"));
+                                AudienceUtil.sendMessage(player, Component.translatable("messages.claims.whitelist.player-not-found"));
                                 return;
                             }
 
                             ClaimManager.addPlayerToWhitelist(claim, targetPlayer.getUniqueId());
 
                             CoreMain.soundManager.playSound(player, SoundUtil.success);
-                            plugin.sendMessage(player, Component.translatable("messages.claims.whitelist.added"));
+                            AudienceUtil.sendMessage(player, Component.translatable("messages.claims.whitelist.added"));
                         });
 
                         sign.openSignInput(player, "  Player Name:  ", "whitelist_player_for_claim");
@@ -190,7 +194,10 @@ public class WhitelistMenu {
                     controls.setPriority(Pane.Priority.HIGH);
 
                     // Back button
-                    controls.addItem(new GuiItem(ItemUtil.setItemLegacyComponentName(Material.BARRIER, Message.msg(player, "messages.claims.ui.general.back")), e -> {
+                    var backItem = new ItemStack(Material.BARRIER);
+                    ItemUtil.setName(backItem, Message.msg(player, "messages.claims.ui.general.back"));
+
+                    controls.addItem(new GuiItem(backItem, e -> {
                         e.setCancelled(true);
                         CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
                         ClaimEditMenu.open(player, claim);
@@ -238,14 +245,20 @@ public class WhitelistMenu {
                     StaticPane pane = new StaticPane(0, 0, 9, 3);
 
                     // Cancel button
-                    pane.addItem(new GuiItem(ItemUtil.setItemLegacyComponentName(Material.GREEN_CONCRETE, Message.msg(player, "messages.claims.ui.general.cancel")), e -> {
+                    var cancelButton = new ItemStack(Material.GREEN_CONCRETE);
+                    ItemUtil.setName(cancelButton, Message.msg(player, "messages.claims.ui.general.cancel"));
+
+                    pane.addItem(new GuiItem(cancelButton, e -> {
                         e.setCancelled(true);
                         CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
                         open(player, claim); // reopen whitelist menu
                     }), 3, 1);
 
                     // Confirm button
-                    pane.addItem(new GuiItem(ItemUtil.setItemLegacyComponentName(Material.RED_CONCRETE, Message.msg(player, "messages.claims.ui.general.confirm")), e -> {
+                    var confirmButton = new ItemStack(Material.RED_CONCRETE);
+                    ItemUtil.setName(confirmButton, Message.msg(player, "messages.claims.ui.general.confirm"));
+
+                    pane.addItem(new GuiItem(confirmButton, e -> {
                         e.setCancelled(true);
 
                         CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
@@ -253,7 +266,7 @@ public class WhitelistMenu {
                         UUID uuid = target.getUniqueId();
 
                         ClaimManager.removePlayerFromWhitelist(claim.getId(), uuid);
-                        CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.ui.whitelist-menu.delete-confirm-menu.success"));
+                         AudienceUtil.sendMessage(player, Component.translatable("messages.claims.ui.whitelist-menu.delete-confirm-menu.success"));
                         ClaimLogger.logWhitelistRemoved(player, claim.getName(), target.getName(), uuid.toString());
                         open(player, claim);
                     }), 5, 1);
@@ -283,7 +296,7 @@ public class WhitelistMenu {
         SkullMeta meta = (SkullMeta) head.getItemMeta();
         if (meta != null) {
             meta.setOwningPlayer(offlinePlayer);
-            meta.setDisplayName(LegacyComponentSerializer.legacySection().serialize(Component.text(Objects.requireNonNull(offlinePlayer.getName()), NamedTextColor.WHITE)));
+            meta.displayName(Component.text(Objects.requireNonNull(offlinePlayer.getName()), NamedTextColor.WHITE));
             head.setItemMeta(meta);
         }
         return head;

@@ -37,12 +37,13 @@
                 <groupId>com.google.code.gson</groupId>
                 <artifactId>gson</artifactId>
                 <version>2.13.2</version>
+                <scope>provided</scope>
             </dependency>
 
-            <!-- The main spigot API version shared across all modules -->
+            <!-- The main paper API version shared across all modules -->
             <dependency>
-                <groupId>org.spigotmc</groupId>
-                <artifactId>spigot-api</artifactId>
+                <groupId>io.papermc.paper</groupId>
+                <artifactId>paper-api</artifactId>
                 <version>1.21.11-R0.1-SNAPSHOT</version>
                 <scope>provided</scope>
             </dependency>
@@ -54,42 +55,13 @@
                 <scope>compile</scope>
             </dependency>
 
-            <!-- net.kyori dependencies that are not included inside the adventure-bom -->
-            <dependency>
-                <groupId>net.kyori</groupId>
-                <artifactId>adventure-platform-bukkit</artifactId>
-                <version>${bom.adventure-platform-version}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>net.kyori</groupId>
-                <artifactId>adventure-platform-facet</artifactId>
-                <version>${bom.adventure-platform-version}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>net.kyori</groupId>
-                <artifactId>adventure-platform-api</artifactId>
-                <version>${bom.adventure-platform-version}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>net.kyori</groupId>
-                <artifactId>examination-api</artifactId>
-                <version>${bom.examination-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.kyori</groupId>
-                <artifactId>examination-string</artifactId>
-                <version>${bom.examination-version}</version>
-            </dependency>
-
             <dependency>
                 <groupId>org.bstats</groupId>
                 <artifactId>bstats-bukkit</artifactId>
                 <version>${bom.bstats-version}</version>
                 <scope>compile</scope>
             </dependency>
+
             <dependency>
                 <groupId>org.bstats</groupId>
                 <artifactId>bstats-base</artifactId>
@@ -111,8 +83,8 @@
 
     <repositories>
         <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
+            <id>papermc</id>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
         <repository>
             <id>sonatype</id>

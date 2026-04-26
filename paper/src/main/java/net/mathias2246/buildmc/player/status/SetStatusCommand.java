@@ -11,6 +11,7 @@ import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.commands.CustomCommand;
 import net.mathias2246.buildmc.status.StatusConfig;
+import net.mathias2246.buildmc.util.AudienceUtil;
 import net.mathias2246.buildmc.util.SoundUtil;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +34,7 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
         var cmd = Commands.literal("status");
         cmd.executes(
                 (command) -> {
-                    command.getSource().getSender().sendMessage("/status <args>");
+                    AudienceUtil.sendMessage(command.getSource().getSender(), Component.text("/status <args>"));
                     return 1;
                 }
         );
@@ -50,7 +51,7 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
                     if (!(requiresPlayer(command.getSource().getSender()) instanceof Player player)) return 0;
 
                     CoreMain.statusManager.removePlayerStatus(player);
-                    player.sendMessage(Component.translatable( "messages.status.successfully-removed"));
+                    AudienceUtil.sendMessage(player, Component.translatable( "messages.status.successfully-removed"));
                     soundManager.playSound(player, SoundUtil.success);
                     return 1;
                 }
@@ -60,7 +61,7 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
             .executes(
                     (command) -> {
                         if (!(command.getSource().getSender() instanceof Player player)) {
-                            command.getSource().getSender().sendMessage(Component.translatable("messages.status.only-players"));
+                            AudienceUtil.sendMessage(command.getSource().getSender(), Component.translatable("messages.status.only-players"));
                             return 0;
                         }
                         return 1;

@@ -3,12 +3,11 @@ package net.mathias2246.buildmc.claims.protections.misc;
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.item.ItemUtil;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.ui.UIUtil;
+import net.mathias2246.buildmc.util.AudienceUtil;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -50,14 +49,15 @@ public class PotionSplash extends Protection {
         }
         ItemUtil.editMeta(displayBase, (meta) -> {
 
-            meta.setDisplayName(LegacyComponentSerializer.legacySection().serialize(
+            meta.displayName(
                     Message.msg(uiHolder, t+".name")
-            ));
-            meta.addItemFlags(
-                    ItemFlag.HIDE_ATTRIBUTES,
-                    ItemFlag.HIDE_ADDITIONAL_TOOLTIP
             );
-            meta.setLore(List.of(LegacyComponentSerializer.legacySection().serialize(Message.msg(uiHolder, t + ".lore")).split("\n")));
+            meta.addItemFlags(
+                    ItemFlag.HIDE_ATTRIBUTES
+            );
+
+            // FIXME: Split component on newline characters
+            meta.lore(List.of(Message.msg(uiHolder, t + ".lore")));
         });
 
         return new GuiItem(
@@ -70,7 +70,7 @@ public class PotionSplash extends Protection {
         ThrownPotion thrownPotion = event.getPotion();
         if (thrownPotion.getShooter() instanceof Player player) {
             if (!ClaimManager.isPlayerAllowed(player, getKey(), thrownPotion.getLocation())) {
-                CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.potion-splash"));
+                AudienceUtil.sendActionBar(player, Component.translatable("messages.claims.not-accessible.potion-splash"));
                 event.setCancelled(true);
             }
         }
@@ -81,7 +81,7 @@ public class PotionSplash extends Protection {
         ThrownPotion thrownPotion = event.getEntity();
         if (thrownPotion.getShooter() instanceof Player player) {
             if (!ClaimManager.isPlayerAllowed(player, getKey(), thrownPotion.getLocation())) {
-                CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.potion-splash"));
+                AudienceUtil.sendActionBar(player, Component.translatable("messages.claims.not-accessible.potion-splash"));
                 event.setCancelled(true);
             }
         }

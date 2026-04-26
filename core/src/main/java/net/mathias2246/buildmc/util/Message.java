@@ -25,7 +25,7 @@ public class Message {
      */
     public static Locale getLocale(CommandSender sender) {
         if (sender instanceof Player player) {
-            return Locale.forLanguageTag(player.getLocale().replace('_', '-'));
+            return Locale.forLanguageTag(player.locale().toString().replace('_', '-'));
         }
         return DEFAULT_LOCALE;
     }
@@ -37,7 +37,7 @@ public class Message {
      * @return the locale of the player
      */
     private static Locale getLocale(Player player) {
-        return Locale.forLanguageTag(player.getLocale().replace('_', '-'));
+        return Locale.forLanguageTag(player.locale().toString().replace('_', '-'));
     }
 
     // === Component methods ===

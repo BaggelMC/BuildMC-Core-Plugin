@@ -5,6 +5,7 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.util.AudienceUtil;
 import net.mathias2246.buildmc.util.SoundUtil;
 import net.mathias2246.buildmc.util.config.YamlConfigurationManager;
 import net.mathias2246.buildmc.util.registry.KeyHolder;
@@ -42,12 +43,12 @@ public class GuidesCommand extends YamlConfigurationManager {
 
         if (n == null || !guides.contains(n)) {
             if (sender instanceof Player player) plugin.getSoundManager().playSound(player, SoundUtil.mistake);
-            plugin.sendMessage(sender, Component.translatable("messages.guides.guide-not-found"));
+            AudienceUtil.sendMessage(sender, Component.translatable("messages.guides.guide-not-found"));
             return 0;
         }
 
         if (sender instanceof Player player) plugin.getSoundManager().playSound(player, SoundUtil.notification);
-        plugin.sendMessage(sender, Objects.requireNonNull(guides.get(n)).getValue());
+        AudienceUtil.sendMessage(sender, Objects.requireNonNull(guides.get(n)).getValue());
         return 1;
     }
 

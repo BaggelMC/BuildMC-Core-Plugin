@@ -1,5 +1,6 @@
 package net.mathias2246.buildmc.api.item;
 
+import net.kyori.adventure.key.Key;
 import net.mathias2246.buildmc.util.TaskUtil;
 import net.mathias2246.buildmc.util.registry.DeferredRegistry;
 import org.bukkit.Keyed;
@@ -26,7 +27,7 @@ import java.util.Objects;
 public abstract class AbstractCustomItem implements Keyed {
 
     /// Shared registry instance for {@link AbstractCustomItem} instances
-    public static final @NotNull DeferredRegistry<AbstractCustomItem> customItemsRegistry = new DeferredRegistry<>();
+    public static final @NotNull DeferredRegistry<AbstractCustomItem> customItemsRegistry = new DeferredRegistry<>(Key.key("buildmc:custom_item"));
 
     private final @NotNull NamespacedKey key;
 
@@ -122,7 +123,7 @@ public abstract class AbstractCustomItem implements Keyed {
         onInteract(item, event);
 
         // Delay 1 tick
-        TaskUtil.defer(plugin, () -> {
+        TaskUtil.defer(plugin, (task) -> {
             Player player = event.getPlayer();
 
             // Ignore interaction if the player dropped an item very recently

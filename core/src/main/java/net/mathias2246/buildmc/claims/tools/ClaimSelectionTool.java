@@ -5,6 +5,7 @@ import net.kyori.adventure.text.TextReplacementConfig;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.item.abstractTypes.AbstractSelectionTool;
 import net.mathias2246.buildmc.claims.ClaimManager;
+import net.mathias2246.buildmc.util.AudienceUtil;
 import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.ParticleSpawner;
 import net.mathias2246.buildmc.util.SoundUtil;
@@ -18,7 +19,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemRarity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -45,6 +46,7 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
 
     public static final int maxSelectionSize = CoreMain.plugin.getConfig().getInt("claims.tool.limit-selection", 8);
 
+
     @Override
     protected @NotNull ItemStack buildDefaultItemStack() {
 
@@ -54,7 +56,7 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
         ItemMeta m = claimToolItemstack.getItemMeta();
 
         if (m != null) {
-            m.setItemName("Select Claim Corners");
+            m.itemName(Component.text("Select Claim Corners"));
             m.setTool(null);
             m.addItemFlags(
                     ItemFlag.HIDE_ATTRIBUTES,
@@ -63,6 +65,7 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
             m.setUnbreakable(true);
             m.setRarity(ItemRarity.UNCOMMON);
             m.setEnchantmentGlintOverride(true);
+            m.setEnchantable(null);
             claimToolItemstack.setItemMeta(m);
         }
 
@@ -76,7 +79,6 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
 
     @Override
     public boolean allowFirstSelection(@NotNull ItemStack item, @NotNull Location at, @NotNull PlayerInteractEvent event) {
-
         Player player = event.getPlayer();
 
         var second = getSecondSelection(player);
@@ -84,17 +86,18 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
         if (at.getWorld() == null) return false;
 
         if (!ClaimManager.isWorldAllowed(at.getWorld())) {
-            CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.create.world-not-allowed"));
+            AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.world-not-allowed"));
             CoreMain.soundManager.playSound(player, SoundUtil.notification);
             return false;
         }
 
         if (second != null) {
             if (!isSelectionInSameWorld(at, second)) {
-                CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.create.different-worlds"));
+                AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.different-worlds"));
                 CoreMain.soundManager.playSound(player, SoundUtil.notification);
                 return false;
             }
+
         }
 
         return true;
@@ -123,7 +126,7 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
         if (at.getWorld() == null) return false;
 
         if (!ClaimManager.isWorldAllowed(at.getWorld())) {
-            CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.create.world-not-allowed"));
+            AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.world-not-allowed"));
             CoreMain.soundManager.playSound(player, SoundUtil.notification);
             return false;
         }
@@ -131,13 +134,13 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
         var first = getFirstSelection(player);
 
         if (player.hasCooldown(item)) {
-            CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.tool.tool-cooldown"));
+            AudienceUtil.sendMessage(player, Component.translatable("messages.claims.tool.tool-cooldown"));
             CoreMain.soundManager.playSound(player, SoundUtil.mistake);
             return false;
         } else if (first == null) {
             return true;
         } else if (!isSelectionInSameWorld(at, first)) {
-            CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.create.different-worlds"));
+            AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.different-worlds"));
             CoreMain.soundManager.playSound(player, SoundUtil.notification);
             return false;
         } else if (isSelectionToLarge(first, at, player)) {
@@ -146,7 +149,7 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
                     TextReplacementConfig.builder().matchLiteral("%selection_limit%").replacement(Integer.toString(maxSelectionSize)).build()
             );
 
-            CoreMain.plugin.sendMessage(player, msg);
+            AudienceUtil.sendMessage(player, msg);
             CoreMain.soundManager.playSound(player, SoundUtil.mistake);
             return false;
         }
@@ -154,19 +157,24 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
         return true;
     }
 
+    // PDC data Key. Needed in the paper implementation because Metadata is deprecated
+    public static final @NotNull NamespacedKey SELECTION_EFFECT_KEY = Objects.requireNonNull(NamespacedKey.fromString("nations:show_claim_selection"));
+
     @Override
     public void onSuccessfulFirstSelection(@NotNull ItemStack item, @NotNull Location at, @NotNull PlayerInteractEvent event) {
         Player player = event.getPlayer();
-        CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.tool.set-pos1"));
+        AudienceUtil.sendMessage(player, Component.translatable("messages.claims.tool.set-pos1"));
 
         CoreMain.soundManager.playSound(player, SoundUtil.success);
 
         player.setCooldown(item, 60);
 
-        if (!player.hasMetadata("claim_selection_particles")) {
-            player.setMetadata("claim_selection_particles", new FixedMetadataValue(getPlugin(), null));
+        var pdc = player.getPersistentDataContainer();
+
+        if (!pdc.has(SELECTION_EFFECT_KEY)) {
+            pdc.set(SELECTION_EFFECT_KEY, PersistentDataType.BOOLEAN, true);
             var p = particles.build(player);
-            p.runTaskTimer(getPlugin(), 0, p.delay);
+            p.run();
         }
     }
 
@@ -176,11 +184,11 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
 
         player.setCooldown(item, 60);
 
-        CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.tool.set-pos2"));
+        AudienceUtil.sendMessage(player, Component.translatable("messages.claims.tool.set-pos2"));
         CoreMain.soundManager.playSound(player, SoundUtil.success);
 
-        if (player.hasMetadata(firstSelectionKey) && player.hasMetadata(secondSelectionKey)) {
-            CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.tool.both-positions-set"));
+        if (player.getPersistentDataContainer().has(firstSelectionKey) && player.getPersistentDataContainer().has(secondSelectionKey)) {
+            AudienceUtil.sendMessage(player, Component.translatable("messages.claims.tool.both-positions-set"));
         }
     }
 }

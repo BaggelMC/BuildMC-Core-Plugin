@@ -5,6 +5,7 @@ import net.mathias2246.buildmc.api.endEvent.EndChangeCause;
 import net.mathias2246.buildmc.api.endEvent.EndManager;
 import net.mathias2246.buildmc.api.endEvent.EndState;
 import net.mathias2246.buildmc.api.event.endevent.EndStateChangeEvent;
+import net.mathias2246.buildmc.util.AudienceUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -86,7 +87,7 @@ public class EndManagerImpl implements EndManager {
 
         Component msg = Component.translatable(announcementKey);
         for (Player player : Bukkit.getOnlinePlayers()) {
-            player.sendMessage(msg);
+            AudienceUtil.sendMessage(player, msg);
         }
     }
 }

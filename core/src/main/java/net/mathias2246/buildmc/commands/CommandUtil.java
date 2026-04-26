@@ -1,7 +1,7 @@
 package net.mathias2246.buildmc.commands;
 
 import net.kyori.adventure.text.Component;
-import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.util.AudienceUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -11,7 +11,7 @@ public class CommandUtil {
         if (sender instanceof Player player) {
             return player;
         } else {
-            CoreMain.plugin.sendMessage(sender, Component.translatable("messages.error.not-a-player"));
+             AudienceUtil.sendMessage(sender, Component.translatable("messages.error.not-a-player"));
             return null;
         }
     }

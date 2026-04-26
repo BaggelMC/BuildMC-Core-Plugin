@@ -3,10 +3,10 @@ package net.mathias2246.buildmc.claims.protections.entities;
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
 import net.kyori.adventure.text.Component;
-import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
+import net.mathias2246.buildmc.util.AudienceUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
@@ -47,7 +47,7 @@ public class EntityTame extends Protection {
         Entity entity = event.getEntity();
 
         if (!ClaimManager.isPlayerAllowed(player, getKey(), entity.getLocation())) {
-            CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.tame-entity"));
+            AudienceUtil.sendActionBar(player, Component.translatable("messages.claims.not-accessible.tame-entity"));
             event.setCancelled(true);
         }
     }

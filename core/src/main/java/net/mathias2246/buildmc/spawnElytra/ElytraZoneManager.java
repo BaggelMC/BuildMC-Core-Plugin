@@ -2,6 +2,7 @@ package net.mathias2246.buildmc.spawnElytra;
 
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.util.AudienceUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -22,13 +23,13 @@ public class ElytraZoneManager {
 
     public void setPos1(@NotNull Player player, @NotNull Location loc) {
         pos1 = loc;
-        CoreMain.plugin.sendMessage(player, Component.translatable("messages.spawn-elytra.pos1-set"));
+         AudienceUtil.sendMessage(player, Component.translatable("messages.spawn-elytra.pos1-set"));
         tryCreateZone(player);
     }
 
     public void setPos2(@NotNull Player player, @NotNull Location loc) {
         pos2 = loc;
-        CoreMain.plugin.sendMessage(player, Component.translatable("messages.spawn-elytra.pos2-set"));
+         AudienceUtil.sendMessage(player, Component.translatable("messages.spawn-elytra.pos2-set"));
         tryCreateZone(player);
     }
 
@@ -36,14 +37,14 @@ public class ElytraZoneManager {
         if (pos1 == null || pos2 == null) return;
 
         if (!Objects.equals(pos1.getWorld(), pos2.getWorld())) {
-            CoreMain.plugin.sendMessage(player, Component.translatable("messages.spawn-elytra.error.different-worlds"));
+             AudienceUtil.sendMessage(player, Component.translatable("messages.spawn-elytra.error.different-worlds"));
             return;
         }
 
         boundingBox = BoundingBox.of(pos1.toVector(), pos2.toVector());
         world = pos1.getWorld();
         saveZoneToConfig();
-        CoreMain.plugin.sendMessage(player, Component.translatable("messages.spawn-elytra.success"));
+         AudienceUtil.sendMessage(player, Component.translatable("messages.spawn-elytra.success"));
     }
 
     public void registerZone(@NotNull Location pos1, @NotNull Location pos2, @NotNull World world) {

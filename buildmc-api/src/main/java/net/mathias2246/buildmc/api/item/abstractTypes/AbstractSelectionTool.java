@@ -6,7 +6,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,14 +23,17 @@ public abstract class AbstractSelectionTool extends AbstractTool {
     /**The default constructor for selection tools.*/
     public AbstractSelectionTool(@NotNull Plugin plugin, @NotNull NamespacedKey key) {
         super(plugin, key);
-        firstSelectionKey = key + "_first_selection";
-        secondSelectionKey = key + "_second_selection";
+
+        // TODO: Make these selection values be reset when a player disconnects for safety
+        firstSelectionKey = Objects.requireNonNull(NamespacedKey.fromString(key + "_first_selection"));
+        secondSelectionKey = Objects.requireNonNull(NamespacedKey.fromString(key + "_second_selection"));
     }
 
-    /**The metadata-key that is used to store the first selection.*/
-    public final @NotNull String firstSelectionKey;
-    /**The metadata-key that is used to store the second selection.*/
-    public final @NotNull String secondSelectionKey;
+    /**The NamespacedKey used to identify the first selection of this selection tool*/
+    public final @NotNull NamespacedKey firstSelectionKey;
+
+    /**The NamespacedKey used to identify the second selection of this selection tool*/
+    public final @NotNull NamespacedKey secondSelectionKey;
 
     /**
      * Checks is this custom item is usable.
@@ -56,9 +59,7 @@ public abstract class AbstractSelectionTool extends AbstractTool {
         if (!canUse(item, event)) return;
         if (!allowFirstSelection(item, at, event)) return;
 
-        event.getPlayer().setMetadata(firstSelectionKey, new FixedMetadataValue(
-                getPlugin(), LocationUtil.serialize(at)
-        ));
+        event.getPlayer().getPersistentDataContainer().set(firstSelectionKey, PersistentDataType.STRING, LocationUtil.serialize(at));
         onSuccessfulFirstSelection(item, at, event);
     }
 
@@ -68,9 +69,9 @@ public abstract class AbstractSelectionTool extends AbstractTool {
      *
      * @return The Location of the first selection or null if not found or invalid*/
     public @Nullable Location getFirstSelection(@NotNull Player player) {
-        var l = player.getMetadata(firstSelectionKey);
-        if (l.isEmpty()) return null;
-        return LocationUtil.tryDeserialize(l.getFirst().asString());
+        var l = player.getPersistentDataContainer().get(firstSelectionKey, PersistentDataType.STRING);
+        if (l == null || l.isEmpty()) return null;
+        return LocationUtil.tryDeserialize(l);
     }
 
     /**Tries reading the second selection position from the player's metadata.
@@ -79,9 +80,9 @@ public abstract class AbstractSelectionTool extends AbstractTool {
      *
      * @return The Location of the second selection or null if not found or invalid*/
     public @Nullable Location getSecondSelection(@NotNull Player player) {
-        var l = player.getMetadata(secondSelectionKey);
-        if (l.isEmpty()) return null;
-        return LocationUtil.tryDeserialize(l.getFirst().asString());
+        var l = player.getPersistentDataContainer().get(secondSelectionKey, PersistentDataType.STRING);
+        if (l == null || l.isEmpty()) return null;
+        return LocationUtil.tryDeserialize(l);
     }
 
 
@@ -91,9 +92,7 @@ public abstract class AbstractSelectionTool extends AbstractTool {
         if (!canUse(item, event)) return;
         if (!allowSecondSelection(item, at, event)) return;
 
-        event.getPlayer().setMetadata(secondSelectionKey, new FixedMetadataValue(
-                getPlugin(), LocationUtil.serialize(at)
-        ));
+        event.getPlayer().getPersistentDataContainer().set(secondSelectionKey, PersistentDataType.STRING, LocationUtil.serialize(at));
         onSuccessfulSecondSelection(item, at, event);
     }
 

@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.event.player.StatusChangeEvent;
 import net.mathias2246.buildmc.api.status.StatusInstance;
+import net.mathias2246.buildmc.util.AudienceUtil;
 import net.mathias2246.buildmc.util.SoundUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -16,8 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
-
-import static net.mathias2246.buildmc.CoreMain.bukkitAudiences;
 
 public class PlayerStatusUtil implements Listener {
 
@@ -63,10 +62,10 @@ public class PlayerStatusUtil implements Listener {
         status = status.toLowerCase();
         if (!doesStatusExist(status)) {
             if (join) {
-                CoreMain.plugin.sendMessage(player, Component.translatable("messages.status.join-doesn't-exist"));
+                 AudienceUtil.sendMessage(player, Component.translatable("messages.status.join-doesn't-exist"));
                 player.getPersistentDataContainer().remove(PLAYER_STATUS_PDC);
             } else {
-                CoreMain.plugin.sendMessage(player, Component.translatable("messages.status.not-found"));
+                 AudienceUtil.sendMessage(player, Component.translatable("messages.status.not-found"));
                 CoreMain.soundManager.playSound(player, SoundUtil.mistake);
             }
             return;
@@ -79,7 +78,7 @@ public class PlayerStatusUtil implements Listener {
             StatusChangeEvent e = new StatusChangeEvent(player, old, s);
             Bukkit.getPluginManager().callEvent(e);
             if (e.isCancelled()) {
-                CoreMain.plugin.sendMessage(player, Component.translatable("messages.status.cannot-set"));
+                 AudienceUtil.sendMessage(player, Component.translatable("messages.status.cannot-set"));
                 return;
             } else if (e.getNewStatus() == null) {
                 CoreMain.statusManager.forceRemovePlayerStatus(player);
@@ -91,9 +90,9 @@ public class PlayerStatusUtil implements Listener {
         if (!allowed.equals(StatusInstance.AllowStatus.ALLOW)) {
             switch (allowed) {
                 case NOT_IN_TEAM ->
-                        CoreMain.plugin.sendMessage(player, Component.translatable("messages.status.not-in-team"));
+                         AudienceUtil.sendMessage(player, Component.translatable("messages.status.not-in-team"));
                 case MISSING_PERMISSION ->
-                        CoreMain.plugin.sendMessage(player, Component.translatable("messages.status.no-permission"));
+                         AudienceUtil.sendMessage(player, Component.translatable("messages.status.no-permission"));
             }
             if (join) {
                 player.getPersistentDataContainer().remove(PLAYER_STATUS_PDC);
@@ -114,7 +113,7 @@ public class PlayerStatusUtil implements Listener {
         );
 
         if (join) return;
-        bukkitAudiences.player(player).sendMessage(Component.translatable("messages.status.successfully-set"));
+        AudienceUtil.sendMessage(player, Component.translatable("messages.status.successfully-set"));
         CoreMain.soundManager.playSound(player, SoundUtil.success);
     }
 

@@ -153,7 +153,6 @@ public class StatusInstance implements ConfigurationSerializable, Keyed {
                 teams = teamNames.stream()
                         .map((name) -> {
                             var manager = org.bukkit.Bukkit.getScoreboardManager();
-                            if (manager == null) return null;
                             return manager.getMainScoreboard().getTeam(((String) name).toLowerCase());
                         })
                         .collect(Collectors.toSet());

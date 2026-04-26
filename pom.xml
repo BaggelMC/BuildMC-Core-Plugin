@@ -13,7 +13,6 @@
         <module>bom</module>
 
         <module>core</module>
-        <module>spigot</module>
         <module>paper</module>
         <module>buildmc-api</module>
     </modules>
@@ -50,8 +49,43 @@
         <minecraft.bukkitApiVersion>1.21</minecraft.bukkitApiVersion>
     </properties>
 
+    <!-- Transitive Dependencies for all modules (except the API module) -->
+    <dependencies>
+        <!--suppress VulnerableLibrariesLocal -->
+        <dependency>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+        </dependency>
+
+    </dependencies>
+
+    <repositories>
+        <repository>
+            <id>papermc-repo</id>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
+        </repository>
+    </repositories>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>net.mathias2246</groupId>
+                <artifactId>BuildMC-BOM</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <build>
         <defaultGoal>clean package</defaultGoal>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -62,6 +96,23 @@
                     <target>${java.version}</target>
                 </configuration>
             </plugin>
+
+            <!-- Clean everything before building so no stale artifacts are left -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.3.2</version>
+                <executions>
+                    <execution>
+                        <id>auto-clean</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
             <!-- Resolves dependency javadocs for IDE -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -87,77 +138,4 @@
             </resource>
         </resources>
     </build>
-
-    <!-- Transitive Dependencies for all modules (except the API module) -->
-    <dependencies>
-        <dependency>
-            <groupId>net.kyori</groupId>
-            <artifactId>adventure-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.kyori</groupId>
-            <artifactId>adventure-key</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.kyori</groupId>
-            <artifactId>adventure-text-minimessage</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.kyori</groupId>
-            <artifactId>adventure-text-serializer-legacy</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.kyori</groupId>
-            <artifactId>examination-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.kyori</groupId>
-            <artifactId>examination-string</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.kyori</groupId>
-            <artifactId>adventure-platform-bukkit</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.kyori</groupId>
-            <artifactId>adventure-platform-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.kyori</groupId>
-            <artifactId>adventure-platform-facet</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.mojang</groupId>
-            <artifactId>brigadier</artifactId>
-            <version>1.0.18</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-        </dependency>
-    </dependencies>
-
-    <repositories>
-        <repository>
-            <id>minecraft-libraries</id>
-            <url>https://libraries.minecraft.net</url>
-        </repository>
-    </repositories>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>net.mathias2246</groupId>
-                <artifactId>BuildMC-BOM</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 </project>

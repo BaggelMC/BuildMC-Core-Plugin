@@ -1,6 +1,6 @@
 package net.mathias2246.buildmc.commands.disabledCommands;
 
-import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.util.AudienceUtil;
 import net.mathias2246.buildmc.util.CommandUtils;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Bukkit;
@@ -10,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.SimpleCommandMap;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -45,8 +46,9 @@ public class DisableCommands {
             // Register dummy override
             Command blockedCommand = new Command(commandName) {
                 @Override
-                public boolean execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
-                    CoreMain.plugin.sendMessage(sender, Message.msg(sender, "messages.error.command-disabled"));
+                public boolean execute(@NotNull CommandSender sender, @NotNull String label, String @NonNull [] args) {
+                    // Use Adventure's Audience directly to avoid BungeeCord overload ambiguity
+                    AudienceUtil.sendMessage(sender, Message.msg(sender, "messages.error.command-disabled"));
                     return true;
                 }
             };

@@ -4,8 +4,9 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.mathias2246.buildmc.api.BuildMcAPI;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.event.lifecycle.BuildMcFinishedLoadingEvent;
@@ -70,8 +71,6 @@ public final class CoreMain {
     public static ClaimTable claimTable;
     public static DeathTable deathTable;
 
-    public static BukkitAudiences bukkitAudiences;
-
     private static boolean isInitialized = false;
 
     public static boolean isInitialized() { return isInitialized; }
@@ -91,6 +90,8 @@ public final class CoreMain {
             .registerTypeAdapter(StatusInstance.class, new StatusConfig.StatusInstanceJsonDeserializer())
             .create();
 
+    public final static GsonComponentSerializer gsonComponentSerializer = GsonComponentSerializer.builder().build();
+
     public static GuidesCommand guideCommand;
 
     public static StatusManager statusManager;
@@ -105,8 +106,6 @@ public final class CoreMain {
 
         initializeConfigs();
 
-        bukkitAudiences = BukkitAudiences.create(plugin);
-
         BStats.initialize();
 
         LanguageManager.init();
@@ -115,14 +114,14 @@ public final class CoreMain {
 
         Bukkit.getServicesManager().register(BuildMcAPI.class, plugin, plugin, ServicePriority.High);
 
-        guides = (BaseRegistry<KeyHolder<Component>>) registriesHolder.addRegistry(DefaultRegistries.GUIDES.toString(), new BaseRegistry<KeyHolder<Component>>());
+        guides = (BaseRegistry<KeyHolder<Component>>) registriesHolder.addRegistry(DefaultRegistries.GUIDES.toString(), new BaseRegistry<KeyHolder<Component>>(Key.key("buildmc:guide")));
 
         guideCommand = new GuidesCommand(plugin, "guides.yml");
         GuidesCommand.enabled = guideCommand.configuration.getBoolean("enabled", true);
 
-        statusesRegistry = (BaseRegistry<StatusInstance>) registriesHolder.addRegistry(DefaultRegistries.STATUSES.toString(), new BaseRegistry<StatusInstance>());
+        statusesRegistry = (BaseRegistry<StatusInstance>) registriesHolder.addRegistry(DefaultRegistries.STATUSES.toString(), new BaseRegistry<StatusInstance>(Key.key("buildmc:status")));
 
-        protectionsRegistry = (DeferredRegistry<Protection>) registriesHolder.addRegistry(DefaultRegistries.PROTECTIONS.toString(), new DeferredRegistry<Protection>());
+        protectionsRegistry = (DeferredRegistry<Protection>) registriesHolder.addRegistry(DefaultRegistries.PROTECTIONS.toString(), new DeferredRegistry<Protection>(Key.key("buildmc:protection")));
 
         customItemsRegistry = (DeferredRegistry<AbstractCustomItem>) registriesHolder.addRegistry(DefaultRegistries.CUSTOM_ITEMS.toString(), AbstractCustomItem.customItemsRegistry);
 

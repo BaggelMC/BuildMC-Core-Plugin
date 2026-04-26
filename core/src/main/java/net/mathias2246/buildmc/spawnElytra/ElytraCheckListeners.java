@@ -1,7 +1,7 @@
 package net.mathias2246.buildmc.spawnElytra;
 
 import net.kyori.adventure.text.Component;
-import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.util.AudienceUtil;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -32,7 +32,7 @@ public record ElytraCheckListeners(ElytraZoneManager zoneManager, boolean boostE
         setPlayerFlying(player);
 
         if (boostEnabled && !isPlayerBoosted(player)) {
-            CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.spawn-elytra.boost-hint"));
+            AudienceUtil.sendMessage(player, Component.translatable("messages.spawn-elytra.boost-hint"));
         }
     }
 

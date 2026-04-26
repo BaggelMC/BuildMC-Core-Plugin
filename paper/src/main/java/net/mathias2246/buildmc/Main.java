@@ -1,7 +1,6 @@
 package net.mathias2246.buildmc;
 
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
-import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.api.claims.ClaimManager;
 import net.mathias2246.buildmc.api.endEvent.EndManager;
 import net.mathias2246.buildmc.api.item.AbstractCustomItem;
@@ -28,9 +27,7 @@ import net.mathias2246.buildmc.util.SoundUtil;
 import net.mathias2246.buildmc.util.config.ConfigurationValidationException;
 import net.mathias2246.buildmc.util.registry.RegistriesHolder;
 import org.bukkit.NamespacedKey;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -146,22 +143,7 @@ public final class Main extends PluginMain implements Listener {
     }
 
     @Override
-    public void sendMessage(CommandSender sender, Component message) {
-        sender.sendMessage(message);
-    }
-
-    @Override
-    public void sendPlayerActionBar(Player player, Component message) {
-        player.sendActionBar(message);
-    }
-
-    @Override
     public @NotNull Plugin getPlugin() {
-        return this;
-    }
-
-    @Override
-    public @NotNull MainClass getMainClass() {
         return this;
     }
 

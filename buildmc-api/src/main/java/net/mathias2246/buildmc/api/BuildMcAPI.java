@@ -1,6 +1,5 @@
 package net.mathias2246.buildmc.api;
 
-import net.mathias2246.buildmc.MainClass;
 import net.mathias2246.buildmc.api.claims.ClaimManager;
 import net.mathias2246.buildmc.api.endEvent.EndManager;
 import net.mathias2246.buildmc.api.spawnEyltra.ElytraManager;
@@ -50,14 +49,6 @@ public interface BuildMcAPI {
      * @param consumer A consumer to apply changes to the core configuration
      */
     void editConfiguration(@NotNull Consumer<FileConfiguration> consumer);
-
-    /**
-     * Gets the {@link MainClass} instance of BuildMC.
-     *
-     * @return the main class instance
-     */
-    @NotNull
-    MainClass getMainClass();
 
     /**
      * Gets the {@link SoundManager}

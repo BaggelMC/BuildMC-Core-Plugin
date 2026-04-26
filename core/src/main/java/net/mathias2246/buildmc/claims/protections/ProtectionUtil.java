@@ -1,7 +1,6 @@
 package net.mathias2246.buildmc.claims.protections;
 
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.mathias2246.buildmc.api.item.ItemUtil;
 import net.mathias2246.buildmc.ui.UIUtil;
 import net.mathias2246.buildmc.util.Message;
@@ -17,14 +16,15 @@ public class ProtectionUtil {
     public static @NotNull GuiItem createDisplayItem(@NotNull Player uiHolder, @NotNull Material material, String baseTranslationKey) {
         ItemStack displayBase = new ItemStack(material);
         ItemUtil.editMeta(displayBase, (meta) -> {
-            meta.setItemName(LegacyComponentSerializer.legacySection().serialize(
+            meta.itemName(
                     Message.msg(uiHolder, baseTranslationKey+".name")
-            ));
-            meta.addItemFlags(
-                    ItemFlag.HIDE_ATTRIBUTES,
-                    ItemFlag.HIDE_ADDITIONAL_TOOLTIP
             );
-            meta.setLore(List.of(LegacyComponentSerializer.legacySection().serialize(Message.msg(uiHolder, baseTranslationKey + ".lore")).split("\n")));
+            meta.addItemFlags(
+                    ItemFlag.HIDE_ATTRIBUTES
+            );
+
+            // FIXME: Split component on newline characters
+            meta.lore(List.of(Message.msg(uiHolder, baseTranslationKey + ".lore")));
         });
         return new GuiItem(
                 displayBase,

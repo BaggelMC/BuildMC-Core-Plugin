@@ -3,11 +3,11 @@ package net.mathias2246.buildmc.claims.protections.misc;
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
 import net.kyori.adventure.text.Component;
-import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
+import net.mathias2246.buildmc.util.AudienceUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -75,20 +75,20 @@ public class Containers extends Protection {
         if (event.getInventory().getHolder() instanceof BlockState block) {
 
             if (!ClaimManager.isPlayerAllowed(player, getKey(), claim)) {
-                CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.container"));
+                AudienceUtil.sendActionBar(player, Component.translatable("messages.claims.not-accessible.container"));
                 event.setCancelled(true);
             }
 
         } else if (event.getInventory().getHolder() instanceof Entity entity) {
 
             if (!ClaimManager.isPlayerAllowed(player, getKey(), claim)) {
-                CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.entity-container"));
+                AudienceUtil.sendActionBar(player, Component.translatable("messages.claims.not-accessible.entity-container"));
                 event.setCancelled(true);
             }
 
         } else {
             if (!ClaimManager.isPlayerAllowed(player, getKey(), claim)) {
-                CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.container"));
+                AudienceUtil.sendActionBar(player, Component.translatable("messages.claims.not-accessible.container"));
                 event.setCancelled(true);
             }
 
@@ -105,7 +105,7 @@ public class Containers extends Protection {
 
         if (!ClaimManager.isPlayerAllowed(player, getKey(), claim)) {
             event.setCancelled(true);
-            CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.interact"));
+            AudienceUtil.sendActionBar(player, Component.translatable("messages.claims.not-accessible.interact"));
         }
     }
 
@@ -134,8 +134,7 @@ public class Containers extends Protection {
 
         if (!ClaimManager.isPlayerAllowed(player, getKey(), claim)) {
             event.setCancelled(true);
-            CoreMain.plugin.sendPlayerActionBar(
-                    player,
+            AudienceUtil.sendActionBar(player, 
                     Component.translatable("messages.claims.not-accessible.container")
             );
         }

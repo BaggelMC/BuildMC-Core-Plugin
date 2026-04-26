@@ -118,6 +118,11 @@ public final class LocationUtil {
 
     /**Calculates the Area in chunks between these chunk coordinates.
      *
+     * @param chunkX1 the smallest chunk X coordinate
+     * @param chunkZ1 the smallest chunk Z coordinate
+     * @param chunkX2 the largest chunk X coordinate
+     * @param chunkZ2 the largest chunk Z coordinate
+     *
      * @return The Area in chunks**/
     public static int calculateChunkArea(int chunkX1, int chunkZ1, int chunkX2, int chunkZ2) {
         int width = Math.abs(chunkX2 - chunkX1) + 1;

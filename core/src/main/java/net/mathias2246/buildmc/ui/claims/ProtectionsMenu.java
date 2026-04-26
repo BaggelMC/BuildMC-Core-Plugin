@@ -126,7 +126,9 @@ public class ProtectionsMenu {
                     controls.setPriority(Pane.Priority.HIGH);
 
                     // Back button
-                    controls.addItem(new GuiItem(ItemUtil.setItemLegacyComponentName(Material.BARRIER, Message.msg(player, "messages.claims.ui.general.back")), e -> {
+                    ItemStack barrier = new ItemStack(Material.BARRIER);
+                    ItemUtil.setName(barrier, Message.msg(player, "messages.claims.ui.general.back"));
+                    controls.addItem(new GuiItem(barrier, e -> {
                         e.setCancelled(true);
                         CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
                         ClaimEditMenu.open(player, claim);
@@ -195,9 +197,8 @@ public class ProtectionsMenu {
 
     private static ItemStack createStatusPane(boolean enabled, @NotNull Player player) {
         Material color = enabled ? Material.RED_STAINED_GLASS_PANE : Material.GREEN_STAINED_GLASS_PANE;
-        return ItemUtil.setItemLegacyComponentName(
-                color,
-                Message.msg(player, enabled ? "messages.claims.ui.protections-menu.enabled" : "messages.claims.ui.protections-menu.disabled")
-        );
+        ItemStack item = new ItemStack(color);
+        ItemUtil.setName(item, Message.msg(player, enabled ? "messages.claims.ui.protections-menu.enabled" : "messages.claims.ui.protections-menu.disabled"));
+        return item;
     }
 }

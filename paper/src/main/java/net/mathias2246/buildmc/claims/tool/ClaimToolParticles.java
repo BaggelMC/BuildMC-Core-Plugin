@@ -1,6 +1,7 @@
 package net.mathias2246.buildmc.claims.tool;
 
 import com.destroystokyo.paper.ParticleBuilder;
+import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.util.LocationUtil;
 import net.mathias2246.buildmc.util.ParticleSpawner;
@@ -23,7 +24,7 @@ public class ClaimToolParticles extends ParticleSpawner {
     public final boolean isRemoveSelection;
 
     public ClaimToolParticles(int repeatTimes, int delay, @NotNull Player source, boolean isRemoveSelection) {
-        super(repeatTimes, delay, source);
+        super(CoreMain.plugin, repeatTimes, delay, source);
         this.isRemoveSelection = isRemoveSelection;
         var l = LocationUtil.tryDeserialize(source.getMetadata("buildmc:claim_tool_first_selection").getFirst().asString());
         if (l == null) return;

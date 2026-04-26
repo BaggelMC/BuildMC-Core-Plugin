@@ -1,10 +1,14 @@
 package net.mathias2246.buildmc.util.registry;
 
+import io.papermc.paper.registry.tag.Tag;
+import io.papermc.paper.registry.tag.TagKey;
+import net.kyori.adventure.key.Key;
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -15,13 +19,16 @@ import java.util.stream.Stream;
 /// </p>
 ///
 /// @see DeferredRegistry
-public class BaseRegistry<T extends Keyed> implements Registry<T>, Iterable<T> {
+public class BaseRegistry<T extends Keyed> implements Registry<T>, Iterable<T>, net.kyori.adventure.key.Keyed {
 
     private final HashMap<NamespacedKey, T> registry;
 
+    private final @NotNull Key regKey;
+
     /// Initializes a new empty register
-    public BaseRegistry() {
-        this.registry = new HashMap<>();
+    public BaseRegistry(@NotNull Key key) {
+        regKey = key;
+        registry = new HashMap<>();
     }
 
     /**Removes an entry from the registry.
@@ -82,9 +89,82 @@ public class BaseRegistry<T extends Keyed> implements Registry<T>, Iterable<T> {
         return registry.size();
     }
 
+    /**
+     * Gets an entry from the deferred-registry
+     *
+     * @param namespacedKey The {@link NamespacedKey} of the entry you are trying to retrieve
+     *
+     * @return The entry under the given {@link NamespacedKey} or null if not found.
+     * */
     @Override
     public @Nullable T get(@NotNull NamespacedKey namespacedKey) {
         return registry.get(namespacedKey);
+    }
+
+    /** Gets the {@link NamespacedKey} of a {@link T}
+     * @param t The object to check
+     *
+     * @return The {@link NamespacedKey} of the object, or null if the parameter is null
+     * **/
+    @Override
+    public NamespacedKey getKey(T t) {
+        return t.getKey();
+    }
+
+    private final @NotNull Map<TagKey<T>, Tag<T>> tags = new HashMap<>();
+
+    /** Adds a {@link org.bukkit.Tag} to this registry.
+     *
+     * @param tag The {@link Tag} to add
+     * **/
+    public void addTag(@NonNull Tag<T> tag) {
+        tags.put(tag.tagKey(), tag);
+    }
+
+    /** Removes a {@link org.bukkit.Tag} from this registry.
+     *
+     * @param tag The {@link TagKey} of the tag to remove
+     * **/
+    public void removeTag(@NonNull TagKey<T> tag) {
+        tags.remove(tag);
+    }
+
+    /** Removes a {@link org.bukkit.Tag} from this registry.
+     *
+     * @param tag The {@link Tag} to remove
+     * **/
+    public void removeTag(@NonNull Tag<T> tag) {
+        tags.remove(tag.tagKey());
+    }
+
+    /** Checks if a certain {@link TagKey} is found for this registry.
+     *
+     * @param tagKey The key to check for
+     * @return True if the tag key was found; Otherwise false
+     * **/
+    @Override
+    public boolean hasTag(@NonNull TagKey<T> tagKey) {
+        return tags.containsKey(tagKey);
+    }
+
+    /** Gets a {@link Tag} from this registry by its key.
+     *
+     * @throws NullPointerException Thrown when the registry doesn't contain any tag with the key that was given
+     * @param tagKey The key of the tag
+     * @return A {@link Tag} instance
+     * **/
+    @Override
+    public @NonNull Tag<T> getTag(@NonNull TagKey<T> tagKey) {
+        return tags.get(tagKey);
+    }
+
+    /** Gets a {@link Collection} containing all {@link Tag}s in this registry.
+     *
+     * @return A {@link Collection} containing all {@link Tag}s in this registry
+     * **/
+    @Override
+    public @NonNull Collection<Tag<T>> getTags() {
+        return tags.values();
     }
 
     /**
@@ -122,11 +202,6 @@ public class BaseRegistry<T extends Keyed> implements Registry<T>, Iterable<T> {
     @Override
     public @NotNull Iterator<T> iterator() {
         return registry.values().iterator();
-    }
-
-    @Override
-    public @Nullable T match(@NotNull String input) {
-        return Registry.super.match(input);
     }
 
     /**
@@ -177,5 +252,13 @@ public class BaseRegistry<T extends Keyed> implements Registry<T>, Iterable<T> {
         if (key == null) return Optional.empty();
         return
                 Optional.ofNullable(registry.get(key));
+    }
+
+    /**
+     * @return The {@link Key} of this registry
+     * **/
+    @Override
+    public @NotNull Key key() {
+        return regKey;
     }
 }

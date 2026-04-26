@@ -1,9 +1,13 @@
 package net.mathias2246.buildmc.util;
 
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Consumer;
 
 /**
  * Utility methods for safely scheduling tasks on the main server thread.
@@ -22,10 +26,6 @@ import org.jetbrains.annotations.NotNull;
  *     }
  * });
  * }</pre>
- *
- * <p>
- *     May god protect you if you use this Class. LOL
- * </p>
  */
 @ApiStatus.Internal
 public final class TaskUtil {
@@ -43,8 +43,21 @@ public final class TaskUtil {
      * @param plugin the owning plugin instance
      * @param task   the task to execute
      */
-    public static void defer(@NotNull Plugin plugin, @NotNull Runnable task) {
-        Bukkit.getScheduler().runTask(plugin, task);
+    public static void defer(@NotNull Plugin plugin, @NotNull Consumer<ScheduledTask> task) {
+        Bukkit.getGlobalRegionScheduler().run(plugin, task);
+    }
+
+    /**
+     * Runs the given task on the next tick on the main server thread.
+     * <p>
+     * This is often used to delay execution until after all synchronous
+     * event handlers for the current tick have completed.
+     *
+     * @param plugin the owning plugin instance
+     * @param task   the task to execute
+     */
+    public static void deferForEntity(@NotNull Plugin plugin, @NotNull Entity entity, @NotNull Consumer<ScheduledTask> task) {
+        entity.getScheduler().run(plugin, task, null);
     }
 
     /**
@@ -54,7 +67,7 @@ public final class TaskUtil {
      * @param delay  number of ticks to delay
      * @param task   the task to execute
      */
-    public static void later(@NotNull Plugin plugin, long delay, @NotNull Runnable task) {
-        Bukkit.getScheduler().runTaskLater(plugin, task, delay);
+    public static void later(@NotNull Plugin plugin, long delay, @NotNull Consumer<ScheduledTask> task) {
+        Bukkit.getGlobalRegionScheduler().runDelayed(plugin, task, delay);
     }
 }

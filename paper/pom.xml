@@ -15,12 +15,12 @@
 
     <repositories>
         <repository>
-            <id>papermc-repo</id>
-            <url>https://repo.papermc.io/repository/maven-public/</url>
-        </repository>
-        <repository>
             <id>central</id>
             <url>https://repo1.maven.org/maven2/</url>
+        </repository>
+        <repository>
+            <id>minecraft-libraries</id>
+            <url>https://libraries.minecraft.net</url>
         </repository>
     </repositories>
 
@@ -31,11 +31,11 @@
             <version>${project.buildVersion}</version>
             <scope>compile</scope>
         </dependency>
-        <!--suppress VulnerableLibrariesLocal -->
+
         <dependency>
-            <groupId>io.papermc.paper</groupId>
-            <artifactId>paper-api</artifactId>
-            <version>1.21.11-R0.1-SNAPSHOT</version>
+            <groupId>com.mojang</groupId>
+            <artifactId>brigadier</artifactId>
+            <version>1.0.18</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -46,14 +46,6 @@
         <resources>
             <resource> <!-- Paper platform resources -->
                 <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-            <resource> <!-- Core resources -->
-                <directory>../core/src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-            <resource> <!-- Other resources -->
-                <directory>../src/main/resources</directory>
                 <filtering>true</filtering>
             </resource>
         </resources>
@@ -69,6 +61,7 @@
                     <target>${java.version}</target>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -85,6 +78,7 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -114,6 +108,7 @@
                             <shadedPattern>net.mathias2246.buildmc.libs.com.github.stefvanschie.inventoryframework</shadedPattern>
                         </relocation>
                     </relocations>
+
                     <artifactSet>
                         <includes>
                             <include>net.mathias2246:core</include>
@@ -127,20 +122,6 @@
 
                     <!-- Filters to exclude duplicates that cause warnings -->
                     <filters>
-                        <!-- A list of compiled core or api classes that are overwritten in the paper version -->
-                        <filter>
-                            <artifact>net.mathias2246:core</artifact>
-                            <excludes>
-                                <exclude>net/mathias2246/buildmc/util/ParticleSpawner.class</exclude>
-                                <exclude>net/mathias2246/buildmc/util/ParticleSpawner$Builder.class</exclude>
-                                <exclude>net/mathias2246/buildmc/util/PlayerTimer.class</exclude>
-                                <exclude>net/mathias2246/buildmc/util/TaskUtil.class</exclude>
-                                <exclude>net/mathias2246/buildmc/api/item/AbstractCustomItem.class</exclude>
-                                <exclude>net/mathias2246/buildmc/api/item/ItemDropTracker.class</exclude>
-                                <exclude>net/mathias2246/buildmc/claims/tools/ClaimSelectionTool.class</exclude>
-                            </excludes>
-                        </filter>
-
                         <!-- Remove overlapping META-INF files -->
                         <filter>
                             <artifact>*:*</artifact>

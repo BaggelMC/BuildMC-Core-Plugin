@@ -1,8 +1,6 @@
 package net.mathias2246.buildmc.api.item;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
@@ -10,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
+/** A helper-class for items. **/
 public class ItemUtil {
     /**A helper method for editing {@link ItemMeta} using a {@link Consumer} that takes in an {@link ItemMeta} instance.
      * <p>The edited {@link ItemMeta} instance will be automatically be set on the {@link ItemStack} instance after editing.</p>
@@ -27,33 +26,6 @@ public class ItemUtil {
         itemStack.setItemMeta(meta);
     }
 
-    /**Will set the item name of the given {@link ItemStack} to the given {@link Component} name.
-     * @param newName The new name of the item. When null, the name will be removed from the item.*/
-    public static void setItemLegacyComponentName(@NotNull ItemStack itemStack, @Nullable Component newName) {
-        editMeta(
-                itemStack,
-                (meta) -> {
-                    if (newName == null) meta.setItemName(null);
-
-                    else meta.setItemName(LegacyComponentSerializer.legacySection().serialize(newName));
-                }
-        );
-    }
-    /**Will create an {@link ItemStack} with the given {@link Component} name.
-     * @param newName The new name of the item. When null, the name will be removed from the item.*/
-    public static @NotNull ItemStack setItemLegacyComponentName(@NotNull Material material, @Nullable Component newName) {
-        ItemStack i = new ItemStack(material);
-        editMeta(
-                i,
-                (meta) -> {
-                    if (newName == null) meta.setItemName(null);
-
-                    else meta.setItemName(LegacyComponentSerializer.legacySection().serialize(newName));
-                }
-        );
-        return i;
-    }
-
 
     /**Will try to get a {@link AbstractCustomItem} from an {@link ItemStack} if it is a custom item.
      * @return The {@link AbstractCustomItem}, or {@code null} if not a custom item.
@@ -67,6 +39,15 @@ public class ItemUtil {
         if (customItemKey == null) return null;
 
         return AbstractCustomItem.customItemsRegistry.get(customItemKey);
+    }
+
+    /** **/
+    public static void setName(@NotNull ItemStack itemStack, @Nullable Component name) {
+        ItemMeta meta = itemStack.getItemMeta();
+        if (meta == null) return;
+
+        meta.itemName(name);
+        itemStack.setItemMeta(meta);
     }
 
 }

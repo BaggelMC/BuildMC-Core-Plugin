@@ -6,13 +6,13 @@ import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
 import com.github.stefvanschie.inventoryframework.pane.Pane;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.ClaimType;
 import net.mathias2246.buildmc.api.item.ItemUtil;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.ui.UIUtil;
+import net.mathias2246.buildmc.util.AudienceUtil;
 import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.SoundUtil;
 import org.bukkit.Bukkit;
@@ -25,7 +25,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -68,7 +68,7 @@ public class ClaimEditMenu {
     public static void open(@NotNull Player player, @NotNull Claim claim) {
 
         if (claim.getId() == null) {
-            plugin.sendMessage(player, Component.translatable("messages.claims.remove.not-found"));
+            AudienceUtil.sendMessage(player, Component.translatable("messages.claims.remove.not-found"));
             plugin.getSoundManager().playSound(player, SoundUtil.mistake);
             return;
         }
@@ -180,10 +180,10 @@ public class ClaimEditMenu {
                                 CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
                                 boolean removed = ClaimManager.removeClaimById(claim.getId());
                                 if (removed) {
-                                    plugin.sendMessage(player,
+                                    AudienceUtil.sendMessage(player, 
                                             Component.translatable("messages.claims.ui.edit-menu.delete-confirm-menu.success"));
                                 } else {
-                                    plugin.sendMessage(player,
+                                    AudienceUtil.sendMessage(player, 
                                             Component.translatable("messages.claims.ui.edit-menu.delete-confirm-menu.fail"));
                                 }
                                 player.closeInventory();
@@ -216,7 +216,7 @@ public class ClaimEditMenu {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(LegacyComponentSerializer.legacySection().serialize(name));
+            meta.displayName(name);
             item.setItemMeta(meta);
         }
         return new GuiItem(item, action);
@@ -244,7 +244,6 @@ public class ClaimEditMenu {
 
         // Item name
         Component nameComponent = Message.msg(player, "messages.claims.ui.edit-menu.info-name");
-        String displayName = LegacyComponentSerializer.legacySection().serialize(nameComponent);
 
         // Item lore (multi-line info)
         Component loreComponent = Message.msg(player, "messages.claims.ui.edit-menu.info",
@@ -256,13 +255,14 @@ public class ClaimEditMenu {
                         "dimension", dimension
                 )
         );
-        String[] loreLines = LegacyComponentSerializer.legacySection().serialize(loreComponent).split("\n");
+        // FIXME: Convert component with newline characters to list of line components
+        List<Component> loreLines = List.of(loreComponent);
 
         ItemStack infoItem = new ItemStack(Material.PAPER);
         ItemMeta meta = infoItem.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(displayName);
-            meta.setLore(Arrays.asList(loreLines));
+            meta.displayName(nameComponent);
+            meta.lore(loreLines);
             infoItem.setItemMeta(meta);
         }
 

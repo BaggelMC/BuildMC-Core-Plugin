@@ -7,6 +7,7 @@ import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.api.endEvent.EndChangeCause;
 import net.mathias2246.buildmc.api.endEvent.EndState;
 import net.mathias2246.buildmc.api.event.endevent.EndStateChangeEvent;
+import net.mathias2246.buildmc.util.AudienceUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -69,11 +70,11 @@ public class EndEventCommand {
 
                     String senderMessageKey = allowEnd ? "messages.end-event.opened" : "messages.end-event.closed";
                     Component senderMessage = Component.translatable(senderMessageKey);
-                    command.getSource().getSender().sendMessage(senderMessage);
+                    AudienceUtil.sendMessage(command.getSource().getSender(), senderMessage);
 
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         Component msg = Component.translatable(messageKey);
-                        player.sendMessage(msg);
+                        AudienceUtil.sendMessage(player, msg);
                     }
                     return 1;
                 }

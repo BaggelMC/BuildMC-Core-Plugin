@@ -13,7 +13,7 @@ public class FirstTimeJoinListener implements Listener {
     public void onFirstTimeJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        if (player.getLastPlayed() != 0) return;
+        if (player.getLastLogin() != 0) return;
         PlayerFirstTimeJoinEvent e = new PlayerFirstTimeJoinEvent(player, event);
         Bukkit.getPluginManager().callEvent(e);
     }

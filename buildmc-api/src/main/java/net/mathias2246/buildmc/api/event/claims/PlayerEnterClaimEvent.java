@@ -41,7 +41,6 @@ public class PlayerEnterClaimEvent extends CustomPlayerEvent {
      * Gets the ID of the claim the player is leaving.
      *
      * @return the ID of the previous claim, or {@code null} if the player was not in a claim
-     * @implNote The claim may not exist at the time of this event.
      */
     public @Nullable Long getFromClaim() {
         return fromClaim;
@@ -51,7 +50,6 @@ public class PlayerEnterClaimEvent extends CustomPlayerEvent {
      * Gets the ID of the claim the player is entering.
      *
      * @return the ID of the new claim, or {@code null} if the player is entering unclaimed land
-     * @implNote The claim may not exist at the time of this event.
      */
     public @Nullable Long getToClaim() {
         return toClaim;
