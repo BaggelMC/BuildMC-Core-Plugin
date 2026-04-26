@@ -13,6 +13,7 @@ import net.mathias2246.buildmc.api.event.lifecycle.BuildMcFinishedLoadingEvent;
 import net.mathias2246.buildmc.api.event.lifecycle.BuildMcRegistryEvent;
 import net.mathias2246.buildmc.api.item.AbstractCustomItem;
 import net.mathias2246.buildmc.api.item.ItemDropTracker;
+import net.mathias2246.buildmc.api.permission.PermissionManager;
 import net.mathias2246.buildmc.api.status.StatusInstance;
 import net.mathias2246.buildmc.api.status.StatusManager;
 import net.mathias2246.buildmc.claims.ClaimLogger;
@@ -95,6 +96,8 @@ public final class CoreMain {
     public static GuidesCommand guideCommand;
 
     public static StatusManager statusManager;
+
+    public static PermissionManager permissionManager;
 
     @ApiStatus.Internal
     public static void initialize(@NotNull PluginMain plugin) {

@@ -5,6 +5,7 @@ import net.mathias2246.buildmc.api.claims.ClaimManager;
 import net.mathias2246.buildmc.api.endEvent.EndManager;
 import net.mathias2246.buildmc.api.item.AbstractCustomItem;
 import net.mathias2246.buildmc.api.item.CustomItemListener;
+import net.mathias2246.buildmc.api.permission.PermissionManager;
 import net.mathias2246.buildmc.api.spawnEyltra.ElytraManager;
 import net.mathias2246.buildmc.api.status.StatusManager;
 import net.mathias2246.buildmc.claims.ClaimCommand;
@@ -178,6 +179,11 @@ public final class Main extends PluginMain implements Listener {
     }
 
     @Override
+    public PermissionManager getPermissionManager() {
+        return CoreMain.permissionManager;
+    }
+
+    @Override
     public void editConfiguration(@NotNull Consumer<FileConfiguration> consumer) {
         consumer.accept(config);
     }
@@ -210,7 +216,7 @@ public final class Main extends PluginMain implements Listener {
         }
     }
 
-    // Is called here, because on paper non-persistent Metadata was replaced with PDC for safety.
+    // Is called here, because on paper non-persistent Metadata was replaced with PDC because it is deprecated.
     // So as a safety check, all the non-persisting values stored inside the players PDC are removed here.
     @EventHandler
     private void onPlayerDisconnect(PlayerQuitEvent event) {

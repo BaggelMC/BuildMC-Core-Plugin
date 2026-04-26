@@ -2,6 +2,7 @@ package net.mathias2246.buildmc.api;
 
 import net.mathias2246.buildmc.api.claims.ClaimManager;
 import net.mathias2246.buildmc.api.endEvent.EndManager;
+import net.mathias2246.buildmc.api.permission.PermissionManager;
 import net.mathias2246.buildmc.api.spawnEyltra.ElytraManager;
 import net.mathias2246.buildmc.api.status.StatusManager;
 import net.mathias2246.buildmc.util.SoundManager;
@@ -9,6 +10,7 @@ import net.mathias2246.buildmc.util.registry.RegistriesHolder;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,6 +23,7 @@ import java.util.function.Consumer;
  * access registries, modify behaviour, and hook into extension points.
  * </p>
  */
+@ApiStatus.NonExtendable
 public interface BuildMcAPI {
 
     /** Tries to get the BuildMcAPI service from Bukkit.
@@ -96,4 +99,11 @@ public interface BuildMcAPI {
      */
     @NotNull
     RegistriesHolder getRegistriesHolder();
+
+    /**
+     * Gets the {@link net.mathias2246.buildmc.api.permission.PermissionManager}
+     *
+     * @return the PermissionManager instance
+     */
+    PermissionManager getPermissionManager();
 }

@@ -7,6 +7,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,6 +24,7 @@ import java.util.UUID;
  * It allows checking claim ownership, player permissions, protections, and
  * managing claims through players or teams.
  */
+@ApiStatus.NonExtendable
 public interface ClaimManager {
 
     /**
