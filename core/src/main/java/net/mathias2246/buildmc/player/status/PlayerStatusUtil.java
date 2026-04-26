@@ -1,4 +1,4 @@
-package net.mathias2246.buildmc.status;
+package net.mathias2246.buildmc.player.status;
 
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.CoreMain;

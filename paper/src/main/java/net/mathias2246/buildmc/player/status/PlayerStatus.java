@@ -5,7 +5,6 @@ import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.event.player.StatusChangeEvent;
 import net.mathias2246.buildmc.api.status.StatusInstance;
 import net.mathias2246.buildmc.api.status.StatusManager;
-import net.mathias2246.buildmc.status.PlayerStatusUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -16,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-import static net.mathias2246.buildmc.status.PlayerStatusUtil.PLAYER_STATUS_PDC;
+import static net.mathias2246.buildmc.player.status.PlayerStatusUtil.PLAYER_STATUS_PDC;
 
 public class PlayerStatus implements Listener, StatusManager {
 

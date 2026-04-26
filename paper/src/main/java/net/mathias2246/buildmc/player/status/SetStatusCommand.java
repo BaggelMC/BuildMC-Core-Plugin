@@ -10,7 +10,6 @@ import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.commands.CustomCommand;
-import net.mathias2246.buildmc.status.StatusConfig;
 import net.mathias2246.buildmc.util.AudienceUtil;
 import net.mathias2246.buildmc.util.SoundUtil;
 import org.bukkit.entity.Player;
