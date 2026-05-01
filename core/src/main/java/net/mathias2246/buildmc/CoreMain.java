@@ -216,7 +216,7 @@ public final class CoreMain {
 
             registerListener(new ClaimUIs());
 
-            customItemsRegistry.initialize();
+
 
             ClaimLogger.init(plugin);
         }
@@ -245,6 +245,8 @@ public final class CoreMain {
             }
         }
 
+        customItemsRegistry.initialize();
+
         new ItemDropTracker(plugin);
 
         plugin.finishLoading();
@@ -268,6 +270,7 @@ public final class CoreMain {
     @SuppressWarnings("EmptyMethod")
     @ApiStatus.Internal
     public static void stop() {
+        databaseManager.close();
     }
 
     private static void initializeConfigs() {

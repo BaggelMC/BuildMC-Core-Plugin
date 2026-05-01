@@ -12,9 +12,12 @@ import net.mathias2246.buildmc.util.LocationUtil;
 import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.SoundUtil;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -24,15 +27,37 @@ import java.util.Objects;
 import static net.mathias2246.buildmc.CoreMain.plugin;
 
 public class ClaimCreate {
-    
+
+    /**Tries reading the first selection position from the player's metadata.
+     *
+     * @param player The player that made the selection
+     *
+     * @return The Location of the first selection or null if not found or invalid*/
+    private static @Nullable Location getFirstSelection(@NotNull Player player) {
+        var l = player.getPersistentDataContainer().get(Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool_first_selection")), PersistentDataType.STRING);
+        if (l == null || l.isEmpty()) return null;
+        return LocationUtil.tryDeserialize(l);
+    }
+
+    /**Tries reading the second selection position from the player's metadata.
+     *
+     * @param player The player that made the selection
+     *
+     * @return The Location of the second selection or null if not found or invalid*/
+    private static @Nullable Location getSecondSelection(@NotNull Player player) {
+        var l = player.getPersistentDataContainer().get(Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool_second_selection")), PersistentDataType.STRING);
+        if (l == null || l.isEmpty()) return null;
+        return LocationUtil.tryDeserialize(l);
+    }
+
     public static int createClaimCommand(@NotNull Player player, String type, String name) {
-        if (!player.hasMetadata("buildmc:claim_tool_first_selection") || !player.hasMetadata("buildmc:claim_tool_second_selection")) {
+        if (!player.getPersistentDataContainer().has(Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool_first_selection"))) || !player.getPersistentDataContainer().has(Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool_second_selection")))) {
              AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.missing-positions"));
             return 0;
         }
 
-        Location pos1 = LocationUtil.tryDeserialize(player.getMetadata("buildmc:claim_tool_first_selection").getFirst().asString());
-        Location pos2 = LocationUtil.tryDeserialize(player.getMetadata("buildmc:claim_tool_second_selection").getFirst().asString());
+        Location pos1 = getFirstSelection(player);
+        Location pos2 = getSecondSelection(player);
 
         if (pos1 == null || pos2 == null) {
              AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.missing-positions"));
@@ -219,8 +244,8 @@ public class ClaimCreate {
     }
 
     private static void removeSelectionData(Player player) {
-        player.removeMetadata("buildmc:claim_tool_first_selection", plugin);
-        player.removeMetadata("buildmc:claim_tool_second_selection", plugin);
+        player.getPersistentDataContainer().remove(Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool_first_selection")));
+        player.getPersistentDataContainer().remove(Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool_second_selection")));
     }
     
 }
