@@ -9,6 +9,7 @@ import net.mathias2246.buildmc.util.AudienceUtil;
 
 public class GuideCommand implements CustomCommand {
 
+    @Override
     public LiteralCommandNode<CommandSourceStack> getCommand() {
         var cmd = Commands.literal("guide");
 

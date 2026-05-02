@@ -9,7 +9,6 @@ import net.mathias2246.buildmc.util.AudienceUtil;
 import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.ParticleSpawner;
 import net.mathias2246.buildmc.util.SoundUtil;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -26,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-@SuppressWarnings({"UnstableApiUsage"})
 public class ClaimSelectionTool extends AbstractSelectionTool {
 
 
@@ -121,7 +119,6 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
     @Override
     public boolean allowSecondSelection(@NotNull ItemStack item, @NotNull Location at, @NotNull PlayerInteractEvent event) {
         Player player = event.getPlayer();
-        Chunk chunk = player.getLocation().getChunk();
 
         if (at.getWorld() == null) return false;
 

@@ -40,6 +40,7 @@ public class PlayerStatus implements Listener, StatusManager {
     }
 
     @SuppressWarnings("UnusedReturnValue")
+    @Override
     public boolean removePlayerStatus(@NotNull Player player) {
         @Nullable StatusInstance old = CoreMain.statusesRegistry.get(Objects.requireNonNull(NamespacedKey.fromString("buildmc:" + player.getPersistentDataContainer().get(PLAYER_STATUS_PDC, PersistentDataType.STRING))).key());
 
@@ -54,6 +55,7 @@ public class PlayerStatus implements Listener, StatusManager {
         return true;
     }
 
+    @Override
     public void forceRemovePlayerStatus(@NotNull Player player) {
         player.getPersistentDataContainer().remove(PLAYER_STATUS_PDC);
 

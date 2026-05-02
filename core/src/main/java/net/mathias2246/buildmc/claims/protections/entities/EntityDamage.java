@@ -41,7 +41,7 @@ public class EntityDamage extends Protection {
         Entity victim = event.getEntity();
         Entity damager = event.getDamageSource().getCausingEntity();
 
-        if ((victim instanceof Player a)) return;
+        if ((victim instanceof Player)) return;
         if (!(damager instanceof Player attacker)) return;
 
         Claim claim = ClaimManager.getClaim(victim.getLocation());

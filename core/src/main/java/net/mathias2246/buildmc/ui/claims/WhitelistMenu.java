@@ -36,11 +36,8 @@ public class WhitelistMenu {
 
     private static final @NotNull StaticPane INVISIBLE_BACKGROUND;
     public static final @NotNull StaticPane RED_BACKGROUND;
-    private static final @NotNull ItemStack ADD_BUTTON;
 
     static {
-        ADD_BUTTON = new ItemStack(Material.LIME_STAINED_GLASS_PANE, 1);
-
         SPACER_ROW = new StaticPane(0, 2, 9, 5);
 
         INVISIBLE_BACKGROUND = new StaticPane(9, 6);

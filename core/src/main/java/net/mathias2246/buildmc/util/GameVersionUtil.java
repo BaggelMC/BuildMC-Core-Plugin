@@ -29,11 +29,15 @@ public class GameVersionUtil {
     }
 
     private static int[] parseVersion(String version) {
-        String[] parts = version.split("\\.");
-        int major = parts.length > 0 ? Integer.parseInt(parts[0]) : 0;
-        int minor = parts.length > 1 ? Integer.parseInt(parts[1]) : 0;
-        int patch = parts.length > 2 ? Integer.parseInt(parts[2]) : 0;
-        return new int[] { major, minor, patch };
+        try {
+            String[] parts = version.split("\\.");
+            int major = parts.length > 0 ? Integer.parseInt(parts[0]) : 0;
+            int minor = parts.length > 1 ? Integer.parseInt(parts[1]) : 0;
+            int patch = parts.length > 2 ? Integer.parseInt(parts[2]) : 0;
+            return new int[]{major, minor, patch};
+        } catch (NumberFormatException ignore) {
+            return new int[]{999,999,999};
+        }
     }
 
 }

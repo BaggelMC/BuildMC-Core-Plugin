@@ -85,6 +85,7 @@ public class BaseRegistry<T extends Keyed> implements Registry<T>, Iterable<T>, 
     }
 
     /// @return The amount of entries in this registry
+    @Override
     public int size() {
         return registry.size();
     }
@@ -192,6 +193,7 @@ public class BaseRegistry<T extends Keyed> implements Registry<T>, Iterable<T>, 
     /**
      * @return A {@link Stream} containing all keys in this registry.
      * */
+    @Override
     public @NotNull Stream<NamespacedKey> keyStream() {
         return registry.keySet().stream();
     }

@@ -282,6 +282,7 @@ public class DeferredRegistry<T extends Keyed> implements Registry<T>, net.kyori
     /**
      * @return A {@link Stream} containing all keys in this deferred-registry.
      * */
+    @Override
     public @NotNull Stream<NamespacedKey> keyStream() {
         return map.keySet().stream();
     }

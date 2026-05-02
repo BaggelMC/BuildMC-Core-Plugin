@@ -59,7 +59,7 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
         var setSub = Commands.literal("set")
             .executes(
                     (command) -> {
-                        if (!(command.getSource().getSender() instanceof Player player)) {
+                        if (!(command.getSource().getSender() instanceof Player)) {
                             AudienceUtil.sendMessage(command.getSource().getSender(), Component.translatable("messages.status.only-players"));
                             return 0;
                         }

@@ -246,7 +246,6 @@ public class SpawnElytraUtil {
 
     /**Makes the player glide using the spawn-elytra.*/
     public static void setPlayerFlying(@NotNull Player player) {
-        var mode = player.getGameMode();
         if (!isSurvival(player)) return;
         player.setGliding(true);
         player.setAllowFlight(false);

@@ -47,6 +47,7 @@ public abstract class AbstractSelectionTool extends AbstractTool {
      *
      * @return True if, the selection tool should be usable right now
      * */
+    @Override
     public abstract boolean canUse(@NotNull ItemStack item, @NotNull PlayerInteractEvent event);
 
     @Override

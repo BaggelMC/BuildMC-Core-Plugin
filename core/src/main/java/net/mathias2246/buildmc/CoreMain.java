@@ -271,6 +271,7 @@ public final class CoreMain {
     @ApiStatus.Internal
     public static void stop() {
         databaseManager.close();
+        ClaimLogger.shutdown();
     }
 
     private static void initializeConfigs() {

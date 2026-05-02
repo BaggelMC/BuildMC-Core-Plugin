@@ -14,7 +14,6 @@ public class SpawnBoostRunnable {
         this.player = player;
 
         this.multiplyValue = config.getInt("spawn-elytra.strength", 2);
-        boolean boostEnabled = config.getBoolean("spawn-elytra.enabled", true);
     }
 
 

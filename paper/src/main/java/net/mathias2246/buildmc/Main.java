@@ -27,6 +27,7 @@ import net.mathias2246.buildmc.util.SoundManager;
 import net.mathias2246.buildmc.util.SoundUtil;
 import net.mathias2246.buildmc.util.config.ConfigurationValidationException;
 import net.mathias2246.buildmc.util.registry.RegistriesHolder;
+import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
@@ -62,6 +63,9 @@ public final class Main extends PluginMain implements Listener {
     public static EndManager apiEndManager;
     private static ElytraManager apiElytraManager;
 
+    /** Internal value for skipping all the logic inside the onDisable method for a cleaner emergency plugin disable. **/
+    private boolean disableImmediately = false;
+
     @Override
     public void onEnable() {
         // Plugin startup logic
@@ -70,8 +74,19 @@ public final class Main extends PluginMain implements Listener {
 
         pluginFolder = plugin.getDataFolder();
         if (!pluginFolder.exists()) {
-            //noinspection ResultOfMethodCallIgnored
-            pluginFolder.mkdir();
+            // Error handling, if creating the plugin data directory fails, immediately disable the plugin
+            try {
+                if (!pluginFolder.mkdir()) {
+                    logger.severe("Could not create BuildMC-Core data folder! Disabling plugin now!");
+
+                    disableImmediately = true;
+                    Bukkit.getPluginManager().disablePlugin(this);
+                }
+            } catch (SecurityException e) {
+                logger.severe("Could not create BuildMC-Core data folder! Disabling plugin now!");
+                disableImmediately = true;
+                Bukkit.getPluginManager().disablePlugin(this);
+            }
         }
 
 
@@ -135,6 +150,11 @@ public final class Main extends PluginMain implements Listener {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+
+        if (disableImmediately) {
+            logger.info("Disabled plugin without closing anything...");
+            return;
+        }
 
         CoreMain.stop();
     }

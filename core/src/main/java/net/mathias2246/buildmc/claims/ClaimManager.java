@@ -410,8 +410,6 @@ public class ClaimManager {
 
         if (pos1.getWorld() != pos2.getWorld()) return null;
 
-        UUID worldId = pos1.getWorld().getUID();
-
         ClaimCreateEvent event = new ClaimCreateEvent(
                 claim
         );
