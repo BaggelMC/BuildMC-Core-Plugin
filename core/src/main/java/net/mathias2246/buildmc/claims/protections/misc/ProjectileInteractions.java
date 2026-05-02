@@ -21,6 +21,7 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.projectiles.ProjectileSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
@@ -31,8 +32,8 @@ public class ProjectileInteractions extends Protection {
     }
 
     @Override
-    public String getTranslationBaseKey() {
-        return "claims.flags.projectile-interactions";
+    public @NonNull String getTranslationBaseKey() {
+        return "claims.protections.projectile-interactions";
     }
 
     @Override
@@ -55,7 +56,7 @@ public class ProjectileInteractions extends Protection {
         if (!ClaimManager.isPlayerAllowed(player, getKey(), block.getLocation())) {
             projectile.remove();
             event.setCancelled(true);
-            AudienceUtil.sendActionBar(player, Component.translatable("messages.claims.not-accessible.interact"));
+            AudienceUtil.sendActionBar(player, Component.translatable(getTranslationBaseKey()+".message"));
         }
 
     }

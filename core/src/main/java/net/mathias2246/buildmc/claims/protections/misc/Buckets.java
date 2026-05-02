@@ -2,11 +2,8 @@ package net.mathias2246.buildmc.claims.protections.misc;
 
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
-import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.api.claims.Protection;
-import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
-import net.mathias2246.buildmc.util.AudienceUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
@@ -20,6 +17,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
@@ -51,11 +49,7 @@ public class Buckets extends Protection {
 
         if (!isBucketUse) return;
 
-        if (!ClaimManager.isPlayerAllowed(player, getKey(), block.getLocation())) {
-            AudienceUtil.sendActionBar(player, 
-                    Component.translatable("messages.claims.not-accessible.block-place"));
-            event.setCancelled(true);
-        }
+        ProtectionUtil.handleProtection(event, this, block.getLocation(), player);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -63,16 +57,12 @@ public class Buckets extends Protection {
         Player player = event.getPlayer();
         Entity entity = event.getEntity();
 
-        if (!ClaimManager.isPlayerAllowed(player, getKey(), entity.getLocation())) {
-            AudienceUtil.sendActionBar(player, 
-                    Component.translatable("messages.claims.not-accessible.entity-bucket"));
-            event.setCancelled(true);
-        }
+        ProtectionUtil.handleProtection(event, this, entity.getLocation(), player);
     }
 
     @Override
-    public String getTranslationBaseKey() {
-        return "claims.flags.bucket-usage";
+    public @NonNull String getTranslationBaseKey() {
+        return "claims.protections.bucket-usage";
     }
 
     @Override

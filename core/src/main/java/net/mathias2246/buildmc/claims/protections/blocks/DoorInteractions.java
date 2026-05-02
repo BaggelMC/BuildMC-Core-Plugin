@@ -2,12 +2,8 @@ package net.mathias2246.buildmc.claims.protections.blocks;
 
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
-import net.kyori.adventure.text.Component;
-import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.Protection;
-import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
-import net.mathias2246.buildmc.util.AudienceUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
@@ -20,6 +16,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
@@ -39,8 +36,8 @@ public class DoorInteractions extends Protection {
     }
 
     @Override
-    public String getTranslationBaseKey() {
-        return "claims.flags.interaction-doors";
+    public @NonNull String getTranslationBaseKey() {
+        return "claims.protections.interaction-doors";
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -52,19 +49,12 @@ public class DoorInteractions extends Protection {
         if (event.getClickedBlock() == null && action != Action.PHYSICAL) return;
 
         Block block = event.getClickedBlock();
-
-        Player player = event.getPlayer();
-
-        Claim claim = ClaimManager.getClaim(Objects.requireNonNull(block).getLocation());
-        if (claim == null) return;
+        if (block == null) return;
 
         var t = block.getType();
 
         if (!Tag.DOORS.isTagged(t) && !Tag.TRAPDOORS.isTagged(t) && !Tag.FENCE_GATES.isTagged(t)) return;
 
-        if (!ClaimManager.isPlayerAllowed(player, getKey(), claim)) {
-            event.setCancelled(true);
-            AudienceUtil.sendActionBar(player, Component.translatable("messages.claims.not-accessible.interact"));
-        }
+        ProtectionUtil.handleProtection(event, this, block.getLocation(), event.getPlayer());
     }
 }

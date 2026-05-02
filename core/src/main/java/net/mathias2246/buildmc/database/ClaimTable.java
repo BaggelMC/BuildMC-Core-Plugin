@@ -481,7 +481,6 @@ public class ClaimTable implements DatabaseTable {
         }
     }
 
-    // TODO: Try to find a way to make this only one request every time
     private void loadClaimRelations(Connection conn, long claimId,
                                     Collection<UUID> whitelistedPlayers,
                                     Collection<String> protections) throws SQLException {

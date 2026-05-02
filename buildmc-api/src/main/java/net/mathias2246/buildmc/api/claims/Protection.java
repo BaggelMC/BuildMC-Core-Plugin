@@ -99,11 +99,20 @@ public abstract class Protection implements Keyed, Displayable, Listener {
 
     /**
      * Gets the translation base key used for localization.
-     * <p>This value should be used as the root for retrieving translatable messages for the UI.</p>
+     * <p>This value should be used as the root for retrieving translations of this protection like display name, lore and message.</p>
+     *
+     * <p>
+     *     Example Translation YAML:
+     *     <pre>protection-base-key:
+     *     name: "My Protection"
+     *     lore "Protects all my stuff."
+     *     message: "&lt;red&gt;You cannot use my stuff!&lt;/red&gt;"
+     *    </pre>
+     * </p>
      *
      * @return the translation key base, never {@code null}
      */
-    public abstract String getTranslationBaseKey();
+    public abstract @NotNull String getTranslationBaseKey();
 
     /**
      * Returns whether this protection is hidden from players.

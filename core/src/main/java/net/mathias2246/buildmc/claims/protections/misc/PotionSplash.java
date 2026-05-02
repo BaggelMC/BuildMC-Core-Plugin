@@ -2,12 +2,10 @@ package net.mathias2246.buildmc.claims.protections.misc;
 
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
-import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.item.ItemUtil;
-import net.mathias2246.buildmc.claims.ClaimManager;
+import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
 import net.mathias2246.buildmc.ui.UIUtil;
-import net.mathias2246.buildmc.util.AudienceUtil;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -23,6 +21,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 import java.util.Objects;
@@ -34,8 +33,8 @@ public class PotionSplash extends Protection {
     }
 
     @Override
-    public String getTranslationBaseKey() {
-        return "claims.flags.splash-potions";
+    public @NonNull String getTranslationBaseKey() {
+        return "claims.protections.splash-potions";
     }
 
     @Override
@@ -49,7 +48,7 @@ public class PotionSplash extends Protection {
         }
         ItemUtil.editMeta(displayBase, (meta) -> {
 
-            meta.displayName(
+            meta.itemName(
                     Message.msg(uiHolder, t+".name")
             );
             meta.addItemFlags(
@@ -69,10 +68,7 @@ public class PotionSplash extends Protection {
     public void onPotionSplash(PotionSplashEvent event) {
         ThrownPotion thrownPotion = event.getPotion();
         if (thrownPotion.getShooter() instanceof Player player) {
-            if (!ClaimManager.isPlayerAllowed(player, getKey(), thrownPotion.getLocation())) {
-                AudienceUtil.sendActionBar(player, Component.translatable("messages.claims.not-accessible.potion-splash"));
-                event.setCancelled(true);
-            }
+            ProtectionUtil.handleProtection(event, this, thrownPotion.getLocation(), player);
         }
     }
 
@@ -80,10 +76,7 @@ public class PotionSplash extends Protection {
     public void onLingeringPotionSplash(LingeringPotionSplashEvent event) {
         ThrownPotion thrownPotion = event.getEntity();
         if (thrownPotion.getShooter() instanceof Player player) {
-            if (!ClaimManager.isPlayerAllowed(player, getKey(), thrownPotion.getLocation())) {
-                AudienceUtil.sendActionBar(player, Component.translatable("messages.claims.not-accessible.potion-splash"));
-                event.setCancelled(true);
-            }
+            ProtectionUtil.handleProtection(event, this, thrownPotion.getLocation(), player);
         }
     }
 

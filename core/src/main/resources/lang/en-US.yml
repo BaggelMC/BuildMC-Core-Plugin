@@ -202,36 +202,6 @@ messages:
       <gray>- In the claims menu you can manage the settings of your claims.
       <gold>---------------------------------------</gold>
 
-    not-accessible:
-      container: "<red>This container is protected by a land claim.</red>"
-      entity-container: "<red>This entity is protected by a land claim.</red>"
-      block-break: "<red>This block is protected by a land claim.</red>"
-      block-place: "<red>This area is protected by a land claim.</red>"
-      entity-place: "<red>This area is protected by a land claim.</red>"
-
-      entity-damage: "<red>This entity is protected by a land claim.</red>"
-
-      sign: "<red>This sign is protected by a land claim.</red>"
-      interact: "<red>This block is protected by a land claim.</red>"
-      entity-rename: "<red>You cannot rename entities protected by a land claim.</red>"
-      armor-stand: "<red>This armor stand is protected by a land claim.</red>"
-      tame-entity: "<red>This entity is protected by a land claim.</red>"
-
-      potion-splash: "<red>This area is protected by a land claim.</red>"
-
-      fishing: "<red>This area is protected by a land claim.</red>"
-
-      vehicle: "<red>This vehicle is protected by a land claim.</red>"
-
-      item-pickup: "<red>This item is protected by a land claim.</red>"
-      item-drop: "<red>You cannot drop items in an area protected by a land claim.</red>"
-
-      frostwalker: "<red>You can't use <lang:enchantment.minecraft.frost_walker> in an area protected by a land claim.</red>"
-      entity-bucket: "<red>This cute %entity% protected by a land claim.</red>"
-
-      attach-leash: "<red>This entity is protected by a land claim.</red>"
-      shear-entity: "<red>This entity is protected by a land claim.</red>"
-
     ui:
       general:
         previous: "<yellow>Previous</yellow>"
@@ -312,159 +282,198 @@ messages:
     cannot-set: "<red>Your status can't be set!</red>"
 
 claims:
-  flags:
+  protections:
     player-break:
       name: "<green>Block Breaking</green>"
       lore: "<gray>Prevents players from breaking blocks.</gray>"
+      message: "<red>This block is protected</red>"
 
     player-place:
       name: "<green>Block Placing</green>"
       lore: "<gray>Prevents players from placing blocks.</gray>"
+      message: "<red>This area is protected</red>"
 
     player-place-entity:
       name: "<green>Entity Placing</green>"
       lore: "<gray>Prevents placing entities such as: Armor Stands, Boats, Minecarts, End Crystals.</gray>"
+      message: "<red>This area is protected</red>"
 
     container:
       name: "<green>Containers</green>"
       lore: "<gray>Prevents players from using containers (Chests, Hoppers...).</gray>"
+      message: "<red>This container is protected</red>"
 
     item-pickup:
       name: "<green>Item Pickup</green>"
       lore: "<gray>Prevents players from picking up items.</gray>"
+      message: "<red>This item is protected</red>"
 
     item-drop:
       name: "<green>Item Dropping</green>"
       lore: "<gray>Prevents players from dropping items.</gray>"
+      message: "<red>This area is protected</red>"
 
     sign-editing:
       name: "<green>Sign Editing</green>"
       lore: "<gray>Prevents players from editing signs.</gray>"
+      message: "<red>This sign is protected</red>"
 
     splash-potions:
       name: "<green>Splash Potions</green>"
       lore: "<gray>Prevents players from using splash potions.</gray>"
+      message: "<red>This area is protected</red>"
 
     vehicle-enter:
       name: "<green>Enter Vehicles</green>"
       lore: "<gray>Prevents players from entering vehicles.</gray>"
+      message: "<red>This vehicle is protected</red>"
 
     bucket-usage:
       name: "<green>Bucket Usage</green>"
       lore: "<gray>Prevents players from using buckets.</gray>"
+      message: "<red>This area is protected</red>"
 
     frost-walker:
       name: "<green>Frost Walker</green>"
       lore: "<gray>Prevents players from using Frost Walker enchantment.</gray>"
+      message: "<red>You can't use <lang:enchantment.minecraft.frost_walker> here</red>"
 
     sculk-sensor:
       name: "<green>Sculk Sensors</green>"
       lore: "<gray>Prevents players from triggering sculk sensors.</gray>"
+      message: "<red>This area is protected</red>"
 
     piston-movement-across-claim-borders:
       name: "<green>Piston Movement</green>"
       lore: "<gray>Prevents pistons from moving blocks across claim borders.</gray>"
+      message: "<red>This area is protected</red>"
 
     interaction-jukebox:
       name: "<green>Jukeboxes</green>"
       lore: "<gray>Prevents players from using jukeboxes.</gray>"
+      message: "<red>This jukebox is protected</red>"
 
     interaction-button-and-lever:
       name: "<green>Buttons & Levers</green>"
       lore: "<gray>Prevents players from using buttons and levers.</gray>"
+      message: "<red>This block is protected</red>"
 
     interaction-redstone-components:
       name: "<green>Redstone Parts</green>"
       lore: "<gray>Prevents players from changing repeaters, comparators and daylight-sensors.</gray>"
+      message: "<red>This block is protected</red>"
 
     interaction-pressure-plates-and-tripwire:
       name: "<green>Pressure Plates & Tripwires</green>"
       lore: "<gray>Prevents players from interacting with pressure plates and tripwires.</gray>"
+      message: "<red>This block is protected</red>"
 
     interaction-doors:
       name: "<green>Doors</green>"
       lore: "<gray>Prevents players from using doors, trapdoors, fence gates.</gray>"
+      message: "<red>This door is protected</red>"
 
     interaction-farmland:
       name: "<green>Farmland</green>"
       lore: "<gray>Prevents players from trampling farmland.</gray>"
+      message: "<red>This farmland is protected</red>"
 
     interaction-campfire:
       name: "<green>Campfires</green>"
       lore: "<gray>Prevents players from using campfires.</gray>"
+      message: "<red>This campfire is protected</red>"
 
     interaction-bells:
       name: "<green>Bells</green>"
       lore: "<gray>Prevents players from using bells.</gray>"
+      message: "<red>This bell is protected</red>"
 
     interaction-attach-leash:
       name: "<green>Leashes</green>"
       lore: "<gray>Prevents players from leashing mobs.</gray>"
+      message: "<red>You cannot leash this entity</red>"
 
     interaction-bonemeal:
       name: "<green>Bonemeal</green>"
       lore: "<gray>Prevents players from using bonemeal.</gray>"
+      message: "<red>This area is protected</red>"
 
     interaction-beehives:
       name: "<green>Beehives</green>"
       lore: "<gray>Prevents players from using beehives.</gray>"
+      message: "<red>This beehive is protected</red>"
 
     interaction-name-tags:
       name: "<green>Name Tags</green>"
       lore: "<gray>Prevents players from using name tags.</gray>"
+      message: "<red>You cannot rename entities</red>"
 
     interaction-light-tnt:
       name: "<green>Light TNT</green>"
       lore: "<gray>Prevents players from lighting TNT with flint & steel or fire charges.</gray>"
+      message: "<red>This TNT is protected</red>"
 
     hanging-entities:
       name: "<green>Hanging Entities</green>"
       lore: "<gray>Prevents placing, destroying, or changing item frames & paintings.</gray>"
+      message: "<red>This entity is protected</red>"
 
     interaction-item-frame:
       name: "<green>Item Frame Interaction</green>"
       lore: "<gray>Prevents interactions with item frames.</gray>"
+      message: "<red>This item frame is protected</red>"
 
     interaction-armor-stand:
       name: "<green>Armor Stands</green>"
       lore: "<gray>Prevents players from changing armor stand equipment.</gray>"
+      message: "<red>This armor stand is protected</red>"
 
     interaction-candles:
       name: "<green>Candles</green>"
       lore: "<gray>Prevents players from putting out candles.</gray>"
+      message: "<red>This candle is protected</red>"
 
     interaction-tame-entity:
       name: "<green>Taming Mobs</green>"
       lore: "<gray>Prevents players from taming mobs.</gray>"
+      message: "<red>This mob is protected</red>"
 
     interaction-shear-entity:
       name: "<green>Shearing Mobs</green>"
       lore: "<gray>Prevents players from shearing mobs.</gray>"
+      message: "<red>This mob is protected</red>"
 
     entity-damage:
       name: "<green>Entity Damage</green>"
       lore: "<gray>Prevents players from damaging entities.</gray>"
+      message: "<red>This entity is protected</red>"
 
     players-friendly-fire:
       name: "<green>Attack Players</green>"
       lore: "<gray>Blocks Players from attacking other players.</gray>"
+      message:
 
     projectile-interactions:
       name: "<green>Projectile Interactions</green>"
       lore: "<gray>Prevents projectiles from interacting with blocks or objects.</gray>\n<dark_gray>Does not affect projectile damage.</dark_gray>"
+      message: "<red>This object is protected</red>"
 
     fishing:
       name: "<green>Fishing</green>"
       lore: "<gray>Prevents players from fishing.</gray>"
+      message: "<red>This area is protected</red>"
 
     explosion-block-damage:
       name: "<green>Explosion Block Damage</green>"
       lore: "<gray>Prevents explosions from destroying blocks.</gray>"
+      message: "<red>This area is protected</red>"
 
     explosion-entity-damage:
       name: "<green>Explosion Entity Damage</green>"
       lore: "<gray>Prevents explosions from damaging entities.</gray>"
+      message: "<red>This area is protected</red>"
 
     entity-modifications:
       name: "<green>Entity Modifications</green>"
       lore: "<gray>Prevents endermen, withers and ravagers from destroying blocks.</gray>"
+      message: "<red>This area is protected</red>"

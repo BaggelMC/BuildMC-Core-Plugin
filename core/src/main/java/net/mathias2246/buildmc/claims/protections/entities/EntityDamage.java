@@ -20,6 +20,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
@@ -31,8 +32,8 @@ public class EntityDamage extends Protection {
     }
 
     @Override
-    public String getTranslationBaseKey() {
-        return "claims.flags.entity-damage";
+    public @NonNull String getTranslationBaseKey() {
+        return "claims.protections.entity-damage";
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -52,7 +53,7 @@ public class EntityDamage extends Protection {
         NamespacedKey k = getKey();
 
         if (claim.hasProtection(k) && !ClaimManager.isPlayerAllowed(attacker, k, claim)) {
-            AudienceUtil.sendMessage(attacker, Component.translatable("messages.claims.not-accessible.entity-damage"));
+            AudienceUtil.sendActionBar(attacker, Component.translatable(getTranslationBaseKey()+".message"));
             event.setCancelled(true);
         }
     }
@@ -65,7 +66,7 @@ public class EntityDamage extends Protection {
         if (!(damager instanceof Player attacker)) return;
 
         if (!ClaimManager.isPlayerAllowed(attacker, getKey(), victim.getLocation())) {
-            AudienceUtil.sendMessage(attacker, Component.translatable("messages.claims.not-accessible.entity-damage"));
+            AudienceUtil.sendActionBar(attacker, Component.translatable(getTranslationBaseKey()+".message"));
             event.setCancelled(true);
         }
     }

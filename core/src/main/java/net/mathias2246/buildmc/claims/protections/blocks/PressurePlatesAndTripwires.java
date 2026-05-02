@@ -2,12 +2,8 @@ package net.mathias2246.buildmc.claims.protections.blocks;
 
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
-import net.kyori.adventure.text.Component;
-import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.Protection;
-import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
-import net.mathias2246.buildmc.util.AudienceUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
@@ -20,6 +16,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
@@ -30,8 +27,8 @@ public class PressurePlatesAndTripwires extends Protection {
     }
 
     @Override
-    public String getTranslationBaseKey() {
-        return "claims.flags.interaction-pressure-plates-and-tripwire";
+    public @NonNull String getTranslationBaseKey() {
+        return "claims.protections.interaction-pressure-plates-and-tripwire";
     }
 
     @Override
@@ -58,12 +55,6 @@ public class PressurePlatesAndTripwires extends Protection {
             return;
         }
 
-        Claim claim = ClaimManager.getClaim(block.getLocation());
-        if (claim == null) return;
-
-        if (!ClaimManager.isPlayerAllowed(player, getKey(), block.getLocation())) {
-            event.setCancelled(true);
-            AudienceUtil.sendActionBar(player, Component.translatable("messages.claims.not-accessible.interact"));
-        }
+        ProtectionUtil.handleProtection(event, this, block.getLocation(), player);
     }
 }

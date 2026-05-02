@@ -2,11 +2,8 @@ package net.mathias2246.buildmc.claims.protections.entities;
 
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
-import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.api.claims.Protection;
-import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
-import net.mathias2246.buildmc.util.AudienceUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
@@ -17,6 +14,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
@@ -27,8 +25,8 @@ public class EntityShear extends Protection {
     }
 
     @Override
-    public String getTranslationBaseKey() {
-        return "claims.flags.interaction-shear-entity";
+    public @NonNull String getTranslationBaseKey() {
+        return "claims.protections.interaction-shear-entity";
     }
 
     @Override
@@ -43,9 +41,6 @@ public class EntityShear extends Protection {
         Player player = event.getPlayer();
         Entity entity = event.getEntity();
 
-        if (!ClaimManager.isPlayerAllowed(player, getKey(), entity.getLocation())) {
-            event.setCancelled(true);
-            AudienceUtil.sendActionBar(player, Component.translatable("messages.claims.not-accessible.shear-entity"));
-        }
+        ProtectionUtil.handleProtection(event, this, entity.getLocation(), event.getPlayer());
     }
 }

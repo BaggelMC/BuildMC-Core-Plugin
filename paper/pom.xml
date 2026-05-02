@@ -48,6 +48,10 @@
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
             </resource>
+            <resource> <!-- Core resources -->
+                <directory>../core/src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
         </resources>
 
 

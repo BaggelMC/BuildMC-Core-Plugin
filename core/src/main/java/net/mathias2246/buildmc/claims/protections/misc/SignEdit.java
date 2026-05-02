@@ -17,6 +17,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.SignChangeEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
@@ -27,8 +28,8 @@ public class SignEdit extends Protection {
     }
 
     @Override
-    public String getTranslationBaseKey() {
-        return "claims.flags.sign-editing";
+    public @NonNull String getTranslationBaseKey() {
+        return "claims.protections.sign-editing";
     }
 
     @Override
@@ -52,7 +53,7 @@ public class SignEdit extends Protection {
             }
 
             // Send feedback to the player
-            AudienceUtil.sendActionBar(player, Component.translatable("messages.claims.not-accessible.sign"));
+            AudienceUtil.sendActionBar(player, Component.translatable(getTranslationBaseKey()+".message"));
         }
     }
 }

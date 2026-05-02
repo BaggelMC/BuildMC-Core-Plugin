@@ -2,12 +2,8 @@ package net.mathias2246.buildmc.claims.protections.blocks;
 
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
-import net.kyori.adventure.text.Component;
-import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.Protection;
-import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
-import net.mathias2246.buildmc.util.AudienceUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
@@ -17,6 +13,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
@@ -35,8 +32,8 @@ public class Farmland extends Protection {
     }
 
     @Override
-    public String getTranslationBaseKey() {
-        return "claims.flags.interaction-farmland";
+    public @NonNull String getTranslationBaseKey() {
+        return "claims.protections.interaction-farmland";
     }
 
 
@@ -45,12 +42,6 @@ public class Farmland extends Protection {
         if (!(event.getEntity() instanceof Player player)) return;
         if (event.getBlock().getType() != Material.FARMLAND) return;
 
-        Claim claim = ClaimManager.getClaim(event.getBlock().getLocation());
-        if (claim == null) return;
-
-        if (!ClaimManager.isPlayerAllowed(player, getKey(), claim)) {
-            event.setCancelled(true);
-            AudienceUtil.sendActionBar(player, Component.translatable("messages.claims.not-accessible.interact"));
-        }
+        ProtectionUtil.handleProtection(event, this, event.getBlock().getLocation(), player);
     }
 }

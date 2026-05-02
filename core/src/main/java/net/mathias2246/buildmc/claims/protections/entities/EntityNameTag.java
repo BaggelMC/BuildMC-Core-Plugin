@@ -2,11 +2,8 @@ package net.mathias2246.buildmc.claims.protections.entities;
 
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
-import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.api.claims.Protection;
-import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
-import net.mathias2246.buildmc.util.AudienceUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
@@ -16,6 +13,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
@@ -27,8 +25,8 @@ public class EntityNameTag extends Protection {
     }
 
     @Override
-    public String getTranslationBaseKey() {
-        return "claims.flags.interaction-name-tags";
+    public @NonNull String getTranslationBaseKey() {
+        return "claims.protections.interaction-name-tags";
     }
 
     @Override
@@ -41,10 +39,6 @@ public class EntityNameTag extends Protection {
     public void onNameTagUse(PlayerInteractEntityEvent event) {
         if (event.getPlayer().getInventory().getItemInMainHand().getType() != Material.NAME_TAG) return;
 
-        Player player = event.getPlayer();
-        if (!ClaimManager.isPlayerAllowed(player, getKey(), event.getRightClicked().getLocation())) {
-            event.setCancelled(true);
-            AudienceUtil.sendActionBar(player, Component.translatable("messages.claims.not-accessible.entity-rename"));
-        }
+        ProtectionUtil.handleProtection(event, this, event.getRightClicked().getLocation(), event.getPlayer());
     }
 }

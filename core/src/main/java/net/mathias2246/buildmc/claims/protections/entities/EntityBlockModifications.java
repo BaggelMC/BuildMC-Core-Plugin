@@ -17,6 +17,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
@@ -36,8 +37,8 @@ public class EntityBlockModifications extends Protection {
     }
 
     @Override
-    public String getTranslationBaseKey() {
-        return "claims.flags.entity-modifications";
+    public @NonNull String getTranslationBaseKey() {
+        return "claims.protections.entity-modifications";
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

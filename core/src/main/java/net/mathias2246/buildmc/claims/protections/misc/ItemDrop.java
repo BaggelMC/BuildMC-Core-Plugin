@@ -2,11 +2,8 @@ package net.mathias2246.buildmc.claims.protections.misc;
 
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
-import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.api.claims.Protection;
-import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
-import net.mathias2246.buildmc.util.AudienceUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
@@ -16,6 +13,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
@@ -27,8 +25,8 @@ public class ItemDrop extends Protection {
     }
 
     @Override
-    public String getTranslationBaseKey() {
-        return "claims.flags.item-drop";
+    public @NonNull String getTranslationBaseKey() {
+        return "claims.protections.item-drop";
     }
 
     @Override
@@ -42,10 +40,7 @@ public class ItemDrop extends Protection {
     public void onItemDrop(PlayerDropItemEvent event) {
         Player player = event.getPlayer();
 
-        if (!ClaimManager.isPlayerAllowed(player, getKey(), player.getLocation())) {
-            AudienceUtil.sendActionBar(player, Component.translatable("messages.claims.not-accessible.item-drop"));
-            event.setCancelled(true);
-        }
+        ProtectionUtil.handleProtection(event, this, player.getLocation(), player);
 
     }
 }

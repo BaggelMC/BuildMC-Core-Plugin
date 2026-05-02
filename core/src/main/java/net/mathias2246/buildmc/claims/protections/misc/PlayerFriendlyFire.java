@@ -19,6 +19,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
@@ -32,8 +33,8 @@ public class PlayerFriendlyFire extends Protection {
     }
 
     @Override
-    public String getTranslationBaseKey() {
-        return "claims.flags.players-friendly-fire";
+    public @NonNull String getTranslationBaseKey() {
+        return "claims.protections.players-friendly-fire";
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -68,7 +69,7 @@ public class PlayerFriendlyFire extends Protection {
             // If victim is allowed but attacker is not allowed, cancel the damage
             if (victimAllowed && !attackerAllowed) {
                 event.setCancelled(true);
-                AudienceUtil.sendActionBar(attacker, Component.translatable("messages.claims.not-accessible.entity-damage"));
+                AudienceUtil.sendActionBar(attacker, Component.translatable(getTranslationBaseKey()+".message"));
             }
         }
     }

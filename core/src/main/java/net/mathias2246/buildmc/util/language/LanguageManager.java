@@ -122,19 +122,7 @@ public class LanguageManager {
     }
 
     public static String translateStr(@NotNull Locale playerLocale, @NotNull String key, @NotNull Map<String, String> replacements, Component... args) {
-        Component base = Component.translatable(key, Arrays.asList(args));
-        Component translated = GlobalTranslator.render(base, playerLocale);
-
-        if (translated.equals(base)) {
-            translated = GlobalTranslator.render(base, DEFAULT_LOCALE);
-        }
-
-        String serialized = MINI_MESSAGE.serialize(translated);
-        for (Map.Entry<String, String> entry : replacements.entrySet()) {
-            serialized = serialized.replace("%" + entry.getKey() + "%", entry.getValue());
-        }
-
-        return serialized;
+        return MINI_MESSAGE.serialize(translate(playerLocale, key, replacements, args));
     }
 
 

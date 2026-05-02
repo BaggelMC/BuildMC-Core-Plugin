@@ -16,6 +16,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
@@ -26,8 +27,8 @@ public class EntityExplosionDamage extends Protection {
     }
 
     @Override
-    public String getTranslationBaseKey() {
-        return "claims.flags.explosion-entity-damage";
+    public @NonNull String getTranslationBaseKey() {
+        return "claims.protections.explosion-entity-damage";
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)

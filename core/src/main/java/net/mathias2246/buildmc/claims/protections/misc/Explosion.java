@@ -17,6 +17,7 @@ import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
@@ -63,7 +64,7 @@ public class Explosion extends Protection {
     }
 
     @Override
-    public String getTranslationBaseKey() {
-        return "claims.flags.explosion-block-damage";
+    public @NonNull String getTranslationBaseKey() {
+        return "claims.protections.explosion-block-damage";
     }
 }
