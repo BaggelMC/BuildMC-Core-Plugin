@@ -197,6 +197,13 @@ public final class CoreMain {
 
 
             var hideAllProtections = CoreMain.plugin.getConfig().getBoolean("claims.hide-all-protections");
+
+            protectionsRegistry.getOptional("buildmc:bucket_usage").ifPresent(
+                    protection -> protocolManager.addPacketListener(
+                            new Buckets.BucketPacketListener(plugin, (Buckets) protection)
+                    )
+            );
+
             for (Protection protection : protectionsRegistry) {
                 var def = protection.isDefaultEnabled();
 
