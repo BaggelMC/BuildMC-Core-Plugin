@@ -13,6 +13,7 @@ import net.mathias2246.buildmc.api.item.ItemUtil;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.ui.UIUtil;
 import net.mathias2246.buildmc.util.AudienceUtil;
+import net.mathias2246.buildmc.util.ComponentUtil;
 import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.SoundUtil;
 import org.bukkit.Bukkit;
@@ -222,16 +223,6 @@ public class ClaimEditMenu {
         return new GuiItem(item, action);
     }
 
-    private static ItemStack createGlassPane(Material material) {
-        ItemStack pane = new ItemStack(material);
-        ItemMeta meta = pane.getItemMeta();
-        if (meta != null) {
-            meta.setHideTooltip(true);
-            pane.setItemMeta(meta);
-        }
-        return pane;
-    }
-
 
     @SuppressWarnings("SameParameterValue") // Suppress only because currently param. x and y aren't implemented fully
     private static void addClaimInfoItem(@NotNull StaticPane pane, @NotNull Player player, @NotNull Claim claim, int x, int y) {
@@ -255,8 +246,8 @@ public class ClaimEditMenu {
                         "dimension", dimension
                 )
         );
-        // FIXME: Convert component with newline characters to list of line components
-        List<Component> loreLines = List.of(loreComponent);
+
+        List<Component> loreLines = ComponentUtil.splitComponentByNewline(loreComponent);
 
         ItemStack infoItem = new ItemStack(Material.PAPER);
         ItemMeta meta = infoItem.getItemMeta();

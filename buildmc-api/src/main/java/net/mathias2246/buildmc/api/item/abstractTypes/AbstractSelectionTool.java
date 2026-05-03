@@ -17,9 +17,6 @@ import java.util.Objects;
  * <p/>A selection tool that is made with this class will write the players selection into the players metadata.*/
 public abstract class AbstractSelectionTool extends AbstractTool {
 
-    /**The NamespacedKey used to identify the cooldown group of selection tools*/
-    public static final @NotNull NamespacedKey SELECTION_TOOL_COOLDOWN_GROUP = Objects.requireNonNull(NamespacedKey.fromString("buildmc:selection_tool_cooldown"));
-
     /**The default constructor for selection tools.*/
     public AbstractSelectionTool(@NotNull Plugin plugin, @NotNull NamespacedKey key) {
         super(plugin, key);

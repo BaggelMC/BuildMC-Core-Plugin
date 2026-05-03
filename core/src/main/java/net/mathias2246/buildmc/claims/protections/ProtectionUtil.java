@@ -8,6 +8,7 @@ import net.mathias2246.buildmc.api.item.ItemUtil;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.ui.UIUtil;
 import net.mathias2246.buildmc.util.AudienceUtil;
+import net.mathias2246.buildmc.util.ComponentUtil;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -21,8 +22,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
 public class ProtectionUtil {
     public static @NotNull GuiItem createDisplayItem(@NotNull Player uiHolder, @NotNull Material material, String baseTranslationKey) {
         ItemStack displayBase = new ItemStack(material);
@@ -34,8 +33,7 @@ public class ProtectionUtil {
                     ItemFlag.HIDE_ATTRIBUTES
             );
 
-            // FIXME: Split component on newline characters
-            meta.lore(List.of(Message.msg(uiHolder, baseTranslationKey + ".lore")));
+            meta.lore(ComponentUtil.splitComponentByNewline(Message.msg(uiHolder, baseTranslationKey + ".lore")));
         });
         return new GuiItem(
                 displayBase,

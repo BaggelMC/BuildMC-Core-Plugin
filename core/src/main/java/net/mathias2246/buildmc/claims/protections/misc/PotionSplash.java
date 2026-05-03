@@ -6,6 +6,7 @@ import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.item.ItemUtil;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
 import net.mathias2246.buildmc.ui.UIUtil;
+import net.mathias2246.buildmc.util.ComponentUtil;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -23,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
 
-import java.util.List;
 import java.util.Objects;
 
 public class PotionSplash extends Protection {
@@ -39,7 +39,7 @@ public class PotionSplash extends Protection {
 
     @Override
     public @NotNull GuiItem getDisplay(@NotNull Player uiHolder, @NotNull Gui gui) {
-        String t = getTranslationBaseKey();
+        String translationBaseKey = getTranslationBaseKey();
 
         ItemStack displayBase = new ItemStack(Material.SPLASH_POTION);
         if (displayBase.getItemMeta() instanceof PotionMeta potion) {
@@ -49,14 +49,13 @@ public class PotionSplash extends Protection {
         ItemUtil.editMeta(displayBase, (meta) -> {
 
             meta.itemName(
-                    Message.msg(uiHolder, t+".name")
+                    Message.msg(uiHolder, translationBaseKey+".name")
             );
             meta.addItemFlags(
                     ItemFlag.HIDE_ATTRIBUTES
             );
 
-            // FIXME: Split component on newline characters
-            meta.lore(List.of(Message.msg(uiHolder, t + ".lore")));
+            meta.lore(ComponentUtil.splitComponentByNewline(Message.msg(uiHolder, translationBaseKey + ".lore")));
         });
 
         return new GuiItem(
