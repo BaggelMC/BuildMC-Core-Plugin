@@ -2,6 +2,8 @@ package net.mathias2246.buildmc.claims.protections.misc;
 
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.item.ItemUtil;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
@@ -19,7 +21,6 @@ import org.bukkit.event.entity.LingeringPotionSplashEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.PotionMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
@@ -41,15 +42,16 @@ public class PotionSplash extends Protection {
     public @NotNull GuiItem getDisplay(@NotNull Player uiHolder, @NotNull Gui gui) {
         String translationBaseKey = getTranslationBaseKey();
 
-        ItemStack displayBase = new ItemStack(Material.SPLASH_POTION);
-        if (displayBase.getItemMeta() instanceof PotionMeta potion) {
-            potion.setBasePotionType(null);
-            displayBase.setItemMeta(potion);
-        }
+        ItemStack displayBase = new ItemStack(Material.STICK);
+
         ItemUtil.editMeta(displayBase, (meta) -> {
+            meta.setItemModel(NamespacedKey.fromString("minecraft:splash_potion"));
+
+            Component name = Message.msg(uiHolder, translationBaseKey+".name")
+                            .decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE);
 
             meta.itemName(
-                    Message.msg(uiHolder, translationBaseKey+".name")
+                    name
             );
             meta.addItemFlags(
                     ItemFlag.HIDE_ATTRIBUTES
