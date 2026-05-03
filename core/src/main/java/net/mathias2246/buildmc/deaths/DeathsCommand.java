@@ -50,7 +50,7 @@ public class DeathsCommand {
                         .append(Component.text("] "))
                         .append(Component.text(DATE_FORMAT.format(new Date(death.timestamp())), NamedTextColor.WHITE))
                         .append(Component.text(" - ").color(NamedTextColor.DARK_GRAY))
-                        .append(Component.text(death.cause(), NamedTextColor.GRAY));
+                        .append(CoreMain.gsonComponentSerializer.deserializeOr(death.cause(), Component.text("---")).color(NamedTextColor.GRAY));
 
                  AudienceUtil.sendMessage(sender, line);
             }
