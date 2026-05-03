@@ -4,7 +4,7 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.mathias2246.buildmc.CoreMain;
 
-public class SoundUtil {
+public final class SoundUtil {
 
     @SuppressWarnings("PatternValidation")
     public static void setup() {

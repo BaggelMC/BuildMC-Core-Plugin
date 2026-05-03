@@ -8,14 +8,11 @@ import org.bukkit.Bukkit;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BStats {
+public final class BStats {
     private static final int pluginId = 27021;
 
-    @SuppressWarnings("FieldCanBeLocal")
-    private static Metrics metrics;
-
     public static void initialize() {
-        metrics = new Metrics(CoreMain.plugin, pluginId);
+        Metrics metrics = new Metrics(CoreMain.plugin, pluginId);
 
         metrics.addCustomChart(new MultiLineChart("servers_and_players", () -> {
             Map<String, Integer> values = new HashMap<>();

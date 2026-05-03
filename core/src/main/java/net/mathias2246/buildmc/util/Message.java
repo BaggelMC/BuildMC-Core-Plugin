@@ -13,7 +13,7 @@ import java.util.Map;
  * Utility class for retrieving localized messages for players and command senders.
  * Handles translation of messages with support for placeholders and locale-specific translations.
  */
-public class Message {
+public final class Message {
 
     private static final Locale DEFAULT_LOCALE = Locale.forLanguageTag("en-US");
 
