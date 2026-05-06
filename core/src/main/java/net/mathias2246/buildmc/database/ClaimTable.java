@@ -2,6 +2,7 @@ package net.mathias2246.buildmc.database;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.collect.ImmutableSet;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.ClaimType;
 import net.mathias2246.buildmc.claims.ClaimManager;
@@ -26,6 +27,14 @@ public class ClaimTable implements DatabaseTable {
             .maximumSize(1000)
             .expireAfterAccess(10, TimeUnit.MINUTES)
             .build();
+
+    public void invalidateCache() {
+        claimCache.invalidateAll();
+    }
+
+    public void invalidateCache(long id) {
+        claimCache.invalidate(id);
+    }
 
     @Override
     public void createTable(Connection conn) throws SQLException {
@@ -190,6 +199,7 @@ public class ClaimTable implements DatabaseTable {
         return getClaimIdAt(conn, location) != null;
     }
 
+    @SuppressWarnings("deprecation") // Because of Claim.setID usage
     public Map<Claim, Long> insertClaims(Connection conn, List<Claim> claims) throws SQLException {
         if (claims.isEmpty()) return Collections.emptyMap();
 
@@ -248,33 +258,9 @@ public class ClaimTable implements DatabaseTable {
         return generatedIds;
     }
 
-    public void deleteClaims(Connection conn, Collection<Long> ids) throws SQLException {
-        if (ids.isEmpty()) return;
-
-        String sql = "DELETE FROM claims WHERE id = ?";
-
-        boolean oldAutoCommit = conn.getAutoCommit();
-        conn.setAutoCommit(false);
-
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            for (Long id : ids) {
-                ps.setLong(1, id);
-                ps.addBatch();
-
-                Claim cached = claimCache.getIfPresent(id);
-                if (cached != null) {
-                    restoreRemainingClaims(cached);
-                    claimCache.invalidate(id);
-                }
-            }
-
-            ps.executeBatch();
-            conn.commit();
-        } catch (SQLException ex) {
-            conn.rollback();
-            throw ex;
-        } finally {
-            conn.setAutoCommit(oldAutoCommit);
+    public void deleteClaimsByIds(Connection conn, Collection<Long> ids) throws SQLException {
+        for (var id : ids) {
+            deleteClaimById(conn, id);
         }
     }
 
@@ -352,6 +338,7 @@ public class ClaimTable implements DatabaseTable {
         }
     }
 
+    @SuppressWarnings("deprecation")  // Because of Claim.setID usage
     public void deleteClaimById(Connection conn, long claimId) throws SQLException {
         // Fetch claim
         Claim claim = getClaimById(conn, claimId);
@@ -509,7 +496,7 @@ public class ClaimTable implements DatabaseTable {
         }
     }
 
-    public List<Claim> getAllClaims(Connection conn) throws SQLException {
+    public ImmutableSet<Claim> getAllClaims(Connection conn) throws SQLException {
         List<Claim> allClaims = new ArrayList<>();
 
         try (PreparedStatement ps = conn.prepareStatement("""
@@ -517,6 +504,7 @@ public class ClaimTable implements DatabaseTable {
         FROM claims
     """)) {
             try (ResultSet rs = ps.executeQuery()) {
+
                 while (rs.next()) {
                     long id = rs.getLong("id");
 
@@ -552,12 +540,7 @@ public class ClaimTable implements DatabaseTable {
             }
         }
 
-        return allClaims;
-    }
-
-
-    public void invalidateClaim(long id) {
-        claimCache.invalidate(id);
+        return ImmutableSet.copyOf(allClaims);
     }
 
     public void updateCache(long id, Claim updatedClaim) {
@@ -677,9 +660,9 @@ public class ClaimTable implements DatabaseTable {
 
     public void removeWhitelistedPlayer(Connection conn, long claimId, UUID playerUuid) throws SQLException {
         try (PreparedStatement ps = conn.prepareStatement("""
-        DELETE FROM claim_whitelisted_players
-        WHERE claim_id = ? AND player_uuid = ?
-    """)) {
+            DELETE FROM claim_whitelisted_players
+            WHERE claim_id = ? AND player_uuid = ?
+        """)) {
             ps.setLong(1, claimId);
             ps.setObject(2, playerUuid);
             ps.executeUpdate();

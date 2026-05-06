@@ -3,13 +3,14 @@ package net.mathias2246.buildmc.api.item;
 import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
 /** A helper-class for items. **/
-public class ItemUtil {
+public final class ItemUtil {
     /**A helper method for editing {@link ItemMeta} using a {@link Consumer} that takes in an {@link ItemMeta} instance.
      * <p>The edited {@link ItemMeta} instance will be automatically be set on the {@link ItemStack} instance after editing.</p>
      * <p>If the meta returned by {@code itemStack.getItemMeta();} equals null, nothing will happen.</p>
@@ -41,7 +42,7 @@ public class ItemUtil {
         return AbstractCustomItem.customItemsRegistry.get(customItemKey);
     }
 
-    /** **/
+    /** Sets the name of an {@link ItemStack} to the given {@link Component}.**/
     public static void setName(@NotNull ItemStack itemStack, @Nullable Component name) {
         ItemMeta meta = itemStack.getItemMeta();
         if (meta == null) return;

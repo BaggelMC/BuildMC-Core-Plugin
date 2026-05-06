@@ -2,6 +2,7 @@ package net.mathias2246.buildmc.api.endEvent;
 
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -9,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
  * API for interacting with BuildMC's End event system.
  * <p>
  * Provides methods to open or close the End, either with a custom
- * announcement key or using the plugin's default keys.
+ * announcement translation key or using the plugin's default keys.
  */
 @ApiStatus.NonExtendable
 public interface EndManager {
@@ -63,6 +64,7 @@ public interface EndManager {
      *
      * @return the current {@link EndState}, never null
      */
+    @Contract(pure = true)
     @NotNull
     EndState getCurrentState();
 }

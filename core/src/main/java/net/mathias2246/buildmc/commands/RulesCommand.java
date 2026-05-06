@@ -8,7 +8,7 @@ import net.mathias2246.buildmc.util.SoundUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class RulesCommand {
+public final class RulesCommand {
     private static final Component separator = Component.text("==============================", NamedTextColor.GRAY);
 
     public static int execute(CommandSender sender) {

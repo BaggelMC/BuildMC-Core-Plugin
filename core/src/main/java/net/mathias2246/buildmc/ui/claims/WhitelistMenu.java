@@ -6,6 +6,7 @@ import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
 import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
 import com.github.stefvanschie.inventoryframework.pane.Pane;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
+import com.google.common.collect.ImmutableSet;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.mathias2246.buildmc.CoreMain;
@@ -73,7 +74,7 @@ public class WhitelistMenu {
     public static void open(Player player, Claim claim) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, task ->
                 {
-                    List<UUID> whitelist = claim.getWhitelistedPlayers();
+                    ImmutableSet<UUID> whitelist = claim.getWhitelistedPlayers();
 
                     ChestGui gui = new ChestGui(6, ComponentHolder.of(Message.msg(player, "messages.claims.ui.whitelist-menu.title", Map.of("claim", claim.getName()))));
 

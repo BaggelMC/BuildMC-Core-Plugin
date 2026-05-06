@@ -5,6 +5,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -23,6 +24,7 @@ public interface ElytraManager {
      *
      * @return true if spawn-elytra is enabled, false otherwise
      */
+    @Contract(pure = true)
     boolean isElytraEnabled();
 
     /**
@@ -31,6 +33,7 @@ public interface ElytraManager {
      * @param player the player to check
      * @return true if the player is inside a spawn-elytra zone
      */
+    @Contract(pure = true)
     boolean isInElytraZone(@NotNull Player player);
 
     /**
@@ -39,6 +42,7 @@ public interface ElytraManager {
      * @param location the location to check
      * @return true if the location is inside a spawn-elytra zone
      */
+    @Contract(pure = true)
     boolean isInElytraZone(@NotNull Location location);
 
     /**
@@ -65,6 +69,7 @@ public interface ElytraManager {
      * @param player the player to check
      * @return true if the player is using spawn-elytra flight
      */
+    @Contract(pure = true)
     boolean isUsingSpawnElytra(@NotNull Player player);
 
     /**
@@ -73,6 +78,7 @@ public interface ElytraManager {
      * @param entity the entity to check
      * @return true if the entity is using spawn-elytra flight
      */
+    @Contract(pure = true)
     boolean isUsingSpawnElytra(@NotNull Entity entity);
 
     /**
@@ -82,6 +88,7 @@ public interface ElytraManager {
      * @param player the player to check
      * @return true if the player has already boosted
      */
+    @Contract(pure = true)
     boolean hasBoosted(@NotNull Player player);
 
     /**
@@ -91,6 +98,7 @@ public interface ElytraManager {
      * @param entity the entity to check
      * @return true if the entity has already boosted
      */
+    @Contract(pure = true)
     boolean hasBoosted(@NotNull Entity entity);
 
     /**

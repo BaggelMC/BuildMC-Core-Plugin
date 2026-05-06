@@ -6,6 +6,7 @@ import net.kyori.adventure.key.Key;
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
@@ -13,26 +14,29 @@ import org.jspecify.annotations.NonNull;
 import java.util.*;
 import java.util.stream.Stream;
 
-/// An implementation of Bukkit's {@link Registry} that is permanently mutable.
-/// <p>
-/// You have to keep in mind that entries in this registry type can be modified at after plugin initialization.
-/// </p>
-///
-/// @see DeferredRegistry
+/**
+ * An implementation of Bukkit's {@link Registry} that is permanently mutable.
+ * <p>
+ * You have to keep in mind that entries in this registry type can be modified at after plugin initialization.
+ * </p>
+ *
+ * @see DeferredRegistry
+**/
+@SuppressWarnings("UnstableApiUsage")
 public class BaseRegistry<T extends Keyed> implements Registry<T>, Iterable<T>, net.kyori.adventure.key.Keyed {
 
     private final HashMap<NamespacedKey, T> registry;
 
     private final @NotNull Key regKey;
 
-    /// Initializes a new empty register
+    /** Initializes a new empty register **/
     public BaseRegistry(@NotNull Key key) {
         regKey = key;
         registry = new HashMap<>();
     }
 
-    /**Removes an entry from the registry.
-
+    /**
+     * Removes an entry from the registry.
      * @param key The {@link NamespacedKey} of the entry to remove
      */
     public void removeEntry(@NotNull NamespacedKey key) {
@@ -72,19 +76,23 @@ public class BaseRegistry<T extends Keyed> implements Registry<T>, Iterable<T>, 
         }
     }
 
-    /// Checks if the given {@link NamespacedKey} is inside this registry or not.
-    /// @throws NullPointerException if the key is {@code null}
-    /// @return {@code true} if, registry contains key; else {@code false}
+    /**
+     * Checks if the given {@link NamespacedKey} is inside this registry or not.
+     *
+     * @return {@code true} if, registry contains key; else {@code false}
+     * */
+    @Contract(pure = true)
     public boolean contains(@NotNull NamespacedKey namespacedKey) {
-        return registry.containsKey(Objects.requireNonNull(namespacedKey));
+        return registry.containsKey(namespacedKey);
     }
 
-    /// @return {@link Set} with all keys in this registry
+    /** @return {@link Set} with all keys in this registry **/
     public Set<NamespacedKey> keySet() {
         return registry.keySet();
     }
 
-    /// @return The amount of entries in this registry
+    /** @return The amount of entries in this registry **/
+    @Contract(pure = true)
     @Override
     public int size() {
         return registry.size();
@@ -107,8 +115,9 @@ public class BaseRegistry<T extends Keyed> implements Registry<T>, Iterable<T>, 
      *
      * @return The {@link NamespacedKey} of the object, or null if the parameter is null
      * **/
+    @Contract(pure = true)
     @Override
-    public NamespacedKey getKey(T t) {
+    public NamespacedKey getKey(@NotNull T t) {
         return t.getKey();
     }
 
@@ -143,6 +152,7 @@ public class BaseRegistry<T extends Keyed> implements Registry<T>, Iterable<T>, 
      * @param tagKey The key to check for
      * @return True if the tag key was found; Otherwise false
      * **/
+    @Contract(pure = true)
     @Override
     public boolean hasTag(@NonNull TagKey<T> tagKey) {
         return tags.containsKey(tagKey);
@@ -259,6 +269,7 @@ public class BaseRegistry<T extends Keyed> implements Registry<T>, Iterable<T>, 
     /**
      * @return The {@link Key} of this registry
      * **/
+    @Contract(pure = true)
     @Override
     public @NotNull Key key() {
         return regKey;

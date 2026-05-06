@@ -22,10 +22,7 @@ import net.mathias2246.buildmc.claims.protections.blocks.*;
 import net.mathias2246.buildmc.claims.protections.entities.*;
 import net.mathias2246.buildmc.claims.protections.misc.*;
 import net.mathias2246.buildmc.commands.GuidesCommand;
-import net.mathias2246.buildmc.database.ClaimTable;
-import net.mathias2246.buildmc.database.DatabaseConfig;
-import net.mathias2246.buildmc.database.DatabaseManager;
-import net.mathias2246.buildmc.database.DeathTable;
+import net.mathias2246.buildmc.database.*;
 import net.mathias2246.buildmc.deaths.DeathListener;
 import net.mathias2246.buildmc.event.claims.PlayerCrossClaimBoundariesListener;
 import net.mathias2246.buildmc.player.FirstTimeJoinListener;
@@ -99,6 +96,8 @@ public final class CoreMain {
 
     public static PermissionManager permissionManager;
 
+    public static PermissionsTable permissionsTable;
+
     @ApiStatus.Internal
     public static void initialize(@NotNull PluginMain plugin) {
         if (isInitialized) {
@@ -168,7 +167,7 @@ public final class CoreMain {
                 new SignEdit(config.getConfigurationSection("claims.protections.sign-editing")),
                 new VehicleEnter(config.getConfigurationSection("claims.protections.vehicle-enter")),
                 new PistonMovement(config.getConfigurationSection("claims.protections.piston-movement-across-claim-borders"))
-                );
+        );
 
         Bukkit.getPluginManager().registerEvents(new Listener() {
             @EventHandler
@@ -288,10 +287,15 @@ public final class CoreMain {
 
     private static void initializeDatabase() {
         databaseManager = new DatabaseManager(CoreMain.plugin);
+
         claimTable = new ClaimTable();
         databaseManager.registerTable(claimTable);
+
         deathTable = new DeathTable();
         databaseManager.registerTable(deathTable);
+
+        permissionsTable = new PermissionsTable();
+        databaseManager.registerTable(permissionsTable);
 
         try {
             claimTable.loadClaimOwners(databaseManager.getConnection());

@@ -6,7 +6,7 @@ import net.mathias2246.buildmc.util.AudienceUtil;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class OpenSign {
+public final class OpenSign {
 
     public static void openFakeSign(@NotNull Player player) {
         SignInputScreen in = new SignInputScreen(

@@ -12,6 +12,7 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.api.status.StatusInstance;
 import net.mathias2246.buildmc.commands.debug.BenchmarkClaims;
+import net.mathias2246.buildmc.commands.debug.InvalidateCaches;
 import net.mathias2246.buildmc.commands.debug.OpenSign;
 import net.mathias2246.buildmc.player.status.PlayerStatusUtil;
 import net.mathias2246.buildmc.player.status.SetStatusCommand;
@@ -59,6 +60,13 @@ public class BuildMcCommand implements CustomCommand {
                                     }
                                     return 0;
                                 }
+                        )
+        );
+
+        debugSub.then(
+                Commands.literal("invalidate-caches")
+                        .executes(
+                                (command) -> InvalidateCaches.invalidateCaches(command.getSource().getSender())
                         )
         );
 

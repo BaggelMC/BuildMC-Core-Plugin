@@ -84,6 +84,7 @@ public final class Main extends PluginMain implements Listener {
                 }
             } catch (SecurityException e) {
                 logger.severe("Could not create BuildMC-Core data folder! Disabling plugin now!");
+                logger.severe("Reason:\n" + e);
                 disableImmediately = true;
                 Bukkit.getPluginManager().disablePlugin(this);
             }

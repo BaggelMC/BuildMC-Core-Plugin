@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class BenchmarkClaims {
+public final class BenchmarkClaims {
 
     public static int benchmark1000Claims() {
         List<Claim> claims = new ArrayList<>();

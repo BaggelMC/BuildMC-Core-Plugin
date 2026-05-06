@@ -6,7 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
-public class CommandUtil {
+public final class CommandUtil {
     public static @Nullable Player requiresPlayer(CommandSender sender) {
         if (sender instanceof Player player) {
             return player;

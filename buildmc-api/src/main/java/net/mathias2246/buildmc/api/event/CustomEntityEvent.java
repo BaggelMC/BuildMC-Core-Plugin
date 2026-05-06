@@ -1,15 +1,18 @@
 package net.mathias2246.buildmc.api.event;
 
+
+import org.bukkit.entity.Entity;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.entity.EntityEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
 /**
- * Base class for custom Bukkit events that support metadata.
+ * Base class for custom Bukkit entity events that support metadata.
  * <p>
- * This class extends {@link Event} and delegates metadata handling
+ * This class extends {@link EntityEvent} and delegates metadata handling
  * to an internal {@link MetadataHolder}. Metadata allows plugin developers
  * to attach arbitrary contextual data to events without subclassing or
  * creating wrapper types.
@@ -18,12 +21,17 @@ import java.util.Map;
  * override {@link #getHandlers()} as required by the Bukkit event system.
  *
  * @see MetadataHolder
- * @see CustomEntityEvent
+ * @see CustomEvent
+ * @see CustomPlayerEvent
  */
-public abstract class CustomEvent extends Event {
+public abstract class CustomEntityEvent extends EntityEvent {
 
     /** Internal holder for metadata entries. */
     protected final MetadataHolder metadataHolder = new MetadataHolder() {};
+
+    protected CustomEntityEvent(@NotNull Entity entity) {
+        super(entity);
+    }
 
     /**
      * Returns an unmodifiable view of the metadata map associated with this event.

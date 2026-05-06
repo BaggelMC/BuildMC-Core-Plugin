@@ -1,5 +1,6 @@
 package net.mathias2246.buildmc.commands.claim;
 
+import com.google.common.collect.ImmutableSet;
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
@@ -85,7 +86,7 @@ public class ClaimCreate {
             }
         }
 
-        List<Claim> overlappingClaims;
+        ImmutableSet<Claim> overlappingClaims;
         try {
             overlappingClaims = ClaimManager.getClaimsInArea(pos1, pos2);
         } catch (SQLException e) {

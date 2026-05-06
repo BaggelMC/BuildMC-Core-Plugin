@@ -2,6 +2,7 @@ package net.mathias2246.buildmc.util.registry;
 
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -29,11 +30,13 @@ public class KeyHolder<T> implements Keyed {
         this.value = value;
     }
 
-    /// Gets the stored object
+    /** Gets the stored object **/
+    @Contract(pure = true)
     public @NotNull T getValue() {
         return value;
     }
 
+    @Contract(pure = true)
     @Override
     public @NotNull NamespacedKey getKey() {
         return key;

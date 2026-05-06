@@ -6,6 +6,7 @@ import net.kyori.adventure.key.Key;
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
@@ -13,13 +14,14 @@ import org.jspecify.annotations.NonNull;
 import java.util.*;
 import java.util.stream.Stream;
 
-/**A {@link DeferredRegistry} is an implementation of bukkits {@link Registry} interface.
+/**A {@link DeferredRegistry} is an implementation of Bukkit's {@link Registry} interface.
  * <p>A {@link DeferredRegistry} stays mutable before all plugins are loaded.
  * You can change the contents of the registry while BuildMC-Core is un-initialized.
  * After initializing using {@code initialize();}, the register will be made immutable for safety.</p>
  *
  * @see BaseRegistry
  * */
+@SuppressWarnings("UnstableApiUsage")
 public class DeferredRegistry<T extends Keyed> implements Registry<T>, net.kyori.adventure.key.Keyed, Iterable<T> {
 
     private final Map<NamespacedKey, T> map = new HashMap<>();
@@ -37,6 +39,7 @@ public class DeferredRegistry<T extends Keyed> implements Registry<T>, net.kyori
      *     When this deferred-registry is initialized, it will be turned immutable for safety.
      *
      * @return True if this deferred-registry instance is initialized.*/
+    @Contract(pure = true)
     public boolean isInitialized() {
         return isInitialized;
     }
@@ -97,7 +100,7 @@ public class DeferredRegistry<T extends Keyed> implements Registry<T>, net.kyori
      *     Nothing will change when this deferred-registry is initialized.
      * </p>
      *
-     * @param entries The entry to add
+     * @param entries The entries to add
      * */
     @SafeVarargs
     public final void addEntries(@NotNull T... entries) {
@@ -129,6 +132,7 @@ public class DeferredRegistry<T extends Keyed> implements Registry<T>, net.kyori
      *
      * @return The entry under the given {@link NamespacedKey} or null if not found.
      * */
+    @Contract(pure = true)
     @Override
     public @Nullable T get(@NotNull NamespacedKey namespacedKey) {
         return map.get(namespacedKey);
@@ -139,6 +143,7 @@ public class DeferredRegistry<T extends Keyed> implements Registry<T>, net.kyori
      *
      * @return The {@link NamespacedKey} of the object, or null if the parameter is null
      * **/
+    @Contract(pure = true)
     @Override
     public @Nullable NamespacedKey getKey(@Nullable T t) {
         if (t == null) return null;
@@ -179,6 +184,7 @@ public class DeferredRegistry<T extends Keyed> implements Registry<T>, net.kyori
      * @param tagKey The key to check for
      * @return True if the tag key was found; Otherwise false
      * **/
+    @Contract(pure = true)
     @Override
     public boolean hasTag(@NonNull TagKey<T> tagKey) {
         return tags.containsKey(tagKey);
@@ -217,7 +223,6 @@ public class DeferredRegistry<T extends Keyed> implements Registry<T>, net.kyori
      * */
     @Override
     public @NotNull T getOrThrow(@NotNull NamespacedKey namespacedKey) throws IllegalArgumentException {
-        if (!map.containsKey(namespacedKey)) throw new IllegalArgumentException("The given key was not found");
         return map.get(namespacedKey);
     }
 
@@ -287,7 +292,8 @@ public class DeferredRegistry<T extends Keyed> implements Registry<T>, net.kyori
         return map.keySet().stream();
     }
 
-    /// @return The amount of entries in this registry
+    /** @return The amount of entries in this registry **/
+    @Contract(pure = true)
     @Override
     public int size() {
         return map.size();
@@ -304,6 +310,7 @@ public class DeferredRegistry<T extends Keyed> implements Registry<T>, net.kyori
     /**
      * @return The {@link Key} of this registry
      * **/
+    @Contract(pure = true)
     @Override
     public @NotNull Key key() {
         return regKey;

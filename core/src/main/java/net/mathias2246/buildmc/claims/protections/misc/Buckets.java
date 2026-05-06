@@ -106,7 +106,7 @@ public class Buckets extends Protection {
                 }, 2);
             }
 
-        };
+        }
 
         private void sendBlockUpdate(@NotNull Player player, @NotNull Location location) {
             var blockData = location.getBlock().getBlockData();

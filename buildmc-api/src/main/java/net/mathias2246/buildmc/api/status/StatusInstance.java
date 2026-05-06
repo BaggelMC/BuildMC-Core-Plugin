@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.scoreboard.Team;
 import org.checkerframework.common.value.qual.MatchesRegex;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,11 +30,13 @@ public class StatusInstance implements ConfigurationSerializable, Keyed {
     private final boolean hasRequirements; // Only for caching
 
     /**@return The Text-Component that is displayed as a prefix before the players name.*/
+    @Contract(pure = true)
     public @NotNull Component getDisplay() {
         return display;
     }
 
     /**@return The id of this status. <p>This is also displayed as the tab completion inside the '/status set ...' command.</p>*/
+    @Contract(pure = true)
     public @NotNull String getStatusId() {
         return statusId;
     }
@@ -82,6 +85,7 @@ public class StatusInstance implements ConfigurationSerializable, Keyed {
 
     /**Checks if the given player can have this status.
      * @return True if, the player has the optional permissions and or team and is not null.*/
+    @Contract(pure = true)
     public AllowStatus allowPlayer(Player player) {
         if (player == null) return AllowStatus.NOT_ALLOWED;
         if (!hasRequirements) return AllowStatus.ALLOW;
@@ -111,6 +115,7 @@ public class StatusInstance implements ConfigurationSerializable, Keyed {
         return AllowStatus.ALLOW;
     }
 
+    @Contract(pure = true)
     @Override
     public @NotNull Map<String, Object> serialize() {
         Map<String, Object> map = new LinkedHashMap<>();
@@ -135,7 +140,8 @@ public class StatusInstance implements ConfigurationSerializable, Keyed {
      *            You can serialize a Status using {@link StatusInstance#serialize()}
      *            </p>
      **/
-    public static StatusInstance deserialize(Map<String, Object> map, @NotNull @MatchesRegex("[a-z0-9/._-]+$") String statusId) {
+    @Contract("_, _ -> new")
+    public static StatusInstance deserialize(@NotNull Map<String, Object> map, @NotNull @MatchesRegex("[a-z0-9/._-]+$") String statusId) {
         statusId = statusId.toLowerCase();
 
         // Permissions as names -> convert back to Permission objects
@@ -170,6 +176,7 @@ public class StatusInstance implements ConfigurationSerializable, Keyed {
         return new StatusInstance(statusId, perms, teams, display);
     }
 
+    @Contract(pure = true)
     @Override
     public @NotNull NamespacedKey getKey() {
         return namespacedKey;

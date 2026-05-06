@@ -9,7 +9,7 @@ import net.mathias2246.buildmc.util.SoundUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
-public class BroadcastCommand {
+public final class BroadcastCommand {
     private static final Component separator = Component.text("==============================", NamedTextColor.GRAY);
 
     public static int execute(CommandSender sender, String input) {

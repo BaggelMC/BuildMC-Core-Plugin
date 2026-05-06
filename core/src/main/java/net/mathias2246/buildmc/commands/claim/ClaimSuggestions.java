@@ -1,5 +1,6 @@
 package net.mathias2246.buildmc.commands.claim;
 
+import com.google.common.collect.ImmutableSet;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.mathias2246.buildmc.api.claims.Claim;
@@ -108,7 +109,7 @@ public class ClaimSuggestions {
         Claim finalClaim = claim;
 
         return CompletableFuture.supplyAsync(() -> {
-            List<UUID> whitelist = finalClaim.getWhitelistedPlayers();
+            ImmutableSet<UUID> whitelist = finalClaim.getWhitelistedPlayers();
 
             for (PlayerSnapshot p : onlinePlayers) {
                 boolean isWhitelisted = whitelist.contains(p.uuid());

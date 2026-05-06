@@ -6,6 +6,7 @@ import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,6 +46,7 @@ public abstract class Protection implements Keyed, Displayable, Listener {
      * @param key      the {@link NamespacedKey} of the protection to check, may be {@code null}
      * @return {@code true} if the protection exists in the registry and is marked hidden, otherwise {@code false}
      */
+    @Contract(pure = true)
     public static boolean isHiddenProtection(@NotNull DeferredRegistry<Protection> registry, @Nullable NamespacedKey key) {
         if (key == null) return false;
 
@@ -120,6 +122,7 @@ public abstract class Protection implements Keyed, Displayable, Listener {
      *
      * @return {@code true} if this protection is hidden, otherwise {@code false}
      */
+    @Contract(pure = true)
     public boolean isHidden() {
         return isHidden;
     }
@@ -138,6 +141,7 @@ public abstract class Protection implements Keyed, Displayable, Listener {
      *
      * @return {@code true} if enabled by default, otherwise {@code false}
      */
+    @Contract(pure = true)
     public boolean isDefaultEnabled() {
         return isDefaultEnabled;
     }
@@ -154,8 +158,9 @@ public abstract class Protection implements Keyed, Displayable, Listener {
     /**
      * Returns the unique {@link NamespacedKey} for this protection.
      *
-     * @return the key, never {@code null}
+     * @return the key of this protection
      */
+    @Contract(pure = true)
     @Override
     public @NotNull NamespacedKey getKey() {
         return key;

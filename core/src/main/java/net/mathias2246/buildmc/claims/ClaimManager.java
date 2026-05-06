@@ -1,5 +1,6 @@
 package net.mathias2246.buildmc.claims;
 
+import com.google.common.collect.ImmutableSet;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.ClaimType;
@@ -285,10 +286,10 @@ public class ClaimManager {
         return CoreMain.claimTable.doesClaimExistInArea(CoreMain.databaseManager.getConnection(), worldID, chunkX1, chunkZ1, chunkX2, chunkZ2);
     }
 
-    /**@return A list of claims in the given area. Is empty if not found.
+    /**@return An immutable set of claims in the given area. Is empty if not found.
      * @throws SQLException If an internal database error occurred.
      * @throws IllegalArgumentException If any of the locations are null, or they're not in the same world.*/
-    public static List<Claim> getClaimsInArea(Location pos1, Location pos2) throws SQLException, IllegalArgumentException {
+    public static ImmutableSet<Claim> getClaimsInArea(Location pos1, Location pos2) throws SQLException, IllegalArgumentException {
         if (pos1 == null || pos2 == null) {
             throw new IllegalArgumentException("Positions cannot be null.");
         }
@@ -309,12 +310,12 @@ public class ClaimManager {
         int chunkX2 = pos2.getBlockX() >> 4;
         int chunkZ2 = pos2.getBlockZ() >> 4;
 
-        return CoreMain.claimTable.getOverlappingClaimsInArea(
+        return ImmutableSet.copyOf(CoreMain.claimTable.getOverlappingClaimsInArea(
                 CoreMain.databaseManager.getConnection(),
                 worldId1,
                 chunkX1, chunkZ1,
                 chunkX2, chunkZ2
-        );
+        ));
     }
 
     /**@return True if, the given chunk is claimed*/
@@ -348,7 +349,7 @@ public class ClaimManager {
         return null;
     }
 
-    public static List<Claim> getAllClaims() throws SQLException {
+    public static ImmutableSet<Claim> getAllClaims() throws SQLException {
         return CoreMain.claimTable.getAllClaims(CoreMain.databaseManager.getConnection());
     }
 
@@ -427,6 +428,7 @@ public class ClaimManager {
 
         if (claimId == -1) return null;
 
+        //noinspection deprecation
         claim.setID(claimId);
 
         // Update ownership mapping
@@ -453,6 +455,7 @@ public class ClaimManager {
 
             if (id == null) continue;
 
+            //noinspection deprecation
             claim.setID(id);
 
             switch (claim.getType()) {
@@ -509,7 +512,7 @@ public class ClaimManager {
             }
         }
 
-        claimTable.deleteClaims(CoreMain.databaseManager.getConnection(), ids);
+        claimTable.deleteClaimsByIds(CoreMain.databaseManager.getConnection(), ids);
     }
 
     /**Adds a player to a Claim whitelist by claimID.*/

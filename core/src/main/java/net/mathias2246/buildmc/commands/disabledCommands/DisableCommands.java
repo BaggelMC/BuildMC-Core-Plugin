@@ -17,7 +17,7 @@ import java.util.Map;
 
 import static net.mathias2246.buildmc.CoreMain.plugin;
 
-public class DisableCommands {
+public final class DisableCommands {
 
     @ApiStatus.Internal
     public static void disableCommand(String namespace, String commandName) {
