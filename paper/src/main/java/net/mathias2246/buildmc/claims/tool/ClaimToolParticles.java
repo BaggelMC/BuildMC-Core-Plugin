@@ -26,6 +26,7 @@ public class ClaimToolParticles extends ParticleSpawner {
     public ClaimToolParticles(int repeatTimes, int delay, @NotNull Player source, boolean isRemoveSelection) {
         super(CoreMain.plugin, repeatTimes, delay, source);
         this.isRemoveSelection = isRemoveSelection;
+        // FIXME: Causes NoSuchElementException
         var l = LocationUtil.tryDeserialize(source.getMetadata("buildmc:claim_tool_first_selection").getFirst().asString());
         if (l == null) return;
         Chunk c = l.getChunk();

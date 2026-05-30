@@ -191,7 +191,7 @@ messages:
 
     help-message: |-
       <gold>------------- <green>Claims Help</green> -------------</gold>
-      <aqua>Click <green><click:open_url:'https://baggel.de/plugins/en/core/docs/1.1.0/user/claims'>here</click></green> to open the full documentation.</aqua>
+      <aqua>Click <green><click:open_url:'https://baggel.de/docs/en/v1.1.0/players/claims/'>here</click></green> to open the full documentation.</aqua>
       <gray>- Use '<gold>/claim claimtool</gold>' to get the claim tool.</gray>
       <gray>- Left-Click to select your first chunk.</gray>
       <gray>- Right-Click to select your second chunk.</gray>

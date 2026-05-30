@@ -45,8 +45,8 @@
         <!-- Custom properties -->
         <project.buildVersion>1.1.0-beta</project.buildVersion>
 
-        <minecraft.supportedVersions>1.21.4-1.21.11</minecraft.supportedVersions>
-        <minecraft.bukkitApiVersion>1.21</minecraft.bukkitApiVersion>
+        <minecraft.supportedVersions>1.21.4-26.1.2</minecraft.supportedVersions>
+        <minecraft.bukkitApiVersion>26.1</minecraft.bukkitApiVersion>
     </properties>
 
     <!-- Transitive Dependencies for all modules (except the API module) -->

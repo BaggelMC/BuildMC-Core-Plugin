@@ -5,6 +5,7 @@ import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
 import com.github.stefvanschie.inventoryframework.pane.Pane;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
+import com.github.stefvanschie.inventoryframework.pane.util.Slot;
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
@@ -131,8 +132,8 @@ public class ClaimEditMenu {
                                 ClaimSelectMenu.open(player);
                             }), 8, 2);
 
-                    gui.addPane(BACKGROUND);
-                    gui.addPane(elements);
+                    gui.addPane(Slot.fromXY(0, 0), BACKGROUND);
+                    gui.addPane(Slot.fromXY(0, 0), elements);
 
                     Bukkit.getScheduler().runTask(plugin, bukkitTask -> {
                         gui.show(player);
@@ -190,8 +191,8 @@ public class ClaimEditMenu {
                                 player.closeInventory();
                             }), 5, 1);
 
-                    gui.addPane(RED_BACKGROUND);
-                    gui.addPane(elements);
+                    gui.addPane(Slot.fromXY(0, 0), RED_BACKGROUND);
+                    gui.addPane(Slot.fromXY(0, 0), elements);
 
                     Bukkit.getScheduler().runTask(plugin, bukkitTask -> {
                         gui.show(player);

@@ -32,7 +32,7 @@ public record ElytraCheckListeners(ElytraZoneManager zoneManager, boolean boostE
         setPlayerFlying(player);
 
         if (boostEnabled && !isPlayerBoosted(player)) {
-            AudienceUtil.sendMessage(player, Component.translatable("messages.spawn-elytra.boost-hint"));
+            AudienceUtil.sendActionBar(player, Component.translatable("messages.spawn-elytra.boost-hint"));
         }
     }
 

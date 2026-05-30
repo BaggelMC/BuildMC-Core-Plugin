@@ -183,6 +183,16 @@ public class SpawnElytraUtil {
                 );
             } catch (Exception ignore) {}
         });
+        GameVersionUtil.onVersion("26.1", v -> {
+            try {
+                //noinspection RedundantCollectionOperation
+                effectiveBlockList.addAll(
+                        List.of(
+                                Objects.requireNonNull(Material.matchMaterial("GOLDEN_DANDELION"))
+                        )
+                );
+            } catch (Exception ignore) {}
+        });
 
 
         for (Material material : effectiveBlockList) {

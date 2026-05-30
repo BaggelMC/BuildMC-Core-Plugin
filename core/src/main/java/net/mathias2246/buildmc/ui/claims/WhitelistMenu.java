@@ -6,6 +6,7 @@ import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
 import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
 import com.github.stefvanschie.inventoryframework.pane.Pane;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
+import com.github.stefvanschie.inventoryframework.pane.util.Slot;
 import com.google.common.collect.ImmutableSet;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -39,7 +40,7 @@ public class WhitelistMenu {
     public static final @NotNull StaticPane RED_BACKGROUND;
 
     static {
-        SPACER_ROW = new StaticPane(0, 2, 9, 5);
+        SPACER_ROW = new StaticPane(9, 5);
 
         INVISIBLE_BACKGROUND = new StaticPane(9, 6);
 
@@ -82,7 +83,7 @@ public class WhitelistMenu {
                         if (ClaimUIs.openUIs.containsKey(claim.getId())) ClaimUIs.openUIs.get(claim.getId()).remove(player);
                     });
 
-                    PaginatedPane pages = new PaginatedPane(0, 0, 9, 5);
+                    PaginatedPane pages = new PaginatedPane(9, 5);
 
                     boolean isFirstPage = true;
                     boolean lowerRow = false;
@@ -93,10 +94,10 @@ public class WhitelistMenu {
                     p.add(new StaticPane(9, 5));
                     StaticPane currentPane = p.getFirst();
 
-                    pages.addPane(0, SPACER_ROW);
-                    pages.addPane(0, INVISIBLE_BACKGROUND);
+                    pages.addPane(0, Slot.fromXY(0, 2), SPACER_ROW);
+                    pages.addPane(0, Slot.fromXY(0, 0), INVISIBLE_BACKGROUND);
 
-                    pages.addPane(0, currentPane);
+                    pages.addPane(0, Slot.fromXY(0, 0), currentPane);
 
                     for (var playerUUID : whitelist) {
                         int row = lowerRow ? 3 : 0;
@@ -138,29 +139,29 @@ public class WhitelistMenu {
                                 lowerRow = false;
                                 if (!isFirstPage) {
 
-                                    pages.addPage(currentPane);
+                                    pages.addPage(Slot.fromXY(0, 0), currentPane);
                                 }
                                 isFirstPage = false;
                                 p.add(new StaticPane(9, 5));
                                 currentPane = p.getLast();
-                                pages.addPane(pages.getPages() - 1, SPACER_ROW);
-                                pages.addPane(pages.getPages() - 1, INVISIBLE_BACKGROUND);
+                                pages.addPane(pages.getPages() - 1, Slot.fromXY(0, 2), SPACER_ROW);
+                                pages.addPane(pages.getPages() - 1, Slot.fromXY(0, 0), INVISIBLE_BACKGROUND);
                             }
                         }
 
                     }
                     if (column > 0 || lowerRow) {
                         if (!isFirstPage) {
-                            pages.addPage(currentPane);
+                            pages.addPage(Slot.fromXY(0, 0), currentPane);
 
                         }
-                        pages.addPane(pages.getPages() - 1, SPACER_ROW);
+                        pages.addPane(pages.getPages() - 1, Slot.fromXY(0, 2), SPACER_ROW);
 
-                        pages.addPane(pages.getPages() - 1, INVISIBLE_BACKGROUND);
+                        pages.addPane(pages.getPages() - 1, Slot.fromXY(0, 0), INVISIBLE_BACKGROUND);
                     }
 
-                    gui.addPane(pages);
-                    StaticPane addButton = new StaticPane(4,2,1,1);
+                    gui.addPane(Slot.fromXY(0, 0), pages);
+                    StaticPane addButton = new StaticPane(1,1);
                     ItemStack addPaneItem = new ItemStack(Material.LIME_STAINED_GLASS_PANE);
                     ItemUtil.setName(addPaneItem, Message.msg(player, "messages.claims.ui.whitelist-menu.add-button.name"));
                     addButton.addItem(new GuiItem(addPaneItem, e -> {
@@ -206,8 +207,8 @@ public class WhitelistMenu {
                     controls.addItem(UIUtil.makePageLeftButton(gui, player, pages, controls, pageIndicator), 2, 0);
                     controls.addItem(UIUtil.makePageRightButton(gui, player, pages, controls, pageIndicator), 6, 0);
 
-                    gui.addPane(controls);
-                    gui.addPane(addButton);
+                    gui.addPane(Slot.fromXY(0, 5), controls);
+                    gui.addPane(Slot.fromXY(4,2), addButton);
 
                     Bukkit.getScheduler().runTask(plugin, bukkitTask ->
                             {
@@ -240,7 +241,7 @@ public class WhitelistMenu {
                         if (ClaimUIs.openUIs.containsKey(claim.getId())) ClaimUIs.openUIs.get(claim.getId()).remove(player);
                     });
 
-                    StaticPane pane = new StaticPane(0, 0, 9, 3);
+                    StaticPane pane = new StaticPane(9, 3);
 
                     // Cancel button
                     var cancelButton = new ItemStack(Material.GREEN_CONCRETE);
@@ -269,8 +270,8 @@ public class WhitelistMenu {
                         open(player, claim);
                     }), 5, 1);
 
-                    gui.addPane(pane);
-                    gui.addPane(RED_BACKGROUND);
+                    gui.addPane(Slot.fromXY(0, 2), pane);
+                    gui.addPane(Slot.fromXY(0, 2), RED_BACKGROUND);
 
                     Bukkit.getScheduler().runTask(plugin, bukkitTask -> {
                         gui.show(player);

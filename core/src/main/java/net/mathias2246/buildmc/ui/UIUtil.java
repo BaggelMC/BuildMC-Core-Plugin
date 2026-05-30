@@ -97,11 +97,11 @@ public class UIUtil {
         NEXT_PAGE_BUTTON = new GuiItem(np, noInteract);
 
         BOTTOM_BAR_WITH_EXIT = new StaticPane(
-                0,5,9,1
+                9,1
         );
 
         BOTTOM_BAR = new StaticPane(
-                0,5,9,1
+                9,1
         );
 
         BOTTOM_BAR_WITH_EXIT.addItem(BLOCKED_PANE, 0, 0);

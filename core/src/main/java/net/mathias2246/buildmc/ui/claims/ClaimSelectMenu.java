@@ -5,6 +5,7 @@ import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
 import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
+import com.github.stefvanschie.inventoryframework.pane.util.Slot;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.mathias2246.buildmc.CoreMain;
@@ -78,13 +79,13 @@ public class ClaimSelectMenu {
 
                     ChestGui gui = new ChestGui(6, ComponentHolder.of(Message.msg(player, "messages.claims.ui.select-menu.title")));
 
-                    PaginatedPane pages = new PaginatedPane(0, 0, 9, 5);
+                    PaginatedPane pages = new PaginatedPane(9, 5);
 
                     pages.populateWithGuiItems(claimButtons);
 
                     StaticPane bottomBar = UIUtil.BOTTOM_BAR.copy();
 
-                    bottomBar.addItem(UIUtil.EXIT_BUTTON, 0, 0);
+                    bottomBar.addItem(UIUtil.EXIT_BUTTON, 8, 0);
 
                     var pageIndicator = UIUtil.makePageIndicator(gui, player, pages);
 
@@ -92,8 +93,8 @@ public class ClaimSelectMenu {
                             pageIndicator, 4, 0
                     );
 
-                    gui.addPane(pages);
-                    gui.addPane(bottomBar);
+                    gui.addPane(Slot.fromXY(0, 0), pages);
+                    gui.addPane(Slot.fromXY(0, 5), bottomBar);
 
                     Bukkit.getScheduler().runTask(plugin, bukkitTask -> {
                         gui.show(player);

@@ -85,7 +85,7 @@ public class ElytraZoneManager {
     }
 
     private void saveZoneToConfig() {
-        CoreMain.config.set("spawn-elytra.zone.world", world.getKey());
+        CoreMain.config.set("spawn-elytra.zone.world", world.getKey().asString());
         CoreMain.config.set("spawn-elytra.zone.pos1.x", pos1.getX());
         CoreMain.config.set("spawn-elytra.zone.pos1.y", pos1.getY());
         CoreMain.config.set("spawn-elytra.zone.pos1.z", pos1.getZ());
