@@ -57,18 +57,19 @@ public class Buckets extends Protection {
 
         public BucketPacketListener(@NotNull Plugin plugin, @NotNull Buckets protection) {
             super(plugin, ListenerPriority.NORMAL,
+                    PacketType.Play.Client.USE_ITEM_ON,
                     PacketType.Play.Client.USE_ITEM
             );
             this.protection = protection;
         }
 
+        private final java.util.Set<java.util.UUID> cancelNextUseItem = java.util.Collections.newSetFromMap(new java.util.concurrent.ConcurrentHashMap<>());
+
         @Override
         public void onPacketReceiving(@NotNull PacketEvent event) {
             Player player = event.getPlayer();
 
-            var hand = event.getPacket()
-                    .getHands()
-                    .read(0);
+            var hand = event.getPacket().getHands().read(0);
 
             ItemStack item = switch (hand) {
                 case MAIN_HAND -> player.getInventory().getItemInMainHand();
@@ -77,19 +78,18 @@ public class Buckets extends Protection {
 
             if (!isBucket(item)) return;
 
-            var rayTrace = player.getWorld().rayTraceBlocks(
-                    player.getEyeLocation(),
-                    player.getEyeLocation().getDirection(),
-                    Objects.requireNonNull(player.getAttribute(Attribute.BLOCK_INTERACTION_RANGE)).getValue()
-            );
+            if (event.getPacketType() == PacketType.Play.Client.USE_ITEM) {
+                if (cancelNextUseItem.remove(player.getUniqueId())) {
+                    event.setCancelled(true);
+                }
+                return;
+            }
 
-            if (rayTrace == null) return;
+            var hitResult = event.getPacket().getStructures().read(0);
+            var pos = hitResult.getBlockPositionModifier().read(0);
+            var hitFace = toBlockFace(hitResult.getDirections().read(0));
 
-            var hitBlock = rayTrace.getHitBlock();
-            var hitFace  = rayTrace.getHitBlockFace();
-
-            if (hitBlock == null || hitFace == null) return;
-
+            var hitBlock = player.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
             var placementBlock = hitBlock.getRelative(hitFace);
 
             Claim claim = ClaimManager.getClaim(placementBlock.getLocation());
@@ -97,34 +97,23 @@ public class Buckets extends Protection {
 
             if (!ClaimManager.isPlayerAllowed(player, protection.getKey(), claim)) {
                 event.setCancelled(true);
-                AudienceUtil.sendActionBar(player, Component.translatable(protection.getTranslationBaseKey()+".message"));
+                cancelNextUseItem.add(player.getUniqueId());
+                AudienceUtil.sendActionBar(player, Component.translatable(protection.getTranslationBaseKey() + ".message"));
 
-                // Delay by 2 ticks to let the client finish its prediction first
-                Bukkit.getScheduler().runTaskLater(plugin, t -> {
-                    player.sendBlockChange(hitBlock.getLocation(), hitBlock.getBlockData());
-                    player.sendBlockChange(placementBlock.getLocation(), placementBlock.getBlockData());
-                }, 2);
-            }
-
-        }
-
-        private void sendBlockUpdate(@NotNull Player player, @NotNull Location location) {
-            var blockData = location.getBlock().getBlockData();
-
-            PacketContainer packet = ProtocolLibrary.getProtocolManager()
-                    .createPacket(PacketType.Play.Server.BLOCK_CHANGE);
-
-            packet.getBlockPositionModifier().write(0,
-                    new BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ()));
-            packet.getBlockData().write(0, WrappedBlockData.createData(blockData));
-
-            try {
-                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
-            } catch (Exception e) {
-                plugin.getLogger().log(Level.WARNING, "Failed to send block update to " + player.getName(), e);
+                //TODO: Resync with client
             }
         }
 
+        private org.bukkit.block.BlockFace toBlockFace(com.comphenix.protocol.wrappers.EnumWrappers.Direction direction) {
+            return switch (direction) {
+                case NORTH -> org.bukkit.block.BlockFace.NORTH;
+                case SOUTH -> org.bukkit.block.BlockFace.SOUTH;
+                case EAST  -> org.bukkit.block.BlockFace.EAST;
+                case WEST  -> org.bukkit.block.BlockFace.WEST;
+                case UP    -> org.bukkit.block.BlockFace.UP;
+                case DOWN  -> org.bukkit.block.BlockFace.DOWN;
+            };
+        }
 
         private boolean isBucket(@NotNull ItemStack item) {
             return switch (item.getType()) {
