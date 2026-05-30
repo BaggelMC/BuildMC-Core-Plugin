@@ -3,6 +3,7 @@ package net.mathias2246.buildmc.util;
 import net.kyori.adventure.sound.Sound;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -13,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
  * worrying about platform-specific APIs.
  * </p>
  */
+@ApiStatus.NonExtendable
 public interface SoundManager {
 
     /**

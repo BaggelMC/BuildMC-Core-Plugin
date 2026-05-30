@@ -22,6 +22,7 @@ import net.mathias2246.buildmc.commands.claim.ClaimRemove;
 import net.mathias2246.buildmc.commands.claim.ClaimSuggestions;
 import net.mathias2246.buildmc.commands.claim.ClaimWho;
 import net.mathias2246.buildmc.ui.claims.ClaimSelectMenu;
+import net.mathias2246.buildmc.util.AudienceUtil;
 import net.mathias2246.buildmc.util.CommandUtil;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -156,7 +157,7 @@ public class ClaimCommand implements CustomCommand {
                                                             String valueStr = StringArgumentType.getString(command, "value").toLowerCase();
 
                                                             if (flag == null || Protection.isHiddenProtection(CoreMain.protectionsRegistry, flag)) {
-                                                                player.sendMessage(Component.translatable("messages.claims.protections.invalid-flag"));
+                                                                AudienceUtil.sendMessage(player, Component.translatable("messages.claims.protections.invalid-flag"));
                                                                 return 0;
                                                             }
 
@@ -183,12 +184,12 @@ public class ClaimCommand implements CustomCommand {
 
         // Check if there is space left in the inventory
         if (player.getInventory().firstEmpty() == -1) {
-            player.sendMessage(Component.translatable("messages.claims.tool.full-inventory"));
+            AudienceUtil.sendMessage(player, Component.translatable("messages.claims.tool.full-inventory"));
             return 0;
         }
 
         claimTool.giveToPlayer(player, claimToolNameAndTooltip);
-        player.sendMessage(Component.translatable("messages.claims.tool.give-success"));
+        AudienceUtil.sendMessage(player, Component.translatable("messages.claims.tool.give-success"));
         return 1;
     }
     
@@ -204,7 +205,7 @@ public class ClaimCommand implements CustomCommand {
         try {
             l = command.getArgument("position", BlockPositionResolver.class).resolve(command.getSource()).toLocation(player.getWorld());
         } catch (CommandSyntaxException e) {
-            player.sendMessage(Component.translatable("messages.error.general"));
+            AudienceUtil.sendMessage(player, Component.translatable("messages.error.general"));
             return 0;
         }
 
@@ -213,7 +214,7 @@ public class ClaimCommand implements CustomCommand {
     
     protected static int handleHelp(CommandContext<CommandSourceStack> command) {
         var sender = command.getSource().getSender();
-        sender.sendMessage(Component.translatable("messages.claims.help-message"));
+        AudienceUtil.sendMessage(sender, Component.translatable("messages.claims.help-message"));
         return 1;
     }
 }

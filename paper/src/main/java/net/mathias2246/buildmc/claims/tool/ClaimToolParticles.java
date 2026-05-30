@@ -1,7 +1,8 @@
 package net.mathias2246.buildmc.claims.tool;
 
 import com.destroystokyo.paper.ParticleBuilder;
-import net.mathias2246.buildmc.Main;
+import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.util.LocationUtil;
 import net.mathias2246.buildmc.util.ParticleSpawner;
 import org.bukkit.Chunk;
@@ -23,8 +24,9 @@ public class ClaimToolParticles extends ParticleSpawner {
     public final boolean isRemoveSelection;
 
     public ClaimToolParticles(int repeatTimes, int delay, @NotNull Player source, boolean isRemoveSelection) {
-        super(repeatTimes, delay, source);
+        super(CoreMain.plugin, repeatTimes, delay, source);
         this.isRemoveSelection = isRemoveSelection;
+        // FIXME: Causes NoSuchElementException
         var l = LocationUtil.tryDeserialize(source.getMetadata("buildmc:claim_tool_first_selection").getFirst().asString());
         if (l == null) return;
         Chunk c = l.getChunk();
@@ -120,7 +122,7 @@ public class ClaimToolParticles extends ParticleSpawner {
 
     @Override
     protected boolean shouldStop() {
-        return !source.hasMetadata("claim_selection_particles");
+        return !source.getPersistentDataContainer().has(ClaimSelectionTool.SELECTION_EFFECT_KEY);
     }
 
     @Override
@@ -134,6 +136,6 @@ public class ClaimToolParticles extends ParticleSpawner {
 
     @Override
     protected void onStop() {
-        source.removeMetadata("claim_selection_particles", Main.plugin);
+        source.getPersistentDataContainer().remove(ClaimSelectionTool.SELECTION_EFFECT_KEY);
     }
 }

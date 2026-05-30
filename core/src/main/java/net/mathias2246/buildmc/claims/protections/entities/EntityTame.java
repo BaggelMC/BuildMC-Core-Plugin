@@ -1,15 +1,9 @@
 package net.mathias2246.buildmc.claims.protections.entities;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.mathias2246.buildmc.CoreMain;
+import com.github.stefvanschie.inventoryframework.gui.GuiItem;
+import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
 import net.mathias2246.buildmc.api.claims.Protection;
-import net.mathias2246.buildmc.api.item.ItemUtil;
-import net.mathias2246.buildmc.claims.ClaimManager;
-import net.mathias2246.buildmc.inventoryframework.gui.GuiItem;
-import net.mathias2246.buildmc.inventoryframework.gui.type.util.Gui;
-import net.mathias2246.buildmc.ui.UIUtil;
-import net.mathias2246.buildmc.util.Message;
+import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
@@ -17,11 +11,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityTameEvent;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
-import java.util.List;
 import java.util.Objects;
 
 public class EntityTame extends Protection {
@@ -38,23 +31,12 @@ public class EntityTame extends Protection {
 
         String t = getTranslationBaseKey();
 
-        ItemStack displayBase = new ItemStack(Material.BONE);
-        ItemUtil.editMeta(displayBase, (meta) -> {
-            meta.setItemName(LegacyComponentSerializer.legacySection().serialize(
-                    Message.msg(uiHolder, t+".name")
-            ));
-            meta.setLore(List.of(LegacyComponentSerializer.legacySection().serialize(Message.msg(uiHolder, t + ".lore")).split("\n")));
-        });
-
-        return new GuiItem(
-                displayBase,
-                UIUtil.noInteract
-        );
+        return ProtectionUtil.createDisplayItem(uiHolder, Material.BONE, t);
     }
 
     @Override
-    public String getTranslationBaseKey() {
-        return "claims.flags.interaction-tame-entity";
+    public @NonNull String getTranslationBaseKey() {
+        return "claims.protections.interaction-tame-entity";
     }
 
     @EventHandler
@@ -62,10 +44,7 @@ public class EntityTame extends Protection {
         if (!(event.getOwner() instanceof Player player)) return;
         Entity entity = event.getEntity();
 
-        if (!ClaimManager.isPlayerAllowed(player, getKey(), entity.getLocation())) {
-            CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.tame-entity"));
-            event.setCancelled(true);
-        }
+        ProtectionUtil.handleProtection(event, this, entity.getLocation(), player);
     }
 
 }

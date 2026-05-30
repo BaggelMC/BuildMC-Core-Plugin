@@ -2,11 +2,12 @@ package net.mathias2246.buildmc.database;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import net.mathias2246.buildmc.CoreMain;
+import com.google.common.collect.ImmutableSet;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.ClaimType;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.util.LocationUtil;
+import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,6 +17,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+import static net.mathias2246.buildmc.CoreMain.plugin;
 import static net.mathias2246.buildmc.claims.ClaimManager.*;
 
 @SuppressWarnings({"unused"})
@@ -26,76 +28,84 @@ public class ClaimTable implements DatabaseTable {
             .expireAfterAccess(10, TimeUnit.MINUTES)
             .build();
 
+    public void invalidateCache() {
+        claimCache.invalidateAll();
+    }
+
+    public void invalidateCache(long id) {
+        claimCache.invalidate(id);
+    }
+
     @Override
     public void createTable(Connection conn) throws SQLException {
         try (Statement stmt = conn.createStatement()) {
             stmt.execute("""
-            CREATE TABLE IF NOT EXISTS claims (
-                id IDENTITY PRIMARY KEY,
-                type VARCHAR(16) NOT NULL,
-                owner_id VARCHAR(64) NOT NULL,
-                world_id UUID NOT NULL,
-                chunk_x1 INT NOT NULL,
-                chunk_z1 INT NOT NULL,
-                chunk_x2 INT NOT NULL,
-                chunk_z2 INT NOT NULL,
-                name VARCHAR(100)
-            );
-        """);
+                CREATE TABLE IF NOT EXISTS claims (
+                    id IDENTITY PRIMARY KEY,
+                    type VARCHAR(16) NOT NULL,
+                    owner_id VARCHAR(64) NOT NULL,
+                    world_id UUID NOT NULL,
+                    chunk_x1 INT NOT NULL,
+                    chunk_z1 INT NOT NULL,
+                    chunk_x2 INT NOT NULL,
+                    chunk_z2 INT NOT NULL,
+                    name VARCHAR(100)
+                );
+            """);
 
             stmt.execute("""
-            CREATE TABLE IF NOT EXISTS claim_whitelisted_players (
-                claim_id BIGINT NOT NULL,
-                player_uuid UUID NOT NULL,
-                PRIMARY KEY (claim_id, player_uuid),
-                FOREIGN KEY (claim_id) REFERENCES claims(id) ON DELETE CASCADE
-            );
-        """);
+                CREATE TABLE IF NOT EXISTS claim_whitelisted_players (
+                    claim_id BIGINT NOT NULL,
+                    player_uuid UUID NOT NULL,
+                    PRIMARY KEY (claim_id, player_uuid),
+                    FOREIGN KEY (claim_id) REFERENCES claims(id) ON DELETE CASCADE
+                );
+            """);
 
             stmt.execute("""
-            CREATE TABLE IF NOT EXISTS claim_protection_flags (
-                claim_id BIGINT NOT NULL,
-                flag VARCHAR(64) NOT NULL,
-                PRIMARY KEY (claim_id, flag),
-                FOREIGN KEY (claim_id) REFERENCES claims(id) ON DELETE CASCADE
-            );
-        """);
+                CREATE TABLE IF NOT EXISTS claim_protection_flags (
+                    claim_id BIGINT NOT NULL,
+                    flag VARCHAR(64) NOT NULL,
+                    PRIMARY KEY (claim_id, flag),
+                    FOREIGN KEY (claim_id) REFERENCES claims(id) ON DELETE CASCADE
+                );
+            """);
 
             stmt.execute("""
-            CREATE INDEX IF NOT EXISTS idx_claims_owner_id\s
-            ON claims(owner_id);
-       \s""");
+                CREATE INDEX IF NOT EXISTS idx_claims_owner_id\s
+                ON claims(owner_id);
+           \s""");
 
             stmt.execute("""
-            CREATE INDEX IF NOT EXISTS idx_claims_world_id\s
-            ON claims(world_id);
-       \s""");
+                CREATE INDEX IF NOT EXISTS idx_claims_world_id\s
+                ON claims(world_id);
+           \s""");
 
             stmt.execute("""
-            CREATE INDEX IF NOT EXISTS idx_claims_chunks\s
-            ON claims(world_id, chunk_x1, chunk_z1, chunk_x2, chunk_z2);
-       \s""");
+                CREATE INDEX IF NOT EXISTS idx_claims_chunks\s
+                ON claims(world_id, chunk_x1, chunk_z1, chunk_x2, chunk_z2);
+           \s""");
             stmt.execute("""
-            CREATE INDEX IF NOT EXISTS idx_whitelisted_claim_id\s
-            ON claim_whitelisted_players(claim_id);
-       \s""");
+                CREATE INDEX IF NOT EXISTS idx_whitelisted_claim_id\s
+                ON claim_whitelisted_players(claim_id);
+           \s""");
             // Index for reverse lookups by player (optional, but useful if you search claims by player)
             stmt.execute("""
-            CREATE INDEX IF NOT EXISTS idx_whitelisted_player_uuid\s
-            ON claim_whitelisted_players(player_uuid);
-       \s""");
+                CREATE INDEX IF NOT EXISTS idx_whitelisted_player_uuid\s
+                ON claim_whitelisted_players(player_uuid);
+           \s""");
             stmt.execute("""
-            CREATE INDEX IF NOT EXISTS idx_flags_claim_id\s
-            ON claim_protection_flags(claim_id);
-       \s""");
+                CREATE INDEX IF NOT EXISTS idx_flags_claim_id\s
+                ON claim_protection_flags(claim_id);
+           \s""");
         }
     }
 
     public long insertClaim(Connection conn, Claim claim) throws SQLException {
         try (PreparedStatement ps = conn.prepareStatement("""
-        INSERT INTO claims (type, owner_id, world_id, chunk_x1, chunk_z1, chunk_x2, chunk_z2, name)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    """, Statement.RETURN_GENERATED_KEYS)) {
+            INSERT INTO claims (type, owner_id, world_id, chunk_x1, chunk_z1, chunk_x2, chunk_z2, name)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """, Statement.RETURN_GENERATED_KEYS)) {
 
             ps.setString(1, claim.getType().name());
             ps.setString(2, claim.getOwnerId());
@@ -150,6 +160,148 @@ public class ClaimTable implements DatabaseTable {
         }
     }
 
+    @Nullable
+    public Long getClaimIdAt(@NotNull Connection conn, @NotNull Location location) {
+
+        int chunkX = location.getBlockX() >> 4;
+        int chunkZ = location.getBlockZ() >> 4;
+        UUID worldId = Objects.requireNonNull(location.getWorld()).getUID();
+
+        try (PreparedStatement ps = conn.prepareStatement("""
+        SELECT id
+        FROM claims
+        WHERE world_id = ?
+          AND chunk_x1 <= ?
+          AND chunk_x2 >= ?
+          AND chunk_z1 <= ?
+          AND chunk_z2 >= ?
+        LIMIT 1
+        """)) {
+
+            ps.setObject(1, worldId);
+            ps.setInt(2, chunkX);
+            ps.setInt(3, chunkX);
+            ps.setInt(4, chunkZ);
+            ps.setInt(5, chunkZ);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getLong("id");
+                }
+            }
+        } catch (SQLException ignore) {
+            return null;
+        }
+        return null;
+    }
+
+    public boolean isInsideClaim(@NotNull Connection conn, @NotNull Location location) {
+        return getClaimIdAt(conn, location) != null;
+    }
+
+    @SuppressWarnings("deprecation") // Because of Claim.setID usage
+    public Map<Claim, Long> insertClaims(Connection conn, List<Claim> claims) throws SQLException {
+        if (claims.isEmpty()) return Collections.emptyMap();
+
+        String sql = """
+            INSERT INTO claims (type, owner_id, world_id, chunk_x1, chunk_z1, chunk_x2, chunk_z2, name)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """;
+
+        Map<Claim, Long> generatedIds = new LinkedHashMap<>();
+
+        boolean oldAutoCommit = conn.getAutoCommit();
+        conn.setAutoCommit(false);
+
+        try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            for (Claim claim : claims) {
+                ps.setString(1, claim.getType().name());
+                ps.setString(2, claim.getOwnerId());
+                ps.setObject(3, claim.getWorldId());
+                ps.setInt(4, claim.getChunkX1());
+                ps.setInt(5, claim.getChunkZ1());
+                ps.setInt(6, claim.getChunkX2());
+                ps.setInt(7, claim.getChunkZ2());
+                ps.setString(8, claim.getName());
+                ps.addBatch();
+            }
+
+            ps.executeBatch();
+
+            try (ResultSet keys = ps.getGeneratedKeys()) {
+                int index = 0;
+                while (keys.next()) {
+                    long id = keys.getLong(1);
+                    Claim claim = claims.get(index++);
+                    generatedIds.put(claim, id);
+                    claim.setID(id);
+                    claimCache.put(id, claim);
+                }
+            }
+
+            insertWhitelistsBulk(conn, generatedIds);
+            insertProtectionsBulk(conn, generatedIds);
+
+            for (Claim claim : claims) {
+                updateRemainingClaims(claim);
+            }
+
+            conn.commit();
+        } catch (SQLException ex) {
+            conn.rollback();
+            throw ex;
+        } finally {
+            conn.setAutoCommit(oldAutoCommit);
+        }
+
+        return generatedIds;
+    }
+
+    public void deleteClaimsByIds(Connection conn, Collection<Long> ids) throws SQLException {
+        for (var id : ids) {
+            deleteClaimById(conn, id);
+        }
+    }
+
+    private void insertWhitelistsBulk(Connection conn, Map<Claim, Long> claims) throws SQLException {
+        String sql = """
+            INSERT INTO claim_whitelisted_players (claim_id, player_uuid)
+            VALUES (?, ?)
+        """;
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            for (var entry : claims.entrySet()) {
+                long claimId = entry.getValue();
+                for (UUID uuid : entry.getKey().getWhitelistedPlayers()) {
+                    ps.setLong(1, claimId);
+                    ps.setObject(2, uuid);
+                    ps.addBatch();
+                }
+            }
+            ps.executeBatch();
+        }
+    }
+
+    private void insertProtectionsBulk(Connection conn, Map<Claim, Long> claims) throws SQLException {
+        String sql = """
+            INSERT INTO claim_protection_flags (claim_id, flag)
+            VALUES (?, ?)
+        """;
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            for (var entry : claims.entrySet()) {
+                long claimId = entry.getValue();
+                for (String flag : entry.getKey().getProtections()) {
+                    ps.setLong(1, claimId);
+                    ps.setString(2, flag);
+                    ps.addBatch();
+                }
+            }
+            ps.executeBatch();
+        }
+    }
+
     private void updateRemainingClaims(Claim claim) {
         // Calculate claimed area in chunks - pls work
         int width = Math.abs(claim.getChunkX2() - claim.getChunkX1()) + 1;
@@ -158,13 +310,13 @@ public class ClaimTable implements DatabaseTable {
 
         String ownerId = claim.getOwnerId();
         if (ownerId == null || ownerId.isEmpty()) {
-            CoreMain.plugin.getLogger().warning("Claim inserted without ownerId. Skipping remaining claims update.");
+            plugin.getLogger().warning("Claim inserted without ownerId. Skipping remaining claims update.");
             return;
         }
 
         switch (claim.getType()) {
             case TEAM -> {
-                int maxChunks = CoreMain.plugin.getConfig().getInt("claims.team-max-chunk-claim-amount", 0);
+                int maxChunks = plugin.getConfig().getInt("claims.team-max-chunk-claim-amount", 0);
                 teamRemainingClaims.compute(ownerId, (team, remaining) -> {
                     if (remaining == null) {
                         remaining = maxChunks; // Initialize
@@ -174,7 +326,7 @@ public class ClaimTable implements DatabaseTable {
                 });
             }
             case PLAYER -> {
-                int maxChunks = CoreMain.plugin.getConfig().getInt("claims.player-max-chunk-claim-amount", 0);
+                int maxChunks = plugin.getConfig().getInt("claims.player-max-chunk-claim-amount", 0);
                 playerRemainingClaims.compute(ownerId, (player, remaining) -> {
                     if (remaining == null) {
                         remaining = maxChunks; // Initialize
@@ -186,11 +338,12 @@ public class ClaimTable implements DatabaseTable {
         }
     }
 
+    @SuppressWarnings("deprecation")  // Because of Claim.setID usage
     public void deleteClaimById(Connection conn, long claimId) throws SQLException {
         // Fetch claim
         Claim claim = getClaimById(conn, claimId);
         if (claim == null) {
-            CoreMain.plugin.getLogger().warning("Attempted to delete claim ID " + claimId + " but it was not found.");
+            plugin.getLogger().warning("Attempted to delete claim ID " + claimId + " but it was not found.");
             return;
         }
 
@@ -245,13 +398,13 @@ public class ClaimTable implements DatabaseTable {
 
         String ownerId = claim.getOwnerId();
         if (ownerId == null || ownerId.isEmpty()) {
-            CoreMain.plugin.getLogger().warning("Claim deletion without ownerId. Skipping remaining claims restore.");
+            plugin.getLogger().warning("Claim deletion without ownerId. Skipping remaining claims restore.");
             return;
         }
 
         switch (claim.getType()) {
             case TEAM -> {
-                int maxChunks = CoreMain.plugin.getConfig().getInt("claims.team-max-chunk-claim-amount", 0);
+                int maxChunks = plugin.getConfig().getInt("claims.team-max-chunk-claim-amount", 0);
                 teamRemainingClaims.compute(ownerId, (team, remaining) -> {
                     if (remaining == null) {
                         remaining = maxChunks; // Initialize
@@ -261,7 +414,7 @@ public class ClaimTable implements DatabaseTable {
                 });
             }
             case PLAYER -> {
-                int maxChunks = CoreMain.plugin.getConfig().getInt("claims.player-max-chunk-claim-amount", 0);
+                int maxChunks = plugin.getConfig().getInt("claims.player-max-chunk-claim-amount", 0);
                 playerRemainingClaims.compute(ownerId, (player, remaining) -> {
                     if (remaining == null) {
                         remaining = maxChunks; // Initialize
@@ -320,8 +473,8 @@ public class ClaimTable implements DatabaseTable {
                                     Collection<String> protections) throws SQLException {
         // Whitelist
         try (PreparedStatement ps = conn.prepareStatement("""
-        SELECT player_uuid FROM claim_whitelisted_players WHERE claim_id = ?
-    """)) {
+            SELECT player_uuid FROM claim_whitelisted_players WHERE claim_id = ?
+        """)) {
             ps.setLong(1, claimId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -332,8 +485,8 @@ public class ClaimTable implements DatabaseTable {
 
         // Protection Flags
         try (PreparedStatement ps = conn.prepareStatement("""
-        SELECT flag FROM claim_protection_flags WHERE claim_id = ?
-    """)) {
+            SELECT flag FROM claim_protection_flags WHERE claim_id = ?
+        """)) {
             ps.setLong(1, claimId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -343,7 +496,7 @@ public class ClaimTable implements DatabaseTable {
         }
     }
 
-    public List<Claim> getAllClaims(Connection conn) throws SQLException {
+    public ImmutableSet<Claim> getAllClaims(Connection conn) throws SQLException {
         List<Claim> allClaims = new ArrayList<>();
 
         try (PreparedStatement ps = conn.prepareStatement("""
@@ -351,6 +504,7 @@ public class ClaimTable implements DatabaseTable {
         FROM claims
     """)) {
             try (ResultSet rs = ps.executeQuery()) {
+
                 while (rs.next()) {
                     long id = rs.getLong("id");
 
@@ -386,12 +540,7 @@ public class ClaimTable implements DatabaseTable {
             }
         }
 
-        return allClaims;
-    }
-
-
-    public void invalidateClaim(long id) {
-        claimCache.invalidate(id);
+        return ImmutableSet.copyOf(allClaims);
     }
 
     public void updateCache(long id, Claim updatedClaim) {
@@ -511,9 +660,9 @@ public class ClaimTable implements DatabaseTable {
 
     public void removeWhitelistedPlayer(Connection conn, long claimId, UUID playerUuid) throws SQLException {
         try (PreparedStatement ps = conn.prepareStatement("""
-        DELETE FROM claim_whitelisted_players
-        WHERE claim_id = ? AND player_uuid = ?
-    """)) {
+            DELETE FROM claim_whitelisted_players
+            WHERE claim_id = ? AND player_uuid = ?
+        """)) {
             ps.setLong(1, claimId);
             ps.setObject(2, playerUuid);
             ps.executeUpdate();
@@ -636,11 +785,11 @@ public class ClaimTable implements DatabaseTable {
 
         // Initialize with the max
         for (String team : teamOwner.keySet()) {
-            int maxChunks = CoreMain.plugin.getConfig().getInt("claims.team-max-chunk-claim-amount", 0);
+            int maxChunks = plugin.getConfig().getInt("claims.team-max-chunk-claim-amount", 0);
             teamRemainingClaims.put(team, maxChunks);
         }
         for (UUID player : playerOwner.keySet()) {
-            int maxChunks = CoreMain.plugin.getConfig().getInt("claims.player-max-chunk-claim-amount", 0);
+            int maxChunks = plugin.getConfig().getInt("claims.player-max-chunk-claim-amount", 0);
             playerRemainingClaims.put(player.toString(), maxChunks);
         }
 
@@ -660,13 +809,13 @@ public class ClaimTable implements DatabaseTable {
 
                 switch (type) {
                     case TEAM -> {
-                        int maxChunks = CoreMain.plugin.getConfig().getInt("claims.team-max-chunk-claim-amount");
+                        int maxChunks = plugin.getConfig().getInt("claims.team-max-chunk-claim-amount");
                         int remaining = teamRemainingClaims.getOrDefault(ownerId, maxChunks);
                         teamRemainingClaims.put(ownerId, Math.max(remaining - chunkCount, 0));
                     }
                     case PLAYER -> {
                         UUID playerUuid = UUID.fromString(ownerId);
-                        int maxChunks = CoreMain.plugin.getConfig().getInt("claims.player-max-chunk-claim-amount");
+                        int maxChunks = plugin.getConfig().getInt("claims.player-max-chunk-claim-amount");
                         int remaining = playerRemainingClaims.getOrDefault(playerUuid.toString(), maxChunks);
                         playerRemainingClaims.put(playerUuid.toString(), Math.max(remaining - chunkCount, 0));
                     }
@@ -678,6 +827,62 @@ public class ClaimTable implements DatabaseTable {
         }
     }
 
+    public void updateClaimName(Connection conn, long claimId, @NotNull String newName) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement("""
+            UPDATE claims
+            SET name = ?
+            WHERE id = ?
+        """)) {
+            ps.setString(1, newName);
+            ps.setLong(2, claimId);
+            ps.executeUpdate();
+        }
 
+        Claim cached = claimCache.getIfPresent(claimId);
+        if (cached != null) {
+            cached.setName(newName);
+            claimCache.put(claimId, cached);
+        }
+    }
 
+    public void updateClaimOwner(Connection conn, @NotNull Claim claim, @NotNull String newOwnerId) throws SQLException {
+        Long claimId = claim.getId();
+        if (claimId == null) {
+            throw new IllegalArgumentException("Claim has no ID: " + claim.getName());
+        }
+
+        String oldOwnerId = claim.getOwnerId();
+        ClaimType type = claim.getType();
+
+        try (PreparedStatement ps = conn.prepareStatement("""
+            UPDATE claims
+            SET owner_id = ?
+            WHERE id = ?
+        """)) {
+            ps.setString(1, newOwnerId);
+            ps.setLong(2, claimId);
+            ps.executeUpdate();
+        }
+
+        switch (type) {
+            case PLAYER -> {
+                UUID oldUuid = UUID.fromString(oldOwnerId);
+                UUID newUuid = UUID.fromString(newOwnerId);
+
+                playerOwner.getOrDefault(oldUuid, new ArrayList<>()).remove(claimId);
+                playerOwner.computeIfAbsent(newUuid, k -> new ArrayList<>()).add(claimId);
+            }
+            case TEAM -> {
+                teamOwner.getOrDefault(oldOwnerId, new ArrayList<>()).remove(claimId);
+                teamOwner.computeIfAbsent(newOwnerId, k -> new ArrayList<>()).add(claimId);
+            }
+            default -> {}
+        }
+
+        restoreRemainingClaims(claim);
+        claim.setOwnerId(newOwnerId);
+        updateRemainingClaims(claim);
+
+        claimCache.put(claimId, claim);
+    }
 }

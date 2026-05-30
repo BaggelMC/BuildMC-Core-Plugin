@@ -1,28 +1,33 @@
 package net.mathias2246.buildmc.ui.claims;
 
+import com.github.stefvanschie.inventoryframework.adventuresupport.ComponentHolder;
+import com.github.stefvanschie.inventoryframework.gui.GuiItem;
+import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
+import com.github.stefvanschie.inventoryframework.pane.Pane;
+import com.github.stefvanschie.inventoryframework.pane.StaticPane;
+import com.github.stefvanschie.inventoryframework.pane.util.Slot;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.ClaimType;
 import net.mathias2246.buildmc.api.item.ItemUtil;
 import net.mathias2246.buildmc.claims.ClaimManager;
-import net.mathias2246.buildmc.inventoryframework.adventuresupport.ComponentHolder;
-import net.mathias2246.buildmc.inventoryframework.gui.GuiItem;
-import net.mathias2246.buildmc.inventoryframework.gui.type.ChestGui;
-import net.mathias2246.buildmc.inventoryframework.pane.Pane;
-import net.mathias2246.buildmc.inventoryframework.pane.StaticPane;
 import net.mathias2246.buildmc.ui.UIUtil;
+import net.mathias2246.buildmc.util.AudienceUtil;
+import net.mathias2246.buildmc.util.ComponentUtil;
 import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.SoundUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -65,7 +70,7 @@ public class ClaimEditMenu {
     public static void open(@NotNull Player player, @NotNull Claim claim) {
 
         if (claim.getId() == null) {
-            plugin.sendMessage(player, Component.translatable("messages.claims.remove.not-found"));
+            AudienceUtil.sendMessage(player, Component.translatable("messages.claims.remove.not-found"));
             plugin.getSoundManager().playSound(player, SoundUtil.mistake);
             return;
         }
@@ -82,6 +87,8 @@ public class ClaimEditMenu {
                     });
 
                     StaticPane elements = new StaticPane(9, 3);
+
+                    addClaimInfoItem(elements, player, claim, 0, 0);
 
                     // Protections button
                     if (!HIDE_ALL_PROTECTIONS && !isPlaceholderClaim) {
@@ -125,8 +132,8 @@ public class ClaimEditMenu {
                                 ClaimSelectMenu.open(player);
                             }), 8, 2);
 
-                    gui.addPane(BACKGROUND);
-                    gui.addPane(elements);
+                    gui.addPane(Slot.fromXY(0, 0), BACKGROUND);
+                    gui.addPane(Slot.fromXY(0, 0), elements);
 
                     Bukkit.getScheduler().runTask(plugin, bukkitTask -> {
                         gui.show(player);
@@ -175,17 +182,17 @@ public class ClaimEditMenu {
                                 CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
                                 boolean removed = ClaimManager.removeClaimById(claim.getId());
                                 if (removed) {
-                                    plugin.sendMessage(player,
+                                    AudienceUtil.sendMessage(player, 
                                             Component.translatable("messages.claims.ui.edit-menu.delete-confirm-menu.success"));
                                 } else {
-                                    plugin.sendMessage(player,
+                                    AudienceUtil.sendMessage(player, 
                                             Component.translatable("messages.claims.ui.edit-menu.delete-confirm-menu.fail"));
                                 }
                                 player.closeInventory();
                             }), 5, 1);
 
-                    gui.addPane(RED_BACKGROUND);
-                    gui.addPane(elements);
+                    gui.addPane(Slot.fromXY(0, 0), RED_BACKGROUND);
+                    gui.addPane(Slot.fromXY(0, 0), elements);
 
                     Bukkit.getScheduler().runTask(plugin, bukkitTask -> {
                         gui.show(player);
@@ -211,19 +218,46 @@ public class ClaimEditMenu {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(LegacyComponentSerializer.legacySection().serialize(name));
+            meta.displayName(name);
             item.setItemMeta(meta);
         }
         return new GuiItem(item, action);
     }
 
-    private static ItemStack createGlassPane(Material material) {
-        ItemStack pane = new ItemStack(material);
-        ItemMeta meta = pane.getItemMeta();
+
+    @SuppressWarnings("SameParameterValue") // Suppress only because currently param. x and y aren't implemented fully
+    private static void addClaimInfoItem(@NotNull StaticPane pane, @NotNull Player player, @NotNull Claim claim, int x, int y) {
+        Vector[] corners = net.mathias2246.buildmc.util.LocationUtil.getBlockCorners(claim);
+        Vector min = corners[0];
+        Vector max = corners[1];
+
+        World world = Bukkit.getServer().getWorld(claim.getWorldId());
+        String dimension = (world != null) ? world.getName() : "UNKNOWN";
+
+        // Item name
+        Component nameComponent = Message.msg(player, "messages.claims.ui.edit-menu.info-name");
+
+        // Item lore (multi-line info)
+        Component loreComponent = Message.msg(player, "messages.claims.ui.edit-menu.info",
+                Map.of(
+                        "minX", String.valueOf(min.getBlockX()),
+                        "minZ", String.valueOf(min.getBlockZ()),
+                        "maxX", String.valueOf(max.getBlockX()),
+                        "maxZ", String.valueOf(max.getBlockZ()),
+                        "dimension", dimension
+                )
+        );
+
+        List<Component> loreLines = ComponentUtil.splitComponentByNewline(loreComponent);
+
+        ItemStack infoItem = new ItemStack(Material.PAPER);
+        ItemMeta meta = infoItem.getItemMeta();
         if (meta != null) {
-            meta.setHideTooltip(true);
-            pane.setItemMeta(meta);
+            meta.displayName(nameComponent);
+            meta.lore(loreLines);
+            infoItem.setItemMeta(meta);
         }
-        return pane;
+
+        pane.addItem(new GuiItem(infoItem, e -> e.setCancelled(true)), x, y);
     }
 }

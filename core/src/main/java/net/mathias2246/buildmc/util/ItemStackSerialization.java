@@ -6,7 +6,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Map;
 
-public class ItemStackSerialization {
+public final class ItemStackSerialization {
 
     private static final Gson gson = new Gson();
 
@@ -18,7 +18,7 @@ public class ItemStackSerialization {
 
     public static ItemStack deserialize(byte[] bytes) throws IllegalArgumentException {
         String json = new String(bytes, java.nio.charset.StandardCharsets.UTF_8);
-        Map<String, Object> map = gson.fromJson(json, new TypeToken<Map<String, Object>>() {});
+        Map<String, Object> map = gson.fromJson(json, new TypeToken<>() {});
         return ItemStack.deserialize(map);
     }
 }

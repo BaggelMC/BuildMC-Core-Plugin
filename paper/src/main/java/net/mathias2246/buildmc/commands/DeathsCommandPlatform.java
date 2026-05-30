@@ -13,6 +13,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 public class DeathsCommandPlatform implements CustomCommand {
@@ -53,10 +54,12 @@ public class DeathsCommandPlatform implements CustomCommand {
                                     }
 
                                     try (Connection conn = CoreMain.databaseManager.getConnection()) {
-                                        List<DeathSummary> deaths = CoreMain.deathTable
-                                                .getDeathsByPlayer(conn, target.getUniqueId());
+                                        List<DeathSummary> deaths =
+                                                CoreMain.deathTable.getDeathsByPlayer(conn, target.getUniqueId());
                                         deaths.forEach(d -> builder.suggest(String.valueOf(d.id())));
-                                    } catch (Exception ignored) {}
+                                    } catch (SQLException e) {
+                                        throw new RuntimeException(e);
+                                    }
 
                                     return builder.buildFuture();
                                 })
@@ -78,12 +81,12 @@ public class DeathsCommandPlatform implements CustomCommand {
     private static boolean hasRestorePermission(CommandSourceStack source) {
         CommandSender sender = source.getSender();
         return sender.hasPermission("buildmc.admin")
-                || sender.hasPermission("buildmc.restore-deaths");
+                || sender.hasPermission("buildmc.deaths.restore");
     }
 
     private static boolean hasListPermission(CommandSourceStack source) {
         CommandSender sender = source.getSender();
         return sender.hasPermission("buildmc.admin")
-                || sender.hasPermission("buildmc.list-deaths");
+                || sender.hasPermission("buildmc.deaths.list");
     }
 }

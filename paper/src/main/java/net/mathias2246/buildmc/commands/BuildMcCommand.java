@@ -11,13 +11,19 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.api.status.StatusInstance;
+import net.mathias2246.buildmc.commands.debug.BenchmarkClaims;
+import net.mathias2246.buildmc.commands.debug.InvalidateCaches;
+import net.mathias2246.buildmc.commands.debug.OpenSign;
+import net.mathias2246.buildmc.player.status.PlayerStatusUtil;
 import net.mathias2246.buildmc.player.status.SetStatusCommand;
-import net.mathias2246.buildmc.status.PlayerStatusUtil;
+import net.mathias2246.buildmc.util.AudienceUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.io.IOException;
 
 import static net.mathias2246.buildmc.CoreMain.gson;
+import static net.mathias2246.buildmc.Main.plugin;
 import static net.mathias2246.buildmc.Main.statusConfig;
 
 public class BuildMcCommand implements CustomCommand {
@@ -27,19 +33,45 @@ public class BuildMcCommand implements CustomCommand {
         var cmd = Commands.literal("buildmc");
 
         cmd.executes(executionInfo -> {
-            executionInfo.getSource().getSender().sendMessage("/buildmc <args>");
+            AudienceUtil.sendMessage(executionInfo.getSource().getSender(), Component.text("/buildmc <args>"));
             return 1;
         });
 
         var debugSub = Commands.literal("debug")
-                .requires(c -> c.getSender().hasPermission("buildmc.admin"))
+                .requires(c -> c.getSender().hasPermission("buildmc.debug"))
                 .executes(ctx -> {
-                    ctx.getSource().getSender().sendMessage("/buildmc debug <args>");
+                    AudienceUtil.sendMessage(ctx.getSource().getSender(), Component.text("/buildmc debug <args>"));
                     return 1;
                 });
 
+        debugSub.then(
+                Commands.literal("1000-claims-benchmark")
+                        .executes(
+                                (command) -> BenchmarkClaims.benchmark1000Claims()
+                        )
+        );
+
+        debugSub.then(
+                Commands.literal("open-fake-sign")
+                        .executes(
+                                (command) -> {
+                                    if (command.getSource().getSender() instanceof Player player) {
+                                        OpenSign.openFakeSign(player);
+                                    }
+                                    return 0;
+                                }
+                        )
+        );
+
+        debugSub.then(
+                Commands.literal("invalidate-caches")
+                        .executes(
+                                (command) -> InvalidateCaches.invalidateCaches(command.getSource().getSender())
+                        )
+        );
+
         // --- MiniMessage debug command ---
-        var miniMsgSub = Commands.literal("minimessage")
+         var miniMsgSub = Commands.literal("minimessage")
                 .then(
                         Commands.argument("message", StringArgumentType.greedyString())
                                 .executes(ctx -> {
@@ -51,12 +83,12 @@ public class BuildMcCommand implements CustomCommand {
                                     try {
                                         component = mm.deserialize(input);
                                     } catch (Exception e) {
-                                        sender.sendMessage(Component.text("❌ Failed to parse MiniMessage: " + e.getMessage(), NamedTextColor.RED));
+                                        AudienceUtil.sendMessage(sender, Component.text("❌ Failed to parse MiniMessage: " + e.getMessage(), NamedTextColor.RED));
                                         return 0;
                                     }
 
-                                    sender.sendMessage(Component.text("Rendered Component:"));
-                                    sender.sendMessage(component);
+                                    AudienceUtil.sendMessage(sender, Component.text("Rendered Component:"));
+                                    AudienceUtil.sendMessage(sender, component);
 
                                     String json = GsonComponentSerializer.gson().serialize(component);
 
@@ -64,7 +96,7 @@ public class BuildMcCommand implements CustomCommand {
                                             .clickEvent(ClickEvent.copyToClipboard(json))
                                             .hoverEvent(Component.text("Copy this component's JSON to your clipboard"));
 
-                                    sender.sendMessage(jsonCopy);
+                                    AudienceUtil.sendMessage(sender, jsonCopy);
                                     return 1;
                                 })
                 );
@@ -78,11 +110,15 @@ public class BuildMcCommand implements CustomCommand {
                         .then(
                                 Commands.literal("reload")
                                         .executes(c -> {
-                                            statusConfig.reload();
 
-                                            for (var player : Bukkit.getOnlinePlayers()) {
-                                                PlayerStatusUtil.reloadPlayerStatus(player);
-                                            }
+                                            Bukkit.getScheduler().runTask(plugin, task -> {
+
+                                                statusConfig.reload();
+
+                                                for (var player : Bukkit.getOnlinePlayers()) {
+                                                    PlayerStatusUtil.reloadPlayerStatus(player);
+                                                }
+                                            });
 
                                             return 1;
                                         })
@@ -151,7 +187,7 @@ public class BuildMcCommand implements CustomCommand {
                     Component msg = Component.text("BuildMC-Core ", NamedTextColor.AQUA)
                             .append(Component.text("v" + version, NamedTextColor.GREEN));
 
-                    sender.sendMessage(msg);
+                    AudienceUtil.sendMessage(sender, msg);
                     return 1;
                 });
 

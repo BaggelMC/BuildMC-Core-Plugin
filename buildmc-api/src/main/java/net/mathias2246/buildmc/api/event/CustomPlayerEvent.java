@@ -24,8 +24,11 @@ import java.util.Map;
  */
 public abstract class CustomPlayerEvent extends PlayerEvent {
 
-    /** Internal holder for metadata entries. */
-    protected final MetadataHolder metadataHolder = new MetadataHolder() {};
+    /**
+     * Internal holder for metadata entries.
+     */
+    protected final MetadataHolder metadataHolder = new MetadataHolder() {
+    };
 
     /**
      * Constructs a new {@code CustomPlayerEvent} for the given player.

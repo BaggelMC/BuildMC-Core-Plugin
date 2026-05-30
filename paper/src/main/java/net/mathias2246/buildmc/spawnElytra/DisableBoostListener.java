@@ -2,6 +2,7 @@ package net.mathias2246.buildmc.spawnElytra;
 
 import com.destroystokyo.paper.event.player.PlayerElytraBoostEvent;
 import net.kyori.adventure.text.Component;
+import net.mathias2246.buildmc.util.AudienceUtil;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,7 +19,7 @@ public class DisableBoostListener implements Listener {
         event.setCancelled(true);
 
         Component text = Message.msg(player, "messages.spawn-elytra.firework-disabled-hint");
-        player.sendActionBar(text);
+        AudienceUtil.sendActionBar(event.getPlayer(), text);
     }
 
 }

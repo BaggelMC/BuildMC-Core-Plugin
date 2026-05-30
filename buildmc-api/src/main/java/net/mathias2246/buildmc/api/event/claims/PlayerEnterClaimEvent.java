@@ -16,9 +16,6 @@ import org.jetbrains.annotations.Nullable;
  *   <li>{@code toClaim} may be {@code null} if the player is leaving a claim and entering unclaimed land.</li>
  * </ul>
  * <p>
- * This event is fired synchronously on the main server thread.
- * <br><br>
- * Plugins can attach optional metadata to this event via {@link #putMetadata(String, Object)}.
  */
 public class PlayerEnterClaimEvent extends CustomPlayerEvent {
 
@@ -44,7 +41,6 @@ public class PlayerEnterClaimEvent extends CustomPlayerEvent {
      * Gets the ID of the claim the player is leaving.
      *
      * @return the ID of the previous claim, or {@code null} if the player was not in a claim
-     * @implNote The claim may not exist at the time of this event.
      */
     public @Nullable Long getFromClaim() {
         return fromClaim;
@@ -54,7 +50,6 @@ public class PlayerEnterClaimEvent extends CustomPlayerEvent {
      * Gets the ID of the claim the player is entering.
      *
      * @return the ID of the new claim, or {@code null} if the player is entering unclaimed land
-     * @implNote The claim may not exist at the time of this event.
      */
     public @Nullable Long getToClaim() {
         return toClaim;

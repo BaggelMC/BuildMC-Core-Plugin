@@ -2,9 +2,11 @@ package net.mathias2246.buildmc.api.status;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@ApiStatus.NonExtendable
 public interface StatusManager {
 
     @SuppressWarnings("UnusedReturnValue")

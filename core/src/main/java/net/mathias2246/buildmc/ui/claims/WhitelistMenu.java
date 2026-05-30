@@ -1,21 +1,23 @@
 package net.mathias2246.buildmc.ui.claims;
 
+import com.github.stefvanschie.inventoryframework.adventuresupport.ComponentHolder;
+import com.github.stefvanschie.inventoryframework.gui.GuiItem;
+import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
+import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
+import com.github.stefvanschie.inventoryframework.pane.Pane;
+import com.github.stefvanschie.inventoryframework.pane.StaticPane;
+import com.github.stefvanschie.inventoryframework.pane.util.Slot;
+import com.google.common.collect.ImmutableSet;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.item.ItemUtil;
 import net.mathias2246.buildmc.claims.ClaimLogger;
 import net.mathias2246.buildmc.claims.ClaimManager;
-import net.mathias2246.buildmc.inventoryframework.adventuresupport.ComponentHolder;
-import net.mathias2246.buildmc.inventoryframework.gui.GuiItem;
-import net.mathias2246.buildmc.inventoryframework.gui.type.ChestGui;
-import net.mathias2246.buildmc.inventoryframework.pane.PaginatedPane;
-import net.mathias2246.buildmc.inventoryframework.pane.Pane;
-import net.mathias2246.buildmc.inventoryframework.pane.StaticPane;
+import net.mathias2246.buildmc.ui.SignInputScreen;
 import net.mathias2246.buildmc.ui.UIUtil;
+import net.mathias2246.buildmc.util.AudienceUtil;
 import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.SoundUtil;
 import org.bukkit.Bukkit;
@@ -26,10 +28,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static net.mathias2246.buildmc.CoreMain.plugin;
 
@@ -39,12 +38,9 @@ public class WhitelistMenu {
 
     private static final @NotNull StaticPane INVISIBLE_BACKGROUND;
     public static final @NotNull StaticPane RED_BACKGROUND;
-    private static final @NotNull ItemStack ADD_BUTTON;
 
     static {
-        ADD_BUTTON = new ItemStack(Material.LIME_STAINED_GLASS_PANE, 1);
-
-        SPACER_ROW = new StaticPane(0, 2, 9, 5);
+        SPACER_ROW = new StaticPane(9, 5);
 
         INVISIBLE_BACKGROUND = new StaticPane(9, 6);
 
@@ -79,7 +75,7 @@ public class WhitelistMenu {
     public static void open(Player player, Claim claim) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, task ->
                 {
-                    List<UUID> whitelist = claim.getWhitelistedPlayers();
+                    ImmutableSet<UUID> whitelist = claim.getWhitelistedPlayers();
 
                     ChestGui gui = new ChestGui(6, ComponentHolder.of(Message.msg(player, "messages.claims.ui.whitelist-menu.title", Map.of("claim", claim.getName()))));
 
@@ -87,7 +83,7 @@ public class WhitelistMenu {
                         if (ClaimUIs.openUIs.containsKey(claim.getId())) ClaimUIs.openUIs.get(claim.getId()).remove(player);
                     });
 
-                    PaginatedPane pages = new PaginatedPane(0, 0, 9, 5);
+                    PaginatedPane pages = new PaginatedPane(9, 5);
 
                     boolean isFirstPage = true;
                     boolean lowerRow = false;
@@ -98,10 +94,10 @@ public class WhitelistMenu {
                     p.add(new StaticPane(9, 5));
                     StaticPane currentPane = p.getFirst();
 
-                    pages.addPane(0, SPACER_ROW);
-                    pages.addPane(0, INVISIBLE_BACKGROUND);
+                    pages.addPane(0, Slot.fromXY(0, 2), SPACER_ROW);
+                    pages.addPane(0, Slot.fromXY(0, 0), INVISIBLE_BACKGROUND);
 
-                    pages.addPane(0, currentPane);
+                    pages.addPane(0, Slot.fromXY(0, 0), currentPane);
 
                     for (var playerUUID : whitelist) {
                         int row = lowerRow ? 3 : 0;
@@ -109,18 +105,19 @@ public class WhitelistMenu {
                         OfflinePlayer target = Bukkit.getOfflinePlayer(playerUUID);
 
                         currentPane.addItem(
-                                new GuiItem(createPlayerHead(
-                                        target,
-                                        target.getName()),
+                                new GuiItem(createPlayerHead(target),
                                         event -> event.setCancelled(true)
                                 ),
                                 column,
                                 row
                         );
+                        ItemStack paneItem = new ItemStack(Material.RED_STAINED_GLASS_PANE);
+                        ItemUtil.setName(paneItem, Message.msg(player, "messages.claims.ui.whitelist-menu.remove"));
                         currentPane.addItem(
+
                                 new GuiItem
                                         (
-                                                ItemUtil.setItemLegacyComponentName(Material.RED_STAINED_GLASS_PANE, Message.msg(player, "messages.claims.ui.whitelist-menu.remove")),
+                                                paneItem,
                                                 event -> {
                                                     event.setCancelled(true);
                                                     CoreMain.soundManager.playSound(player, SoundUtil.notification);
@@ -142,39 +139,52 @@ public class WhitelistMenu {
                                 lowerRow = false;
                                 if (!isFirstPage) {
 
-                                    pages.addPage(currentPane);
+                                    pages.addPage(Slot.fromXY(0, 0), currentPane);
                                 }
                                 isFirstPage = false;
                                 p.add(new StaticPane(9, 5));
                                 currentPane = p.getLast();
-                                pages.addPane(pages.getPages() - 1, SPACER_ROW);
-                                pages.addPane(pages.getPages() - 1, INVISIBLE_BACKGROUND);
+                                pages.addPane(pages.getPages() - 1, Slot.fromXY(0, 2), SPACER_ROW);
+                                pages.addPane(pages.getPages() - 1, Slot.fromXY(0, 0), INVISIBLE_BACKGROUND);
                             }
                         }
 
                     }
                     if (column > 0 || lowerRow) {
                         if (!isFirstPage) {
-                            pages.addPage(currentPane);
+                            pages.addPage(Slot.fromXY(0, 0), currentPane);
 
                         }
-                        pages.addPane(pages.getPages() - 1, SPACER_ROW);
+                        pages.addPane(pages.getPages() - 1, Slot.fromXY(0, 2), SPACER_ROW);
 
-                        pages.addPane(pages.getPages() - 1, INVISIBLE_BACKGROUND);
+                        pages.addPane(pages.getPages() - 1, Slot.fromXY(0, 0), INVISIBLE_BACKGROUND);
                     }
 
-                    gui.addPane(pages);
-                    StaticPane addButton = new StaticPane(4,2,1,1);
-                    ItemStack a = ItemUtil.setItemLegacyComponentName(Material.LIME_STAINED_GLASS_PANE, Message.msg(player, "messages.claims.ui.whitelist-menu.add-button.name"));
-                    addButton.addItem(new GuiItem(a, e -> {
+                    gui.addPane(Slot.fromXY(0, 0), pages);
+                    StaticPane addButton = new StaticPane(1,1);
+                    ItemStack addPaneItem = new ItemStack(Material.LIME_STAINED_GLASS_PANE);
+                    ItemUtil.setName(addPaneItem, Message.msg(player, "messages.claims.ui.whitelist-menu.add-button.name"));
+                    addButton.addItem(new GuiItem(addPaneItem, e -> {
                         e.setCancelled(true);
                         CoreMain.soundManager.playSound(player, SoundUtil.notification);
-                        CoreMain.plugin.sendMessage(player,
-                                Component.translatable("messages.claims.ui.whitelist-menu.add-button.click-info")
-                                        .clickEvent(
-                                                ClickEvent.suggestCommand("/claim whitelist add "+claim.getType()+" "+claim.getName()+" ")
-                                        )
-                        );
+
+                        var sign = new SignInputScreen((signKey, input) -> {
+                            if (input.isBlank()) return;
+
+                            var targetPlayer = Bukkit.getPlayer(input);
+                            if (targetPlayer == null) {
+                                CoreMain.soundManager.playSound(player, SoundUtil.mistake);
+                                AudienceUtil.sendMessage(player, Component.translatable("messages.claims.whitelist.player-not-found"));
+                                return;
+                            }
+
+                            ClaimManager.addPlayerToWhitelist(claim, targetPlayer.getUniqueId());
+
+                            CoreMain.soundManager.playSound(player, SoundUtil.success);
+                            AudienceUtil.sendMessage(player, Component.translatable("messages.claims.whitelist.added"));
+                        });
+
+                        sign.openSignInput(player, "  Player Name:  ", "whitelist_player_for_claim");
                     }), 0, 0);
                     addButton.setPriority(Pane.Priority.HIGH);
 
@@ -183,7 +193,10 @@ public class WhitelistMenu {
                     controls.setPriority(Pane.Priority.HIGH);
 
                     // Back button
-                    controls.addItem(new GuiItem(ItemUtil.setItemLegacyComponentName(Material.BARRIER, Message.msg(player, "messages.claims.ui.general.back")), e -> {
+                    var backItem = new ItemStack(Material.BARRIER);
+                    ItemUtil.setName(backItem, Message.msg(player, "messages.claims.ui.general.back"));
+
+                    controls.addItem(new GuiItem(backItem, e -> {
                         e.setCancelled(true);
                         CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
                         ClaimEditMenu.open(player, claim);
@@ -194,8 +207,8 @@ public class WhitelistMenu {
                     controls.addItem(UIUtil.makePageLeftButton(gui, player, pages, controls, pageIndicator), 2, 0);
                     controls.addItem(UIUtil.makePageRightButton(gui, player, pages, controls, pageIndicator), 6, 0);
 
-                    gui.addPane(controls);
-                    gui.addPane(addButton);
+                    gui.addPane(Slot.fromXY(0, 5), controls);
+                    gui.addPane(Slot.fromXY(4,2), addButton);
 
                     Bukkit.getScheduler().runTask(plugin, bukkitTask ->
                             {
@@ -228,17 +241,23 @@ public class WhitelistMenu {
                         if (ClaimUIs.openUIs.containsKey(claim.getId())) ClaimUIs.openUIs.get(claim.getId()).remove(player);
                     });
 
-                    StaticPane pane = new StaticPane(0, 0, 9, 3);
+                    StaticPane pane = new StaticPane(9, 3);
 
                     // Cancel button
-                    pane.addItem(new GuiItem(ItemUtil.setItemLegacyComponentName(Material.GREEN_CONCRETE, Message.msg(player, "messages.claims.ui.general.cancel")), e -> {
+                    var cancelButton = new ItemStack(Material.GREEN_CONCRETE);
+                    ItemUtil.setName(cancelButton, Message.msg(player, "messages.claims.ui.general.cancel"));
+
+                    pane.addItem(new GuiItem(cancelButton, e -> {
                         e.setCancelled(true);
                         CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
                         open(player, claim); // reopen whitelist menu
                     }), 3, 1);
 
                     // Confirm button
-                    pane.addItem(new GuiItem(ItemUtil.setItemLegacyComponentName(Material.RED_CONCRETE, Message.msg(player, "messages.claims.ui.general.confirm")), e -> {
+                    var confirmButton = new ItemStack(Material.RED_CONCRETE);
+                    ItemUtil.setName(confirmButton, Message.msg(player, "messages.claims.ui.general.confirm"));
+
+                    pane.addItem(new GuiItem(confirmButton, e -> {
                         e.setCancelled(true);
 
                         CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
@@ -246,13 +265,13 @@ public class WhitelistMenu {
                         UUID uuid = target.getUniqueId();
 
                         ClaimManager.removePlayerFromWhitelist(claim.getId(), uuid);
-                        CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.ui.whitelist-menu.delete-confirm-menu.success"));
+                         AudienceUtil.sendMessage(player, Component.translatable("messages.claims.ui.whitelist-menu.delete-confirm-menu.success"));
                         ClaimLogger.logWhitelistRemoved(player, claim.getName(), target.getName(), uuid.toString());
                         open(player, claim);
                     }), 5, 1);
 
-                    gui.addPane(pane);
-                    gui.addPane(RED_BACKGROUND);
+                    gui.addPane(Slot.fromXY(0, 2), pane);
+                    gui.addPane(Slot.fromXY(0, 2), RED_BACKGROUND);
 
                     Bukkit.getScheduler().runTask(plugin, bukkitTask -> {
                         gui.show(player);
@@ -271,12 +290,12 @@ public class WhitelistMenu {
         );
     }
 
-    private static ItemStack createPlayerHead(OfflinePlayer offlinePlayer, String name) {
+    private static ItemStack createPlayerHead(OfflinePlayer offlinePlayer) {
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) head.getItemMeta();
         if (meta != null) {
             meta.setOwningPlayer(offlinePlayer);
-            meta.setDisplayName(LegacyComponentSerializer.legacySection().serialize(Component.text(name, NamedTextColor.WHITE)));
+            meta.displayName(Component.text(Objects.requireNonNull(offlinePlayer.getName()), NamedTextColor.WHITE));
             head.setItemMeta(meta);
         }
         return head;

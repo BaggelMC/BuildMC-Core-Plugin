@@ -5,6 +5,8 @@ import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.claims.ClaimLogger;
 import net.mathias2246.buildmc.claims.ClaimManager;
+import net.mathias2246.buildmc.util.AudienceUtil;
+import net.mathias2246.buildmc.util.SoundUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
@@ -21,14 +23,16 @@ public class ClaimWhitelist {
             case "team" -> {
                 Team team = ClaimManager.getPlayerTeam(player);
                 if (team == null) {
-                    CoreMain.plugin.sendMessage(player, Component.translatable("messages.error.not-in-a-team"));
+                     AudienceUtil.sendMessage(player, Component.translatable("messages.error.not-in-a-team"));
+                    CoreMain.soundManager.playSound(player, SoundUtil.mistake);
                     yield List.of();
                 }
                 yield ClaimManager.teamOwner.getOrDefault(team.getName(), List.of());
             }
             case "server" -> player.hasPermission("buildmc.admin") ? ClaimManager.serverClaims : List.of();
             default -> {
-                CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.create.invalid-type"));
+                 AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.invalid-type"));
+                CoreMain.soundManager.playSound(player, SoundUtil.mistake);
                 yield List.of();
             }
         };
@@ -39,48 +43,56 @@ public class ClaimWhitelist {
                 .orElse(null);
 
         if (claimId == null) {
-            CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.whitelist.claim-not-found"));
+             AudienceUtil.sendMessage(player, Component.translatable("messages.claims.whitelist.claim-not-found"));
+            CoreMain.soundManager.playSound(player, SoundUtil.mistake);
             return 0;
         }
 
         Player target = Bukkit.getPlayerExact(targetPlayerName);
         if (target == null) {
-            CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.whitelist.player-not-found"));
+             AudienceUtil.sendMessage(player, Component.translatable("messages.claims.whitelist.player-not-found"));
+            CoreMain.soundManager.playSound(player, SoundUtil.mistake);
             return 0;
         }
 
         UUID targetUUID = target.getUniqueId();
         Claim claim = ClaimManager.getClaimByID(claimId);
         if (claim == null) {
-            CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.whitelist.claim-not-found"));
+             AudienceUtil.sendMessage(player, Component.translatable("messages.claims.whitelist.claim-not-found"));
+            CoreMain.soundManager.playSound(player, SoundUtil.mistake);
             return 0;
         }
 
         switch (action.toLowerCase()) {
             case "add" -> {
                 if (claim.getWhitelistedPlayers().contains(targetUUID)) {
-                    CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.whitelist.already-added"));
+                     AudienceUtil.sendMessage(player, Component.translatable("messages.claims.whitelist.already-added"));
+                    CoreMain.soundManager.playSound(player, SoundUtil.notification);
                     return 0;
                 }
 
                 ClaimManager.addPlayerToWhitelist(claimId, targetUUID);
-                CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.whitelist.added"));
+                 AudienceUtil.sendMessage(player, Component.translatable("messages.claims.whitelist.added"));
+                CoreMain.soundManager.playSound(player, SoundUtil.success);
                 ClaimLogger.logWhitelistAdded(player, name, targetPlayerName, targetUUID.toString());
                 return 1;
             }
             case "remove" -> {
                 if (!claim.getWhitelistedPlayers().contains(targetUUID)) {
-                    CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.whitelist.not-on-list"));
+                     AudienceUtil.sendMessage(player, Component.translatable("messages.claims.whitelist.not-on-list"));
+                    CoreMain.soundManager.playSound(player, SoundUtil.notification);
                     return 0;
                 }
 
                 ClaimManager.removePlayerFromWhitelist(claimId, targetUUID);
-                CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.whitelist.removed"));
+                 AudienceUtil.sendMessage(player, Component.translatable("messages.claims.whitelist.removed"));
+                CoreMain.soundManager.playSound(player, SoundUtil.success);
                 ClaimLogger.logWhitelistRemoved(player, name, targetPlayerName, targetUUID.toString());
                 return 1;
             }
             default -> {
-                CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.whitelist.invalid-action"));
+                 AudienceUtil.sendMessage(player, Component.translatable("messages.claims.whitelist.invalid-action"));
+                CoreMain.soundManager.playSound(player, SoundUtil.mistake);
                 return 0;
             }
         }

@@ -1,15 +1,9 @@
 package net.mathias2246.buildmc.claims.protections.misc;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.mathias2246.buildmc.CoreMain;
+import com.github.stefvanschie.inventoryframework.gui.GuiItem;
+import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
 import net.mathias2246.buildmc.api.claims.Protection;
-import net.mathias2246.buildmc.api.item.ItemUtil;
-import net.mathias2246.buildmc.claims.ClaimManager;
-import net.mathias2246.buildmc.inventoryframework.gui.GuiItem;
-import net.mathias2246.buildmc.inventoryframework.gui.type.util.Gui;
-import net.mathias2246.buildmc.ui.UIUtil;
-import net.mathias2246.buildmc.util.Message;
+import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
@@ -19,12 +13,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityPickupItemEvent;
-import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
-import java.util.List;
 import java.util.Objects;
 
 public class ItemPickup extends Protection {
@@ -35,30 +27,15 @@ public class ItemPickup extends Protection {
     }
 
     @Override
-    public String getTranslationBaseKey() {
-        return "claims.flags.item-pickup";
+    public @NonNull String getTranslationBaseKey() {
+        return "claims.protections.item-pickup";
     }
 
     @Override
     public @NotNull GuiItem getDisplay(@NotNull Player uiHolder, @NotNull Gui gui) {
         String t = getTranslationBaseKey();
 
-        ItemStack displayBase = new ItemStack(Material.HOPPER);
-        ItemUtil.editMeta(displayBase, (meta) -> {
-            meta.setItemName(LegacyComponentSerializer.legacySection().serialize(
-                    Message.msg(uiHolder, t+".name")
-            ));
-            meta.addItemFlags(
-                    ItemFlag.HIDE_ATTRIBUTES,
-                    ItemFlag.HIDE_ADDITIONAL_TOOLTIP
-            );
-            meta.setLore(List.of(LegacyComponentSerializer.legacySection().serialize(Message.msg(uiHolder, t + ".lore")).split("\n")));
-        });
-
-        return new GuiItem(
-                displayBase,
-                UIUtil.noInteract
-        );
+        return ProtectionUtil.createDisplayItem(uiHolder, Material.HOPPER, t);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -67,12 +44,6 @@ public class ItemPickup extends Protection {
         Item item = event.getItem();
 
         if (!(entity instanceof Player player)) return;
-
-
-        if (!ClaimManager.isPlayerAllowed(player, getKey(), item.getLocation())) {
-            event.setCancelled(true);
-            CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.item-pickup"));
-        }
-
+        ProtectionUtil.handleProtection(event, this, item.getLocation(), player);
     }
 }

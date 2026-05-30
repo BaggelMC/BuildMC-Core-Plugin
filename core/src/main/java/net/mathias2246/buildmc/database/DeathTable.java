@@ -17,7 +17,7 @@ public class DeathTable implements DatabaseTable {
                     player_uuid UUID NOT NULL,
                     timestamp BIGINT NOT NULL,
                     xp INT NOT NULL,
-                    cause VARCHAR(64)
+                    cause VARCHAR(MAX)
                 );
             """);
 

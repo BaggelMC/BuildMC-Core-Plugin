@@ -1,12 +1,11 @@
 package net.mathias2246.buildmc.ui;
 
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import com.github.stefvanschie.inventoryframework.gui.GuiItem;
+import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
+import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
+import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.item.ItemUtil;
-import net.mathias2246.buildmc.inventoryframework.gui.GuiItem;
-import net.mathias2246.buildmc.inventoryframework.gui.type.util.Gui;
-import net.mathias2246.buildmc.inventoryframework.pane.PaginatedPane;
-import net.mathias2246.buildmc.inventoryframework.pane.StaticPane;
 import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.SoundUtil;
 import org.bukkit.Material;
@@ -24,9 +23,6 @@ import java.util.function.Consumer;
 import static net.mathias2246.buildmc.CoreMain.plugin;
 
 public class UIUtil {
-
-    public static final @NotNull LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.legacySection();
-
     public static final @NotNull GuiItem BLOCKED_PANE;
     public static final @NotNull GuiItem INVISIBLE_PANE;
     public static final @NotNull GuiItem EXIT_BUTTON;
@@ -37,6 +33,7 @@ public class UIUtil {
 
     public final static Consumer<InventoryClickEvent> exitButton = event -> {
         event.setCancelled(true);
+        if (event.getWhoClicked() instanceof Player player)CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
         event.getWhoClicked().closeInventory();
     };
 
@@ -50,7 +47,7 @@ public class UIUtil {
         ItemUtil.editMeta(
                 i1,
                 (meta) -> {
-                    meta.setItemName(null);
+                    meta.itemName(null);
                     meta.setHideTooltip(true);
                 }
         );
@@ -58,7 +55,7 @@ public class UIUtil {
         ItemUtil.editMeta(
                 i2,
                 (meta) -> {
-                    meta.setItemName(null);
+                    meta.itemName(null);
                     meta.setHideTooltip(true);
                 }
         );
@@ -67,7 +64,7 @@ public class UIUtil {
         ItemUtil.editMeta(
                 e,
                 (meta) -> {
-                    meta.setItemName(null);
+                    meta.itemName(null);
                     // Component.translatable("ui.nations.general.exit").color(TextColor.color(240, 64, 45))
                     meta.setRarity(ItemRarity.COMMON);
                     meta.setHideTooltip(true);
@@ -78,7 +75,7 @@ public class UIUtil {
         ItemUtil.editMeta(
                 lp,
                 (meta) -> {
-                    meta.setItemName(null);
+                    meta.itemName(null);
                     // Component.translatable("ui.nations.general.last_page")
                 }
         );
@@ -87,7 +84,7 @@ public class UIUtil {
         ItemUtil.editMeta(
                 np,
                 (meta) -> {
-                    meta.setItemName(null);
+                    meta.itemName(null);
                     // Component.translatable("ui.nations.general.next_page")
                 }
         );
@@ -100,11 +97,11 @@ public class UIUtil {
         NEXT_PAGE_BUTTON = new GuiItem(np, noInteract);
 
         BOTTOM_BAR_WITH_EXIT = new StaticPane(
-                0,5,9,1
+                9,1
         );
 
         BOTTOM_BAR = new StaticPane(
-                0,5,9,1
+                9,1
         );
 
         BOTTOM_BAR_WITH_EXIT.addItem(BLOCKED_PANE, 0, 0);
@@ -150,14 +147,14 @@ public class UIUtil {
     }
 
     public static void setPageIndicatorName(@NotNull ItemStack itemStack, Player player, PaginatedPane pages) {
-        ItemUtil.editMeta(itemStack, meta -> meta.setItemName(LEGACY_COMPONENT_SERIALIZER.serialize(Message.msg(
+        ItemUtil.editMeta(itemStack, meta -> meta.itemName(Message.msg(
                 player,
                 "messages.claims.ui.general.page-indicator",
                 Map.of(
                         "current", Integer.toString(pages.getPage()+1),
                         "total", Integer.toString(pages.getPages())
                 )
-        )))
+        ))
         );
     }
 
@@ -169,9 +166,9 @@ public class UIUtil {
 
     public static GuiItem makePageLeftButton(Gui gui, Player player, PaginatedPane pages, StaticPane bottomBar, GuiItem pageIndicator) {
         ItemStack itemStack = new ItemStack(Material.ARROW, 1);
-        ItemUtil.editMeta(itemStack, meta -> meta.setItemName(LEGACY_COMPONENT_SERIALIZER.serialize(Message.msg(
+        ItemUtil.editMeta(itemStack, meta -> meta.itemName(Message.msg(
                 player,
-                "messages.claims.ui.general.previous")))
+                "messages.claims.ui.general.previous"))
         );
         return new GuiItem(itemStack,
                 event -> {
@@ -187,9 +184,9 @@ public class UIUtil {
     }
     public static GuiItem makePageRightButton(Gui gui, Player player, PaginatedPane pages, StaticPane bottomBar, GuiItem pageIndicator) {
         ItemStack itemStack = new ItemStack(Material.ARROW, 1);
-        ItemUtil.editMeta(itemStack, meta -> meta.setItemName(LEGACY_COMPONENT_SERIALIZER.serialize(Message.msg(
+        ItemUtil.editMeta(itemStack, meta -> meta.itemName(Message.msg(
                 player,
-                "messages.claims.ui.general.next")))
+                "messages.claims.ui.general.next"))
         );
         return new GuiItem(itemStack,
                 event -> {

@@ -2,6 +2,7 @@ package net.mathias2246.buildmc.util.registry;
 
 import org.bukkit.Keyed;
 import org.bukkit.Registry;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,6 +20,7 @@ import java.util.*;
  */
 public class RegistriesHolder implements Iterable<Registry<? extends Keyed>> {
 
+    /// The internal {@link Map} that stores all registers
     private final @NotNull Map<String, Registry<? extends Keyed>> registries = new HashMap<>();
 
     /**@return A {@link Collection} containing all registries in this holder.*/
@@ -34,23 +36,27 @@ public class RegistriesHolder implements Iterable<Registry<? extends Keyed>> {
     /**A Builder class used to create new instances of {@link RegistriesHolder}s.*/
     public static class Builder {
 
-        private final RegistriesHolder holder = new RegistriesHolder();
+        private final Map<String, Registry<? extends Keyed>> registries = new HashMap<>();
 
         public Builder() {}
 
         /**Adds an existing {@link Registry} instance to the holder instance that this {@code Builder} will build.*/
+        @Contract("_, _ -> this")
         public @NotNull Builder addRegistry(@NotNull String key, @NotNull Registry<? extends Keyed> registry) {
-            if (holder.registries.containsKey(key)) return this;
-
-            holder.registries.put(key, registry);
+            registries.putIfAbsent(key, registry);
             return this;
         }
 
         /**@return a new {@link RegistriesHolder} with all configured values*/
-        public @NotNull RegistriesHolder build() { return holder; }
+        @Contract("-> new")
+        public @NotNull RegistriesHolder build() {
+            return new RegistriesHolder(registries); // fresh instance every time
+        }
     }
 
-    private RegistriesHolder() {}
+    private RegistriesHolder(Map<String, Registry<? extends Keyed>> registries) {
+        this.registries.putAll(registries);
+    }
 
     /**Retrieves a {@link Registry} instance from this holder by its key.
      *

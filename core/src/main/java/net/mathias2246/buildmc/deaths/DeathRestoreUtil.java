@@ -8,10 +8,9 @@ import java.util.Map;
 
 public class DeathRestoreUtil {
 
+    // TODO: Try make async
+    // TODO: Create better ItemStack serialization / deserialization
     public static void restore(Player player, DeathRecord record) {
-
-        player.setLevel(0);
-        player.setExp(0f);
         player.giveExp(record.xp());
 
         for (Map.Entry<Integer, byte[]> entry : record.items().entrySet()) {

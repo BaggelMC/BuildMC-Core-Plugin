@@ -1,15 +1,9 @@
 package net.mathias2246.buildmc.claims.protections.misc;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.mathias2246.buildmc.CoreMain;
+import com.github.stefvanschie.inventoryframework.gui.GuiItem;
+import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
 import net.mathias2246.buildmc.api.claims.Protection;
-import net.mathias2246.buildmc.api.item.ItemUtil;
-import net.mathias2246.buildmc.claims.ClaimManager;
-import net.mathias2246.buildmc.inventoryframework.gui.GuiItem;
-import net.mathias2246.buildmc.inventoryframework.gui.type.util.Gui;
-import net.mathias2246.buildmc.ui.UIUtil;
-import net.mathias2246.buildmc.util.Message;
+import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
@@ -22,8 +16,8 @@ import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
-import java.util.List;
 import java.util.Objects;
 
 public class FrostWalker extends Protection {
@@ -37,23 +31,12 @@ public class FrostWalker extends Protection {
 
         String t = getTranslationBaseKey();
 
-        ItemStack displayBase = new ItemStack(Material.ICE);
-        ItemUtil.editMeta(displayBase, (meta) -> {
-            meta.setItemName(LegacyComponentSerializer.legacySection().serialize(
-                    Message.msg(uiHolder, t+".name")
-            ));
-            meta.setLore(List.of(LegacyComponentSerializer.legacySection().serialize(Message.msg(uiHolder, t + ".lore")).split("\n")));
-        });
-
-        return new GuiItem(
-                displayBase,
-                UIUtil.noInteract
-        );
+        return ProtectionUtil.createDisplayItem(uiHolder, Material.ICE, t);
     }
 
     @Override
-    public String getTranslationBaseKey() {
-        return "claims.flags.frost-walker";
+    public @NonNull String getTranslationBaseKey() {
+        return "claims.protections.frost-walker";
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -66,9 +49,6 @@ public class FrostWalker extends Protection {
         ItemStack boots = player.getInventory().getBoots();
         if (boots == null || !boots.containsEnchantment(Enchantment.FROST_WALKER)) return;
 
-        if (!ClaimManager.isPlayerAllowed(player, getKey(), event.getBlock().getLocation())) {
-            event.setCancelled(true);
-            CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.frostwalker"));
-        }
+        ProtectionUtil.handleProtection(event, this, entity.getLocation(), player);
     }
 }

@@ -1,14 +1,11 @@
 package net.mathias2246.buildmc.claims.protections.misc;
 
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import com.github.stefvanschie.inventoryframework.gui.GuiItem;
+import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.Protection;
-import net.mathias2246.buildmc.api.item.ItemUtil;
 import net.mathias2246.buildmc.claims.ClaimManager;
-import net.mathias2246.buildmc.inventoryframework.gui.GuiItem;
-import net.mathias2246.buildmc.inventoryframework.gui.type.util.Gui;
-import net.mathias2246.buildmc.ui.UIUtil;
-import net.mathias2246.buildmc.util.Message;
+import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -17,15 +14,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
-import java.sql.SQLException;
-import java.util.List;
 import java.util.Objects;
-
-import static net.mathias2246.buildmc.CoreMain.plugin;
 
 public class EntityExplosionDamage extends Protection {
     public EntityExplosionDamage(@Nullable ConfigurationSection section) {
@@ -34,20 +27,15 @@ public class EntityExplosionDamage extends Protection {
     }
 
     @Override
-    public String getTranslationBaseKey() {
-        return "claims.flags.explosion-entity-damage";
+    public @NonNull String getTranslationBaseKey() {
+        return "claims.protections.explosion-entity-damage";
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onExplosionDamage (EntityDamageEvent event) {
         Location location = event.getEntity().getLocation();
 
-        Claim claim = null;
-        try {
-            claim = ClaimManager.getClaim(location);
-        } catch (SQLException e) {
-            plugin.getLogger().severe("SQL error while getting claim: " + e);
-        }
+        Claim claim = ClaimManager.getClaim(location);
         if (claim == null) return;
 
         if (claim.hasProtection(getKey())) {
@@ -62,17 +50,6 @@ public class EntityExplosionDamage extends Protection {
 
         String t = getTranslationBaseKey();
 
-        ItemStack displayBase = new ItemStack(Material.GUNPOWDER);
-        ItemUtil.editMeta(displayBase, (meta) -> {
-            meta.setItemName(LegacyComponentSerializer.legacySection().serialize(
-                    Message.msg(uiHolder, t+".name")
-            ));
-            meta.setLore(List.of(LegacyComponentSerializer.legacySection().serialize(Message.msg(uiHolder, t + ".lore")).split("\n")));
-        });
-
-        return new GuiItem(
-                displayBase,
-                UIUtil.noInteract
-        );
+        return ProtectionUtil.createDisplayItem(uiHolder, Material.GUNPOWDER, t);
     }
 }

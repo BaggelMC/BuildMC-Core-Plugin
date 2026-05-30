@@ -6,6 +6,7 @@ import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,7 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * Represents a type of {@code Protection} that can be applied to claims.
  * <p>
- * Protections define specific behaviors, rules, or restrictions within a claim (e.g., blocking explosions,
+ * Protections define specific behaviours, rules, or restrictions within a claim (e.g., blocking explosions,
  * preventing PVP, etc.). Each protection is uniquely identified by a {@link NamespacedKey} and can be
  * enabled/disabled by default when a claim is created.
  * </p>
@@ -45,6 +46,7 @@ public abstract class Protection implements Keyed, Displayable, Listener {
      * @param key      the {@link NamespacedKey} of the protection to check, may be {@code null}
      * @return {@code true} if the protection exists in the registry and is marked hidden, otherwise {@code false}
      */
+    @Contract(pure = true)
     public static boolean isHiddenProtection(@NotNull DeferredRegistry<Protection> registry, @Nullable NamespacedKey key) {
         if (key == null) return false;
 
@@ -99,11 +101,20 @@ public abstract class Protection implements Keyed, Displayable, Listener {
 
     /**
      * Gets the translation base key used for localization.
-     * <p>This value should be used as the root for retrieving translatable messages for the UI.</p>
+     * <p>This value should be used as the root for retrieving translations of this protection like display name, lore and message.</p>
+     *
+     * <p>
+     *     Example Translation YAML:
+     *     <pre>protection-base-key:
+     *     name: "My Protection"
+     *     lore "Protects all my stuff."
+     *     message: "&lt;red&gt;You cannot use my stuff!&lt;/red&gt;"
+     *    </pre>
+     * </p>
      *
      * @return the translation key base, never {@code null}
      */
-    public abstract String getTranslationBaseKey();
+    public abstract @NotNull String getTranslationBaseKey();
 
     /**
      * Returns whether this protection is hidden from players.
@@ -111,6 +122,7 @@ public abstract class Protection implements Keyed, Displayable, Listener {
      *
      * @return {@code true} if this protection is hidden, otherwise {@code false}
      */
+    @Contract(pure = true)
     public boolean isHidden() {
         return isHidden;
     }
@@ -129,6 +141,7 @@ public abstract class Protection implements Keyed, Displayable, Listener {
      *
      * @return {@code true} if enabled by default, otherwise {@code false}
      */
+    @Contract(pure = true)
     public boolean isDefaultEnabled() {
         return isDefaultEnabled;
     }
@@ -145,8 +158,9 @@ public abstract class Protection implements Keyed, Displayable, Listener {
     /**
      * Returns the unique {@link NamespacedKey} for this protection.
      *
-     * @return the key, never {@code null}
+     * @return the key of this protection
      */
+    @Contract(pure = true)
     @Override
     public @NotNull NamespacedKey getKey() {
         return key;

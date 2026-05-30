@@ -1,11 +1,11 @@
 package net.mathias2246.buildmc;
 
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
-import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.api.claims.ClaimManager;
 import net.mathias2246.buildmc.api.endEvent.EndManager;
 import net.mathias2246.buildmc.api.item.AbstractCustomItem;
 import net.mathias2246.buildmc.api.item.CustomItemListener;
+import net.mathias2246.buildmc.api.permission.PermissionManager;
 import net.mathias2246.buildmc.api.spawnEyltra.ElytraManager;
 import net.mathias2246.buildmc.api.status.StatusManager;
 import net.mathias2246.buildmc.claims.ClaimCommand;
@@ -21,17 +21,18 @@ import net.mathias2246.buildmc.player.PlayerHeadDropModifier;
 import net.mathias2246.buildmc.player.PlayerSpawnTeleportCommand;
 import net.mathias2246.buildmc.player.status.PlayerStatus;
 import net.mathias2246.buildmc.player.status.SetStatusCommand;
+import net.mathias2246.buildmc.player.status.StatusConfig;
 import net.mathias2246.buildmc.spawnElytra.*;
-import net.mathias2246.buildmc.status.StatusConfig;
 import net.mathias2246.buildmc.util.SoundManager;
 import net.mathias2246.buildmc.util.SoundUtil;
 import net.mathias2246.buildmc.util.config.ConfigurationValidationException;
 import net.mathias2246.buildmc.util.registry.RegistriesHolder;
+import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +44,7 @@ import java.util.logging.Logger;
 
 import static net.mathias2246.buildmc.CoreMain.registriesHolder;
 
-public final class Main extends PluginMain {
+public final class Main extends PluginMain implements Listener {
 
     public static Logger logger;
 
@@ -62,6 +63,9 @@ public final class Main extends PluginMain {
     public static EndManager apiEndManager;
     private static ElytraManager apiElytraManager;
 
+    /** Internal value for skipping all the logic inside the onDisable method for a cleaner emergency plugin disable. **/
+    private boolean disableImmediately = false;
+
     @Override
     public void onEnable() {
         // Plugin startup logic
@@ -70,8 +74,20 @@ public final class Main extends PluginMain {
 
         pluginFolder = plugin.getDataFolder();
         if (!pluginFolder.exists()) {
-            //noinspection ResultOfMethodCallIgnored
-            pluginFolder.mkdir();
+            // Error handling, if creating the plugin data directory fails, immediately disable the plugin
+            try {
+                if (!pluginFolder.mkdir()) {
+                    logger.severe("Could not create BuildMC-Core data folder! Disabling plugin now!");
+
+                    disableImmediately = true;
+                    Bukkit.getPluginManager().disablePlugin(this);
+                }
+            } catch (SecurityException e) {
+                logger.severe("Could not create BuildMC-Core data folder! Disabling plugin now!");
+                logger.severe("Reason:\n" + e);
+                disableImmediately = true;
+                Bukkit.getPluginManager().disablePlugin(this);
+            }
         }
 
 
@@ -128,8 +144,18 @@ public final class Main extends PluginMain {
     }
 
     @Override
+    public void onLoad() {
+        CoreMain.onLoad();
+    }
+
+    @Override
     public void onDisable() {
         // Plugin shutdown logic
+
+        if (disableImmediately) {
+            logger.info("Disabled plugin without closing anything...");
+            return;
+        }
 
         CoreMain.stop();
     }
@@ -139,22 +165,7 @@ public final class Main extends PluginMain {
     }
 
     @Override
-    public void sendMessage(CommandSender sender, Component message) {
-        sender.sendMessage(message);
-    }
-
-    @Override
-    public void sendPlayerActionBar(Player player, Component message) {
-        player.sendActionBar(message);
-    }
-
-    @Override
     public @NotNull Plugin getPlugin() {
-        return this;
-    }
-
-    @Override
-    public @NotNull MainClass getMainClass() {
         return this;
     }
 
@@ -189,6 +200,11 @@ public final class Main extends PluginMain {
     }
 
     @Override
+    public PermissionManager getPermissionManager() {
+        return CoreMain.permissionManager;
+    }
+
+    @Override
     public void editConfiguration(@NotNull Consumer<FileConfiguration> consumer) {
         consumer.accept(config);
     }
@@ -197,6 +213,8 @@ public final class Main extends PluginMain {
     public void finishLoading() {
 
         SoundUtil.setup();
+
+        registerEvent(this);
 
         getServer().getPluginManager().registerEvents(new CustomItemListener(), this);
 
@@ -217,5 +235,14 @@ public final class Main extends PluginMain {
         if (config.getBoolean("player-head.on-death")) {
             getServer().getPluginManager().registerEvents(new PlayerHeadDropDeathListener(new PlayerHeadDropModifier()), this);
         }
+    }
+
+    // Is called here, because on paper non-persistent Metadata was replaced with PDC because it is deprecated.
+    // So as a safety check, all the non-persisting values stored inside the players PDC are removed here.
+    @EventHandler
+    private void onPlayerDisconnect(PlayerQuitEvent event) {
+        var pdc = event.getPlayer().getPersistentDataContainer();
+
+        pdc.remove(ClaimSelectionTool.SELECTION_EFFECT_KEY);
     }
 }

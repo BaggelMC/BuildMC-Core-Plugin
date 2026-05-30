@@ -1,26 +1,32 @@
 package net.mathias2246.buildmc.api.claims;
 
-import org.bukkit.Chunk;
+import com.google.common.collect.ImmutableSet;
+import net.mathias2246.buildmc.api.event.claims.ClaimCreateEvent;
+import net.mathias2246.buildmc.api.event.claims.ClaimRemoveEvent;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
- * The {@code ClaimAPI} provides methods to interact with land claims,
+ * The {@link ClaimManager} provides methods to interact with land claims,
  * protections, and whitelists within the BuildMC plugin.
  * <p>
  * It allows checking claim ownership, player permissions, protections, and
  * managing claims through players or teams.
  */
+@ApiStatus.NonExtendable
 public interface ClaimManager {
 
     /**
@@ -32,6 +38,15 @@ public interface ClaimManager {
     @Nullable Team getPlayerTeam(@NotNull Player player);
 
     /**
+     * Gets the name of the owner of the given claim.
+     *
+     * @param claim the claim to get the owners name from.
+     * @return the name of the claim owner
+     */
+    @Contract(pure = true)
+    @NotNull String getOwnerName(@NotNull Claim claim);
+
+    /**
      * Checks whether a player is allowed to create a claim in a specific world.
      * <p>
      *     Players can bypass this by using the <i>'buildmc.bypass-claim-dimension-list'</i> permission.
@@ -40,6 +55,7 @@ public interface ClaimManager {
      * @param world The {@link World} to check
      * @return {@code true} if, claims can be created by anyone in the given world.
      * */
+    @Contract(pure = true)
     boolean isWorldAllowed(@NotNull World world);
 
     /**
@@ -53,6 +69,7 @@ public interface ClaimManager {
      * @param player      the player
      * @return {@code true} if the player is allowed, otherwise {@code false}
      */
+    @Contract(pure = true)
     boolean isPlayerAllowedInClaim(@Nullable Claim claim, @NotNull Player player);
 
     /**
@@ -77,6 +94,7 @@ public interface ClaimManager {
      * @param claim       the claim, or {@code null} if outside a claim
      * @return {@code true} if the player is allowed, otherwise {@code false}
      */
+    @Contract(pure = true)
     boolean isPlayerAllowed(@NotNull Player player, @NotNull Collection<NamespacedKey> protections, @Nullable Claim claim);
 
     /**
@@ -88,6 +106,7 @@ public interface ClaimManager {
      * @param claim      the claim, or {@code null} if outside a claim
      * @return {@code true} if the player is allowed, otherwise {@code false}
      */
+    @Contract(pure = true)
     boolean isPlayerAllowed(@NotNull Player player, @NotNull NamespacedKey protection, @Nullable Claim claim);
 
     /**
@@ -99,6 +118,7 @@ public interface ClaimManager {
      * @param location   the location
      * @return {@code true} if the player is allowed, otherwise {@code false}
      */
+    @Contract(pure = true)
     boolean isPlayerAllowed(@NotNull Player player, @NotNull NamespacedKey protection, Location location);
 
     /**
@@ -108,6 +128,7 @@ public interface ClaimManager {
      * @param protections the protections (protections) to check
      * @return {@code true} if the claim has any of the protections
      */
+    @Contract(pure = true)
     boolean hasAnyProtection(Claim claim, Collection<NamespacedKey> protections);
 
     /**
@@ -117,6 +138,7 @@ public interface ClaimManager {
      * @param protection the protection to check
      * @return {@code true} if the claim has the protection
      */
+    @Contract(pure = true)
     boolean hasProtection(Claim claim, NamespacedKey protection);
 
     /**
@@ -126,6 +148,7 @@ public interface ClaimManager {
      * @param protections the protections to check
      * @return {@code true} if the claim has all the protections
      */
+    @Contract(pure = true)
     boolean hasAllProtections(Claim claim, Collection<String> protections);
 
     /**
@@ -135,6 +158,7 @@ public interface ClaimManager {
      * @param keys  the protection keys to check
      * @return {@code true} if the claim has all the protections
      */
+    @Contract(pure = true)
     boolean hasAllProtectionKeys(Claim claim, Collection<NamespacedKey> keys);
 
     /**
@@ -148,6 +172,7 @@ public interface ClaimManager {
      * @return {@code true} if a claim exists in the area
      * @throws SQLException if a database error occurs
      */
+    @Contract(pure = true)
     boolean isClaimInArea(UUID worldID, int chunkX1, int chunkZ1, int chunkX2, int chunkZ2) throws SQLException;
 
     /**
@@ -155,36 +180,31 @@ public interface ClaimManager {
      *
      * @param pos1 first corner location
      * @param pos2 opposite corner location
-     * @return list of claims in the area
+     * @return immutable set of claims in the area
      * @throws SQLException              if a database error occurs
      * @throws IllegalArgumentException  if any of the {@link Location}s are null, or they're not in the same world.
      */
-    List<Claim> getClaimsInArea(Location pos1, Location pos2) throws SQLException, IllegalArgumentException;
+    @Contract(value = "null, _ -> fail; _, null -> fail", pure = true)
+    ImmutableSet<Claim> getClaimsInArea(Location pos1, Location pos2) throws SQLException, IllegalArgumentException;
 
     /**
-     * Checks if a {@link Chunk} is claimed.
+     * Checks if a {@link Location} is claimed.
      *
-     * @param chunk the chunk
+     * @param loc a location
      * @return {@code true} if the chunk is claimed
      */
-    boolean isClaimed(Chunk chunk);
+    @Contract(pure = true)
+    boolean isClaimed(@NotNull Location loc);
 
     /**
-     * Gets the claim ID of a claimed {@link Chunk}.
+     * Gets the claim ID of a claimed {@link Location}.
      *
-     * @param chunk the chunk
+     * @param loc a location
      * @return the claim ID, or {@code null} if unclaimed
      */
-    @Nullable Long getClaimId(Chunk chunk);
+    @Contract(pure = true)
+    @Nullable Long getClaimId(@NotNull Location loc);
 
-    /**
-     * Gets the claim associated with a {@link Chunk}.
-     *
-     * @param chunk the chunk
-     * @return the claim
-     * @throws SQLException if a database error occurs
-     */
-    @Nullable Claim getClaim(Chunk chunk) throws SQLException;
 
     /**
      * Gets a claim by its ID.
@@ -197,10 +217,10 @@ public interface ClaimManager {
     /**
      * Gets the claim at a given location.
      *
-     * @param location the location
+     * @param location a location
      * @return the claim, or {@code null} if unclaimed
      */
-    @Nullable Claim getClaim(Location location) throws SQLException;
+    @Nullable Claim getClaim(@NotNull Location location);
 
     /**
      * Retrieves all {@link Claim} entries stored in the database.
@@ -209,10 +229,39 @@ public interface ClaimManager {
      * Consider using it primarily during startup, data synchronization, or administrative tasks.
      * </p>
      *
-     * @return a list containing all {@link Claim} objects found in the database.
+     * @return An immutable set containing all {@link Claim} objects found in the database.
      * @throws SQLException if a database access error occurs while retrieving claims.
      */
-    List<Claim> getAllClaims() throws SQLException;
+    @Contract(pure = true)
+    ImmutableSet<Claim> getAllClaims() throws SQLException;
+
+    /**
+     * Attempts to create a claim of some {@link ClaimType} between two positions.
+     *
+     * @param type    the {@link ClaimType} of the claim
+     * @param claimOwner the id of the claim owner.
+     *                   <p>
+     *                   "Server" for {@link ClaimType#SERVER} or {@link ClaimType#PLACEHOLDER}.
+     *                   </p>
+     *                   <p>
+     *                   The team id for {@link ClaimType#TEAM}, or the player {@link UUID} for {@link ClaimType#PLAYER}.
+     *                   </p>
+     * @param claimName the claim name
+     * @param pos1      first corner location
+     * @param pos2      opposite corner location
+     * @return The ID of the claim. Or {@code null} if the claim was not created successfully
+     * @throws IllegalArgumentException  if any of the {@link Location}s are null, or they're not in the same world.
+     */
+    @Contract("_, _, _, null, _ -> fail; _, _, _, _, null -> fail")
+    @Nullable Long tryClaimArea(@NotNull ClaimType type, @NotNull String claimOwner, @NotNull String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
+
+    /**
+     * Attempts to register a {@link Claim} instance.
+     *
+     * @param claim The {@link Claim} to register. All values of the claim are validated.
+     * @return The ID of the claim. Or {@code null} if the claim was not registered successfully
+     */
+    @Nullable Long tryClaimArea(@NotNull Claim claim);
 
     /**
      * Attempts to create a claim for a player between two positions.
@@ -221,10 +270,11 @@ public interface ClaimManager {
      * @param claimName the claim name
      * @param pos1      first corner location
      * @param pos2      opposite corner location
-     * @return {@code true} if the claim was created successfully
+     * @return The ID of the claim. Or {@code null} if the claim was not created successfully
      * @throws IllegalArgumentException  if any of the {@link Location}s are null, or they're not in the same world.
      */
-    boolean tryClaimPlayerArea(@NotNull Player player, String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
+    @Contract("_, _, null, _ -> fail; _, _, _, null -> fail")
+    @Nullable Long tryClaimPlayerArea(@NotNull Player player, @NotNull String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
 
     /**
      * Attempts to create a claim for a {@link Team} between two positions.
@@ -233,10 +283,11 @@ public interface ClaimManager {
      * @param claimName the claim name
      * @param pos1      first corner location
      * @param pos2      opposite corner location
-     * @return {@code true} if the claim was created successfully
+     * @return The ID of the claim. Or {@code null} if the claim was not created successfully
      * @throws IllegalArgumentException  if any of the {@link Location}s are null, or they're not in the same world.
      */
-    boolean tryClaimTeamArea(@NotNull Team team, String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
+    @Contract("_, _, null, _ -> fail; _, _, _, null -> fail")
+    @Nullable Long tryClaimTeamArea(@NotNull Team team, @NotNull String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
 
     /**
      * Attempts to create a claim owned by the server between two positions.
@@ -244,10 +295,11 @@ public interface ClaimManager {
      * @param claimName the claim name
      * @param pos1      first corner location
      * @param pos2      opposite corner location
-     * @return {@code true} if the claim was created successfully
+     * @return The ID of the claim. Or {@code null} if the claim was not created successfully
      * @throws IllegalArgumentException if any of the {@link Location}s are null, or they're not in the same world
      */
-    boolean tryClaimServerArea(String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
+    @Contract("_, null, _ -> fail; _, _, null -> fail")
+    @Nullable Long tryClaimServerArea(@NotNull String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
 
     /**
      * Attempts to create a placeholder claim between two positions.
@@ -259,10 +311,55 @@ public interface ClaimManager {
      * @param claimName the claim name
      * @param pos1      first corner location
      * @param pos2      opposite corner location
-     * @return {@code true} if the claim was created successfully
+     * @return The ID of the claim. Or {@code null} if the claim was not created successfully
      * @throws IllegalArgumentException if any of the {@link Location}s are null, or they're not in the same world
      */
-    boolean tryClaimPlaceholderArea(String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
+    @Contract("_, null, _ -> fail; _, _, null -> fail")
+    @Nullable Long tryClaimPlaceholderArea(@NotNull String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
+
+    /**
+     * Registers multiple {@link Claim} objects in the system and persists them to the database.
+     * <p>
+     * This method will first fire a {@link ClaimCreateEvent} containing all provided claims.
+     * If the event is cancelled by any listener, the registration process is aborted
+     * and {@code null} is returned.
+     * </p>
+     * <p>
+     * If not cancelled, all claims are inserted into the database in a batch operation.
+     * The returned map links each {@link Claim} to its newly assigned database ID.
+     * </p>
+     * <p><b>Important:</b> You are responsible for supplying fully initialized {@link Claim}
+     * instances. This method only handles persistence and cache registration; it does not
+     * validate claim boundaries, ownership rules, or overlap constraints.</p>
+     *
+     * @param claims the list of claims to register
+     * @return a map of each claim to its generated database ID, or {@code null} if the creation event was cancelled
+     * @throws SQLException if a database access error occurs during insertion
+     */
+    Map<Claim, Long> registerClaims(List<Claim> claims) throws SQLException;
+
+    /**
+     * Deletes multiple {@link Claim} objects from the system and removes them from the database.
+     * <p>
+     * If the provided collection is {@code null} or empty, the method returns immediately
+     * without performing any action.
+     * </p>
+     * <p>
+     * A {@link ClaimRemoveEvent} is fired before deletion, allowing listeners to react
+     * to or track the removal. This event is informational and does not prevent deletion.
+     * </p>
+     * <p>
+     * Each claim must already have a valid database ID. If any claim has a {@code null}
+     * ID, an {@link IllegalArgumentException} is thrown and no database operation is performed.
+     * </p>
+     * <p><b>Important:</b> You are responsible for ensuring the claims are valid and should
+     * be removed. This method only handles persistence and cache removal.</p>
+     *
+     * @param claims the collection of claims to delete
+     * @throws SQLException if a database access error occurs during deletion
+     * @throws IllegalArgumentException if any claim does not have a valid ID
+     */
+    void deleteClaims(Collection<Claim> claims) throws SQLException, IllegalArgumentException;
 
     /**
      * Adds a player to a claim's whitelist.
@@ -350,6 +447,7 @@ public interface ClaimManager {
      * @param claimId the claim ID
      * @return the claim name
      */
+    @Contract(pure = true)
     @Nullable String getClaimNameById(long claimId);
 
     /**
@@ -368,6 +466,7 @@ public interface ClaimManager {
      * @return {@code true} if the owner already has a claim with that name
      * @throws SQLException if a database error occurs
      */
+    @Contract(pure = true)
     boolean doesOwnerHaveClaimWithName(String ownerId, String claimName) throws SQLException;
 
     /**
@@ -377,6 +476,7 @@ public interface ClaimManager {
      * @return the number of remaining claims available to the team,
      *         or {@code null} if no data is available
      */
+    @Contract(pure = true)
     @Nullable Integer getRemainingTeamClaims(String teamName);
 
     /**
@@ -386,6 +486,7 @@ public interface ClaimManager {
      * @return the number of remaining claims available to the player,
      *         or {@code null} if no data is available
      */
+    @Contract(pure = true)
     @Nullable Integer getRemainingPlayerClaims(String playerUUID);
 
     /**
@@ -395,6 +496,7 @@ public interface ClaimManager {
      * @return the number of remaining claims available to the player,
      *         or {@code null} if no data is available
      */
+    @Contract(pure = true)
     @Nullable Integer getRemainingPlayerClaims(UUID playerUUID);
 
     /**
@@ -436,4 +538,41 @@ public interface ClaimManager {
      */
     void setRemainingPlayerClaims(UUID playerUUID, @Nullable Integer remainingClaims);
 
+    /**
+     * Update the name of a Claim
+     *
+     * @param claim   the claim
+     * @param newName the new claim name
+     * @throws SQLException if a database error occurs
+     * @throws IllegalArgumentException if the claim has no ID
+     */
+    void updateClaimName(@NotNull Claim claim,  @NotNull String newName) throws SQLException, IllegalArgumentException;
+
+    /**
+     * Update the name of a Claim
+     *
+     * @param claimId the claim ID
+     * @param newName the new claim name
+     * @throws SQLException if a database error occurs
+     */
+    void updateClaimName(long claimId,  @NotNull String newName) throws SQLException;
+
+    /**
+     * Update the owner of a Claim
+     *
+     * @param claim   the claim
+     * @param newOwnerId the new owner ID (usually a player UUID as string, a team name or "server" depending on the {@link ClaimType})
+     * @throws SQLException if a database error occurs
+     * @throws IllegalArgumentException if the claim has no ID
+     */
+    void updateClaimOwner(@NotNull Claim claim, @NotNull String newOwnerId) throws SQLException, IllegalArgumentException;
+
+    /**
+     * Update the owner of a Claim
+     *
+     * @param claimId   the claim ID
+     * @param newOwnerId the new owner ID (usually a player UUID as string, a team name or "server" depending on the {@link ClaimType})
+     * @throws SQLException if a database error occurs
+     */
+    void updateClaimOwner(long claimId, @NotNull String newOwnerId) throws SQLException;
 }
