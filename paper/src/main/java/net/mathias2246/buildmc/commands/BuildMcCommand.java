@@ -12,9 +12,11 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.api.status.StatusInstance;
 import net.mathias2246.buildmc.commands.debug.BenchmarkClaims;
+import net.mathias2246.buildmc.commands.debug.InvalidateCaches;
 import net.mathias2246.buildmc.commands.debug.OpenSign;
+import net.mathias2246.buildmc.player.status.PlayerStatusUtil;
 import net.mathias2246.buildmc.player.status.SetStatusCommand;
-import net.mathias2246.buildmc.status.PlayerStatusUtil;
+import net.mathias2246.buildmc.util.AudienceUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -31,14 +33,14 @@ public class BuildMcCommand implements CustomCommand {
         var cmd = Commands.literal("buildmc");
 
         cmd.executes(executionInfo -> {
-            executionInfo.getSource().getSender().sendMessage("/buildmc <args>");
+            AudienceUtil.sendMessage(executionInfo.getSource().getSender(), Component.text("/buildmc <args>"));
             return 1;
         });
 
         var debugSub = Commands.literal("debug")
                 .requires(c -> c.getSender().hasPermission("buildmc.debug"))
                 .executes(ctx -> {
-                    ctx.getSource().getSender().sendMessage("/buildmc debug <args>");
+                    AudienceUtil.sendMessage(ctx.getSource().getSender(), Component.text("/buildmc debug <args>"));
                     return 1;
                 });
 
@@ -61,6 +63,13 @@ public class BuildMcCommand implements CustomCommand {
                         )
         );
 
+        debugSub.then(
+                Commands.literal("invalidate-caches")
+                        .executes(
+                                (command) -> InvalidateCaches.invalidateCaches(command.getSource().getSender())
+                        )
+        );
+
         // --- MiniMessage debug command ---
          var miniMsgSub = Commands.literal("minimessage")
                 .then(
@@ -74,12 +83,12 @@ public class BuildMcCommand implements CustomCommand {
                                     try {
                                         component = mm.deserialize(input);
                                     } catch (Exception e) {
-                                        sender.sendMessage(Component.text("❌ Failed to parse MiniMessage: " + e.getMessage(), NamedTextColor.RED));
+                                        AudienceUtil.sendMessage(sender, Component.text("❌ Failed to parse MiniMessage: " + e.getMessage(), NamedTextColor.RED));
                                         return 0;
                                     }
 
-                                    sender.sendMessage(Component.text("Rendered Component:"));
-                                    sender.sendMessage(component);
+                                    AudienceUtil.sendMessage(sender, Component.text("Rendered Component:"));
+                                    AudienceUtil.sendMessage(sender, component);
 
                                     String json = GsonComponentSerializer.gson().serialize(component);
 
@@ -87,7 +96,7 @@ public class BuildMcCommand implements CustomCommand {
                                             .clickEvent(ClickEvent.copyToClipboard(json))
                                             .hoverEvent(Component.text("Copy this component's JSON to your clipboard"));
 
-                                    sender.sendMessage(jsonCopy);
+                                    AudienceUtil.sendMessage(sender, jsonCopy);
                                     return 1;
                                 })
                 );
@@ -178,7 +187,7 @@ public class BuildMcCommand implements CustomCommand {
                     Component msg = Component.text("BuildMC-Core ", NamedTextColor.AQUA)
                             .append(Component.text("v" + version, NamedTextColor.GREEN));
 
-                    sender.sendMessage(msg);
+                    AudienceUtil.sendMessage(sender, msg);
                     return 1;
                 });
 

@@ -1,5 +1,6 @@
 package net.mathias2246.buildmc.api.item;
 
+import net.kyori.adventure.key.Key;
 import net.mathias2246.buildmc.util.TaskUtil;
 import net.mathias2246.buildmc.util.registry.DeferredRegistry;
 import org.bukkit.Keyed;
@@ -15,6 +16,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,7 +28,7 @@ import java.util.Objects;
 public abstract class AbstractCustomItem implements Keyed {
 
     /// Shared registry instance for {@link AbstractCustomItem} instances
-    public static final @NotNull DeferredRegistry<AbstractCustomItem> customItemsRegistry = new DeferredRegistry<>();
+    public static final @NotNull DeferredRegistry<AbstractCustomItem> customItemsRegistry = new DeferredRegistry<>(Key.key("buildmc:custom_item"));
 
     private final @NotNull NamespacedKey key;
 
@@ -37,6 +39,7 @@ public abstract class AbstractCustomItem implements Keyed {
         return plugin;
     }
 
+    @Contract(pure = true)
     @Override
     public @NotNull NamespacedKey getKey() {
         return key;
@@ -101,6 +104,7 @@ public abstract class AbstractCustomItem implements Keyed {
     /**
      * Checks if the given ItemStack is of this custom item type.
      * @return True if the given ItemStack is of this type.*/
+    @Contract(pure = true)
     public boolean isThis(@Nullable ItemStack item) {
         if (item == null) return false;
         if (!(item.getItemMeta() instanceof ItemMeta meta)) return false;
@@ -110,7 +114,10 @@ public abstract class AbstractCustomItem implements Keyed {
     }
 
     /**Checks if the player can interact in any way with this custom item.
-     * @implNote Should implement logic like, for example, cooldowns or location checks that should be applied.*/
+     * <p>
+     *      You should implement logic like, for example, cooldowns or location checks that should be applied.
+     * </p>
+     * */
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public abstract boolean canUse(@NotNull ItemStack item, @NotNull PlayerInteractEvent event);
 
@@ -122,7 +129,7 @@ public abstract class AbstractCustomItem implements Keyed {
         onInteract(item, event);
 
         // Delay 1 tick
-        TaskUtil.defer(plugin, () -> {
+        TaskUtil.defer(plugin, (task) -> {
             Player player = event.getPlayer();
 
             // Ignore interaction if the player dropped an item very recently
@@ -150,9 +157,12 @@ public abstract class AbstractCustomItem implements Keyed {
     /**Executed when a player right-clicks with this custom-item type in his hand.*/
     protected abstract void onRightClick(@NotNull ItemStack item, @NotNull Location at, @NotNull PlayerInteractEvent event);
 
-    /**Creates the default ItemStack for this custom-item type
-     * @implNote Should implement logic that changes e.g. ItemMeta like tools or consumables.
-     * Is called inside the constructor to create the default ItemStack.*/
+    /**Creates the default ItemStack for this custom-item type.
+     * <p>
+     * You should implement logic that changes e.g. ItemMeta like tools or consumables here.
+     * Is called inside the constructor to create the default ItemStack.
+     * </p>
+     * */
     protected abstract @NotNull ItemStack buildDefaultItemStack();
 
 }

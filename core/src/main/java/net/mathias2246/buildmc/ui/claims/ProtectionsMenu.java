@@ -6,6 +6,7 @@ import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
 import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
 import com.github.stefvanschie.inventoryframework.pane.Pane;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
+import com.github.stefvanschie.inventoryframework.pane.util.Slot;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.Protection;
@@ -34,7 +35,7 @@ public class ProtectionsMenu {
     private static final @NotNull StaticPane INVISIBLE_BACKGROUND;
 
     static {
-        SPACER_ROW = new StaticPane(0, 2, 9, 5);
+        SPACER_ROW = new StaticPane(9, 5);
 
         INVISIBLE_BACKGROUND = new StaticPane(9,6);
 
@@ -65,7 +66,7 @@ public class ProtectionsMenu {
                         if (ClaimUIs.openUIs.containsKey(claim.getId())) ClaimUIs.openUIs.get(claim.getId()).remove(player);
                     });
 
-                    PaginatedPane pages = new PaginatedPane(0, 0, 9, 5);
+                    PaginatedPane pages = new PaginatedPane(9, 5);
 
                     boolean isFirstPage = true;
                     boolean lowerRow = false;
@@ -76,9 +77,9 @@ public class ProtectionsMenu {
                     p.add(new StaticPane(9, 5));
                     StaticPane currentPane = p.getFirst();
 
-                    pages.addPane(0, SPACER_ROW);
-                    pages.addPane(0, INVISIBLE_BACKGROUND);
-                    pages.addPane(0, currentPane);
+                    pages.addPane(0, Slot.fromXY(0, 2), SPACER_ROW);
+                    pages.addPane(0, Slot.fromXY(0, 0), INVISIBLE_BACKGROUND);
+                    pages.addPane(0, Slot.fromXY(0, 0), currentPane);
 
                     for (var protection : protections) {
                             if (protection.isHidden()) continue;
@@ -98,35 +99,37 @@ public class ProtectionsMenu {
                                 } else {
                                     lowerRow = false;
                                     if (!isFirstPage) {
-                                        pages.addPage(currentPane);
+                                        pages.addPage(Slot.fromXY(0, 0), currentPane);
 
                                     }
                                         isFirstPage = false;
                                         p.add(new StaticPane(9, 5));
                                         currentPane = p.getLast();
-                                        pages.addPane(pages.getPages() - 1, SPACER_ROW);
-                                        pages.addPane(pages.getPages() - 1, INVISIBLE_BACKGROUND);
+                                        pages.addPane(pages.getPages() - 1, Slot.fromXY(0, 2), SPACER_ROW);
+                                        pages.addPane(pages.getPages() - 1, Slot.fromXY(0, 0), INVISIBLE_BACKGROUND);
                                 }
                             }
 
                     }
                     if (column > 0 || lowerRow) {
                         if (!isFirstPage) {
-                            pages.addPage(currentPane);
+                            pages.addPage(Slot.fromXY(0, 0), currentPane);
 
                         }
-                        pages.addPane(pages.getPages() - 1, SPACER_ROW);
-                        pages.addPane(pages.getPages() - 1, INVISIBLE_BACKGROUND);
+                        pages.addPane(pages.getPages() - 1, Slot.fromXY(0, 2), SPACER_ROW);
+                        pages.addPane(pages.getPages() - 1, Slot.fromXY(0, 0), INVISIBLE_BACKGROUND);
                     }
 
-                    gui.addPane(pages);
+                    gui.addPane(Slot.fromXY(0, 0), pages);
 
                     // Nav bar
                     StaticPane controls = UIUtil.BOTTOM_BAR.copy();
                     controls.setPriority(Pane.Priority.HIGH);
 
                     // Back button
-                    controls.addItem(new GuiItem(ItemUtil.setItemLegacyComponentName(Material.BARRIER, Message.msg(player, "messages.claims.ui.general.back")), e -> {
+                    ItemStack barrier = new ItemStack(Material.BARRIER);
+                    ItemUtil.setName(barrier, Message.msg(player, "messages.claims.ui.general.back"));
+                    controls.addItem(new GuiItem(barrier, e -> {
                         e.setCancelled(true);
                         CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
                         ClaimEditMenu.open(player, claim);
@@ -137,7 +140,7 @@ public class ProtectionsMenu {
                     controls.addItem(UIUtil.makePageLeftButton(gui, player, pages, controls, pageIndicator), 2, 0);
                     controls.addItem(UIUtil.makePageRightButton(gui, player, pages, controls, pageIndicator), 6, 0);
 
-                    gui.addPane(controls);
+                    gui.addPane(Slot.fromXY(0, 5), controls);
 
                     Bukkit.getScheduler().runTask(plugin, bukkitTask ->
                         {
@@ -195,9 +198,8 @@ public class ProtectionsMenu {
 
     private static ItemStack createStatusPane(boolean enabled, @NotNull Player player) {
         Material color = enabled ? Material.RED_STAINED_GLASS_PANE : Material.GREEN_STAINED_GLASS_PANE;
-        return ItemUtil.setItemLegacyComponentName(
-                color,
-                Message.msg(player, enabled ? "messages.claims.ui.protections-menu.enabled" : "messages.claims.ui.protections-menu.disabled")
-        );
+        ItemStack item = new ItemStack(color);
+        ItemUtil.setName(item, Message.msg(player, enabled ? "messages.claims.ui.protections-menu.enabled" : "messages.claims.ui.protections-menu.disabled"));
+        return item;
     }
 }

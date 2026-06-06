@@ -17,6 +17,7 @@ import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 import java.util.Objects;
@@ -28,8 +29,8 @@ public class PistonMovement extends Protection {
     }
 
     @Override
-    public String getTranslationBaseKey() {
-        return "claims.flags.piston-movement-across-claim-borders";
+    public @NonNull String getTranslationBaseKey() {
+        return "claims.protections.piston-movement-across-claim-borders";
     }
 
     @Override

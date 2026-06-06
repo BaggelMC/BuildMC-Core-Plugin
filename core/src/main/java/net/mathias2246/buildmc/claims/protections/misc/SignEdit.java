@@ -3,10 +3,10 @@ package net.mathias2246.buildmc.claims.protections.misc;
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
 import net.kyori.adventure.text.Component;
-import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
+import net.mathias2246.buildmc.util.AudienceUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Sign;
@@ -17,6 +17,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.SignChangeEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
@@ -27,8 +28,8 @@ public class SignEdit extends Protection {
     }
 
     @Override
-    public String getTranslationBaseKey() {
-        return "claims.flags.sign-editing";
+    public @NonNull String getTranslationBaseKey() {
+        return "claims.protections.sign-editing";
     }
 
     @Override
@@ -52,7 +53,7 @@ public class SignEdit extends Protection {
             }
 
             // Send feedback to the player
-            CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.sign"));
+            AudienceUtil.sendActionBar(player, Component.translatable(getTranslationBaseKey()+".message"));
         }
     }
 }

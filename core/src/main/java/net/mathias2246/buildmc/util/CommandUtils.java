@@ -8,7 +8,7 @@ import java.lang.reflect.Field;
 
 import static net.mathias2246.buildmc.CoreMain.plugin;
 
-public class CommandUtils {
+public final class CommandUtils {
     public static @Nullable CommandMap getCommandMap() {
         try {
             Field commandMapField = Bukkit.getServer().getClass().getDeclaredField("commandMap");

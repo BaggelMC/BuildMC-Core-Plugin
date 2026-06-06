@@ -5,12 +5,14 @@ import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
 import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
+import com.github.stefvanschie.inventoryframework.pane.util.Slot;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.ui.UIUtil;
+import net.mathias2246.buildmc.util.AudienceUtil;
 import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.SoundUtil;
 import org.bukkit.Bukkit;
@@ -24,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 import static net.mathias2246.buildmc.CoreMain.plugin;
-import static net.mathias2246.buildmc.ui.UIUtil.LEGACY_COMPONENT_SERIALIZER;
 
 public class ClaimSelectMenu {
 
@@ -78,13 +79,13 @@ public class ClaimSelectMenu {
 
                     ChestGui gui = new ChestGui(6, ComponentHolder.of(Message.msg(player, "messages.claims.ui.select-menu.title")));
 
-                    PaginatedPane pages = new PaginatedPane(0, 0, 9, 5);
+                    PaginatedPane pages = new PaginatedPane(9, 5);
 
                     pages.populateWithGuiItems(claimButtons);
 
                     StaticPane bottomBar = UIUtil.BOTTOM_BAR.copy();
 
-                    bottomBar.addItem(UIUtil.EXIT_BUTTON, 0, 0);
+                    bottomBar.addItem(UIUtil.EXIT_BUTTON, 8, 0);
 
                     var pageIndicator = UIUtil.makePageIndicator(gui, player, pages);
 
@@ -92,8 +93,8 @@ public class ClaimSelectMenu {
                             pageIndicator, 4, 0
                     );
 
-                    gui.addPane(pages);
-                    gui.addPane(bottomBar);
+                    gui.addPane(Slot.fromXY(0, 0), pages);
+                    gui.addPane(Slot.fromXY(0, 5), bottomBar);
 
                     Bukkit.getScheduler().runTask(plugin, bukkitTask -> {
                         gui.show(player);
@@ -121,36 +122,37 @@ public class ClaimSelectMenu {
             ItemStack item = new ItemStack(material);
             ItemMeta meta = item.getItemMeta();
             if (meta == null) {
-                plugin.sendMessage(player, Component.translatable("messages.claims.ui.errors.no-item-meta"));
+                AudienceUtil.sendMessage(player, Component.translatable("messages.claims.ui.errors.no-item-meta"));
                 continue;
             }
 
             meta.addItemFlags(
-                    ItemFlag.HIDE_ATTRIBUTES,
-                    ItemFlag.HIDE_ADDITIONAL_TOOLTIP
+                    ItemFlag.HIDE_ATTRIBUTES
             );
 
-            meta.setDisplayName(LEGACY_COMPONENT_SERIALIZER.serialize(Component.text(claim.getName(), NamedTextColor.GREEN)));
+            meta.displayName(Component.text(claim.getName(), NamedTextColor.GREEN));
 
-            List<String> lore = new ArrayList<>();
-            String typeMessage;
+            List<Component> lore = new ArrayList<>();
+            Component typeMessage;
             switch (claim.getType()) {
-                case PLAYER -> typeMessage = LEGACY_COMPONENT_SERIALIZER.serialize(Message.msg(player, "messages.claims.ui.select-menu.player-type"));
-                case TEAM -> typeMessage = LEGACY_COMPONENT_SERIALIZER.serialize(Message.msg(player, "messages.claims.ui.select-menu.team-type"));
-                case SERVER -> typeMessage = LEGACY_COMPONENT_SERIALIZER.serialize(Message.msg(player, "messages.claims.ui.select-menu.server-type"));
-                case PLACEHOLDER -> typeMessage = LEGACY_COMPONENT_SERIALIZER.serialize(Message.msg(player, "messages.claims.ui.select-menu.placeholder-type"));
-                default -> typeMessage = LEGACY_COMPONENT_SERIALIZER.serialize(Message.msg(player, "messages.claims.ui.select-menu.unknown-type"));
+                case PLAYER -> typeMessage = Message.msg(player, "messages.claims.ui.select-menu.player-type");
+                case TEAM -> typeMessage = Message.msg(player, "messages.claims.ui.select-menu.team-type");
+                case SERVER -> typeMessage = Message.msg(player, "messages.claims.ui.select-menu.server-type");
+                case PLACEHOLDER -> typeMessage = Message.msg(player, "messages.claims.ui.select-menu.placeholder-type");
+                default -> typeMessage = Message.msg(player, "messages.claims.ui.select-menu.unknown-type");
             }
 
-            lore.add("Owner: "+ClaimManager.getOwnerName(claim));
+            lore.add(Component.text("Owner: "+ClaimManager.getOwnerName(claim)));
 
             lore.add(typeMessage);
 
-            lore.add(LEGACY_COMPONENT_SERIALIZER.serialize(Message.msg(player,
-                    "messages.claims.ui.select-menu.id",
-                    Map.of("id", String.valueOf(claim.getId())))));
+            lore.add(
+                    Message.msg(
+                            player,
+                        "messages.claims.ui.select-menu.id",
+                            Map.of("id", String.valueOf(claim.getId()))));
 
-            meta.setLore(lore);
+            meta.lore(lore);
             item.setItemMeta(meta);
 
             items.add(new GuiItem(item, event -> {

@@ -8,6 +8,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.event.player.PlayerSpawnTeleportEvent;
+import net.mathias2246.buildmc.util.AudienceUtil;
 import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.PlayerTimer;
 import org.bukkit.Bukkit;
@@ -28,7 +29,7 @@ public class TeleportTimer extends PlayerTimer {
             PlayerSpawnTeleportEvent e = new PlayerSpawnTeleportEvent(player, Bukkit.getWorlds().getFirst().getSpawnLocation());
             Bukkit.getPluginManager().callEvent(e);
             if (e.isCancelled()) {
-                CoreMain.plugin.sendMessage(player, Component.translatable("messages.spawn-teleport.not-working"));
+                 AudienceUtil.sendMessage(player, Component.translatable("messages.spawn-teleport.not-working"));
                 return 0;
             }
 
@@ -52,7 +53,7 @@ public class TeleportTimer extends PlayerTimer {
         @Override
         public void onExit() {
             unregisterInputListener();
-            CoreMain.plugin.sendMessage(player, Component.translatable("messages.teleport.successful"));
+             AudienceUtil.sendMessage(player, Component.translatable("messages.teleport.successful"));
             player.teleport(to, PlayerTeleportEvent.TeleportCause.PLUGIN);
             CoreMain.soundManager.playSound(player, success);
         }
@@ -70,7 +71,7 @@ public class TeleportTimer extends PlayerTimer {
         @Override
         protected void onCancel() {
             unregisterInputListener();
-            CoreMain.plugin.sendMessage(player, Component.translatable("messages.teleport.cancelled"));
+             AudienceUtil.sendMessage(player, Component.translatable("messages.teleport.cancelled"));
             CoreMain.soundManager.playSound(player, mistake);
         }
 
@@ -83,8 +84,7 @@ public class TeleportTimer extends PlayerTimer {
                             .replacement(String.valueOf(steps - currentStep))
                             .build();
 
-            CoreMain.plugin.sendPlayerActionBar(
-                    player,
+            AudienceUtil.sendMessage(player, 
                     Message.msg(player,"messages.teleport.counter").replaceText(secondsReplacement)
             );
             CoreMain.soundManager.playSound(player, notification);

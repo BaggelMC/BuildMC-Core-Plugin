@@ -23,8 +23,6 @@ public class PlayerCrossClaimBoundariesListener implements Listener {
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
-        if (event.getTo() == null) return;
-
         Location oldLoc = event.getFrom();
         Location newLoc = event.getTo();
 

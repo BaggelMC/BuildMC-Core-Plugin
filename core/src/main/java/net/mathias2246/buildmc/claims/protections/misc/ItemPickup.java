@@ -2,10 +2,7 @@ package net.mathias2246.buildmc.claims.protections.misc;
 
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
-import net.kyori.adventure.text.Component;
-import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Protection;
-import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -18,6 +15,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
@@ -29,8 +27,8 @@ public class ItemPickup extends Protection {
     }
 
     @Override
-    public String getTranslationBaseKey() {
-        return "claims.flags.item-pickup";
+    public @NonNull String getTranslationBaseKey() {
+        return "claims.protections.item-pickup";
     }
 
     @Override
@@ -46,12 +44,6 @@ public class ItemPickup extends Protection {
         Item item = event.getItem();
 
         if (!(entity instanceof Player player)) return;
-
-
-        if (!ClaimManager.isPlayerAllowed(player, getKey(), item.getLocation())) {
-            event.setCancelled(true);
-            CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.item-pickup"));
-        }
-
+        ProtectionUtil.handleProtection(event, this, item.getLocation(), player);
     }
 }

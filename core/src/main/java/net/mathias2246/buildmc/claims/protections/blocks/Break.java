@@ -2,10 +2,7 @@ package net.mathias2246.buildmc.claims.protections.blocks;
 
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
-import net.kyori.adventure.text.Component;
-import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Protection;
-import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -15,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
@@ -26,8 +24,8 @@ public class Break extends Protection {
     }
 
     @Override
-    public String getTranslationBaseKey() {
-        return "claims.flags.player-break";
+    public @NonNull String getTranslationBaseKey() {
+        return "claims.protections.player-break";
     }
 
     @Override
@@ -39,11 +37,6 @@ public class Break extends Protection {
 
     @EventHandler
     public void onPlayerMine(BlockBreakEvent event) {
-        Player player = event.getPlayer();
-
-        if (!ClaimManager.isPlayerAllowed(player, getKey(), event.getBlock().getLocation())) {
-            CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.block-break"));
-            event.setCancelled(true);
-        }
+        ProtectionUtil.handleProtection(event, this, event.getBlock().getLocation(), event.getPlayer());
     }
 }

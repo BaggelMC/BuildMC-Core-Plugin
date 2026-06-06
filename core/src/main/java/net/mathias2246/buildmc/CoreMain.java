@@ -4,14 +4,16 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.mathias2246.buildmc.api.BuildMcAPI;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.event.lifecycle.BuildMcFinishedLoadingEvent;
 import net.mathias2246.buildmc.api.event.lifecycle.BuildMcRegistryEvent;
 import net.mathias2246.buildmc.api.item.AbstractCustomItem;
 import net.mathias2246.buildmc.api.item.ItemDropTracker;
+import net.mathias2246.buildmc.api.permission.PermissionManager;
 import net.mathias2246.buildmc.api.status.StatusInstance;
 import net.mathias2246.buildmc.api.status.StatusManager;
 import net.mathias2246.buildmc.claims.ClaimLogger;
@@ -20,20 +22,15 @@ import net.mathias2246.buildmc.claims.protections.blocks.*;
 import net.mathias2246.buildmc.claims.protections.entities.*;
 import net.mathias2246.buildmc.claims.protections.misc.*;
 import net.mathias2246.buildmc.commands.GuidesCommand;
-import net.mathias2246.buildmc.database.ClaimTable;
-import net.mathias2246.buildmc.database.DatabaseConfig;
-import net.mathias2246.buildmc.database.DatabaseManager;
-import net.mathias2246.buildmc.database.DeathTable;
+import net.mathias2246.buildmc.database.*;
 import net.mathias2246.buildmc.deaths.DeathListener;
 import net.mathias2246.buildmc.event.claims.PlayerCrossClaimBoundariesListener;
 import net.mathias2246.buildmc.player.FirstTimeJoinListener;
-import net.mathias2246.buildmc.status.PlayerStatusUtil;
-import net.mathias2246.buildmc.status.StatusConfig;
+import net.mathias2246.buildmc.player.status.PlayerStatusUtil;
+import net.mathias2246.buildmc.player.status.StatusConfig;
 import net.mathias2246.buildmc.ui.claims.ClaimUIs;
 import net.mathias2246.buildmc.util.BStats;
 import net.mathias2246.buildmc.util.SoundManager;
-import net.mathias2246.buildmc.util.config.ConfigHandler;
-import net.mathias2246.buildmc.util.config.ConfigurationValidationException;
 import net.mathias2246.buildmc.util.language.LanguageManager;
 import net.mathias2246.buildmc.util.registry.*;
 import org.bukkit.Bukkit;
@@ -48,7 +45,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -70,8 +66,6 @@ public final class CoreMain {
     public static ClaimTable claimTable;
     public static DeathTable deathTable;
 
-    public static BukkitAudiences bukkitAudiences;
-
     private static boolean isInitialized = false;
 
     public static boolean isInitialized() { return isInitialized; }
@@ -91,9 +85,15 @@ public final class CoreMain {
             .registerTypeAdapter(StatusInstance.class, new StatusConfig.StatusInstanceJsonDeserializer())
             .create();
 
+    public final static GsonComponentSerializer gsonComponentSerializer = GsonComponentSerializer.builder().build();
+
     public static GuidesCommand guideCommand;
 
     public static StatusManager statusManager;
+
+    public static PermissionManager permissionManager;
+
+    public static PermissionsTable permissionsTable;
 
     @ApiStatus.Internal
     public static void initialize(@NotNull PluginMain plugin) {
@@ -105,8 +105,6 @@ public final class CoreMain {
 
         initializeConfigs();
 
-        bukkitAudiences = BukkitAudiences.create(plugin);
-
         BStats.initialize();
 
         LanguageManager.init();
@@ -115,14 +113,14 @@ public final class CoreMain {
 
         Bukkit.getServicesManager().register(BuildMcAPI.class, plugin, plugin, ServicePriority.High);
 
-        guides = (BaseRegistry<KeyHolder<Component>>) registriesHolder.addRegistry(DefaultRegistries.GUIDES.toString(), new BaseRegistry<KeyHolder<Component>>());
+        guides = (BaseRegistry<KeyHolder<Component>>) registriesHolder.addRegistry(DefaultRegistries.GUIDES.toString(), new BaseRegistry<KeyHolder<Component>>(Key.key("buildmc:guide")));
 
         guideCommand = new GuidesCommand(plugin, "guides.yml");
         GuidesCommand.enabled = guideCommand.configuration.getBoolean("enabled", true);
 
-        statusesRegistry = (BaseRegistry<StatusInstance>) registriesHolder.addRegistry(DefaultRegistries.STATUSES.toString(), new BaseRegistry<StatusInstance>());
+        statusesRegistry = (BaseRegistry<StatusInstance>) registriesHolder.addRegistry(DefaultRegistries.STATUSES.toString(), new BaseRegistry<StatusInstance>(Key.key("buildmc:status")));
 
-        protectionsRegistry = (DeferredRegistry<Protection>) registriesHolder.addRegistry(DefaultRegistries.PROTECTIONS.toString(), new DeferredRegistry<Protection>());
+        protectionsRegistry = (DeferredRegistry<Protection>) registriesHolder.addRegistry(DefaultRegistries.PROTECTIONS.toString(), new DeferredRegistry<Protection>(Key.key("buildmc:protection")));
 
         customItemsRegistry = (DeferredRegistry<AbstractCustomItem>) registriesHolder.addRegistry(DefaultRegistries.CUSTOM_ITEMS.toString(), AbstractCustomItem.customItemsRegistry);
 
@@ -166,7 +164,7 @@ public final class CoreMain {
                 new SignEdit(config.getConfigurationSection("claims.protections.sign-editing")),
                 new VehicleEnter(config.getConfigurationSection("claims.protections.vehicle-enter")),
                 new PistonMovement(config.getConfigurationSection("claims.protections.piston-movement-across-claim-borders"))
-                );
+        );
 
         Bukkit.getPluginManager().registerEvents(new Listener() {
             @EventHandler
@@ -195,6 +193,13 @@ public final class CoreMain {
 
 
             var hideAllProtections = CoreMain.plugin.getConfig().getBoolean("claims.hide-all-protections");
+
+            protectionsRegistry.getOptional("buildmc:bucket_usage").ifPresent(
+                    protection -> protocolManager.addPacketListener(
+                            new Buckets.BucketPacketListener(plugin, (Buckets) protection)
+                    )
+            );
+
             for (Protection protection : protectionsRegistry) {
                 var def = protection.isDefaultEnabled();
 
@@ -214,7 +219,7 @@ public final class CoreMain {
 
             registerListener(new ClaimUIs());
 
-            customItemsRegistry.initialize();
+
 
             ClaimLogger.init(plugin);
         }
@@ -243,6 +248,8 @@ public final class CoreMain {
             }
         }
 
+        customItemsRegistry.initialize();
+
         new ItemDropTracker(plugin);
 
         plugin.finishLoading();
@@ -266,37 +273,31 @@ public final class CoreMain {
     @SuppressWarnings("EmptyMethod")
     @ApiStatus.Internal
     public static void stop() {
+        databaseManager.close();
+        ClaimLogger.shutdown();
     }
 
     private static void initializeConfigs() {
         databaseConfig = new DatabaseConfig();
-        initConfig(databaseConfig);
     }
 
     private static void initializeDatabase() {
         databaseManager = new DatabaseManager(CoreMain.plugin);
+
         claimTable = new ClaimTable();
         databaseManager.registerTable(claimTable);
+
         deathTable = new DeathTable();
         databaseManager.registerTable(deathTable);
+
+        permissionsTable = new PermissionsTable();
+        databaseManager.registerTable(permissionsTable);
 
         try {
             claimTable.loadClaimOwners(databaseManager.getConnection());
             ClaimTable.calculateRemainingClaims(databaseManager.getConnection());
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    private static void initConfig(ConfigHandler config) {
-        config.generateConfig();
-        try {
-            config.loadConfig();
-            config.validateConfig();
-        } catch (IOException e) {
-            plugin.getLogger().severe("Failed to load config: " + e);
-        } catch (ConfigurationValidationException e) {
-            plugin.getLogger().severe("Config validation failed: " + e);
         }
     }
 }

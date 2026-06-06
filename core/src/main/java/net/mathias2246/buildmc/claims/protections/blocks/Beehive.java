@@ -2,21 +2,19 @@ package net.mathias2246.buildmc.claims.protections.blocks;
 
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
-import net.kyori.adventure.text.Component;
-import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Protection;
-import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
@@ -30,22 +28,19 @@ public class Beehive extends Protection {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBeehiveInteract(PlayerInteractEvent event) {
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
-        if (event.getClickedBlock() == null) return;
+        Block block = ProtectionUtil.rightClickBlock(event);
+        if (block == null) return;
 
-        Material type = event.getClickedBlock().getType();
+        Material type = block.getType();
         if (type != Material.BEEHIVE && type != Material.BEE_NEST) return;
 
-        Player player = event.getPlayer();
-        if (!ClaimManager.isPlayerAllowed(player, getKey(), event.getClickedBlock().getLocation())) {
-            event.setCancelled(true);
-            CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.interact"));
-        }
+        ProtectionUtil.handleProtection(event, this, block.getLocation(), event.getPlayer());
+
     }
 
     @Override
-    public String getTranslationBaseKey() {
-        return "claims.flags.interaction-beehives";
+    public @NonNull String getTranslationBaseKey() {
+        return "claims.protections.interaction-beehives";
     }
 
     @Override

@@ -2,10 +2,7 @@ package net.mathias2246.buildmc.claims.protections.entities;
 
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
-import net.kyori.adventure.text.Component;
-import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Protection;
-import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -18,6 +15,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
@@ -28,8 +26,8 @@ public class VehicleEnter extends Protection {
     }
 
     @Override
-    public String getTranslationBaseKey() {
-        return "claims.flags.vehicle-enter";
+    public @NonNull String getTranslationBaseKey() {
+        return "claims.protections.vehicle-enter";
     }
 
     @Override
@@ -45,9 +43,6 @@ public class VehicleEnter extends Protection {
         Entity entered = event.getEntered();
 
         if (!(entered instanceof Player player)) return;
-        if (!ClaimManager.isPlayerAllowed(player, getKey(), vehicle.getLocation())) {
-            CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.vehicle"));
-            event.setCancelled(true);
-        }
+        ProtectionUtil.handleProtection(event, this, vehicle.getLocation(), player);
     }
 }

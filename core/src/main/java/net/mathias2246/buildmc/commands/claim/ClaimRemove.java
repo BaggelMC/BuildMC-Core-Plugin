@@ -5,6 +5,7 @@ import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.claims.ClaimLogger;
 import net.mathias2246.buildmc.claims.ClaimManager;
+import net.mathias2246.buildmc.util.AudienceUtil;
 import net.mathias2246.buildmc.util.LocationUtil;
 import net.mathias2246.buildmc.util.SoundUtil;
 import org.bukkit.entity.Player;
@@ -31,7 +32,7 @@ public class ClaimRemove {
             case "team" -> {
                 Team team = ClaimManager.getPlayerTeam(player);
                 if (team == null) {
-                    CoreMain.plugin.sendMessage(player, Component.translatable("messages.error.not-in-a-team"));
+                     AudienceUtil.sendMessage(player, Component.translatable("messages.error.not-in-a-team"));
                     CoreMain.soundManager.playSound(player, SoundUtil.mistake);
                     return 0;
                 }
@@ -46,7 +47,7 @@ public class ClaimRemove {
             }
             case "server", "placeholder" -> {
                 if (!player.hasPermission("buildmc.admin")) {
-                    CoreMain.plugin.sendMessage(player, Component.translatable("messages.error.no-permission"));
+                     AudienceUtil.sendMessage(player, Component.translatable("messages.error.no-permission"));
                     CoreMain.soundManager.playSound(player, SoundUtil.mistake);
                     return 0;
                 }
@@ -60,21 +61,21 @@ public class ClaimRemove {
                 }
             }
             default -> {
-                CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.remove.invalid-type"));
+                 AudienceUtil.sendMessage(player, Component.translatable("messages.claims.remove.invalid-type"));
                 CoreMain.soundManager.playSound(player, SoundUtil.mistake);
                 return 0;
             }
         }
 
         if (claimId == -1) {
-            CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.remove.not-found"));
+             AudienceUtil.sendMessage(player, Component.translatable("messages.claims.remove.not-found"));
             CoreMain.soundManager.playSound(player, SoundUtil.mistake);
             return 0;
         }
 
         Claim claim = ClaimManager.getClaimByID(claimId);
         if (claim == null) {
-            CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.remove.failed"));
+             AudienceUtil.sendMessage(player, Component.translatable("messages.claims.remove.failed"));
             CoreMain.soundManager.playSound(player, SoundUtil.mistake);
             return 0;
         }
@@ -99,12 +100,12 @@ public class ClaimRemove {
         boolean success = ClaimManager.removeClaimById(claimId);
 
         if (success) {
-            CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.remove.success"));
+             AudienceUtil.sendMessage(player, Component.translatable("messages.claims.remove.success"));
             CoreMain.soundManager.playSound(player, SoundUtil.success);
             ClaimLogger.logClaimDeleted(player, claimName);
             return 1;
         }
-        CoreMain.plugin.sendMessage(player, Component.translatable("messages.claims.remove.failed"));
+         AudienceUtil.sendMessage(player, Component.translatable("messages.claims.remove.failed"));
         CoreMain.soundManager.playSound(player, SoundUtil.mistake);
         return 0;
     }

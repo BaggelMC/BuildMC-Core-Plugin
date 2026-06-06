@@ -5,9 +5,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.IllegalFormatException;
 import java.util.Objects;
 
 /**A Utility class for Bukkit Locations.*/
@@ -39,6 +41,7 @@ public final class LocationUtil {
      * @param data the serialized string
      * @return Location object
      */
+    @Contract(value = "null -> fail; _ -> new;", pure = true)
     public static @NotNull Location deserialize(String data) {
         if (data == null || data.isEmpty()) {
             throw new IllegalArgumentException("Data string cannot be null or empty");
@@ -54,13 +57,17 @@ public final class LocationUtil {
             throw new IllegalArgumentException("World not found: " + parts[0]);
         }
 
-        double x = Double.parseDouble(parts[1]);
-        double y = Double.parseDouble(parts[2]);
-        double z = Double.parseDouble(parts[3]);
-        float yaw = Float.parseFloat(parts[4]);
-        float pitch = Float.parseFloat(parts[5]);
+        try {
+            double x = Double.parseDouble(parts[1]);
+            double y = Double.parseDouble(parts[2]);
+            double z = Double.parseDouble(parts[3]);
+            float yaw = Float.parseFloat(parts[4]);
+            float pitch = Float.parseFloat(parts[5]);
 
-        return new Location(world, x, y, z, yaw, pitch);
+            return new Location(world, x, y, z, yaw, pitch);
+        } catch (IllegalFormatException e)  {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -70,28 +77,13 @@ public final class LocationUtil {
      * @param data the serialized string
      * @return Location object, or null is failed
      */
+    @Contract(value = "_ -> _", pure = true)
     public static @Nullable Location tryDeserialize(String data) {
-        if (data == null || data.isEmpty()) {
+        try {
+            return deserialize(data);
+        } catch (Exception e) {
             return null;
         }
-
-        String[] parts = data.split(",");
-        if (parts.length != 6) {
-            return null;
-        }
-
-        World world = Bukkit.getWorld(parts[0]);
-        if (world == null) {
-            return null;
-        }
-
-        double x = Double.parseDouble(parts[1]);
-        double y = Double.parseDouble(parts[2]);
-        double z = Double.parseDouble(parts[3]);
-        float yaw = Float.parseFloat(parts[4]);
-        float pitch = Float.parseFloat(parts[5]);
-
-        return new Location(world, x, y, z, yaw, pitch);
     }
 
     /**
@@ -102,6 +94,7 @@ public final class LocationUtil {
      * @param pos2 Second corner location
      * @return Number of chunks in the rectangular selection
      */
+    @Contract(pure = true)
     public static int calculateChunkArea(@NotNull Location pos1, @NotNull Location pos2) {
         if (!Objects.equals(pos1.getWorld(), pos2.getWorld())) {
             throw new IllegalArgumentException("Positions are in different worlds");
@@ -118,7 +111,13 @@ public final class LocationUtil {
 
     /**Calculates the Area in chunks between these chunk coordinates.
      *
+     * @param chunkX1 the smallest chunk X coordinate
+     * @param chunkZ1 the smallest chunk Z coordinate
+     * @param chunkX2 the largest chunk X coordinate
+     * @param chunkZ2 the largest chunk Z coordinate
+     *
      * @return The Area in chunks**/
+    @Contract(pure = true)
     public static int calculateChunkArea(int chunkX1, int chunkZ1, int chunkX2, int chunkZ2) {
         int width = Math.abs(chunkX2 - chunkX1) + 1;
         int height = Math.abs(chunkZ2 - chunkZ1) + 1;
@@ -133,6 +132,7 @@ public final class LocationUtil {
      * @param claim The claim
      * @return Vector array: [minCorner, maxCorner]
      */
+    @Contract(pure = true)
     public static Vector[] getBlockCorners(Claim claim) {
         int minChunkX = Math.min(claim.getChunkX1(), claim.getChunkX2());
         int maxChunkX = Math.max(claim.getChunkX1(), claim.getChunkX2());

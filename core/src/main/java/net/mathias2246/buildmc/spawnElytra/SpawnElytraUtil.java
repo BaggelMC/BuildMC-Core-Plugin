@@ -183,6 +183,16 @@ public class SpawnElytraUtil {
                 );
             } catch (Exception ignore) {}
         });
+        GameVersionUtil.onVersion("26.1", v -> {
+            try {
+                //noinspection RedundantCollectionOperation
+                effectiveBlockList.addAll(
+                        List.of(
+                                Objects.requireNonNull(Material.matchMaterial("GOLDEN_DANDELION"))
+                        )
+                );
+            } catch (Exception ignore) {}
+        });
 
 
         for (Material material : effectiveBlockList) {
@@ -246,7 +256,6 @@ public class SpawnElytraUtil {
 
     /**Makes the player glide using the spawn-elytra.*/
     public static void setPlayerFlying(@NotNull Player player) {
-        var mode = player.getGameMode();
         if (!isSurvival(player)) return;
         player.setGliding(true);
         player.setAllowFlight(false);

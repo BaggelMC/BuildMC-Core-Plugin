@@ -5,7 +5,7 @@ spawn-elytra:
   # Enable or Disable the spawn elytra feature
   enabled: true # Default: true
   # The strength of the spawn elytra boost
-  strength: 5 # Default: 5
+  strength: 2 # Default: 2
   # Should the use of firework rockets with the spawn elytra be blocked?
   disable-rockets: true # Default: true
   # Disable gliding for players when joining. Used to prevent bugs.

@@ -2,10 +2,7 @@ package net.mathias2246.buildmc.claims.protections.entities;
 
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
-import net.kyori.adventure.text.Component;
-import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Protection;
-import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -17,6 +14,7 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
@@ -39,10 +37,7 @@ public class HangingEntities extends Protection {
     public void onPaintingBreak(HangingBreakByEntityEvent event) {
         if (!(event.getRemover() instanceof Player player)) return;
 
-        if (!ClaimManager.isPlayerAllowed(player, getKey(), event.getEntity().getLocation())) {
-            event.setCancelled(true);
-            CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.entity-damage"));
-        }
+        ProtectionUtil.handleProtection(event, this, event.getEntity().getLocation(), player);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -51,14 +46,11 @@ public class HangingEntities extends Protection {
 
         if (player == null) return;
 
-        if (!ClaimManager.isPlayerAllowed(player, getKey(), event.getEntity().getLocation())) {
-            event.setCancelled(true);
-            CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.block-place"));
-        }
+        ProtectionUtil.handleProtection(event, this, event.getEntity().getLocation(), player);
     }
 
     @Override
-    public String getTranslationBaseKey() {
-        return "claims.flags.hanging-entities";
+    public @NonNull String getTranslationBaseKey() {
+        return "claims.protections.hanging-entities";
     }
 }

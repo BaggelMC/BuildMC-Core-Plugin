@@ -3,10 +3,10 @@ package net.mathias2246.buildmc.claims.protections.misc;
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
 import net.kyori.adventure.text.Component;
-import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
+import net.mathias2246.buildmc.util.AudienceUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
@@ -21,6 +21,7 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.projectiles.ProjectileSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
@@ -31,8 +32,8 @@ public class ProjectileInteractions extends Protection {
     }
 
     @Override
-    public String getTranslationBaseKey() {
-        return "claims.flags.projectile-interactions";
+    public @NonNull String getTranslationBaseKey() {
+        return "claims.protections.projectile-interactions";
     }
 
     @Override
@@ -55,7 +56,7 @@ public class ProjectileInteractions extends Protection {
         if (!ClaimManager.isPlayerAllowed(player, getKey(), block.getLocation())) {
             projectile.remove();
             event.setCancelled(true);
-            CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.interact"));
+            AudienceUtil.sendActionBar(player, Component.translatable(getTranslationBaseKey()+".message"));
         }
 
     }

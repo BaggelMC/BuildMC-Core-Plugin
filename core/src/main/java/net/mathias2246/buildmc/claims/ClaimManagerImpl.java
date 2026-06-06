@@ -1,5 +1,7 @@
 package net.mathias2246.buildmc.claims;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.ClaimManager;
 import net.mathias2246.buildmc.api.claims.ClaimType;
@@ -87,7 +89,7 @@ public class ClaimManagerImpl implements ClaimManager {
     }
 
     @Override
-    public List<Claim> getClaimsInArea(Location pos1, Location pos2) throws SQLException, IllegalArgumentException {
+    public ImmutableSet<Claim> getClaimsInArea(Location pos1, Location pos2) throws SQLException, IllegalArgumentException {
         return net.mathias2246.buildmc.claims.ClaimManager.getClaimsInArea(pos1, pos2);
     }
 
@@ -112,7 +114,7 @@ public class ClaimManagerImpl implements ClaimManager {
     }
 
     @Override
-    public List<Claim> getAllClaims() throws SQLException {
+    public ImmutableSet<Claim> getAllClaims() throws SQLException {
         return net.mathias2246.buildmc.claims.ClaimManager.getAllClaims();
     }
 
@@ -190,7 +192,7 @@ public class ClaimManagerImpl implements ClaimManager {
     }
 
     @Override
-    public Long tryClaimPlaceholderArea(@NotNull String claimName, @NotNull Location pos1, @NotNull Location pos2) throws IllegalArgumentException {
+    public Long tryClaimPlaceholderArea(@NotNull String claimName, Location pos1, Location pos2) throws IllegalArgumentException {
         if (pos1.getWorld() == null) {
             throw new IllegalArgumentException("Both locations must have a world.");
         } else {

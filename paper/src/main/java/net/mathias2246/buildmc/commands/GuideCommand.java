@@ -4,9 +4,12 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
+import net.kyori.adventure.text.Component;
+import net.mathias2246.buildmc.util.AudienceUtil;
 
 public class GuideCommand implements CustomCommand {
 
+    @Override
     public LiteralCommandNode<CommandSourceStack> getCommand() {
         var cmd = Commands.literal("guide");
 
@@ -14,7 +17,7 @@ public class GuideCommand implements CustomCommand {
 
         cmd.executes(
                 command -> {
-                    command.getSource().getSender().sendMessage("/guide <args>");
+                    AudienceUtil.sendMessage(command.getSource().getSender(), Component.text("/guide <args>"));
                     return 0;
                 }
         );

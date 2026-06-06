@@ -1,5 +1,6 @@
 package net.mathias2246.buildmc.deaths;
 
+import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.util.ItemStackSerialization;
 import org.bukkit.Material;
@@ -24,7 +25,8 @@ public class DeathListener implements Listener {
         ItemStack[] armor = inv.getArmorContents().clone();
         ItemStack offhand = inv.getItemInOffHand().clone();
 
-        String deathMessage = event.getDeathMessage();
+        Component deathMessage = event.deathMessage();
+
         int totalExp = player.getTotalExperience();
         var uuid = player.getUniqueId();
 
@@ -57,7 +59,7 @@ public class DeathListener implements Listener {
                         CoreMain.databaseManager.getConnection(),
                         uuid,
                         totalExp,
-                        deathMessage,
+                        CoreMain.gsonComponentSerializer.serialize(deathMessage != null ? deathMessage : Component.text("---")),
                         items
                 );
             } catch (Exception e) {

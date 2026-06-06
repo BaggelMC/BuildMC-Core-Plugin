@@ -15,8 +15,6 @@ import java.util.List;
  * This event is fired synchronously on the main server thread.
  * If the event is cancelled, <b>none</b> of the claims should be created.
  * <p>
- * Plugins may attach optional metadata to this event via
- * {@link #putMetadata(String, Object)}.
  */
 public class ClaimCreateEvent extends CustomEvent implements Cancellable {
 

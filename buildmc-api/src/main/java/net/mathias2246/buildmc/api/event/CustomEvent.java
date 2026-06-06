@@ -18,7 +18,7 @@ import java.util.Map;
  * override {@link #getHandlers()} as required by the Bukkit event system.
  *
  * @see MetadataHolder
- * @see CustomPlayerEvent
+ * @see CustomEntityEvent
  */
 public abstract class CustomEvent extends Event {
 

@@ -10,7 +10,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -54,10 +53,6 @@ public final class ClaimLogger {
         retentionDays = plugin.getConfig().getInt("claims.logs.retention-days", 14);
         mirrorToConsole = plugin.getConfig().getBoolean("claims.logs.mirror-to-console", false);
 
-        String rotationTimeStr =
-                plugin.getConfig().getString("claims.logs.rotation-time", "00:00");
-
-        LocalTime rotationTime = LocalTime.parse(rotationTimeStr);
         logDir = plugin.getDataFolder().toPath().resolve("logs/claims");
 
         if (!enabled) return;

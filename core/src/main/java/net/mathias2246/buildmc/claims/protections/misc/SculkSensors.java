@@ -3,7 +3,6 @@ package net.mathias2246.buildmc.claims.protections.misc;
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
 import net.mathias2246.buildmc.api.claims.Protection;
-import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -16,6 +15,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockReceiveGameEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
@@ -26,8 +26,8 @@ public class SculkSensors extends Protection {
     }
 
     @Override
-    public String getTranslationBaseKey() {
-        return "claims.flags.sculk-sensor";
+    public @NonNull String getTranslationBaseKey() {
+        return "claims.protections.sculk-sensor";
     }
 
     @Override
@@ -48,9 +48,7 @@ public class SculkSensors extends Protection {
 
         if (!(entity instanceof Player player)) return;
 
-        if (!ClaimManager.isPlayerAllowed(player, getKey(), block.getLocation())) {
-            event.setCancelled(true);
-        }
+        ProtectionUtil.handleProtection(event, this, block.getLocation(), player);
 
     }
 }

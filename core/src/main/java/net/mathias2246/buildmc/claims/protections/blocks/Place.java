@@ -2,10 +2,7 @@ package net.mathias2246.buildmc.claims.protections.blocks;
 
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
-import net.kyori.adventure.text.Component;
-import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Protection;
-import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -16,6 +13,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
@@ -26,8 +24,8 @@ public class Place extends Protection {
     }
 
     @Override
-    public String getTranslationBaseKey() {
-        return "claims.flags.player-place";
+    public @NonNull String getTranslationBaseKey() {
+        return "claims.protections.player-place";
     }
 
     @Override
@@ -38,11 +36,6 @@ public class Place extends Protection {
     }
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerPlace(BlockPlaceEvent event) {
-        Player player = event.getPlayer();
-
-        if (!ClaimManager.isPlayerAllowed(player, getKey(), event.getBlock().getLocation())) {
-            CoreMain.plugin.sendPlayerActionBar(player, Component.translatable("messages.claims.not-accessible.block-place"));
-            event.setCancelled(true);
-        }
+        ProtectionUtil.handleProtection(event, this, event.getBlockPlaced().getLocation(), event.getPlayer());
     }
 }

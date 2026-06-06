@@ -3,6 +3,7 @@ package net.mathias2246.buildmc.ui;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.*;
 import com.comphenix.protocol.wrappers.BlockPosition;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -46,7 +47,7 @@ public class SignInputScreen implements Listener {
         Sign sign = (Sign) Material.OAK_SIGN.createBlockData().createBlockState();
 
         SignSide d = sign.getSide(Side.FRONT);
-        d.setLine(1, Objects.requireNonNullElse(footer, ""));
+        d.line(1, Component.text(Objects.requireNonNullElse(footer, "")));
 
         player.sendBlockChange(signLoc, sign.getBlockData());
         player.sendBlockUpdate(signLoc, sign);
