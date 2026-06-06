@@ -42,8 +42,6 @@ public class DatabaseManager {
                 logger.severe("Failed to create database directory!");
             }
         }
-
-        config.reloadConfig(); // Ensure latest config is loaded
     }
 
     public void connect() {

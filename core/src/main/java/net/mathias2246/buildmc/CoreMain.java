@@ -31,8 +31,6 @@ import net.mathias2246.buildmc.player.status.StatusConfig;
 import net.mathias2246.buildmc.ui.claims.ClaimUIs;
 import net.mathias2246.buildmc.util.BStats;
 import net.mathias2246.buildmc.util.SoundManager;
-import net.mathias2246.buildmc.util.config.ConfigHandler;
-import net.mathias2246.buildmc.util.config.ConfigurationValidationException;
 import net.mathias2246.buildmc.util.language.LanguageManager;
 import net.mathias2246.buildmc.util.registry.*;
 import org.bukkit.Bukkit;
@@ -47,7 +45,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -282,7 +279,6 @@ public final class CoreMain {
 
     private static void initializeConfigs() {
         databaseConfig = new DatabaseConfig();
-        initConfig(databaseConfig);
     }
 
     private static void initializeDatabase() {
@@ -302,18 +298,6 @@ public final class CoreMain {
             ClaimTable.calculateRemainingClaims(databaseManager.getConnection());
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    private static void initConfig(ConfigHandler config) {
-        config.generateConfig();
-        try {
-            config.loadConfig();
-            config.validateConfig();
-        } catch (IOException e) {
-            plugin.getLogger().severe("Failed to load config: " + e);
-        } catch (ConfigurationValidationException e) {
-            plugin.getLogger().severe("Config validation failed: " + e);
         }
     }
 }
