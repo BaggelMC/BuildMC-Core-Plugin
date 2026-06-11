@@ -288,6 +288,13 @@ messages:
           lore-line1: "<gray>Verwende <gold>/claim whitelist add</gold> </gray>"
           lore-line2: "<gray>um jemanden zu whitelisten.</gray>"
           click-info: "<gray><italic>Klick hier um whitelist Befehl einzufügen.</italic></gray>"
+
+          dialog-title: "<green>Füge einen Spieler zur Claim Whitelist hinzu.</green>"
+          input-label: "<yellow>Gebe den Spielernamen ein:</yellow>"
+
+          confirm: "<green>Bestätigen</green>"
+          cancel: "<red>Abbrechen</red>"
+
         delete-confirm-menu:
           title: "%player% entfernen?"
           success: <green>Spieler erfolgreich von der Whitelist entfernt.</green>

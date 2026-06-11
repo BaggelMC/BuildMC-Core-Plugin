@@ -268,6 +268,12 @@ messages:
           lore-line2: "<gray>to whitelist someone.</gray>"
           click-info: "<gray><italic>> Click this to insert the whitelist command <</italic></gray>"
 
+          dialog-title: "<green>Add a player to the claim whitelist.</green>"
+          input-label: "<yellow>Enter the player name:</yellow>"
+
+          confirm: "<green>Confirm</green>"
+          cancel: "<red>Cancel</red>"
+
         delete-confirm-menu:
           title: "Remove %player%?"
           success: "<green>Player removed from whitelist!</green>"

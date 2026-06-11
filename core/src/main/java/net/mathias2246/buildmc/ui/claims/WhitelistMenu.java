@@ -8,7 +8,14 @@ import com.github.stefvanschie.inventoryframework.pane.Pane;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import com.github.stefvanschie.inventoryframework.pane.util.Slot;
 import com.google.common.collect.ImmutableSet;
+import io.papermc.paper.dialog.Dialog;
+import io.papermc.paper.registry.data.dialog.ActionButton;
+import io.papermc.paper.registry.data.dialog.DialogBase;
+import io.papermc.paper.registry.data.dialog.action.DialogAction;
+import io.papermc.paper.registry.data.dialog.input.DialogInput;
+import io.papermc.paper.registry.data.dialog.type.DialogType;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickCallback;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
@@ -168,23 +175,46 @@ public class WhitelistMenu {
                         e.setCancelled(true);
                         CoreMain.soundManager.playSound(player, SoundUtil.notification);
 
-                        var sign = new SignInputScreen((signKey, input) -> {
-                            if (input.isBlank()) return;
+                        Dialog dialog = Dialog.create(builder -> builder.empty()
+                                .base(DialogBase.builder(Message.msg(player, "messages.claims.ui.whitelist-menu.add-button.dialog-title"))
+                                        .canCloseWithEscape(true)
+                                        .inputs(List.of(
+                                                DialogInput.text("player_name", Message.msg(player, "messages.claims.ui.whitelist-menu.add-button.input-label"))
+                                                        .build()
+                                        ))
+                                        .build()
+                                )
+                                .type(DialogType.confirmation(
+                                        ActionButton.builder(Message.msg(player, "messages.claims.ui.whitelist-menu.add-button.confirm"))
+                                                .action(DialogAction.customClick(
+                                                        (view, audience) -> {
+                                                            String input = view.getText("player_name");
+                                                            if (input == null || input.isBlank()) return;
 
-                            var targetPlayer = Bukkit.getPlayer(input);
-                            if (targetPlayer == null) {
-                                CoreMain.soundManager.playSound(player, SoundUtil.mistake);
-                                AudienceUtil.sendMessage(player, Component.translatable("messages.claims.whitelist.player-not-found"));
-                                return;
-                            }
+                                                            Player target = Bukkit.getPlayer(input);
+                                                            if (target == null) {
+                                                                CoreMain.soundManager.playSound(player, SoundUtil.mistake);
+                                                                AudienceUtil.sendMessage(player, Component.translatable("messages.claims.whitelist.player-not-found"));
+                                                                return;
+                                                            }
 
-                            ClaimManager.addPlayerToWhitelist(claim, targetPlayer.getUniqueId());
+                                                            ClaimManager.addPlayerToWhitelist(claim, target.getUniqueId());
 
-                            CoreMain.soundManager.playSound(player, SoundUtil.success);
-                            AudienceUtil.sendMessage(player, Component.translatable("messages.claims.whitelist.added"));
-                        });
+                                                            CoreMain.soundManager.playSound(player, SoundUtil.success);
+                                                            AudienceUtil.sendMessage(player, Component.translatable("messages.claims.whitelist.added"));
 
-                        sign.openSignInput(player, "  Player Name:  ", "whitelist_player_for_claim");
+                                                            Bukkit.getScheduler().runTask(plugin, () -> open(player, claim));
+                                                        },
+                                                        ClickCallback.Options.builder().uses(1).build()
+                                                ))
+                                                .build(),
+                                        ActionButton.builder(Message.msg(player, "messages.claims.ui.whitelist-menu.add-button.cancel"))
+                                                .action(null) // null = just close the dialog
+                                                .build()
+                                ))
+                        );
+
+                        player.showDialog(dialog);
                     }), 0, 0);
                     addButton.setPriority(Pane.Priority.HIGH);
 
@@ -270,8 +300,8 @@ public class WhitelistMenu {
                         open(player, claim);
                     }), 5, 1);
 
-                    gui.addPane(Slot.fromXY(0, 2), pane);
-                    gui.addPane(Slot.fromXY(0, 2), RED_BACKGROUND);
+                    gui.addPane(Slot.fromXY(0, 0), pane);
+                    gui.addPane(Slot.fromXY(0, 0), RED_BACKGROUND);
 
                     Bukkit.getScheduler().runTask(plugin, bukkitTask -> {
                         gui.show(player);
