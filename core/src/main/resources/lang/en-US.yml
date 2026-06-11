@@ -6,13 +6,12 @@ messages:
     message: "<green>Welcome %player_name%!</green>"
 
   guides:
-
     guide-not-found: "<red>This guide doesn't exist!</red>"
 
     commands: |-
       ==================== <blue>Commands</blue> ====================
       <gray>Here is a list of custom commands you can use:</gray>
-      
+
       <gray>- </gray><gold>/rules</gold>  | Gives you the rules of the server
       <gray>- </gray><gold>/spawn</gold> | Teleports you to the worldspawn
       <gray>- </gray><gold>/claim</gold>   | Manage your claims
@@ -104,35 +103,34 @@ messages:
 
       successfully-claimed-area: |-
         <gold>---------------------------------------</gold>
-        
+
         <green>Successfully claimed area!</green>
-        
+
         <blue>You have </blue>%chunks_left%<blue> chunks left to claim</blue>
-        
+
         <gold>---------------------------------------</gold>
 
       successfully-claimed-area-no-count: |-
         <gold>---------------------------------------</gold>
-        
+
         <green>Successfully claimed area!</green>
-        
+
         <gold>---------------------------------------</gold>
 
       successfully-removed-area: |-
         <gold>---------------------------------------</gold>
-        
+
         <green>Successfully removed area!</green>
         <blue>You now have </blue>%chunks_left%<blue> chunks left to claim</blue>
-        
+
         <gold>---------------------------------------</gold>
 
       successfully-removed-area-no-count: |-
         <gold>---------------------------------------</gold>
-        
+
         <green>Successfully removed area!</green>
-        
+
         <gold>---------------------------------------</gold>
-      
 
       other-claim-in-selection: "\n<red>There is someone else's claim in your selection!</red>\n"
 
@@ -200,7 +198,7 @@ messages:
       <gray>- Right-Click to select your second chunk.</gray>
       <gray>- Use '<gold>/claim create \<team/player> <name></gold>'
         to create a claim for yourself or your team.</gray>
-      
+
       <gray>- Use '<gold>/claim</gold>' to open the claims menu.
       <gray>- In the claims menu you can manage the settings of your claims.
       <gold>---------------------------------------</gold>
@@ -223,7 +221,7 @@ messages:
         title: "Create a Claim"
         notice: |-
           <red>Make sure you have selected your area with the <u><click:open_url:https://baggel.de/core/player/claims/introduction/#creating-a-claim>claim tool</click></u> first!</red>
-  
+
           <green>Select a <yellow><u><click:open_url:https://baggel.de/core/player/claims/claim-types/>Claim Type</u></yellow> and give your claim a <yellow>name</yellow>.</green>
         claim-type: "<yellow>Claim Type</yellow>"
         claim-name: "<yellow>Claim Name:</yellow>"

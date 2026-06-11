@@ -6,7 +6,6 @@ messages:
     message: "<green>Willkommen %player_name%!</green>"
 
   guides:
-
     guide-not-found: "<red>Diesen Guide gibt es nicht!</red>"
 
     commands: |-
@@ -30,24 +29,24 @@ messages:
     pos2-set: <green>Position 2 gesetzt.</green>
     success: <green>Elytra-Zone erstellt.</green>
     error:
-      different-worlds: '<red>Positionen müssen in der gleichen Welt sein!</red>'
+      different-worlds: "<red>Positionen müssen in der gleichen Welt sein!</red>"
   end-event:
     opened: <green>Das Ende ist jetzt 'geöffnet'.</green>
     closed: <green>Das Ende ist jetzt 'geschlossen'.</green>
-    broadcast-closed: '<gold>--------------------------------</gold>
+    broadcast-closed: "<gold>--------------------------------</gold>
 
 
       <yellow>Das Ende wurde <red>GESCHLOSSEN</red>!</yellow>
 
 
-      <gold>--------------------------------</gold>'
-    broadcast-opened: '<gold>--------------------------------</gold>
+      <gold>--------------------------------</gold>"
+    broadcast-opened: "<gold>--------------------------------</gold>
 
 
       <yellow>Das Ende wurde <green>GEÖFFNET</green>!</yellow>
 
 
-      <gold>--------------------------------</gold>'
+      <gold>--------------------------------</gold>"
     closed-message: <red>Das Ende ist derzeit geschlossen.
 
   status:
@@ -60,8 +59,8 @@ messages:
     cannot-set: "<red>Dein Status kann nicht gesetzt werden!</red>"
 
   error:
-    general: '<red>Ein Fehler ist aufgetreten: <red>%error_message%'
-    general-str: 'Ein Fehler ist aufgetreten: %error_message%'
+    general: "<red>Ein Fehler ist aufgetreten: <red>%error_message%"
+    general-str: "Ein Fehler ist aufgetreten: %error_message%"
     no-permission: <red>Du hast keine Berechtigung, dies zu tun.
     no-permission-str: Du hast keine Berechtigung, dies zu tun.
     not-a-player: <red>Dieser Befehl kann nur von Spielern verwendet werden.</red>
@@ -95,52 +94,58 @@ messages:
       tool-name: Claim-Ecken auswählen
       tool-tooltip-line1: Benutze dieses Tool, um die Ecken deines Claims festzulegen.
       tool-tooltip-line2: Benutze '/claim help' um hilfe zu erhalten.
-      tool-tooltip-line3: ''
-      tool-tooltip-line4: ''
+      tool-tooltip-line3: ""
+      tool-tooltip-line4: ""
       tool-cooldown: <red>Warte Kurz!</red>
       give-success: <green>Erfolg! Klick <blue><click:run_command:/claim help>[HIER]</click></blue> für hilfe!</green>
       full-inventory: <red>Dein Inventar ist vol>l! Bitte schaffe Platz für das Claim-Tool.</red>
-      selection-too-large: <red>Deine Auswahl darf nicht breiter oder länger als %selection_limit%
+      selection-too-large:
+        <red>Deine Auswahl darf nicht breiter oder länger als %selection_limit%
         sein!</red>
       no-first-selection: <red>Du musst zuerst die andere Ecke auswählen!</red>
       set-pos1: <green>Position erfolgreich gesetzt 1!</green>
       set-pos2: <green>Position erfolgreich gesetzt 2!</green>
-      both-positions-set: <green>Beide Positionen gesetzt! Die Zone kann jetzt beansprucht
+      both-positions-set:
+        <green>Beide Positionen gesetzt! Die Zone kann jetzt beansprucht
         werden.</green>
       no-team-to-select: <red>Du musst in einem Team sein, um einen Claim zu setzen!</red>
-      successfully-claimed-area: '<gold>---------------------------------------</gold>
+      successfully-claimed-area:
+        "<gold>---------------------------------------</gold>
 
         <green>Gebiet erfolgreich geclaimt!</green>
 
         <blue>Du hast noch </blue>%chunks_left%<blue> Chunks zum Claim verfügbar</blue>
 
-        <gold>---------------------------------------</gold>'
-      successfully-claimed-area-no-count: '<gold>---------------------------------------</gold>
+        <gold>---------------------------------------</gold>"
+      successfully-claimed-area-no-count:
+        "<gold>---------------------------------------</gold>
 
         <green>Gebiet erfolgreich geclaimt!</green>
 
-        <gold>---------------------------------------</gold>'
-      successfully-removed-area: '<gold>---------------------------------------</gold>
+        <gold>---------------------------------------</gold>"
+      successfully-removed-area:
+        "<gold>---------------------------------------</gold>
 
         <green>Gebiet erfolgreich entfernt!</green>
 
         <blue>Du hast jetzt noch </blue>%chunks_left%<blue> Chunks zum Claim verfügbar</blue>
 
-        <gold>---------------------------------------</gold>'
-      successfully-removed-area-no-count: '<gold>---------------------------------------</gold>
+        <gold>---------------------------------------</gold>"
+      successfully-removed-area-no-count:
+        "<gold>---------------------------------------</gold>
 
         <green>Gebiet erfolgreich entfernt!</green>
 
-        <gold>---------------------------------------</gold>'
-      other-claim-in-selection: '
+        <gold>---------------------------------------</gold>"
+      other-claim-in-selection: "
 
         <red>In deiner Auswahl befindet sich ein fremder Claim!</red>
 
-        '
+        "
       no-chunks-left: <red>Du hast keine Chunks zum Claimen mehr verfügbar!</red>
     create:
       missing-positions: <red>Du hast noch nicht beide Positionen gesetzt.</red>
-      success: '<blue>------------------------</blue>
+      success: "<blue>------------------------</blue>
 
         <green>Gebiet erfolgreich geclaimt.
 
@@ -148,24 +153,24 @@ messages:
 
         <green>Du hast <gold>%remaining_claims%</gold> Chunks übrig.</green>
 
-        <blue>------------------------</blue>'
-      failed: '<red>Fehler: Gebiet konnte nicht geclaimt werden.</red>'
-      success-server: '<blue>------------------------</blue>
+        <blue>------------------------</blue>"
+      failed: "<red>Fehler: Gebiet konnte nicht geclaimt werden.</red>"
+      success-server: "<blue>------------------------</blue>
 
         <green>Server Gebiet erfolgreich geclaimt!</green>
 
-        <blue>------------------------</blue>'
-      success-placeholder: '<blue>------------------------</blue>
+        <blue>------------------------</blue>"
+      success-placeholder: "<blue>------------------------</blue>
 
         <green>Platzhalter Gebiet erfolgreich geclaimt!</green>
 
-        <blue>------------------------</blue>'
-      invalid-type: '<red>Fehler: Argument ''type'' muss entweder ''player'' oder
-        ''team'' sein.</red>'
-      different-worlds: '<red>Fehler: Beide Positionen müssen in der selben Welt sein.</red>'
-      no-remaining-claims: '<red>Du hast nicht genug Chunks übrig
+        <blue>------------------------</blue>"
+      invalid-type: "<red>Fehler: Argument 'type' muss entweder 'player' oder
+        'team' sein.</red>"
+      different-worlds: "<red>Fehler: Beide Positionen müssen in der selben Welt sein.</red>"
+      no-remaining-claims: "<red>Du hast nicht genug Chunks übrig
 
-        Übrige Chunks: %remaining_claims%</red>'
+        Übrige Chunks: %remaining_claims%</red>"
 
       world-not-allowed: "<red>Du kannst in dieser Dimension keine Claims erstellen!</red>"
 
@@ -177,8 +182,8 @@ messages:
       missing-input: "<red>Der Name kann nicht Leer sein.</red>"
       name-has-spaces: "<red>Der Name darf kein Leerzeichen enthalten.</red>"
     remove:
-      invalid-type: '<red>Fehler: Argument ''type'' muss entweder ''player'' oder
-        ''team'' sein.</red>'
+      invalid-type: "<red>Fehler: Argument 'type' muss entweder 'player' oder
+        'team' sein.</red>"
       not-found: <red>Der Claim konnte nicht gefunden werden oder gehört nicht dir.
       failed: <red>Claim konnte nicht entfernt werden.</red>
       success: <green>Claim erfolgreich entfernt.</green>
@@ -196,18 +201,22 @@ messages:
       not-on-list: <yellow>Dieser Spieler ist nicht auf der Whitelist.
       already-added: <yellow>Dieser Spieler ist bereits auf der Whitelist.
       player-not-found: <red>Der angegebene Spieler konnte nicht gefunden werden.
-      claim-not-found: <red>Der Claim konnte nicht gefunden werden oder gehört nicht
+      claim-not-found:
+        <red>Der Claim konnte nicht gefunden werden oder gehört nicht
         dir.
     protections:
-      invalid-type: <red>Invalider Claim typ. Benutze <yellow>player</yellow> oder
+      invalid-type:
+        <red>Invalider Claim typ. Benutze <yellow>player</yellow> oder
         <yellow>team</yellow>.
       invalid-flag: <red>Dieser Schutz existiert nicht.
-      invalid-value: <red>Invalider Wert. Er kann entweder <yellow>true</yellow> oder
+      invalid-value:
+        <red>Invalider Wert. Er kann entweder <yellow>true</yellow> oder
         <yellow>false</yellow> sein.
       not-found: <red>Keinen Claim mit diesem Namen gefunden.
       added: <green>Schutz <yellow>%flag%</yellow> wurde für diesen Claim <green>aktiviert</green>.
       removed: <green>Schutz <yellow>%flag%</yellow> wurde für diesen Claim <red>deaktiviert</red>.
-    help-message: "<gold>------------- <green>Claims Help</green> -------------</gold>\
+    help-message:
+      "<gold>------------- <green>Claims Help</green> -------------</gold>\
       \ \n<aqua>Drücke <green><click:open_url:'https://baggel.de/docs/de/v1.1.0/players/claims/'>hier</click></green>\
       \ um die vollständigen Docs zu öffnen.</aqua>\n<gray>- Benutze '<gold>/claim\
       \ claimtool</gold>' um das Claim Werkzeug zu erhalten.</gray>\n<gray>- Links-Klick\
@@ -225,7 +234,8 @@ messages:
       entity-damage: <red>Dieses Entity ist durch ein Land-Claim geschützt.</red>
       sign: <red>Dieses Schild ist durch ein Land-Claim geschützt.</red>
       interact: <red>Dieser Block ist durch ein Land-Claim geschützt.</red>
-      entity-rename: <red>Du kannst keine Entities umbenennen, die durch ein Land-Claim
+      entity-rename:
+        <red>Du kannst keine Entities umbenennen, die durch ein Land-Claim
         geschützt sind.</red>
       armor-stand: <red>Dieser Rüstungsständer ist durch ein Land-Claim geschützt.</red>
       tame-entity: <red>Dieses Entity ist durch ein Land-Claim geschützt.</red>
@@ -233,9 +243,11 @@ messages:
       fishing: <red>Dieses Gebiet ist durch ein Land-Claim geschützt.</red>
       vehicle: <red>Dieses Fahrzeug ist durch ein Land-Claim geschützt.</red>
       item-pickup: <red>Dieses Item ist durch ein Land-Claim geschützt.</red>
-      item-drop: <red>Du kannst keine Items in einem durch ein Land-Claim geschützten
+      item-drop:
+        <red>Du kannst keine Items in einem durch ein Land-Claim geschützten
         Gebiet fallen lassen.</red>
-      frostwalker: <red>Du kannst <lang:enchantment.minecraft.frost_walker> in einem
+      frostwalker:
+        <red>Du kannst <lang:enchantment.minecraft.frost_walker> in einem
         geschützten Gebiet nicht benutzen.</red>
       entity-bucket: <red>Dieses niedliche %entity% ist durch ein Land-Claim geschützt.</red>
       attach-leash: <red>Dieses Entity ist durch ein Land-Claim geschützt.</red>
@@ -249,7 +261,7 @@ messages:
         confirm: <red>Bestätigen</red>
         cancel: <green>Abbruch</green>
       errors:
-        no-item-meta: '<red>Fehler: item-meta konnte nicht generiert werden.'
+        no-item-meta: "<red>Fehler: item-meta konnte nicht generiert werden."
 
       create-dialog:
         title: "Erstelle einen Claim"
@@ -271,16 +283,16 @@ messages:
 
       select-menu:
         title: <gold>Wähle einen Claim aus.</gold>
-        player-type: '<gray>Typ: Spieler Claim</gray>'
-        team-type: '<gray>Typ: Team Claim</gray>'
-        server-type: '<gray>Typ: Server Claim</gray>'
-        placeholder-type: '<gray>Typ: Platzhalter Claim</gray>'
-        unknown-type: '<gray>Typ: Unbekannt</gray>'
-        id: '<dark_gray>ID: %id%</dark_gray>'
+        player-type: "<gray>Typ: Spieler Claim</gray>"
+        team-type: "<gray>Typ: Team Claim</gray>"
+        server-type: "<gray>Typ: Server Claim</gray>"
+        placeholder-type: "<gray>Typ: Platzhalter Claim</gray>"
+        unknown-type: "<gray>Typ: Unbekannt</gray>"
+        id: "<dark_gray>ID: %id%</dark_gray>"
         empty: <red>Du hast noch keine Claims.</red>
         new-claim-button: "<green>Neuen Claim erstellen</green>"
       edit-menu:
-        title: '<gold>Claim bearbeiten: ''%claim%''</gold>'
+        title: "<gold>Claim bearbeiten: '%claim%'</gold>"
 
         info-name: "<aqua>Claim Info</aqua>"
         info: |-
@@ -296,9 +308,9 @@ messages:
         delete-confirm-menu:
           title: <red>Löschung von '%claim%' bestätigen.</red>
           success: <green>Claim erfolgreich gelöscht.</green>
-          fail: '<red>Fehler: Claim konnte nicht gelöscht werden.</red>'
+          fail: "<red>Fehler: Claim konnte nicht gelöscht werden.</red>"
       protections-menu:
-        title: '<gold>Schutz: ''%claim%''</gold>'
+        title: "<gold>Schutz: '%claim%'</gold>"
         enabled: <green>Erlaubt</green> <gray>(Drücke zum Blockieren)</gray>
         disabled: <red>Blockiert</red> <gray>(Drücke zum Erlauben)</gray>
         toggle-hint: <dark_gray>Klicke unten, um umzuschalten</dark_gray>
@@ -331,8 +343,9 @@ claims:
       lore: <gray>Verhindert das platzieren von Blöcken.</gray>
     player-place-entity:
       name: <green>Entities Platzieren</green>
-      lore: '<gray>Verhindert das Platzieren von Entities wie: Armor Stands, Boote,
-        Minecarts oder End Crystals.</gray>'
+      lore:
+        "<gray>Verhindert das Platzieren von Entities wie: Armor Stands, Boote,
+        Minecarts oder End Crystals.</gray>"
     container:
       name: <green>Behälter</green>
       lore: <gray>Verhinder das Spieler Behälter öffnen kann (Kisten, Trichter...).</gray>
@@ -350,7 +363,8 @@ claims:
       lore: <gray>Verindert das Spieler Tränke werfen.</gray>
     vehicle-enter:
       name: <green>Fahrzeuge</green>
-      lore: <gray>Verhindert das Spieler sich auf Fahrzeuge wie Boote, Pferde oder
+      lore:
+        <gray>Verhindert das Spieler sich auf Fahrzeuge wie Boote, Pferde oder
         Minecarts setzen.</gray>
     bucket-usage:
       name: <green>Eimer</green>
