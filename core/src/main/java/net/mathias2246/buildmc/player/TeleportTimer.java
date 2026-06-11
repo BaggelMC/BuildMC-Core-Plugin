@@ -71,7 +71,7 @@ public class TeleportTimer extends PlayerTimer {
         @Override
         protected void onCancel() {
             unregisterInputListener();
-             AudienceUtil.sendMessage(player, Component.translatable("messages.teleport.cancelled"));
+             AudienceUtil.sendActionBar(player, Component.translatable("messages.teleport.cancelled"));
             CoreMain.soundManager.playSound(player, mistake);
         }
 
@@ -84,23 +84,34 @@ public class TeleportTimer extends PlayerTimer {
                             .replacement(String.valueOf(steps - currentStep))
                             .build();
 
-            AudienceUtil.sendMessage(player, 
+            AudienceUtil.sendActionBar(player,
                     Message.msg(player,"messages.teleport.counter").replaceText(secondsReplacement)
             );
             CoreMain.soundManager.playSound(player, notification);
         }
 
     private void registerInputListener() {
-        List<PacketType> packets = new ArrayList<>(List.of(
-                PacketType.Play.Client.POSITION,
-                PacketType.Play.Client.POSITION_LOOK
-        ));
-
-        inputListener = new PacketAdapter(CoreMain.plugin, packets) {
+        inputListener = new PacketAdapter(CoreMain.plugin, PacketType.Play.Client.STEER_VEHICLE) {
             @Override
             public void onPacketReceiving(PacketEvent event) {
-                if (event.getPlayer().getUniqueId().equals(player.getUniqueId())) {
-                    playerInputReceived = true;
+                if (!event.getPlayer().getUniqueId().equals(player.getUniqueId())) return;
+
+                try {
+                    Object handle = event.getPacket().getHandle();
+                    Object input = handle.getClass().getMethod("input").invoke(handle);
+                    Class<?> inputClass = input.getClass();
+
+                    boolean forward  = (boolean) inputClass.getMethod("forward").invoke(input);
+                    boolean backward = (boolean) inputClass.getMethod("backward").invoke(input);
+                    boolean left     = (boolean) inputClass.getMethod("left").invoke(input);
+                    boolean right    = (boolean) inputClass.getMethod("right").invoke(input);
+                    boolean jump     = (boolean) inputClass.getMethod("jump").invoke(input);
+
+                    if (forward || backward || left || right || jump) {
+                        playerInputReceived = true;
+                    }
+                } catch (Exception e) {
+                    CoreMain.plugin.getLogger().warning("Failed to read STEER_VEHICLE packet: " + e.getMessage());
                 }
             }
         };
