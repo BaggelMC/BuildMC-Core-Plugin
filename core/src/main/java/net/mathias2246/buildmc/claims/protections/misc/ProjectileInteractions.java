@@ -18,6 +18,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,7 +38,7 @@ public class ProjectileInteractions extends Protection {
     }
 
     @Override
-    public @NotNull GuiItem getDisplay(@NotNull Player uiHolder, @NotNull Gui gui) {
+    public @NotNull ItemStack getDisplay(@NotNull Player uiHolder, @NotNull Gui gui) {
         String t = getTranslationBaseKey();
 
         return ProtectionUtil.createDisplayItem(uiHolder, Material.ARROW, t);

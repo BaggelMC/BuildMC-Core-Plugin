@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
@@ -34,7 +35,7 @@ public class PistonMovement extends Protection {
     }
 
     @Override
-    public @NotNull GuiItem getDisplay(@NotNull Player uiHolder, @NotNull Gui gui) {
+    public @NotNull ItemStack getDisplay(@NotNull Player uiHolder, @NotNull Gui gui) {
         String t = getTranslationBaseKey();
 
         return ProtectionUtil.createDisplayItem(uiHolder, Material.PISTON, t);

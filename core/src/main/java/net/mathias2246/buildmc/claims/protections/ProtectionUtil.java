@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ProtectionUtil {
-    public static @NotNull GuiItem createDisplayItem(@NotNull Player uiHolder, @NotNull Material material, String baseTranslationKey) {
+    public static @NotNull ItemStack createDisplayItem(@NotNull Player uiHolder, @NotNull Material material, String baseTranslationKey) {
         ItemStack displayBase = new ItemStack(material);
         ItemUtil.editMeta(displayBase, (meta) -> {
             meta.itemName(
@@ -35,10 +35,7 @@ public class ProtectionUtil {
 
             meta.lore(ComponentUtil.splitComponentByNewline(Message.msg(uiHolder, baseTranslationKey + ".lore")));
         });
-        return new GuiItem(
-                displayBase,
-                UIUtil.noInteract
-        );
+        return displayBase;
     }
 
     public static <T extends Cancellable> void handleProtection(

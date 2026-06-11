@@ -14,6 +14,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
@@ -32,7 +33,7 @@ public class PressurePlatesAndTripwires extends Protection {
     }
 
     @Override
-    public @NotNull GuiItem getDisplay(@NotNull Player uiHolder, @NotNull Gui gui) {
+    public @NotNull ItemStack getDisplay(@NotNull Player uiHolder, @NotNull Gui gui) {
         String t = getTranslationBaseKey();
 
         return ProtectionUtil.createDisplayItem(uiHolder, Material.STONE_PRESSURE_PLATE, t);

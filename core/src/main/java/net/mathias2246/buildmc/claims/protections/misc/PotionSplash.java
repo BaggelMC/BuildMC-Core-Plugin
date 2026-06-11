@@ -39,7 +39,7 @@ public class PotionSplash extends Protection {
     }
 
     @Override
-    public @NotNull GuiItem getDisplay(@NotNull Player uiHolder, @NotNull Gui gui) {
+    public @NotNull ItemStack getDisplay(@NotNull Player uiHolder, @NotNull Gui gui) {
         String translationBaseKey = getTranslationBaseKey();
 
         ItemStack displayBase = new ItemStack(Material.STICK);
@@ -60,10 +60,7 @@ public class PotionSplash extends Protection {
             meta.lore(ComponentUtil.splitComponentByNewline(Message.msg(uiHolder, translationBaseKey + ".lore")));
         });
 
-        return new GuiItem(
-                displayBase,
-                UIUtil.noInteract
-        );
+        return displayBase;
     }
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPotionSplash(PotionSplashEvent event) {

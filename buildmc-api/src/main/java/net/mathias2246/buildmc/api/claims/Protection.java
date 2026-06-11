@@ -5,6 +5,7 @@ import net.mathias2246.buildmc.util.registry.DeferredRegistry;
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -13,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 /**
  * Represents a type of {@code Protection} that can be applied to claims.
@@ -164,5 +166,9 @@ public abstract class Protection implements Keyed, Displayable, Listener {
     @Override
     public @NotNull NamespacedKey getKey() {
         return key;
+    }
+
+    public @Nullable Consumer<? super InventoryClickEvent> getDisplayAction() {
+        return event -> event.setCancelled(true);
     }
 }

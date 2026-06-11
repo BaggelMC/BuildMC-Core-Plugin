@@ -85,8 +85,12 @@ public class ProtectionsMenu {
                             if (protection.isHidden()) continue;
 
                             int row = lowerRow ? 3 : 0;
+                            GuiItem display = new GuiItem(
+                                    protection.getDisplay(player, gui),
+                                    protection.getDisplayAction()
+                            );
 
-                            currentPane.addItem(protection.getDisplay(player, gui), column, row);
+                            currentPane.addItem(display, column, row);
                             currentPane.addItem(makeStatusItem(gui, currentPane, claim, protection, column, row + 1, player), column, row + 1);
 
                             column++;
