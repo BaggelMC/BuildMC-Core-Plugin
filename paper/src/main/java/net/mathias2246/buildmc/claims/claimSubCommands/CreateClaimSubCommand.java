@@ -6,6 +6,7 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.mathias2246.buildmc.commands.claim.ClaimCreate;
 import net.mathias2246.buildmc.commands.claim.ClaimSuggestions;
+import net.mathias2246.buildmc.ui.claims.CreateClaimDialog;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -15,6 +16,11 @@ import static net.mathias2246.buildmc.commands.CommandUtil.requiresPlayer;
 public final class CreateClaimSubCommand {
     public static ArgumentBuilder<CommandSourceStack, ?> createSubCommand() {
         return Commands.literal("create")
+                .executes(command -> {
+                    if (!(requiresPlayer(command.getSource().getSender()) instanceof Player player)) return 0;
+                    CreateClaimDialog.open(player);
+                    return 1;
+                })
                 .then(
                         Commands.argument("type", StringArgumentType.word())
                                 .suggests((ctx, builder) -> {

@@ -158,6 +158,9 @@ messages:
       protected-server: "<red>The area you're trying to claim is protected by the server.</red>"
       overlap: "<red>The area you're trying to claim already contains claims by someone else.</red>"
 
+      missing-input: "<red>The name cannot be empty.</red>"
+      name-has-spaces: "<red>The name cannot contain spaces.</red>"
+
     remove:
       invalid-type: "<red>Error: Argument 'type' must be either 'player' or 'team'.</red>"
       not-found: "<red>That claim could not be found or is not owned by you."
@@ -216,6 +219,24 @@ messages:
       errors:
         no-item-meta: "<red>Error: Failed to generate item-meta."
 
+      create-dialog:
+        title: "Create a Claim"
+        notice: |-
+          <red>Make sure you have selected your area with the <u><click:open_url:https://baggel.de/core/player/claims/introduction/#creating-a-claim>claim tool</click></u> first!</red>
+  
+          <green>Select a <yellow><u><click:open_url:https://baggel.de/core/player/claims/claim-types/>Claim Type</u></yellow> and give your claim a <yellow>name</yellow>.</green>
+        claim-type: "<yellow>Claim Type</yellow>"
+        claim-name: "<yellow>Claim Name:</yellow>"
+
+        claim-types:
+          player: "Player"
+          team: "Team"
+          server: "Server"
+          placeholder: "Placeholder"
+
+        create: "<green>Create</green>"
+        cancel: "<red>Cancel</red>"
+
       select-menu:
         title: "<gold>Select a Claim</gold>"
 
@@ -227,6 +248,8 @@ messages:
 
         id: "<dark_gray>ID: %id%</dark_gray>"
         empty: "<red>You have not claimed anything yet.</red>"
+
+        new-claim-button: "<green>Create new Claim</green>"
 
       edit-menu:
         title: "<gold>Edit Claim: '%claim%'</gold>"

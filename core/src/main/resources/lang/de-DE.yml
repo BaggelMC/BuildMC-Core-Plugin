@@ -173,6 +173,9 @@ messages:
       error-database: <red>Ein Datenbank Fehler ist aufgetreten.</red>
       protected-server: <red>Das ausgewählte Gebiet enthält einen Schutz vom Server.</red>
       overlap: <red>Das ausgewählte Gebiet enthält einen anderen Claim.</red>
+
+      missing-input: "<red>Der Name kann nicht Leer sein.</red>"
+      name-has-spaces: "<red>Der Name darf kein Leerzeichen enthalten.</red>"
     remove:
       invalid-type: '<red>Fehler: Argument ''type'' muss entweder ''player'' oder
         ''team'' sein.</red>'
@@ -247,6 +250,25 @@ messages:
         cancel: <green>Abbruch</green>
       errors:
         no-item-meta: '<red>Fehler: item-meta konnte nicht generiert werden.'
+
+      create-dialog:
+        title: "Erstelle einen Claim"
+        notice: |-
+          <red>Stelle sicher, dass zuerst den Bereich mit dem <u><click:open_url:https://baggel.de/de/core/player/claims/introduction/#einen-claim-erstellen>Claim Tool</u> ausgewählt hast.</red>
+
+          <green>Wähle einen <yellow><u><click:open_url:https://baggel.de/de/core/player/claims/claim-types/>Claim Typ</u></yellow> aus und geben deinem Claim einen <yellow>Namen</yellow>.</green>
+        claim-type: "<yellow>Claim Typ</yellow>"
+        claim-name: "<yellow>Claim Name:</yellow>"
+
+        claim-types:
+          player: "Speiler"
+          team: "Team"
+          server: "Server"
+          placeholder: "Platzhalter"
+
+        create: "<green>Erstellen</green>"
+        cancel: "<red>Abbrechen</red>"
+
       select-menu:
         title: <gold>Wähle einen Claim aus.</gold>
         player-type: '<gray>Typ: Spieler Claim</gray>'
@@ -256,6 +278,7 @@ messages:
         unknown-type: '<gray>Typ: Unbekannt</gray>'
         id: '<dark_gray>ID: %id%</dark_gray>'
         empty: <red>Du hast noch keine Claims.</red>
+        new-claim-button: "<green>Neuen Claim erstellen</green>"
       edit-menu:
         title: '<gold>Claim bearbeiten: ''%claim%''</gold>'
 

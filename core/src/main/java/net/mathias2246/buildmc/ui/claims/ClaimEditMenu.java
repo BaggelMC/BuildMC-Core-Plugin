@@ -88,7 +88,7 @@ public class ClaimEditMenu {
 
                     StaticPane elements = new StaticPane(9, 3);
 
-                    addClaimInfoItem(elements, player, claim, 0, 0);
+                    addClaimInfoItem(elements, player, claim, 4, 0);
 
                     // Protections button
                     if (!HIDE_ALL_PROTECTIONS && !isPlaceholderClaim) {
