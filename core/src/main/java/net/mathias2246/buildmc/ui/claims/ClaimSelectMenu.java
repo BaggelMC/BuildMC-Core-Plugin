@@ -4,12 +4,14 @@ import com.github.stefvanschie.inventoryframework.adventuresupport.ComponentHold
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
 import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
+import com.github.stefvanschie.inventoryframework.pane.Pane;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import com.github.stefvanschie.inventoryframework.pane.util.Slot;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
+import net.mathias2246.buildmc.api.item.ItemUtil;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.ui.UIUtil;
 import net.mathias2246.buildmc.util.AudienceUtil;
@@ -26,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 import static net.mathias2246.buildmc.CoreMain.plugin;
+import static net.mathias2246.buildmc.ui.claims.ClaimEditMenu.BACKGROUND;
 
 public class ClaimSelectMenu {
 
@@ -83,9 +86,27 @@ public class ClaimSelectMenu {
 
                     pages.populateWithGuiItems(claimButtons);
 
+                    StaticPane background = new StaticPane(9, 5);
+                    background.setPriority(Pane.Priority.LOWEST);
+                    for (int x = 0; x < 9; x++) {
+                        for (int y = 0; y < 5; y++) {
+                            background.addItem(UIUtil.INVISIBLE_PANE, x, y);
+                        }
+                    }
+
+                    gui.addPane(Slot.fromXY(0, 0), background);
+
                     StaticPane bottomBar = UIUtil.BOTTOM_BAR.copy();
 
                     bottomBar.addItem(UIUtil.EXIT_BUTTON, 8, 0);
+
+                    ItemStack newClaimItem = new ItemStack(Material.LIME_STAINED_GLASS_PANE);
+                    ItemUtil.setName(newClaimItem, Message.msg(player, "messages.claims.ui.select-menu.new-claim-button"));
+                    bottomBar.addItem(new GuiItem(newClaimItem, e -> {
+                        e.setCancelled(true);
+                        CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
+                        Bukkit.getScheduler().runTask(plugin, () -> CreateClaimDialog.open(player));
+                    }), 0, 0);
 
                     var pageIndicator = UIUtil.makePageIndicator(gui, player, pages);
 
