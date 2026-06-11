@@ -25,10 +25,10 @@ import net.mathias2246.buildmc.player.status.StatusConfig;
 import net.mathias2246.buildmc.spawnElytra.*;
 import net.mathias2246.buildmc.util.SoundManager;
 import net.mathias2246.buildmc.util.SoundUtil;
-import net.mathias2246.buildmc.util.config.ConfigurationValidationException;
 import net.mathias2246.buildmc.util.registry.RegistriesHolder;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -130,7 +130,7 @@ public final class Main extends PluginMain implements Listener {
 
         try {
             EndListener.loadFromConfig();
-        } catch (ConfigurationValidationException e) {
+        } catch (InvalidConfigurationException e) {
             throw new RuntimeException(e);
         }
 

@@ -2,9 +2,9 @@ package net.mathias2246.buildmc.endEvent;
 
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.util.AudienceUtil;
-import net.mathias2246.buildmc.util.config.ConfigurationValidationException;
 import org.bukkit.PortalType;
 import org.bukkit.World;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -23,7 +23,7 @@ public class EndListener implements Listener {
 
     private static List<EntityType> blockedEntities;
 
-    public static void loadFromConfig() throws ConfigurationValidationException {
+    public static void loadFromConfig() throws InvalidConfigurationException {
         allowEnd = config.getBoolean("end-event.allow-end", false);
         List<String> rawList = config.getStringList("end-event.blocked-entities");
 
@@ -35,7 +35,7 @@ public class EndListener implements Listener {
                 EntityType type = EntityType.valueOf(upperName);
                 validatedEntities.add(type);
             } catch (IllegalArgumentException e) {
-                throw new ConfigurationValidationException("Invalid entity type in end-event.blocked-entities: " + name);
+                throw new InvalidConfigurationException("Invalid entity type in end-event.blocked-entities: " + name);
             }
         }
 
