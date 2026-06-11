@@ -25,6 +25,7 @@ messages:
   spawn-elytra:
     boost-hint: Drücke <key:key.swapOffhand> um zu beschleunigen!
     firework-disabled-hint: <red>Raketen sind für Spawn-Elytren deaktiviert.</red>
+    riptide-disabled-hint: "<red>Sog Verzauberung ist für Spawn-Elytren deaktiviert.</red>"
     pos1-set: <green>Position 1 gesetzt.</green>
     pos2-set: <green>Position 2 gesetzt.</green>
     success: <green>Elytra-Zone erstellt.</green>

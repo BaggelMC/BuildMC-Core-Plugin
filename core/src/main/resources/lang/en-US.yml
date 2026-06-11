@@ -25,6 +25,7 @@ messages:
   spawn-elytra:
     boost-hint: "Press <key:key.swapOffhand> to boost!"
     firework-disabled-hint: "<red>Firework boost is disabled for spawn elytra.</red>"
+    riptide-disabled-hint: "<red>Riptide boost is disabled for spawn elytra.</red>"
 
     pos1-set: "<green>Position 1 set.</green>"
     pos2-set: "<green>Position 2 set.</green>"
