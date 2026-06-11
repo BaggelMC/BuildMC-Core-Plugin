@@ -38,7 +38,7 @@ public final class CreateClaimSubCommand {
 
                                                     // Validate positions
 
-                                                    return ClaimCreate.createClaimCommand(player, type, name);
+                                                    return ClaimCreate.createClaimCommand(player, type, name, false);
                                                 })
                                 )
                 );

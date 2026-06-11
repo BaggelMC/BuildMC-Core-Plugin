@@ -26,6 +26,11 @@ import static net.mathias2246.buildmc.CoreMain.plugin;
 public class CreateClaimDialog {
 
     public static void open(Player player) {
+        if (!ClaimCreate.validateClaimArea(player)) {
+            CoreMain.soundManager.playSound(player, SoundUtil.mistake);
+            return;
+        }
+
         List<SingleOptionDialogInput.OptionEntry> typeOptions = new ArrayList<>();
         typeOptions.add(SingleOptionDialogInput.OptionEntry.create("player", Message.msg(player, "messages.claims.ui.create-dialog.claim-types.player"), true));
         typeOptions.add(SingleOptionDialogInput.OptionEntry.create("team", Message.msg(player, "messages.claims.ui.create-dialog.claim-types.team"), false));
@@ -72,7 +77,7 @@ public class CreateClaimDialog {
                                             }
 
                                             Bukkit.getScheduler().runTask(plugin, () ->
-                                                    ClaimCreate.createClaimCommand(p, type, name)
+                                                    ClaimCreate.createClaimCommand(p, type, name, true)
                                             );
                                         },
                                         ClickCallback.Options.builder().uses(1).build()

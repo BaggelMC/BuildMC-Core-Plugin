@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -29,31 +28,107 @@ import static net.mathias2246.buildmc.CoreMain.plugin;
 
 public class ClaimCreate {
 
-    /**Tries reading the first selection position from the player's metadata.
+    /**
+     * Validates that the player's current area selection is eligible to be claimed.
+     * Checks selection existence, world consistency, size limits, world allowlist,
+     * and overlap with existing claims.
      *
-     * @param player The player that made the selection
+     * <p>Sends feedback messages and plays sounds directly on the player for any
+     * failed check, so callers do not need to handle error messaging themselves.
      *
-     * @return The Location of the first selection or null if not found or invalid*/
-    private static @Nullable Location getFirstSelection(@NotNull Player player) {
-        var l = player.getPersistentDataContainer().get(Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool_first_selection")), PersistentDataType.STRING);
-        if (l == null || l.isEmpty()) return null;
-        return LocationUtil.tryDeserialize(l);
+     * @param player The player attempting to create a claim
+     * @return {@code true} if all area checks pass and the selection can be claimed;
+     *         {@code false} if any check fails
+     */
+    public static boolean validateClaimArea(@NotNull Player player) {
+        if (!player.getPersistentDataContainer().has(Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool_first_selection")))
+                || !player.getPersistentDataContainer().has(Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool_second_selection")))) {
+            AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.missing-positions"));
+            return false;
+        }
+
+        Location pos1 = getFirstSelection(player);
+        Location pos2 = getSecondSelection(player);
+
+        if (pos1 == null || pos2 == null) {
+            AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.missing-positions"));
+            CoreMain.soundManager.playSound(player, SoundUtil.notification);
+            return false;
+        }
+
+        if (!Objects.equals(pos1.getWorld(), pos2.getWorld())) {
+            AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.different-worlds"));
+            CoreMain.soundManager.playSound(player, SoundUtil.notification);
+            return false;
+        }
+
+        if (ClaimSelectionTool.isSelectionToLarge(pos1, pos2, player)) {
+            AudienceUtil.sendMessage(player, Component.translatable("messages.claims.tool.selection-too-large"));
+            CoreMain.soundManager.playSound(player, SoundUtil.notification);
+            return false;
+        }
+
+        if (!player.hasPermission("buildmc.bypass-claim-dimension-list")) {
+            if (!ClaimManager.isWorldAllowed(Objects.requireNonNull(pos1.getWorld()))) {
+                AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.world-not-allowed"));
+                CoreMain.soundManager.playSound(player, SoundUtil.notification);
+                return false;
+            }
+        }
+
+        return checkNoOverlap(player, pos1, pos2);
     }
 
-    /**Tries reading the second selection position from the player's metadata.
+    /**
+     * Checks whether the given area overlaps any existing claims, and sends the
+     * appropriate error message and sound to the player if it does.
      *
-     * @param player The player that made the selection
-     *
-     * @return The Location of the second selection or null if not found or invalid*/
-    private static @Nullable Location getSecondSelection(@NotNull Player player) {
-        var l = player.getPersistentDataContainer().get(Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool_second_selection")), PersistentDataType.STRING);
-        if (l == null || l.isEmpty()) return null;
-        return LocationUtil.tryDeserialize(l);
+     * @param player The player attempting to create a claim
+     * @param pos1   First corner of the selection
+     * @param pos2   Second corner of the selection
+     * @return {@code true} if the area is clear; {@code false} if it overlaps an existing claim
+     */
+    private static boolean checkNoOverlap(@NotNull Player player, @NotNull Location pos1, @NotNull Location pos2) {
+        ImmutableSet<Claim> overlappingClaims;
+        try {
+            overlappingClaims = ClaimManager.getClaimsInArea(pos1, pos2);
+        } catch (SQLException e) {
+            plugin.getLogger().severe("There was an error while getting the claims in an area: " + e.getMessage());
+            CoreMain.soundManager.playSound(player, SoundUtil.mistake);
+            AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.error-database"));
+            return false;
+        }
+
+        if (!overlappingClaims.isEmpty()) {
+            boolean serverProtected = overlappingClaims.stream()
+                    .anyMatch(claim -> claim.getType() == ClaimType.SERVER || claim.getType() == ClaimType.PLACEHOLDER);
+
+            if (serverProtected) {
+                AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.protected-server"));
+            } else {
+                AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.overlap"));
+            }
+            CoreMain.soundManager.playSound(player, SoundUtil.notification);
+            return false;
+        }
+
+        return true;
     }
 
-    public static int createClaimCommand(@NotNull Player player, String type, String name) {
-        if (!player.getPersistentDataContainer().has(Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool_first_selection"))) || !player.getPersistentDataContainer().has(Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool_second_selection")))) {
-             AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.missing-positions"));
+    /**
+     * Attempts to create a claim for the player with the given type and name.
+     *
+     * @param player           The player creating the claim
+     * @param type             The claim type ("player", "team", "server", "placeholder")
+     * @param name             The name for the new claim
+     * @param checksAlreadyRan Pass {@code true} if {@link #validateClaimArea(Player)} has
+     *                         already been called and passed for this player's current
+     *                         selection. Pass {@code false} to have the area checks run
+     *                         here before proceeding.
+     * @return 1 on success, 0 on failure
+     */
+    public static int createClaimCommand(@NotNull Player player, String type, String name, boolean checksAlreadyRan) {
+        if (!checksAlreadyRan && !validateClaimArea(player)) {
             return 0;
         }
 
@@ -61,52 +136,14 @@ public class ClaimCreate {
         Location pos2 = getSecondSelection(player);
 
         if (pos1 == null || pos2 == null) {
-             AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.missing-positions"));
+            AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.missing-positions"));
             CoreMain.soundManager.playSound(player, SoundUtil.notification);
             return 0;
         }
 
-        if (!Objects.equals(pos1.getWorld(), pos2.getWorld())) {
-             AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.different-worlds"));
-            CoreMain.soundManager.playSound(player, SoundUtil.notification);
-            return 0;
-        }
-
-        if (ClaimSelectionTool.isSelectionToLarge(pos1, pos2, player)) {
-             AudienceUtil.sendMessage(player, Component.translatable("messages.claims.tool.selection-too-large"));
-            CoreMain.soundManager.playSound(player, SoundUtil.notification);
-            return 0;
-        }
-
-        if (!player.hasPermission("buildmc.bypass-claim-dimension-list")) {
-            if (!ClaimManager.isWorldAllowed(Objects.requireNonNull(pos1.getWorld()))) {
-                 AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.world-not-allowed"));
-                CoreMain.soundManager.playSound(player, SoundUtil.notification);
-                return 0;
-            }
-        }
-
-        ImmutableSet<Claim> overlappingClaims;
-        try {
-            overlappingClaims = ClaimManager.getClaimsInArea(pos1, pos2);
-        } catch (SQLException e) {
-            plugin.getLogger().severe("There was an error while getting the claims in an area: " + e.getMessage());
-            CoreMain.soundManager.playSound(player, SoundUtil.mistake);
-             AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.error-database"));
-            return 0;
-        }
-
-        if (!overlappingClaims.isEmpty()) {
-            boolean serverProtected = overlappingClaims.stream()
-                    .anyMatch(claim -> claim.getType() == ClaimType.SERVER);
-
-            if (serverProtected) {
-                 AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.protected-server"));
-                CoreMain.soundManager.playSound(player, SoundUtil.notification);
-            } else {
-                 AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.overlap"));
-                CoreMain.soundManager.playSound(player, SoundUtil.notification);
-            }
+        // Always re-check overlap regardless of checksAlreadyRan, to close the race
+        // window where another player claims the same area while the dialog is open
+        if (!checkNoOverlap(player, pos1, pos2)) {
             return 0;
         }
 
@@ -114,37 +151,36 @@ public class ClaimCreate {
 
         switch (type.toLowerCase()) {
             case "player" -> {
-                // Check remaining claims for player
                 int maxChunksAllowed = plugin.getConfig().getInt("claims.player-max-chunk-claim-amount");
                 int remainingChunks = ClaimManager.playerRemainingClaims.getOrDefault(player.getUniqueId().toString(), maxChunksAllowed);
                 if ((remainingChunks - newClaimChunks) < 0) {
-                     AudienceUtil.sendMessage(player, Message.msg(player, "messages.claims.create.no-remaining-claims", Map.of("no-remaining-claims", String.valueOf(remainingChunks))));
+                    AudienceUtil.sendMessage(player, Message.msg(player, "messages.claims.create.no-remaining-claims", Map.of("no-remaining-claims", String.valueOf(remainingChunks))));
                     CoreMain.soundManager.playSound(player, SoundUtil.mistake);
                     return 0;
                 }
 
                 try {
                     if (ClaimManager.doesOwnerHaveClaimWithName(player.getUniqueId().toString(), name)) {
-                         AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.duplicate-name"));
+                        AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.duplicate-name"));
                         CoreMain.soundManager.playSound(player, SoundUtil.mistake);
                         return 1;
                     }
                 } catch (SQLException e) {
                     plugin.getLogger().severe("SQL Error while trying to check claim name availability: " + e);
-                     AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.error-database"));
+                    AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.error-database"));
                     CoreMain.soundManager.playSound(player, SoundUtil.mistake);
                     return 0;
                 }
 
                 boolean success = ClaimManager.tryClaimPlayerArea(player, name, pos1, pos2) != null;
                 if (success) {
-                     AudienceUtil.sendMessage(player, Message.msg(player, "messages.claims.create.success", Map.of("remaining_claims", String.valueOf(remainingChunks - newClaimChunks))));
+                    AudienceUtil.sendMessage(player, Message.msg(player, "messages.claims.create.success", Map.of("remaining_claims", String.valueOf(remainingChunks - newClaimChunks))));
                     CoreMain.soundManager.playSound(player, SoundUtil.success);
                     removeSelectionData(player);
                     ClaimLogger.logClaimCreated(player, name);
                     return 1;
                 } else {
-                     AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.failed"));
+                    AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.failed"));
                     CoreMain.soundManager.playSound(player, SoundUtil.mistake);
                     return 0;
                 }
@@ -153,42 +189,41 @@ public class ClaimCreate {
             case "team" -> {
                 Team team = ClaimManager.getPlayerTeam(player);
                 if (team == null) {
-                     AudienceUtil.sendMessage(player, Component.translatable("messages.error.not-in-a-team"));
+                    AudienceUtil.sendMessage(player, Component.translatable("messages.error.not-in-a-team"));
                     CoreMain.soundManager.playSound(player, SoundUtil.mistake);
                     return 0;
                 }
 
-                // Check remaining claims for team
                 int maxChunksAllowed = plugin.getConfig().getInt("claims.team-max-chunk-claim-amount");
                 int remainingChunks = ClaimManager.teamRemainingClaims.getOrDefault(team.getName(), maxChunksAllowed);
                 if ((remainingChunks - newClaimChunks) < 0) {
-                     AudienceUtil.sendMessage(player, Message.msg(player, "messages.claims.create.no-remaining-claims", Map.of("remaining_claims", String.valueOf(remainingChunks))));
+                    AudienceUtil.sendMessage(player, Message.msg(player, "messages.claims.create.no-remaining-claims", Map.of("remaining_claims", String.valueOf(remainingChunks))));
                     CoreMain.soundManager.playSound(player, SoundUtil.mistake);
                     return 0;
                 }
 
                 try {
                     if (ClaimManager.doesOwnerHaveClaimWithName(team.getName(), name)) {
-                         AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.duplicate-name"));
+                        AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.duplicate-name"));
                         CoreMain.soundManager.playSound(player, SoundUtil.mistake);
                         return 1;
                     }
                 } catch (SQLException e) {
                     plugin.getLogger().severe("SQL Error while trying to check claim name availability: " + e);
                     CoreMain.soundManager.playSound(player, SoundUtil.mistake);
-                     AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.error-database"));
+                    AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.error-database"));
                     return 0;
                 }
 
                 boolean success = ClaimManager.tryClaimTeamArea(team, name, pos1, pos2) != null;
                 if (success) {
-                     AudienceUtil.sendMessage(player, Message.msg(player, "messages.claims.create.success", Map.of("remaining_claims", String.valueOf(remainingChunks - newClaimChunks))));
+                    AudienceUtil.sendMessage(player, Message.msg(player, "messages.claims.create.success", Map.of("remaining_claims", String.valueOf(remainingChunks - newClaimChunks))));
                     removeSelectionData(player);
                     CoreMain.soundManager.playSound(player, SoundUtil.success);
                     ClaimLogger.logClaimCreated(player, name);
                     return 1;
                 } else {
-                     AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.failed"));
+                    AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.failed"));
                     CoreMain.soundManager.playSound(player, SoundUtil.mistake);
                     return 0;
                 }
@@ -196,20 +231,20 @@ public class ClaimCreate {
 
             case "server", "placeholder" -> {
                 if (!player.hasPermission("buildmc.admin")) {
-                     AudienceUtil.sendMessage(player, Component.translatable("messages.error.no-permission"));
+                    AudienceUtil.sendMessage(player, Component.translatable("messages.error.no-permission"));
                     CoreMain.soundManager.playSound(player, SoundUtil.mistake);
                     return 0;
                 }
 
                 try {
                     if (ClaimManager.doesOwnerHaveClaimWithName(type.toLowerCase(), name)) {
-                         AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.duplicate-name"));
+                        AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.duplicate-name"));
                         CoreMain.soundManager.playSound(player, SoundUtil.mistake);
                         return 1;
                     }
                 } catch (SQLException e) {
                     plugin.getLogger().severe("SQL Error while trying to check claim name availability: " + e);
-                     AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.error-database"));
+                    AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.error-database"));
                     CoreMain.soundManager.playSound(player, SoundUtil.mistake);
                     return 0;
                 }
@@ -221,7 +256,7 @@ public class ClaimCreate {
                 };
 
                 if (success) {
-                     AudienceUtil.sendMessage(player, Message.msg(player,
+                    AudienceUtil.sendMessage(player, Message.msg(player,
                             "messages.claims.create.success-" + type.toLowerCase(),
                             Map.of("claim_name", name)
                     ));
@@ -230,23 +265,42 @@ public class ClaimCreate {
                     ClaimLogger.logClaimCreated(player, name);
                     return 1;
                 } else {
-                     AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.failed"));
+                    AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.failed"));
                     CoreMain.soundManager.playSound(player, SoundUtil.mistake);
                     return 0;
                 }
             }
 
             default -> {
-                 AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.invalid-type"));
+                AudienceUtil.sendMessage(player, Component.translatable("messages.claims.create.invalid-type"));
                 CoreMain.soundManager.playSound(player, SoundUtil.mistake);
                 return 0;
             }
         }
     }
 
+    /**Tries reading the first selection position from the player's metadata.
+     *
+     * @param player The player that made the selection
+     * @return The Location of the first selection or null if not found or invalid */
+    private static @Nullable Location getFirstSelection(@NotNull Player player) {
+        var l = player.getPersistentDataContainer().get(Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool_first_selection")), PersistentDataType.STRING);
+        if (l == null || l.isEmpty()) return null;
+        return LocationUtil.tryDeserialize(l);
+    }
+
+    /**Tries reading the second selection position from the player's metadata.
+     *
+     * @param player The player that made the selection
+     * @return The Location of the second selection or null if not found or invalid */
+    private static @Nullable Location getSecondSelection(@NotNull Player player) {
+        var l = player.getPersistentDataContainer().get(Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool_second_selection")), PersistentDataType.STRING);
+        if (l == null || l.isEmpty()) return null;
+        return LocationUtil.tryDeserialize(l);
+    }
+
     private static void removeSelectionData(Player player) {
         player.getPersistentDataContainer().remove(Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool_first_selection")));
         player.getPersistentDataContainer().remove(Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool_second_selection")));
     }
-    
 }
