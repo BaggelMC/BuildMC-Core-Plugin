@@ -110,10 +110,11 @@ public class ClaimTable implements DatabaseTable {
             ps.setString(1, claim.getType().name());
             ps.setString(2, claim.getOwnerId());
             ps.setObject(3, claim.getWorldId());
-            ps.setInt(4, claim.getChunkX1());
-            ps.setInt(5, claim.getChunkZ1());
-            ps.setInt(6, claim.getChunkX2());
-            ps.setInt(7, claim.getChunkZ2());
+
+            ps.setInt(4, Math.min(claim.getChunkX1(), claim.getChunkX2()));
+            ps.setInt(5, Math.min(claim.getChunkZ1(), claim.getChunkZ2()));
+            ps.setInt(6, Math.max(claim.getChunkX1(), claim.getChunkX2()));
+            ps.setInt(7, Math.max(claim.getChunkZ1(), claim.getChunkZ2()));
             ps.setString(8, claim.getName());
 
             ps.executeUpdate();
@@ -219,10 +220,10 @@ public class ClaimTable implements DatabaseTable {
                 ps.setString(1, claim.getType().name());
                 ps.setString(2, claim.getOwnerId());
                 ps.setObject(3, claim.getWorldId());
-                ps.setInt(4, claim.getChunkX1());
-                ps.setInt(5, claim.getChunkZ1());
-                ps.setInt(6, claim.getChunkX2());
-                ps.setInt(7, claim.getChunkZ2());
+                ps.setInt(4, Math.min(claim.getChunkX1(), claim.getChunkX2()));
+                ps.setInt(5, Math.min(claim.getChunkZ1(), claim.getChunkZ2()));
+                ps.setInt(6, Math.max(claim.getChunkX1(), claim.getChunkX2()));
+                ps.setInt(7, Math.max(claim.getChunkZ1(), claim.getChunkZ2()));
                 ps.setString(8, claim.getName());
                 ps.addBatch();
             }
