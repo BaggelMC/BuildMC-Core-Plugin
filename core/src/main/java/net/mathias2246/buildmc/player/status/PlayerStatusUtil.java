@@ -35,7 +35,6 @@ public class PlayerStatusUtil implements Listener {
         return MiniMessage.miniMessage().deserialize(raw);
     }
 
-    /** Call this after reloading the config so the cached prefix stays in sync. */
     public static void reloadDeathPrefix() {
         deathPrefix = deserializeDeathPrefix();
     }

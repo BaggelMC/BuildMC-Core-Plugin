@@ -14,6 +14,7 @@ import net.mathias2246.buildmc.api.status.StatusInstance;
 import net.mathias2246.buildmc.commands.debug.BenchmarkClaims;
 import net.mathias2246.buildmc.commands.debug.InvalidateCaches;
 import net.mathias2246.buildmc.commands.debug.OpenSign;
+import net.mathias2246.buildmc.player.status.PlayerStatus;
 import net.mathias2246.buildmc.player.status.PlayerStatusUtil;
 import net.mathias2246.buildmc.player.status.SetStatusCommand;
 import net.mathias2246.buildmc.util.AudienceUtil;
@@ -114,6 +115,7 @@ public class BuildMcCommand implements CustomCommand {
                                             Bukkit.getScheduler().runTask(plugin, task -> {
 
                                                 statusConfig.reload();
+                                                PlayerStatusUtil.reloadDeathPrefix();
 
                                                 for (var player : Bukkit.getOnlinePlayers()) {
                                                     PlayerStatusUtil.reloadPlayerStatus(player);
