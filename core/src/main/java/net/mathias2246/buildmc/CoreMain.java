@@ -84,7 +84,7 @@ public final class CoreMain {
 
     public static DeferredRegistry<AbstractCustomItem> customItemsRegistry;
 
-    public static BaseRegistry<KeyHolder<Component>> guides;
+    public static BaseRegistry<KeyHolder<String>> guides;
 
     public final static Gson gson = new GsonBuilder()
             .serializeNulls()
@@ -119,7 +119,7 @@ public final class CoreMain {
 
         Bukkit.getServicesManager().register(BuildMcAPI.class, plugin, plugin, ServicePriority.High);
 
-        guides = (BaseRegistry<KeyHolder<Component>>) registriesHolder.addRegistry(DefaultRegistries.GUIDES.toString(), new BaseRegistry<KeyHolder<Component>>(Key.key("buildmc:guide")));
+        guides = (BaseRegistry<KeyHolder<String>>) registriesHolder.addRegistry(DefaultRegistries.GUIDES.toString(), new BaseRegistry<KeyHolder<String>>(Key.key("buildmc:guide")));
 
         guideCommand = new GuidesCommand(plugin, "guides.yml");
         GuidesCommand.enabled = guideCommand.configuration.getBoolean("enabled", true);

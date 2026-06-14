@@ -1,3 +1,6 @@
+# BuildMC-Core-Plugin Database Configuration
+# Join our discord server https://discord.gg/p8wBMZXAfb
+
 database:
   useServerMode: false  # Set to true to improve plugin performance on larger servers (may use more resources)
   serverUrl: "jdbc:h2:tcp://localhost/./database" # DO NOT TOUCH IF YOU DON'T KNOW WHAT YOU'RE DOING! JDBC URL for H2 server mode.

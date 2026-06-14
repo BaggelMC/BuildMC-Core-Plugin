@@ -35,9 +35,6 @@ public class GuideCommand implements CustomCommand {
                                 (ctx, builder) -> GuidesCommand.buildSuggestions(builder)
                         )
         );
-
         return cmd.build();
     }
-
 }
-
