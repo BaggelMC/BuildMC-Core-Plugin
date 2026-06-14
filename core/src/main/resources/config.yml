@@ -1,33 +1,13 @@
 # BuildMC-Core-Plugin Configuration
 # Join our discord server https://discord.gg/p8wBMZXAfb
-
-spawn-elytra:
-  # Enable or Disable the spawn elytra feature
-  enabled: true # Default: true
-  # The strength of the spawn elytra boost
-  strength: 2 # Default: 2
-  # Should the use of firework rockets with the spawn elytra be blocked?
-  disable-rockets: true # Default: true
-  # Disable gliding for players when joining. Used to prevent bugs.
-  # Shouldn't be disabled! Only if you really have to
-  on-join-elytra-check: true # Default: true
-  # The Zone in which you can use the spawn elytra
-  # You are able to set the elytra zone using the command '/buildmc elytrazone setup ...'
-  zone:
-    world:
-    pos1:
-      x:
-      y:
-      z:
-    pos2:
-      x:
-      y:
-      z:
-
-
 status:
   # If players should be able to use the '/status' command
   enabled: true # Default: true
+
+  # If it should show the players death count in the tablist
+  death-counter: true
+  # The prefix shown in front of the death count. A MiniMessage string
+  death-prefix: " <dark_gray>|</dark_gray> <head:entity/wither/wither:false> "
 
 
 # The End-Event settings

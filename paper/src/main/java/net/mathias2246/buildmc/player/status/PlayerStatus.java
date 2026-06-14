@@ -25,7 +25,7 @@ public class PlayerStatus implements Listener, StatusManager {
 
     @Override
     public void setPlayerName(@NotNull Player player, @Nullable Component component) {
-        player.playerListName(component);
+        player.playerListName(component == null ? null : component.append(PlayerStatusUtil.buildDeathSuffix(player)));
         player.displayName(component);
         player.customName(component);
         player.setCustomNameVisible(true);
@@ -50,7 +50,7 @@ public class PlayerStatus implements Listener, StatusManager {
             return false;
         }
 
-       forceRemovePlayerStatus(player);
+        forceRemovePlayerStatus(player);
 
         return true;
     }
@@ -59,7 +59,8 @@ public class PlayerStatus implements Listener, StatusManager {
     public void forceRemovePlayerStatus(@NotNull Player player) {
         player.getPersistentDataContainer().remove(PLAYER_STATUS_PDC);
 
-        player.playerListName(null);
+        PlayerStatusUtil.refreshTabListNameNoStatus(player);
+
         player.displayName(null);
         player.customName(null);
         player.setCustomNameVisible(false);

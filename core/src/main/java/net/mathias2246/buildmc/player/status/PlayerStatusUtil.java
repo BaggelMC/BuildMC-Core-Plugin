@@ -1,6 +1,7 @@
 package net.mathias2246.buildmc.player.status;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.event.player.StatusChangeEvent;
 import net.mathias2246.buildmc.api.status.StatusInstance;
@@ -11,16 +12,42 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.Statistic;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+import static net.mathias2246.buildmc.CoreMain.config;
+
 public class PlayerStatusUtil implements Listener {
 
     public static final @NotNull NamespacedKey PLAYER_STATUS_PDC = Objects.requireNonNull(NamespacedKey.fromString("buildmc:player_status"));
+
+    // Deserialized once on class load; re-assign on config reload if needed
+    private static Component deathPrefix = deserializeDeathPrefix();
+
+    private static Component deserializeDeathPrefix() {
+        String raw = config.getString("status.death-prefix", "☠");
+        return MiniMessage.miniMessage().deserialize(raw);
+    }
+
+    public static void reloadDeathPrefix() {
+        deathPrefix = deserializeDeathPrefix();
+    }
+
+    /**
+     * Returns the death-counter suffix component for {@code player},
+     * or {@link Component#empty()} when the feature is disabled in the config.
+     */
+    public static @NotNull Component buildDeathSuffix(@NotNull Player player) {
+        if (!config.getBoolean("status.death-counter", false)) return Component.empty();
+        int deaths = player.getStatistic(Statistic.DEATHS);
+        return Component.text("").append(deathPrefix).append(Component.text(deaths));
+    }
 
     private static boolean hasStatus(@NotNull Player player) {
         return player.getPersistentDataContainer().has(PLAYER_STATUS_PDC);
@@ -62,10 +89,10 @@ public class PlayerStatusUtil implements Listener {
         status = status.toLowerCase();
         if (!doesStatusExist(status)) {
             if (join) {
-                 AudienceUtil.sendMessage(player, Component.translatable("messages.status.join-doesn't-exist"));
+                AudienceUtil.sendMessage(player, Component.translatable("messages.status.join-doesn't-exist"));
                 player.getPersistentDataContainer().remove(PLAYER_STATUS_PDC);
             } else {
-                 AudienceUtil.sendMessage(player, Component.translatable("messages.status.not-found"));
+                AudienceUtil.sendMessage(player, Component.translatable("messages.status.not-found"));
                 CoreMain.soundManager.playSound(player, SoundUtil.mistake);
             }
             return;
@@ -78,7 +105,7 @@ public class PlayerStatusUtil implements Listener {
             StatusChangeEvent e = new StatusChangeEvent(player, old, s);
             Bukkit.getPluginManager().callEvent(e);
             if (e.isCancelled()) {
-                 AudienceUtil.sendMessage(player, Component.translatable("messages.status.cannot-set"));
+                AudienceUtil.sendMessage(player, Component.translatable("messages.status.cannot-set"));
                 return;
             } else if (e.getNewStatus() == null) {
                 CoreMain.statusManager.forceRemovePlayerStatus(player);
@@ -90,9 +117,9 @@ public class PlayerStatusUtil implements Listener {
         if (!allowed.equals(StatusInstance.AllowStatus.ALLOW)) {
             switch (allowed) {
                 case NOT_IN_TEAM ->
-                         AudienceUtil.sendMessage(player, Component.translatable("messages.status.not-in-team"));
+                        AudienceUtil.sendMessage(player, Component.translatable("messages.status.not-in-team"));
                 case MISSING_PERMISSION ->
-                         AudienceUtil.sendMessage(player, Component.translatable("messages.status.no-permission"));
+                        AudienceUtil.sendMessage(player, Component.translatable("messages.status.no-permission"));
             }
             if (join) {
                 player.getPersistentDataContainer().remove(PLAYER_STATUS_PDC);
@@ -122,15 +149,41 @@ public class PlayerStatusUtil implements Listener {
         return CoreMain.statusesRegistry.contains(Objects.requireNonNull(NamespacedKey.fromString("buildmc:" + status)));
     }
 
+    /**
+     * Refreshes the tab-list name for a player who has no status,
+     * showing only the death-counter suffix (or their plain name if the feature is off).
+     */
+    public static void refreshTabListNameNoStatus(@NotNull Player player) {
+        if (!config.getBoolean("status.death-counter", false)) {
+            player.playerListName(null);
+            return;
+        }
+        Component name = Component.text(player.getName()).append(buildDeathSuffix(player));
+        player.playerListName(name);
+    }
+
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        if (hasStatus(event.getPlayer())) {
-            Player player = event.getPlayer();
+        Player player = event.getPlayer();
+        if (hasStatus(player)) {
             CoreMain.statusManager.setPlayerStatus(
                     player,
                     player.getPersistentDataContainer().get(PLAYER_STATUS_PDC, PersistentDataType.STRING),
                     true
             );
+        } else {
+            refreshTabListNameNoStatus(player);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        if (!config.getBoolean("status.death-counter", false)) return;
+        Player player = event.getEntity();
+        if (hasStatus(player)) {
+            reloadPlayerStatus(player);
+        } else {
+            refreshTabListNameNoStatus(player);
         }
     }
 

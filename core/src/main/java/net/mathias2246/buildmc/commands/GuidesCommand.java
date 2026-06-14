@@ -2,10 +2,14 @@ package net.mathias2246.buildmc.commands;
 
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import io.papermc.paper.dialog.Dialog;
+import io.papermc.paper.registry.data.dialog.DialogBase;
+import io.papermc.paper.registry.data.dialog.body.DialogBody;
+import io.papermc.paper.registry.data.dialog.type.DialogType;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.util.AudienceUtil;
+import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.SoundUtil;
 import net.mathias2246.buildmc.util.config.YamlConfigurationManager;
 import net.mathias2246.buildmc.util.registry.KeyHolder;
@@ -15,6 +19,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
@@ -37,18 +43,40 @@ public class GuidesCommand extends YamlConfigurationManager {
     public static int showGuide(@NotNull CommandSender sender, String key) {
         if (key == null) return 0;
 
-        key = key.toLowerCase();
+        if (!(sender instanceof Player player)) {
+            // Fallback to chat for non-player senders
+            key = key.toLowerCase();
+            NamespacedKey n = NamespacedKey.fromString("buildmc:" + key);
+            if (n == null || !guides.contains(n)) {
+                AudienceUtil.sendMessage(sender, Component.translatable("messages.guides.guide-not-found"));
+                return 0;
+            }
+            AudienceUtil.sendMessage(sender, Message.msg(sender, Objects.requireNonNull(guides.get(n)).getValue()));
+            return 1;
+        }
 
+        key = key.toLowerCase();
         NamespacedKey n = NamespacedKey.fromString("buildmc:" + key);
 
         if (n == null || !guides.contains(n)) {
-            if (sender instanceof Player player) plugin.getSoundManager().playSound(player, SoundUtil.mistake);
+            plugin.getSoundManager().playSound(player, SoundUtil.mistake);
             AudienceUtil.sendMessage(sender, Component.translatable("messages.guides.guide-not-found"));
             return 0;
         }
 
-        if (sender instanceof Player player) plugin.getSoundManager().playSound(player, SoundUtil.notification);
-        AudienceUtil.sendMessage(sender, Objects.requireNonNull(guides.get(n)).getValue());
+        Component guideContent = Message.msg(player, Objects.requireNonNull(guides.get(n)).getValue());
+
+        String finalKey = key;
+        Dialog dialog = Dialog.create(builder -> builder.empty()
+                .base(DialogBase.builder(Message.msg(player, "messages.guides.dialog-title", Map.of("guide", finalKey)))
+                        .body(List.of(DialogBody.plainMessage(guideContent, 512)))
+                        .build()
+                )
+                .type(DialogType.notice())
+        );
+
+        plugin.getSoundManager().playSound(player, SoundUtil.notification);
+        player.showDialog(dialog);
         return 1;
     }
 
@@ -76,10 +104,10 @@ public class GuidesCommand extends YamlConfigurationManager {
             guides.addEntry(
                     new KeyHolder<>(
                             Objects.requireNonNull(NamespacedKey.fromString("buildmc:" + g.getKey())),
-                            MiniMessage.miniMessage().deserialize((String)g.getValue()))
+                            (String) g.getValue()
+                    )
             );
         }
-
     }
 
     /**
