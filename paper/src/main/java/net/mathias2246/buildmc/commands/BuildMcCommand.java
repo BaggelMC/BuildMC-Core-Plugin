@@ -19,6 +19,7 @@ import net.mathias2246.buildmc.player.status.PlayerStatusUtil;
 import net.mathias2246.buildmc.player.status.SetStatusCommand;
 import net.mathias2246.buildmc.util.AudienceUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
@@ -71,7 +72,13 @@ public class BuildMcCommand implements CustomCommand {
                 .executes(
                         (command) -> {
                             if (TestBoundingBox.testSelection == null && command.getSource().getSender() instanceof Player player) {
-                                int ret = TestBoundingBox.createTestBox(player.getLocation(), new BoundingBox(0,0,0,1,2,3), Material.RED_STAINED_GLASS);
+                                Location aligned = player.getLocation().clone();
+                                aligned.setX(Math.floor(aligned.getX()));
+                                aligned.setY(Math.floor(aligned.getY()));
+                                aligned.setZ(Math.floor(aligned.getZ()));
+                                aligned.setRotation(0, 0);
+
+                                int ret = TestBoundingBox.createTestBox(aligned, new BoundingBox(0,0,0,1,2,3), Material.RED_STAINED_GLASS);
                                 TestBoundingBox.testSelection.showToPlayer(plugin, player);
 
                                 return ret;

@@ -27,9 +27,9 @@ public class BoundingBoxSelection {
         faces[1] = new SelectionFace(origin, material.createBlockData(), BlockFace.WEST, (float)boundingBox.getWidthZ(), (float)boundingBox.getHeight());
         faces[2] = new SelectionFace(origin, material.createBlockData(), BlockFace.DOWN, (float)boundingBox.getWidthX(), (float)boundingBox.getWidthZ());
         // Opposite Faces
-        faces[3] = new SelectionFace(origin, material.createBlockData(), BlockFace.SOUTH, -(float)boundingBox.getWidthX(), -(float)boundingBox.getHeight());
-        faces[4] = new SelectionFace(origin, material.createBlockData(), BlockFace.EAST, -(float)boundingBox.getWidthZ(), -(float)boundingBox.getHeight());
-        faces[5] = new SelectionFace(origin, material.createBlockData(), BlockFace.UP, -(float)boundingBox.getWidthX(), -(float)boundingBox.getWidthZ());
+        faces[3] = new SelectionFace(oppositeOrigin, material.createBlockData(), BlockFace.SOUTH, -(float)boundingBox.getWidthX(), -(float)boundingBox.getHeight());
+        faces[4] = new SelectionFace(oppositeOrigin, material.createBlockData(), BlockFace.EAST, -(float)boundingBox.getWidthZ(), -(float)boundingBox.getHeight());
+        faces[5] = new SelectionFace(oppositeOrigin, material.createBlockData(), BlockFace.UP, -(float)boundingBox.getWidthX(), -(float)boundingBox.getWidthZ());
 
     }
 

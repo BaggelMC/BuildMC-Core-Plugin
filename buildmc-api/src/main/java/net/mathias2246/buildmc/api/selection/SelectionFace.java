@@ -78,7 +78,6 @@ public class SelectionFace {
                 );
                 break;
             case SOUTH:
-                blockDisplay.getLocation().setZ(blockDisplay.getLocation().getZ());
                 blockDisplay.setTransformation(
                         new Transformation(
                                 new Vector3f(),
@@ -109,7 +108,6 @@ public class SelectionFace {
                 );
                 break;
             case UP:
-                blockDisplay.getLocation().setY(blockDisplay.getLocation().getY()+1);
                 blockDisplay.setTransformation(
                         new Transformation(
                                 new Vector3f(),
@@ -120,7 +118,6 @@ public class SelectionFace {
                 );
                 break;
             case EAST:
-                blockDisplay.getLocation().setX(blockDisplay.getLocation().getX()+1);
                 blockDisplay.setTransformation(
                         new Transformation(
                                 new Vector3f(),
