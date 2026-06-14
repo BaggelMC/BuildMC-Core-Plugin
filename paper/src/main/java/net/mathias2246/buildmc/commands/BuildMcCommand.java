@@ -14,11 +14,14 @@ import net.mathias2246.buildmc.api.status.StatusInstance;
 import net.mathias2246.buildmc.commands.debug.BenchmarkClaims;
 import net.mathias2246.buildmc.commands.debug.InvalidateCaches;
 import net.mathias2246.buildmc.commands.debug.OpenSign;
+import net.mathias2246.buildmc.commands.debug.TestBoundingBox;
 import net.mathias2246.buildmc.player.status.PlayerStatusUtil;
 import net.mathias2246.buildmc.player.status.SetStatusCommand;
 import net.mathias2246.buildmc.util.AudienceUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.util.BoundingBox;
 
 import java.io.IOException;
 
@@ -61,6 +64,22 @@ public class BuildMcCommand implements CustomCommand {
                                     return 0;
                                 }
                         )
+        );
+
+        debugSub.then(
+                Commands.literal("create-bounding-box")
+                .executes(
+                        (command) -> {
+                            if (TestBoundingBox.testSelection == null && command.getSource().getSender() instanceof Player player) {
+                                int ret = TestBoundingBox.createTestBox(player.getLocation(), new BoundingBox(0,0,0,1,2,3), Material.RED_STAINED_GLASS);
+                                TestBoundingBox.testSelection.showToPlayer(plugin, player);
+
+                                return ret;
+                            }
+                            command.getSource().getSender().sendMessage("Failed to create bounding box...");
+                            return 0;
+                        }
+                )
         );
 
         debugSub.then(

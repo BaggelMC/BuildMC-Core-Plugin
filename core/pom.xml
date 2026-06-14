@@ -11,6 +11,7 @@
 
     <properties>
         <java.version>21</java.version>
+        <maven.compiler.release>21</maven.compiler.release>
     </properties>
 
     <repositories>
@@ -85,8 +86,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <release>${java.version}</release>
                 </configuration>
             </plugin>
 
@@ -122,7 +122,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.5.3</version>
+                <version>3.6.0</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
