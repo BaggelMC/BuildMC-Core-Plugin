@@ -56,7 +56,8 @@ public final class Main extends PluginMain implements Listener {
 
     public static File pluginFolder;
 
-    public static final ElytraZoneManager zoneManager = new ElytraZoneManager();
+    public static SpawnElytraConfig spawnElytraConfig;
+    public static ElytraZoneManager zoneManager;
 
     public static StatusConfig statusConfig;
     public static ClaimManager apiClaimManager;
@@ -138,7 +139,10 @@ public final class Main extends PluginMain implements Listener {
 
         apiClaimManager = new ClaimManagerImpl();
         apiEndManager = new EndManagerImpl();
-        apiElytraManager = new ElytraManagerImpl(zoneManager);
+
+        spawnElytraConfig = new SpawnElytraConfig();
+        zoneManager = new ElytraZoneManager(spawnElytraConfig);
+        apiElytraManager = new ElytraManagerImpl(zoneManager, spawnElytraConfig);
 
 
     }
@@ -219,10 +223,11 @@ public final class Main extends PluginMain implements Listener {
         getServer().getPluginManager().registerEvents(new CustomItemListener(), this);
 
         getServer().getPluginManager().registerEvents(new EndListener(), this);
-        if (config.getBoolean("spawn-elytra.enabled")) {
-            getServer().getPluginManager().registerEvents(new ElytraJoinListener(config.getBoolean("spawn-elytra.enabled", true), config.getDouble("spawn-elytra.strength", 2)), this);
-            getServer().getPluginManager().registerEvents(new ElytraCheckListeners(zoneManager, config.getBoolean("spawn-elytra.enabled", true), config.getDouble("spawn-elytra.strength", 2)), this);
-            if (config.getBoolean("spawn-elytra.disable-rockets")) getServer().getPluginManager().registerEvents(new DisableBoostListener(), this);
+
+        if (spawnElytraConfig.enabled) {
+            getServer().getPluginManager().registerEvents(new ElytraJoinListener(spawnElytraConfig), this);
+            getServer().getPluginManager().registerEvents(new ElytraCheckListeners(zoneManager, spawnElytraConfig.enabled, spawnElytraConfig.strength), this);
+            if (spawnElytraConfig.disableRockets) getServer().getPluginManager().registerEvents(new DisableBoostListener(), this);
 
             zoneManager.loadZoneFromConfig();
         }
