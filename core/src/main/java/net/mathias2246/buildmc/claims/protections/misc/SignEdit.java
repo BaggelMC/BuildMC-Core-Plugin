@@ -1,6 +1,5 @@
 package net.mathias2246.buildmc.claims.protections.misc;
 
-import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.api.claims.Protection;

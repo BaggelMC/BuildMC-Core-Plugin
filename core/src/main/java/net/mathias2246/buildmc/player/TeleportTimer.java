@@ -17,9 +17,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static net.mathias2246.buildmc.util.SoundUtil.*;
 
 public class TeleportTimer extends PlayerTimer {

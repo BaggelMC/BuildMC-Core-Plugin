@@ -1,13 +1,11 @@
 package net.mathias2246.buildmc.claims.protections.misc;
 
-import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.item.ItemUtil;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
-import net.mathias2246.buildmc.ui.UIUtil;
 import net.mathias2246.buildmc.util.ComponentUtil;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Material;

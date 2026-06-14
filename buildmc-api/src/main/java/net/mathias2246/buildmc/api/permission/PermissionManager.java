@@ -1,7 +1,6 @@
 package net.mathias2246.buildmc.api.permission;
 
 import org.bukkit.entity.Player;
-import org.bukkit.permissions.Permissible;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
