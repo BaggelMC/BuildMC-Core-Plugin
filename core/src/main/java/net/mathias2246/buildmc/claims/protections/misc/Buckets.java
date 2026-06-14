@@ -34,6 +34,8 @@ import java.util.logging.Level;
 
 public class Buckets extends Protection {
 
+    private final java.util.Map<java.util.UUID, Integer> pendingSequences = new java.util.concurrent.ConcurrentHashMap<>();
+
     public Buckets(@Nullable ConfigurationSection section) {
         //noinspection SimplifiableConditionalExpression
         super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:bucket_usage")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
@@ -54,6 +56,7 @@ public class Buckets extends Protection {
     public static class BucketPacketListener extends PacketAdapter {
 
         private final @NotNull Buckets protection;
+        private final @NotNull Plugin plugin;
 
         public BucketPacketListener(@NotNull Plugin plugin, @NotNull Buckets protection) {
             super(plugin, ListenerPriority.NORMAL,
@@ -61,6 +64,7 @@ public class Buckets extends Protection {
                     PacketType.Play.Client.USE_ITEM
             );
             this.protection = protection;
+            this.plugin = plugin;
         }
 
         private final java.util.Set<java.util.UUID> cancelNextUseItem = java.util.Collections.newSetFromMap(new java.util.concurrent.ConcurrentHashMap<>());
@@ -81,6 +85,11 @@ public class Buckets extends Protection {
             if (event.getPacketType() == PacketType.Play.Client.USE_ITEM) {
                 if (cancelNextUseItem.remove(player.getUniqueId())) {
                     event.setCancelled(true);
+
+                    final int useItemSequence = event.getPacket().getIntegers().read(0);
+                    Bukkit.getScheduler().runTask(plugin, () ->
+                            sendBlockChangedAck(player, useItemSequence)
+                    );
                 }
                 return;
             }
@@ -100,7 +109,43 @@ public class Buckets extends Protection {
                 cancelNextUseItem.add(player.getUniqueId());
                 AudienceUtil.sendActionBar(player, Component.translatable(protection.getTranslationBaseKey() + ".message"));
 
-                //TODO: Resync with client
+                final int useItemOnSequence = event.getPacket().getIntegers().read(0);
+                final org.bukkit.block.Block finalPlacementBlock = placementBlock;
+                final org.bukkit.block.Block finalHitBlock = hitBlock;
+
+                Bukkit.getScheduler().runTask(plugin, () -> {
+                    sendBlockChangedAck(player, useItemOnSequence);
+                    resyncBlock(player, finalPlacementBlock);
+                    resyncBlock(player, finalHitBlock);
+                });
+            }
+        }
+
+        private void sendBlockChangedAck(@NotNull Player player, int sequence) {
+            PacketContainer ack = ProtocolLibrary.getProtocolManager()
+                    .createPacket(PacketType.Play.Server.BLOCK_CHANGED_ACK);
+            ack.getIntegers().write(0, sequence);
+            try {
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, ack);
+            } catch (Exception e) {
+                plugin.getLogger().log(Level.WARNING, "Failed to send BlockChangedAck for " + player.getName(), e);
+            }
+        }
+
+        private void resyncBlock(@NotNull Player player, @NotNull org.bukkit.block.Block block) {
+            PacketContainer packet = ProtocolLibrary.getProtocolManager()
+                    .createPacket(PacketType.Play.Server.BLOCK_CHANGE);
+
+            packet.getBlockPositionModifier().write(0,
+                    new BlockPosition(block.getX(), block.getY(), block.getZ()));
+
+            packet.getBlockData().write(0,
+                    WrappedBlockData.createData(block.getBlockData()));
+
+            try {
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+            } catch (Exception e) {
+                plugin.getLogger().log(Level.WARNING, "Failed to resync block for " + player.getName(), e);
             }
         }
 
