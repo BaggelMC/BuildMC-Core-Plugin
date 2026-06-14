@@ -9,7 +9,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.IllegalFormatException;
 import java.util.Objects;
 
 /**A Utility class for Bukkit Locations.*/
@@ -57,17 +56,13 @@ public final class LocationUtil {
             throw new IllegalArgumentException("World not found: " + parts[0]);
         }
 
-        try {
-            double x = Double.parseDouble(parts[1]);
-            double y = Double.parseDouble(parts[2]);
-            double z = Double.parseDouble(parts[3]);
-            float yaw = Float.parseFloat(parts[4]);
-            float pitch = Float.parseFloat(parts[5]);
+        double x = Double.parseDouble(parts[1]);
+        double y = Double.parseDouble(parts[2]);
+        double z = Double.parseDouble(parts[3]);
+        float yaw = Float.parseFloat(parts[4]);
+        float pitch = Float.parseFloat(parts[5]);
 
-            return new Location(world, x, y, z, yaw, pitch);
-        } catch (IllegalFormatException e)  {
-            throw new RuntimeException(e);
-        }
+        return new Location(world, x, y, z, yaw, pitch);
     }
 
     /**
