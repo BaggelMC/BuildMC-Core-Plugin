@@ -1,16 +1,20 @@
 package net.mathias2246.buildmc.deaths;
 
+import net.mathias2246.buildmc.player.status.PlayerStatusUtil;
 import net.mathias2246.buildmc.util.ItemStackSerialization;
+import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Map;
 
+import static net.mathias2246.buildmc.CoreMain.config;
+
 public class DeathRestoreUtil {
 
     // TODO: Try make async
     // TODO: Create better ItemStack serialization / deserialization
-    public static void restore(Player player, DeathRecord record) {
+    public static void restore(Player player, DeathRecord record, boolean updateStatistics) {
         player.giveExp(record.xp());
 
         for (Map.Entry<Integer, byte[]> entry : record.items().entrySet()) {
@@ -44,6 +48,20 @@ public class DeathRestoreUtil {
                     player.getWorld().dropItemNaturally(player.getLocation(), item);
                 } else {
                     player.getInventory().setItemInOffHand(item);
+                }
+            }
+        }
+
+        if (updateStatistics) {
+            int currentDeaths = player.getStatistic(Statistic.DEATHS);
+            if (currentDeaths > 0) {
+                player.setStatistic(Statistic.DEATHS, currentDeaths - 1);
+            }
+            if (config.getBoolean("status.death-counter", false)) {
+                if (PlayerStatusUtil.hasStatus(player)) {
+                    PlayerStatusUtil.reloadPlayerStatus(player);
+                } else {
+                    PlayerStatusUtil.refreshTabListNameNoStatus(player);
                 }
             }
         }

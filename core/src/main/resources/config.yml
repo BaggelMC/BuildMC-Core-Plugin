@@ -310,3 +310,8 @@ disabled-commands:
 player-head:
   # When true, players will drop their head on death.
   on-death: true # Default: true
+
+death-restore:
+  # When true, restoring a death will update the game statistics to remove a death
+  # This also controls the status death counter
+  update-statistics: true
