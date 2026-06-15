@@ -11,7 +11,13 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import static net.mathias2246.buildmc.Main.*;
 import static net.mathias2246.buildmc.spawnElytra.SpawnElytraUtil.*;
 
-public record ElytraJoinListener(boolean boostEnabled, double multiplyValue) implements Listener {
+public class ElytraJoinListener implements Listener {
+
+    private final SpawnElytraConfig config;
+
+    public ElytraJoinListener(SpawnElytraConfig config) {
+        this.config = config;
+    }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
@@ -21,7 +27,7 @@ public record ElytraJoinListener(boolean boostEnabled, double multiplyValue) imp
 
         startElytraStateTask(player);
 
-        if (!config.getBoolean("spawn-elytra.on-join-elytra-check", true)) return;
+        if (!config.onJoinElytraCheck) return;
 
         stopFlying(player);
 

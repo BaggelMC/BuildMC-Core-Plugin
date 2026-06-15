@@ -2,7 +2,6 @@ package net.mathias2246.buildmc.api.event;
 
 
 import org.bukkit.entity.Entity;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityEvent;
 import org.jetbrains.annotations.NotNull;

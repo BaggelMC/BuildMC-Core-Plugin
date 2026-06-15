@@ -1,11 +1,7 @@
 package net.mathias2246.buildmc;
 
-import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.ListenerPriority;
-import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketEvent;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.kyori.adventure.key.Key;
@@ -41,7 +37,6 @@ import net.mathias2246.buildmc.util.registry.*;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerLoadEvent;
@@ -84,7 +79,7 @@ public final class CoreMain {
 
     public static DeferredRegistry<AbstractCustomItem> customItemsRegistry;
 
-    public static BaseRegistry<KeyHolder<Component>> guides;
+    public static BaseRegistry<KeyHolder<String>> guides;
 
     public final static Gson gson = new GsonBuilder()
             .serializeNulls()
@@ -119,7 +114,7 @@ public final class CoreMain {
 
         Bukkit.getServicesManager().register(BuildMcAPI.class, plugin, plugin, ServicePriority.High);
 
-        guides = (BaseRegistry<KeyHolder<Component>>) registriesHolder.addRegistry(DefaultRegistries.GUIDES.toString(), new BaseRegistry<KeyHolder<Component>>(Key.key("buildmc:guide")));
+        guides = (BaseRegistry<KeyHolder<String>>) registriesHolder.addRegistry(DefaultRegistries.GUIDES.toString(), new BaseRegistry<KeyHolder<String>>(Key.key("buildmc:guide")));
 
         guideCommand = new GuidesCommand(plugin, "guides.yml");
         GuidesCommand.enabled = guideCommand.configuration.getBoolean("enabled", true);

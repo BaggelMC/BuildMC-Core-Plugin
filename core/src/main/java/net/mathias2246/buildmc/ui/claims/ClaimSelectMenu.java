@@ -28,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 import static net.mathias2246.buildmc.CoreMain.plugin;
-import static net.mathias2246.buildmc.ui.claims.ClaimEditMenu.BACKGROUND;
 
 public class ClaimSelectMenu {
 

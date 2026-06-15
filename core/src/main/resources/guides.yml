@@ -1,15 +1,36 @@
 # BuildMC-Core-Plugin Guides Configuration
 # Join our discord server https://discord.gg/p8wBMZXAfb
 
-# Here you can set guides for players to read.
-# Players can use '/guide ...' to show a simple guide about a certain topic.
+# Guides are short help texts players can read using '/guide <name>'.
+#
+# HOW TO ADD A GUIDE
+# ──────────────────
+# 1. Pick a short name for your guide (lowercase, no spaces, e.g. "pvp" or "claim-land").
+#
+# 2. Add a line here in the format:
+#       your-guide-name: "messages.guides.your-guide-name"
+#    The value on the right is just a key. It tells the plugin where to find the actual text.
+#
+# 3. Open the language file:
+#       plugins/BuildMC-Core/lang/en-US.yml   (or whichever language you use)
+#    Find (or create) the "guides:" section under "messages:" and add your text there:
+#
+#       messages:
+#         guides:
+#           your-guide-name: |-
+#             Your guide text goes here.
+#             You can use multiple lines.
+#             MiniMessage formatting like <gold>gold text</gold> or <bold>bold</bold> works here too.
+#
+# 4. Save both files and reload the plugin (e.g. /plugman reload BuildMC-Core).
+#
+# TIP: The "|-" on the line with the key lets you write text across multiple lines.
+#      Every line after it that is indented further belongs to that guide.
+
 
 # If true, players can use the '/guide' command
 enabled: true # Default: true
 
 guides:
-  # This is a basic example for a guide with a translation.
-  # You can add MiniMessage text directly, but just using a translation is recommended.
-  commands: "<lang:messages.guides.commands>"
-
-  spawn-elytra: "<lang:messages.guides.spawn-elytra>"
+  commands: "messages.guides.commands"
+  spawn-elytra: "messages.guides.spawn-elytra"
