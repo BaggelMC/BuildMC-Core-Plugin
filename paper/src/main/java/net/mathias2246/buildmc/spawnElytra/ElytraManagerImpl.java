@@ -9,15 +9,19 @@ import org.jetbrains.annotations.NotNull;
 
 import static net.mathias2246.buildmc.Main.plugin;
 
-public record ElytraManagerImpl(ElytraZoneManager zoneManager) implements ElytraManager {
+public class ElytraManagerImpl implements ElytraManager {
 
-    public ElytraManagerImpl(@NotNull ElytraZoneManager zoneManager) {
+    private final ElytraZoneManager zoneManager;
+    private final SpawnElytraConfig config;
+
+    public ElytraManagerImpl(@NotNull ElytraZoneManager zoneManager, SpawnElytraConfig config) {
         this.zoneManager = zoneManager;
+        this.config = config;
     }
 
     @Override
     public boolean isElytraEnabled() {
-        return plugin.getConfig().getBoolean("spawn-elytra.enabled", true);
+        return config.enabled;
     }
 
     @Override
@@ -82,7 +86,7 @@ public record ElytraManagerImpl(ElytraZoneManager zoneManager) implements Elytra
     @Override
     public void applyBoost(@NotNull Player player) {
 
-        int multiplyValue = plugin.getConfig().getInt("spawn-elytra.strength", 2);
+        int multiplyValue = config.strength;
         double verticalVelocity = 1.2;
 
         applyBoost(player, multiplyValue, verticalVelocity);
@@ -95,7 +99,7 @@ public record ElytraManagerImpl(ElytraZoneManager zoneManager) implements Elytra
 
     @Override
     public void applyRawBoost(@NotNull Player player) {
-        int multiplyValue = plugin.getConfig().getInt("spawn-elytra.strength", 2);
+        int multiplyValue = config.strength;
         double verticalVelocity = 1.2;
 
         SpawnElytraUtil.applyRawBoost(player, multiplyValue, verticalVelocity);

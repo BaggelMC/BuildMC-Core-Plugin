@@ -7,6 +7,7 @@ messages:
 
   guides:
     guide-not-found: "<red>Diesen Guide gibt es nicht!</red>"
+    dialog-title: "<green>Guide für: <dark_gray>'</dark_gray><gold><b>%guide%</b></gold><dark_gray>'</dark_gray></green>"
 
     commands: |-
       ===================== <blue>Commands</blue> =====================

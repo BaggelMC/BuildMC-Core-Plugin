@@ -14,15 +14,21 @@ import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.util.Objects;
 
-/**Class for storing and managing the spawn-elytra zone*/
+/** Class for storing and managing the spawn-elytra zone */
 public class ElytraZoneManager {
+
+    private final SpawnElytraConfig config;
 
     private Location pos1;
     private Location pos2;
     private BoundingBox boundingBox;
+    private World world;
+
+    public ElytraZoneManager(@NotNull SpawnElytraConfig config) {
+        this.config = config;
+    }
 
     public World getWorld() {
         return world;
@@ -36,8 +42,6 @@ public class ElytraZoneManager {
         this.world = world;
         saveZoneToConfig();
     }
-
-    private World world;
 
     public void setPos1(@NotNull CommandSender sender, @NotNull Location loc) {
         pos1 = loc;
@@ -55,14 +59,16 @@ public class ElytraZoneManager {
         if (pos1 == null || pos2 == null) return;
 
         if (!Objects.equals(pos1.getWorld(), pos2.getWorld())) {
-            if (sender != null) AudienceUtil.sendMessage(sender, Component.translatable("messages.spawn-elytra.error.different-worlds"));
+            if (sender != null)
+                AudienceUtil.sendMessage(sender, Component.translatable("messages.spawn-elytra.error.different-worlds"));
             return;
         }
 
         boundingBox = BoundingBox.of(pos1.toVector(), pos2.toVector());
         world = pos1.getWorld();
         saveZoneToConfig();
-        if (sender != null) AudienceUtil.sendMessage(sender, Component.translatable("messages.spawn-elytra.success"));
+        if (sender != null)
+            AudienceUtil.sendMessage(sender, Component.translatable("messages.spawn-elytra.success"));
     }
 
     public void registerZone(@NotNull Location pos1, @NotNull Location pos2, @NotNull World world) {
@@ -85,53 +91,38 @@ public class ElytraZoneManager {
     }
 
     private void saveZoneToConfig() {
-        CoreMain.config.set("spawn-elytra.zone.world", world.getKey().asString());
-        CoreMain.config.set("spawn-elytra.zone.pos1.x", pos1.getX());
-        CoreMain.config.set("spawn-elytra.zone.pos1.y", pos1.getY());
-        CoreMain.config.set("spawn-elytra.zone.pos1.z", pos1.getZ());
-        CoreMain.config.set("spawn-elytra.zone.pos2.x", pos2.getX());
-        CoreMain.config.set("spawn-elytra.zone.pos2.y", pos2.getY());
-        CoreMain.config.set("spawn-elytra.zone.pos2.z", pos2.getZ());
-
-        try {
-            CoreMain.config.save(CoreMain.configFile);
-        } catch (IOException e) {
-            CoreMain.plugin.getLogger().warning("Failed to save config file while storing elytra-zone because of exception: " + e.getMessage());
-        }
+        config.saveZone(
+                world.getKey().asString(),
+                pos1.getX(), pos1.getY(), pos1.getZ(),
+                pos2.getX(), pos2.getY(), pos2.getZ()
+        );
     }
 
     public void loadZoneFromConfig() {
-        Key worldKey;
+        String rawWorldKey = config.zoneWorld;
 
+        if (rawWorldKey == null || rawWorldKey.isEmpty()) {
+            CoreMain.plugin.getLogger().warning("ElytraZoneManager: World key is missing in elytra-zone.yml");
+            return;
+        }
+
+        Key worldKey;
         try {
             //noinspection PatternValidation
-            worldKey = Key.key(Objects.requireNonNull(CoreMain.config.getString("spawn-elytra.zone.world")));
-        } catch (InvalidKeyException ignore) {
-            CoreMain.plugin.getLogger().warning("ElytraZoneManager: World key seems to be invalid inside the config");
-            return;
-        }  catch (NullPointerException ignore) {
-            CoreMain.plugin.getLogger().warning("ElytraZoneManager: World key seems to be missing inside the config");
+            worldKey = Key.key(rawWorldKey);
+        } catch (InvalidKeyException e) {
+            CoreMain.plugin.getLogger().warning("ElytraZoneManager: World key '" + rawWorldKey + "' is invalid in elytra-zone.yml");
             return;
         }
 
         world = Bukkit.getWorld(worldKey);
         if (world == null) {
-            CoreMain.plugin.getLogger().warning("ElytraZoneManager: World with key '" + worldKey + "' not found.");
+            CoreMain.plugin.getLogger().warning("ElytraZoneManager: World '" + worldKey + "' not found.");
             return;
         }
 
-        double x1 = CoreMain.config.getDouble("spawn-elytra.zone.pos1.x");
-        double y1 = CoreMain.config.getDouble("spawn-elytra.zone.pos1.y");
-        double z1 = CoreMain.config.getDouble("spawn-elytra.zone.pos1.z");
-
-        double x2 = CoreMain.config.getDouble("spawn-elytra.zone.pos2.x");
-        double y2 = CoreMain.config.getDouble("spawn-elytra.zone.pos2.y");
-        double z2 = CoreMain.config.getDouble("spawn-elytra.zone.pos2.z");
-
-        pos1 = new Location(world, x1, y1, z1);
-        pos2 = new Location(world, x2, y2, z2);
+        pos1 = new Location(world, config.zoneX1, config.zoneY1, config.zoneZ1);
+        pos2 = new Location(world, config.zoneX2, config.zoneY2, config.zoneZ2);
         boundingBox = BoundingBox.of(pos1.toVector(), pos2.toVector());
-
     }
-
 }
