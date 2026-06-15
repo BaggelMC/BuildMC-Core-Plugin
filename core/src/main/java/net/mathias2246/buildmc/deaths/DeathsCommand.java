@@ -15,6 +15,8 @@ import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 
+import static net.mathias2246.buildmc.CoreMain.config;
+
 public class DeathsCommand {
 
     private static final SimpleDateFormat DATE_FORMAT =
@@ -85,7 +87,7 @@ public class DeathsCommand {
                 return 0;
             }
 
-            DeathRestoreUtil.restore(target, record);
+            DeathRestoreUtil.restore(target, record, config.getBoolean("death-restore.update-statistics", false));
             AudienceUtil.sendMessage(sender, Component.translatable("messages.deaths.restored"));
 
             return 1;
