@@ -4,14 +4,6 @@
 
 ---
 
-## NOTICE
-
-Baggel development has largely **left GitHub**. This repository will no longer receive updates.
-
-Development continues on our self-hosted Forgejo: https://git.mathias2246.net:3000/BuildMC/BuildMC-Core-Plugin
-
----
-
 ## Features
 
 BuildMC-Core provides a solid foundation for any Minecraft project. Designed for the **BuildMC SMP**, it bundles essential features every project might need:
