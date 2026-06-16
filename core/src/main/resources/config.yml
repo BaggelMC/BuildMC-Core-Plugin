@@ -5,7 +5,7 @@ status:
   enabled: true # Default: true
 
   # If it should show the players death count in the tablist
-  death-counter: true
+  death-counter: false
   # The prefix shown in front of the death count. A MiniMessage string
   death-prefix: " <dark_gray>|</dark_gray> <head:entity/wither/wither:false> "
 
