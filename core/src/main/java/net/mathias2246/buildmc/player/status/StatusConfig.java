@@ -4,6 +4,7 @@ import com.google.gson.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.api.event.player.StatusLoadEvent;
 import net.mathias2246.buildmc.api.status.StatusInstance;
 import net.mathias2246.buildmc.util.config.YamlConfigurationManager;
 import net.mathias2246.buildmc.util.registry.BaseRegistry;
@@ -46,6 +47,9 @@ public class StatusConfig extends YamlConfigurationManager {
             var v = s.getValues(false);
             reg.addEntry(StatusInstance.deserialize(v, key.toLowerCase()));
         }
+
+        StatusLoadEvent statusLoadEvent = new StatusLoadEvent(reg);
+        Bukkit.getPluginManager().callEvent(statusLoadEvent);
     }
 
     public static class StatusInstanceJsonDeserializer implements JsonDeserializer<StatusInstance> {
