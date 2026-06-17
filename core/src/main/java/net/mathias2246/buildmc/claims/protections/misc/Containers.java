@@ -1,6 +1,5 @@
 package net.mathias2246.buildmc.claims.protections.misc;
 
-import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
 import org.bukkit.Location;
@@ -36,7 +35,7 @@ public class Containers extends Protection {
     }
 
     @Override
-    public @NotNull ItemStack getDisplay(@NotNull Player uiHolder, @NotNull Gui gui) {
+    public @NotNull ItemStack getDisplay(@NotNull Player uiHolder) {
         String t = getTranslationBaseKey();
 
         return ProtectionUtil.createDisplayItem(uiHolder, Material.CHEST, t);
