@@ -1,9 +1,13 @@
 package net.mathias2246.buildmc.commands;
 
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
+import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
+import io.papermc.paper.command.brigadier.argument.resolvers.BlockPositionResolver;
+import io.papermc.paper.math.BlockPosition;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -88,6 +92,57 @@ public class BuildMcCommand implements CustomCommand {
                         }
                 )
         );
+
+        debugSub.then(
+                Commands.literal("bounding-box-interpolation")
+                        .then(
+                                Commands.argument("duration-ticks", IntegerArgumentType.integer(0))
+                                        .executes(
+                                                (command) -> {
+                                                    if (TestBoundingBox.testSelection != null && command.getSource().getSender() instanceof Player player) {
+                                                        TestBoundingBox.testSelection.setInterpolationDuration(command.getArgument("duration-ticks", Integer.class));
+                                                        return 1;
+                                                    }
+                                                    command.getSource().getSender().sendMessage("Failed to set bounding box interpolation duration...");
+                                                    return 0;
+                                                }
+                                        )
+                        )
+        );
+
+        debugSub.then(
+                Commands.literal("set-bounding-box")
+                        .then(
+                                Commands.argument("min-coords", ArgumentTypes.blockPosition())
+                                        .then(
+                                                Commands.argument("max-coords", ArgumentTypes.blockPosition())
+                                                        .executes(
+                                                                (command) -> {
+                                                                    if (TestBoundingBox.testSelection != null && command.getSource().getSender() instanceof Player player) {
+                                                                        BlockPosition minP = command.getArgument("min-coords", BlockPositionResolver.class).resolve(command.getSource());
+                                                                        BlockPosition maxP = command.getArgument("max-coords", BlockPositionResolver.class).resolve(command.getSource());
+
+                                                                        BoundingBox newBoundingBox = new BoundingBox(
+                                                                                minP.x(),
+                                                                                minP.y(),
+                                                                                minP.z(),
+                                                                                maxP.x(),
+                                                                                maxP.y(),
+                                                                                maxP.z()
+                                                                        );
+
+                                                                        TestBoundingBox.testSelection.setBoundingBox(newBoundingBox);
+                                                                        return 1;
+                                                                    }
+                                                                    command.getSource().getSender().sendMessage("Failed to set bounding box...");
+                                                                    return 0;
+                                                                }
+                                                        )
+                                        )
+                        )
+        );
+
+
 
         debugSub.then(
                 Commands.literal("invalidate-caches")

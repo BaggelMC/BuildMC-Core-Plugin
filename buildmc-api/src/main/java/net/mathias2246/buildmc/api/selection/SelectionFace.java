@@ -8,7 +8,7 @@ import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Transformation;
-import org.bukkit.util.Vector;
+import org.checkerframework.common.value.qual.IntRange;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector2f;
@@ -20,6 +20,8 @@ public class SelectionFace {
     private @NotNull Location origin;
 
     private final @NotNull BlockFace face;
+
+    private boolean isDestroyed = false;
 
     public SelectionFace(@NotNull Location origin, @NotNull BlockData blockDisplay, @NotNull BlockFace face, @NotNull Vector2f size) {
         this.origin = origin;
@@ -33,10 +35,17 @@ public class SelectionFace {
 
                     entity.setVisibleByDefault(false);
                     entity.setBlock(blockDisplay);
+
+                    entity.addScoreboardTag("selection_face");
                 }
         );
 
         setTransform(size.x, size.y);
+    }
+
+    public void destroy() {
+        blockDisplay.remove();
+        isDestroyed = true;
     }
 
     public SelectionFace(@NotNull Location origin, @NotNull BlockData blockDisplay, @NotNull BlockFace face, float width, float height) {
@@ -67,62 +76,109 @@ public class SelectionFace {
             float height
     ) {
         switch (face) {
-            case NORTH:
+            case NORTH, SOUTH:
                 blockDisplay.setTransformation(
                         new Transformation(
                                 new Vector3f(),
                                 new Quaternionf().identity(),
                                 new Vector3f(width, height, 0.01f),
+                                new Quaternionf().identity()
+                        )
+                );
+                break;
+            case WEST, EAST:
+                blockDisplay.setTransformation(
+                        new Transformation(
+                                new Vector3f(),
+                                new Quaternionf().identity(),
+                                new Vector3f(0.01f, height, width),
+                                new Quaternionf().identity()
+                        )
+                );
+                break;
+            case DOWN, UP:
+                blockDisplay.setTransformation(
+                        new Transformation(
+                                new Vector3f(),
+                                new Quaternionf().identity(),
+                                new Vector3f(width, 0.01f, height),
+                                new Quaternionf().identity()
+                        )
+                );
+                break;
+        }
+
+    }
+
+    private void setTransform(
+            Vector3f scale
+    ) {
+        switch (face) {
+            case NORTH:
+                scale.z = 0.01f;
+                blockDisplay.setTransformation(
+                        new Transformation(
+                                new Vector3f(),
+                                new Quaternionf().identity(),
+                                scale,
                                 new Quaternionf().identity()
                         )
                 );
                 break;
             case SOUTH:
+                scale.mul(-1);
+                scale.z = 0.01f;
                 blockDisplay.setTransformation(
                         new Transformation(
                                 new Vector3f(),
                                 new Quaternionf().identity(),
-                                new Vector3f(width, height, 0.01f),
+                                scale,
                                 new Quaternionf().identity()
                         )
                 );
                 break;
             case WEST:
+                scale.x = 0.01f;
                 blockDisplay.setTransformation(
                         new Transformation(
                                 new Vector3f(),
                                 new Quaternionf().identity(),
-                                new Vector3f(0.01f, height, width),
-                                new Quaternionf().identity()
-                        )
-                );
-                break;
-            case DOWN:
-                blockDisplay.setTransformation(
-                        new Transformation(
-                                new Vector3f(),
-                                new Quaternionf().identity(),
-                                new Vector3f(width, 0.01f, height),
-                                new Quaternionf().identity()
-                        )
-                );
-                break;
-            case UP:
-                blockDisplay.setTransformation(
-                        new Transformation(
-                                new Vector3f(),
-                                new Quaternionf().identity(),
-                                new Vector3f(width, 0.01f, height),
+                                scale,
                                 new Quaternionf().identity()
                         )
                 );
                 break;
             case EAST:
+                scale.mul(-1);
+                scale.x = 0.01f;
                 blockDisplay.setTransformation(
                         new Transformation(
                                 new Vector3f(),
                                 new Quaternionf().identity(),
-                                new Vector3f(0.01f, height, width),
+                                scale,
+                                new Quaternionf().identity()
+                        )
+                );
+                break;
+            case DOWN:
+                scale.y = 0.01f;
+                blockDisplay.setTransformation(
+                        new Transformation(
+                                new Vector3f(),
+                                new Quaternionf().identity(),
+                                scale,
+                                new Quaternionf().identity()
+                        )
+                );
+                break;
+            case UP:
+                scale.mul(-1);
+                scale.y = 0.01f;
+                blockDisplay.setTransformation(
+                        new Transformation(
+                                new Vector3f(),
+                                new Quaternionf().identity(),
+                                scale,
                                 new Quaternionf().identity()
                         )
                 );
@@ -149,6 +205,10 @@ public class SelectionFace {
         blockDisplay.teleport(newOrigin);
     }
 
+    void setInterpolationDuration(@IntRange(from=0, to=59) int interpolationDuration) {
+        blockDisplay.setInterpolationDuration(interpolationDuration);
+    }
+
     public void setBlock(@NotNull BlockData blockData) {
         blockDisplay.setBlock(blockData);
     }
@@ -172,12 +232,11 @@ public class SelectionFace {
     }
 
     public void setSize(float width, float height) {
-        Transformation transformation = blockDisplay.getTransformation();
+        setTransform(width, height);
+    }
 
-        transformation.getScale().set(width, height, 0.01f);
-        transformation.getTranslation().set(width / 2, height / 2, 0);
-
-        blockDisplay.setTransformation(transformation);
+    public void setSize(Vector3f size) {
+        setTransform(size);
     }
 
     public void showToPlayer(@NotNull Plugin plugin, @NotNull Player player) {
@@ -185,27 +244,15 @@ public class SelectionFace {
     }
 
     public void hideFromPlayer(@NotNull Plugin plugin, @NotNull Player player) {
-        player.hideEntity(plugin, player);
+        player.hideEntity(plugin, blockDisplay);
     }
 
     public boolean canPlayerSee(@NotNull Player player) {
         return player.canSee(blockDisplay);
     }
 
-    public static Quaternionf blockFaceRotation(BlockFace face) {
-        Vector dir = face.getDirection();
-
-        Vector3f forward = new Vector3f(
-                (float) dir.getX(),
-                (float) dir.getY(),
-                (float) dir.getZ()
-        );
-
-        return new Quaternionf()
-                .rotateTo(
-                        new Vector3f(0, 0, 1), // default forward
-                        forward
-                );
+    public boolean isDestroyed() {
+        return isDestroyed;
     }
 }
 

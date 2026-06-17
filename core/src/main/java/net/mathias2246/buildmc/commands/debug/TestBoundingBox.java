@@ -14,9 +14,27 @@ public final class TestBoundingBox {
     public static int createTestBox(@NotNull Location origin, @NotNull BoundingBox boundingBox, @NotNull Material material) {
         testSelection = new BoundingBoxSelection(
                 boundingBox,
-                origin,
+                origin.getWorld(),
                 material
         );
+
+        return 1;
+    }
+
+    public static int setInterpolationDuration(int duration) {
+        if (testSelection == null) return 0;
+
+        testSelection.setInterpolationDuration(duration);
+
+        return 1;
+    }
+
+    public static int setBoundingBox(@NotNull BoundingBox boundingBox) {
+        if (testSelection == null) {
+            return 0;
+        }
+
+        testSelection.setBoundingBox(boundingBox);
 
         return 1;
     }
