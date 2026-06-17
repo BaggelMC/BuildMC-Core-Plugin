@@ -111,10 +111,11 @@ public class ClaimTable implements DatabaseTable {
             ps.setString(2, claim.getOwnerId());
             ps.setObject(3, claim.getWorldId());
 
-            ps.setInt(4, Math.min(claim.getChunkX1(), claim.getChunkX2()));
-            ps.setInt(5, Math.min(claim.getChunkZ1(), claim.getChunkZ2()));
-            ps.setInt(6, Math.max(claim.getChunkX1(), claim.getChunkX2()));
-            ps.setInt(7, Math.max(claim.getChunkZ1(), claim.getChunkZ2()));
+            int[] norm = LocationUtil.normalizeChunkCoords(claim);
+            ps.setInt(4, norm[0]);
+            ps.setInt(5, norm[1]);
+            ps.setInt(6, norm[2]);
+            ps.setInt(7, norm[3]);
             ps.setString(8, claim.getName());
 
             ps.executeUpdate();
@@ -164,8 +165,8 @@ public class ClaimTable implements DatabaseTable {
     @Nullable
     public Long getClaimIdAt(@NotNull Connection conn, @NotNull Location location) {
 
-        int chunkX = location.getBlockX() >> 4;
-        int chunkZ = location.getBlockZ() >> 4;
+        int chunkX = LocationUtil.blockToChunk(location.getBlockX());
+        int chunkZ = LocationUtil.blockToChunk(location.getBlockZ());
         UUID worldId = Objects.requireNonNull(location.getWorld()).getUID();
 
         try (PreparedStatement ps = conn.prepareStatement("""
@@ -220,10 +221,11 @@ public class ClaimTable implements DatabaseTable {
                 ps.setString(1, claim.getType().name());
                 ps.setString(2, claim.getOwnerId());
                 ps.setObject(3, claim.getWorldId());
-                ps.setInt(4, Math.min(claim.getChunkX1(), claim.getChunkX2()));
-                ps.setInt(5, Math.min(claim.getChunkZ1(), claim.getChunkZ2()));
-                ps.setInt(6, Math.max(claim.getChunkX1(), claim.getChunkX2()));
-                ps.setInt(7, Math.max(claim.getChunkZ1(), claim.getChunkZ2()));
+                int[] norm = LocationUtil.normalizeChunkCoords(claim);
+                ps.setInt(4, norm[0]);
+                ps.setInt(5, norm[1]);
+                ps.setInt(6, norm[2]);
+                ps.setInt(7, norm[3]);
                 ps.setString(8, claim.getName());
                 ps.addBatch();
             }
@@ -304,10 +306,8 @@ public class ClaimTable implements DatabaseTable {
     }
 
     private void updateRemainingClaims(Claim claim) {
-        // Calculate claimed area in chunks - pls work
-        int width = Math.abs(claim.getChunkX2() - claim.getChunkX1()) + 1;
-        int height = Math.abs(claim.getChunkZ2() - claim.getChunkZ1()) + 1;
-        int claimedArea = width * height;
+        int claimedArea = LocationUtil.calculateChunkArea(
+                claim.getChunkX1(), claim.getChunkZ1(), claim.getChunkX2(), claim.getChunkZ2());
 
         String ownerId = claim.getOwnerId();
         if (ownerId == null || ownerId.isEmpty()) {
@@ -392,10 +392,8 @@ public class ClaimTable implements DatabaseTable {
 
 
     private void restoreRemainingClaims(Claim claim) {
-        // Calculate claimed area in chunks
-        int width = Math.abs(claim.getChunkX2() - claim.getChunkX1()) + 1;
-        int height = Math.abs(claim.getChunkZ2() - claim.getChunkZ1()) + 1;
-        int claimedArea = width * height;
+        int claimedArea = LocationUtil.calculateChunkArea(
+                claim.getChunkX1(), claim.getChunkZ1(), claim.getChunkX2(), claim.getChunkZ2());
 
         String ownerId = claim.getOwnerId();
         if (ownerId == null || ownerId.isEmpty()) {
@@ -549,10 +547,8 @@ public class ClaimTable implements DatabaseTable {
     }
 
     public boolean doesClaimExistInArea(Connection conn, UUID worldId, int chunkX1, int chunkZ1, int chunkX2, int chunkZ2) throws SQLException {
-        int minX = Math.min(chunkX1, chunkX2);
-        int maxX = Math.max(chunkX1, chunkX2);
-        int minZ = Math.min(chunkZ1, chunkZ2);
-        int maxZ = Math.max(chunkZ1, chunkZ2);
+        int[] norm = LocationUtil.normalizeChunkCoords(chunkX1, chunkZ1, chunkX2, chunkZ2);
+        int minX = norm[0], minZ = norm[1], maxX = norm[2], maxZ = norm[3];
 
         try (PreparedStatement ps = conn.prepareStatement("""
         SELECT 1 FROM claims
@@ -584,10 +580,8 @@ public class ClaimTable implements DatabaseTable {
             int x2, int z2
     ) throws SQLException {
 
-        int minX = Math.min(x1, x2);
-        int maxX = Math.max(x1, x2);
-        int minZ = Math.min(z1, z2);
-        int maxZ = Math.max(z1, z2);
+        int[] norm = LocationUtil.normalizeChunkCoords(x1, z1, x2, z2);
+        int minX = norm[0], minZ = norm[1], maxX = norm[2], maxZ = norm[3];
 
         List<Claim> overlappingClaims = new ArrayList<>();
 

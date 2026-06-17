@@ -49,7 +49,7 @@ public class PlayerStatusUtil implements Listener {
         return Component.text("").append(deathPrefix).append(Component.text(deaths));
     }
 
-    private static boolean hasStatus(@NotNull Player player) {
+    public static boolean hasStatus(@NotNull Player player) {
         return player.getPersistentDataContainer().has(PLAYER_STATUS_PDC);
     }
 

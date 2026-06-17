@@ -121,6 +121,51 @@ public final class LocationUtil {
     }
 
     /**
+     * Converts a block coordinate to its chunk coordinate.
+     * Equivalent to {@code blockCoord >> 4}.
+     *
+     * @param blockCoord the block X or Z coordinate
+     * @return the chunk coordinate
+     */
+    @Contract(pure = true)
+    public static int blockToChunk(int blockCoord) {
+        return blockCoord >> 4;
+    }
+
+    /**
+     * Normalizes a pair of chunk coordinates so that the first value is always
+     * the minimum and the second is always the maximum.
+     * Use this before persisting or querying claim boundaries.
+     *
+     * @param chunkX1 first chunk X coordinate (either corner)
+     * @param chunkZ1 first chunk Z coordinate (either corner)
+     * @param chunkX2 second chunk X coordinate (either corner)
+     * @param chunkZ2 second chunk Z coordinate (either corner)
+     * @return int array {@code [minX, minZ, maxX, maxZ]}
+     */
+    @Contract(pure = true)
+    public static int[] normalizeChunkCoords(int chunkX1, int chunkZ1, int chunkX2, int chunkZ2) {
+        return new int[]{
+                Math.min(chunkX1, chunkX2),
+                Math.min(chunkZ1, chunkZ2),
+                Math.max(chunkX1, chunkX2),
+                Math.max(chunkZ1, chunkZ2)
+        };
+    }
+
+    /**
+     * Normalizes the chunk coordinates of a claim so that x1 &lt;= x2 and z1 &lt;= z2.
+     *
+     * @param claim the claim
+     * @return int array {@code [minX, minZ, maxX, maxZ]}
+     */
+    @Contract(pure = true)
+    public static int[] normalizeChunkCoords(@NotNull Claim claim) {
+        return normalizeChunkCoords(claim.getChunkX1(), claim.getChunkZ1(),
+                claim.getChunkX2(), claim.getChunkZ2());
+    }
+
+    /**
      * Returns the min and max block coordinates of a claim.
      * Always sorted: x1 &lt;= x2, z1 &lt;= z2
      *
