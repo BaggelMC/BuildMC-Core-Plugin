@@ -1,6 +1,5 @@
 package net.mathias2246.buildmc.claims.protections.entities;
 
-import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
 import org.bukkit.Material;
@@ -26,7 +25,7 @@ public class HangingEntities extends Protection {
     }
 
     @Override
-    public @NotNull ItemStack getDisplay(@NotNull Player uiHolder, @NotNull Gui gui) {
+    public @NotNull ItemStack getDisplay(@NotNull Player uiHolder) {
 
         String t = getTranslationBaseKey();
 

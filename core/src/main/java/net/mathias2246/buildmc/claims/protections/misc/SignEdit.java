@@ -1,6 +1,5 @@
 package net.mathias2246.buildmc.claims.protections.misc;
 
-import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.claims.ClaimManager;
@@ -33,7 +32,7 @@ public class SignEdit extends Protection {
     }
 
     @Override
-    public @NotNull ItemStack getDisplay(@NotNull Player uiHolder, @NotNull Gui gui) {
+    public @NotNull ItemStack getDisplay(@NotNull Player uiHolder) {
         String t = getTranslationBaseKey();
 
         return ProtectionUtil.createDisplayItem(uiHolder, Material.OAK_SIGN, t);

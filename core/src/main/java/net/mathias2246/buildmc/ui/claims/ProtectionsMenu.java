@@ -86,7 +86,7 @@ public class ProtectionsMenu {
 
                             int row = lowerRow ? 3 : 0;
                             GuiItem display = new GuiItem(
-                                    protection.getDisplay(player, gui),
+                                    protection.getDisplay(player),
                                     protection.getDisplayAction()
                             );
 

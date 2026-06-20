@@ -1,6 +1,5 @@
 package net.mathias2246.buildmc.api.ui;
 
-import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -17,10 +16,9 @@ public interface Displayable {
      *     Requires a {@link Player} for server-side translations of names and item lore and other data.
      * </p>
      * @param uiHolder The {@link Player} that the item is show to
-     * @param gui The {@link Gui} instance the item is used in
      *
      * @return The {@link ItemStack} to display to the player**/
-    @NotNull ItemStack getDisplay(@NotNull Player uiHolder, @NotNull Gui gui);
+    @NotNull ItemStack getDisplay(@NotNull Player uiHolder);
 
     /** Get the click action associated with this display item.
      *
