@@ -9,6 +9,7 @@ import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.Main;
+import net.mathias2246.buildmc.api.status.StatusInstance;
 import net.mathias2246.buildmc.commands.CustomCommand;
 import net.mathias2246.buildmc.util.AudienceUtil;
 import net.mathias2246.buildmc.util.SoundUtil;
@@ -93,8 +94,13 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
     public static CompletableFuture<Suggestions> getStatusesIdSuggestion(CommandContext<CommandSourceStack> ctx, SuggestionsBuilder builder) {
         String remaining = builder.getRemaining().toLowerCase();
 
-        for (var si : CoreMain.statusesRegistry.keySet()) {
-            var statusId = si.toString().replace("buildmc:", "");
+        if (!(ctx.getSource().getSender() instanceof Player player)) return builder.buildFuture();
+
+        for (var si : CoreMain.statusesRegistry) {
+            // Skip statuses the player cannot use
+            if (!si.allowPlayer(player).equals(StatusInstance.AllowStatus.ALLOW)) continue;
+
+            var statusId = si.getKey().toString().replace("buildmc:", "");
             if (statusId.toLowerCase().startsWith(remaining)) {
                 builder.suggest(statusId);
             }
