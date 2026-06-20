@@ -167,7 +167,8 @@ public class Buckets extends Protection {
                      SALMON_BUCKET,
                      TROPICAL_FISH_BUCKET,
                      TADPOLE_BUCKET,
-                     PUFFERFISH_BUCKET -> true;
+                     PUFFERFISH_BUCKET,
+                     SULFUR_CUBE_BUCKET-> true;
                 default -> false;
             };
         }
