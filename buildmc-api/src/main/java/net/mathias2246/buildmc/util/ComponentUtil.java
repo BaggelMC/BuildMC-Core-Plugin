@@ -16,14 +16,17 @@ public final class ComponentUtil {
      * @return A {@link List} of lines
      * **/
     public static @NotNull List<Component> splitComponentByNewline(@NotNull Component component) {
+        // Fast-path: if the component has no newlines anywhere in its tree,
+        // and it's a single logical unit, return it directly without rebuilding.
+        if (!containsNewline(component)) {
+            return List.of(component);
+        }
+
         List<Component> lines = new ArrayList<>();
         List<Component> currentLine = new ArrayList<>();
 
-        // Flatten the component tree into a single list of leaves
-        // so we can scan for newlines while preserving all styling
         flattenComponent(component, currentLine, lines);
 
-        // Flush the last line if it has content
         if (!currentLine.isEmpty()) {
             lines.add(mergeComponents(currentLine));
         }
@@ -31,35 +34,46 @@ public final class ComponentUtil {
         return lines.isEmpty() ? List.of(Component.empty()) : lines;
     }
 
+    private static boolean containsNewline(@NotNull Component component) {
+        // Check this component's own content
+        if (component instanceof TextComponent text
+                && text.content().contains("\n")) {
+            return true;
+        }
+        // Recurse into children
+        for (Component child : component.children()) {
+            if (containsNewline(child)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static void flattenComponent(
             @NotNull Component component,
             @NotNull List<Component> currentLine,
             @NotNull List<Component> lines) {
 
-        // Check if this component's content contains a newline
         if (component instanceof TextComponent text) {
             String content = text.content();
             String[] parts = content.split("\n", -1);
 
             for (int i = 0; i < parts.length; i++) {
                 if (i > 0) {
-                    // We hit a newline — flush current line and start a new one
                     lines.add(mergeComponents(currentLine));
                     currentLine.clear();
                 }
-
                 if (!parts[i].isEmpty()) {
-                    // Preserve the original component's style on each split part
-                    currentLine.add(text.content(parts[i]));
+                    // Strip children here — we recurse into them separately below
+                    currentLine.add(text.content(parts[i]).children(List.of()));
                 }
             }
         } else {
-            // Non-text components (translatable, keybind, etc.)
-            // can't contain newlines themselves, add as-is
+            // Strip children but keep the component type and style
             currentLine.add(component.children(List.of()));
         }
 
-        // Recurse into children, inheriting parent style
+        // Recurse into children
         for (Component child : component.children()) {
             flattenComponent(child, currentLine, lines);
         }
@@ -69,9 +83,9 @@ public final class ComponentUtil {
         if (parts.isEmpty()) return Component.empty();
         if (parts.size() == 1) return parts.getFirst();
 
-        // Use the first part as the base and attach the rest as children
-        Component base = parts.getFirst();
-        return base.children(parts.subList(1, parts.size()));
+        // Use an unstyled root and attach all parts as children
+        // This avoids base.children() wiping out base's own existing children
+        return Component.text("").children(parts);
     }
 
 }

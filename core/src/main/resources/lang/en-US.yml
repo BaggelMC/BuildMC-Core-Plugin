@@ -222,7 +222,7 @@ messages:
       create-dialog:
         title: "Create a Claim"
         notice: |-
-          <red>Make sure you have selected your area with the <u><click:open_url:https://baggel.de/core/player/claims/introduction/#creating-a-claim>claim tool</click></u> first!</red>
+          <red>Make sure you have selected your area with the <u><click:open_url:https://baggel.de/core/player/claims/introduction/#creating-a-claim/>claim tool</click></u> first!</red>
 
           <green>Select a <yellow><u><click:open_url:https://baggel.de/core/player/claims/claim-types/>Claim Type</u></yellow> and give your claim a <yellow>name</yellow>.</green>
         claim-type: "<yellow>Claim Type</yellow>"
@@ -256,8 +256,8 @@ messages:
 
         info-name: "<aqua>Claim Info</aqua>"
         info: |-
-          <gray>From:</gray> <green>X <blue>%minX%</blue> | Z <blue>%minZ%</blue></green>
-          <gray>To:</gray>    <green>X <blue>%maxX%</blue> | Z <blue>%maxZ%</blue></green>
+          <gray>From:</gray> <green>X </green><blue>%minX%</blue><green> | Z <blue>%minZ%</blue></green>
+          <gray>To:</gray>    <green>X </green><blue>%maxX%</blue><green> | Z <blue>%maxZ%</blue></green>
           <gray>In:</gray>    <green>%dimension%</green>
 
         protections: "<green>Protections</green>"
