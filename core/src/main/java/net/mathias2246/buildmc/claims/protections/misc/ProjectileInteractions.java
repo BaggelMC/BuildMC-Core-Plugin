@@ -10,6 +10,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -44,6 +45,7 @@ public class ProjectileInteractions extends Protection {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onProjectileHit(ProjectileHitEvent event) {
+        if (event.getEntityType() == EntityType.WIND_CHARGE) return;
         Block block = event.getHitBlock();
         if (block == null) return;
 
@@ -65,6 +67,7 @@ public class ProjectileInteractions extends Protection {
         Entity entity = event.getEntity();
 
         if (!(entity instanceof Projectile projectile)) return;
+        if (event.getEntityType() == EntityType.WIND_CHARGE) return;
 
         ProjectileSource shooter = projectile.getShooter();
         if (!(shooter instanceof Player player)) return;

@@ -22,7 +22,7 @@ import java.util.Objects;
 public class EntityExplosionDamage extends Protection {
     public EntityExplosionDamage(@Nullable ConfigurationSection section) {
         //noinspection SimplifiableConditionalExpression
-        super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:explosions")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
+        super(Objects.requireNonNull(NamespacedKey.fromString("buildmc:enity_explosion_damage")), (section != null ? section.getBoolean("default", true) : true), section != null && section.getBoolean("is-hidden", false));
     }
 
     @Override

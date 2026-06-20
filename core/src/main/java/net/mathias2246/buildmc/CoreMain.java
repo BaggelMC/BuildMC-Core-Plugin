@@ -164,7 +164,8 @@ public final class CoreMain {
                 new EntityShear(config.getConfigurationSection("claims.protections.interactions.shear-entity")),
                 new SignEdit(config.getConfigurationSection("claims.protections.sign-editing")),
                 new VehicleEnter(config.getConfigurationSection("claims.protections.vehicle-enter")),
-                new PistonMovement(config.getConfigurationSection("claims.protections.piston-movement-across-claim-borders"))
+                new PistonMovement(config.getConfigurationSection("claims.protections.piston-movement-across-claim-borders")),
+                new UseWindCharge(config.getConfigurationSection("claims.protections.projectile-interactions"))
         );
 
         Bukkit.getPluginManager().registerEvents(new Listener() {

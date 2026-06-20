@@ -506,3 +506,8 @@ claims:
       name: "<green>Entity Modifications</green>"
       lore: "<gray>Prevents endermen, withers and ravagers from destroying blocks.</gray>"
       message: "<red>This area is protected</red>"
+
+    wind-charge:
+      name: "<green>Wind Charges</green>"
+      lore: "<gray>Prevents using Wind Charges</gray>"
+      message: "<red>You cannot use Wind Charges here.</red>"
