@@ -54,14 +54,14 @@ public class ClaimCommand implements CustomCommand {
                 }
        );
 
-        cmd.executes(ClaimCommand::handleEdit);
+        cmd.executes(ClaimCommand::handleMenu);
         cmd.then(
                 Commands.literal("claimtool")
                         .requires((command) -> config.getBoolean("claims.tool.enable-give-command", true))
                         .executes(ClaimCommand::handleGetClaimTool)
             );
         cmd.then(
-                Commands.literal("edit").executes(ClaimCommand::handleEdit)
+                Commands.literal("menu").executes(ClaimCommand::handleMenu)
         );
         cmd.then(
                 Commands.literal("who")
@@ -172,7 +172,7 @@ public class ClaimCommand implements CustomCommand {
         return cmd.build();
     }
 
-    protected static int handleEdit(CommandContext<CommandSourceStack> command) {
+    protected static int handleMenu(CommandContext<CommandSourceStack> command) {
         if (!(requiresPlayer(command.getSource().getSender()) instanceof Player player)) return 0;
 
         ClaimSelectMenu.open(player);
