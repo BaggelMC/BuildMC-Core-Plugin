@@ -7,8 +7,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import static net.mathias2246.buildmc.Main.plugin;
-
 public class ElytraManagerImpl implements ElytraManager {
 
     private final ElytraZoneManager zoneManager;

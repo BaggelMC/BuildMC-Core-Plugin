@@ -23,7 +23,7 @@ public class LanguageManager {
     private static final List<String> DEFAULT_FILES = List.of("en-US.yml", "de-DE.yml");
     private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
     private static final File LANG_FOLDER;
-    private static final Key TRANSLATOR_KEY = Key.key("buildmc:lang");
+    private static final Key TRANSLATOR_KEY = Key.key("buildmc", "lang");
     private static boolean initialized = false;
 
     static {
