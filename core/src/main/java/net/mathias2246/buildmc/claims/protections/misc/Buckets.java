@@ -161,7 +161,6 @@ public class Buckets extends Protection {
                 case BUCKET,
                      WATER_BUCKET,
                      LAVA_BUCKET,
-                     MILK_BUCKET,
                      POWDER_SNOW_BUCKET,
                      AXOLOTL_BUCKET,
                      COD_BUCKET,
