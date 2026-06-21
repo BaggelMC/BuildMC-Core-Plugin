@@ -155,6 +155,7 @@
                                 <exclude>guides.yml</exclude>
                                 <exclude>status.yml</exclude>
                                 <exclude>lang/**</exclude>
+                                <exclude>elytra-zone.yml</exclude>
                             </excludes>
                         </filter>
                     </filters>

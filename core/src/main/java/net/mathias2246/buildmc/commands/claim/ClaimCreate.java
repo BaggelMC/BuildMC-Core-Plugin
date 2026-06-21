@@ -288,7 +288,7 @@ public class ClaimCreate {
      *
      * @param player The player that made the selection
      * @return The Location of the first selection or null if not found or invalid */
-    private static @Nullable Location getFirstSelection(@NotNull Player player) {
+    public static @Nullable Location getFirstSelection(@NotNull Player player) {
         var l = player.getPersistentDataContainer().get(Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool_first_selection")), PersistentDataType.STRING);
         if (l == null || l.isEmpty()) return null;
         return LocationUtil.tryDeserialize(l);
@@ -298,7 +298,7 @@ public class ClaimCreate {
      *
      * @param player The player that made the selection
      * @return The Location of the second selection or null if not found or invalid */
-    private static @Nullable Location getSecondSelection(@NotNull Player player) {
+    public static @Nullable Location getSecondSelection(@NotNull Player player) {
         var l = player.getPersistentDataContainer().get(Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool_second_selection")), PersistentDataType.STRING);
         if (l == null || l.isEmpty()) return null;
         return LocationUtil.tryDeserialize(l);
