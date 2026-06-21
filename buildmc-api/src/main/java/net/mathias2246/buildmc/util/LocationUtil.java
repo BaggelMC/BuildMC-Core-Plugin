@@ -173,7 +173,7 @@ public final class LocationUtil {
      * @return Vector array: [minCorner, maxCorner]
      */
     @Contract(pure = true)
-    public static Vector[] getBlockCorners(Claim claim) {
+    public static Vector[] getBlockCorners(@NotNull Claim claim) {
         int minChunkX = Math.min(claim.getChunkX1(), claim.getChunkX2());
         int maxChunkX = Math.max(claim.getChunkX1(), claim.getChunkX2());
         int minChunkZ = Math.min(claim.getChunkZ1(), claim.getChunkZ2());

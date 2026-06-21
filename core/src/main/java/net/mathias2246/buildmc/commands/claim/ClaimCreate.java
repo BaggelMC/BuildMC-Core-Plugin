@@ -5,6 +5,7 @@ import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.ClaimType;
+import net.mathias2246.buildmc.api.item.AbstractCustomItem;
 import net.mathias2246.buildmc.claims.ClaimLogger;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
@@ -27,6 +28,10 @@ import java.util.Objects;
 import static net.mathias2246.buildmc.CoreMain.plugin;
 
 public class ClaimCreate {
+    /** Checks if the player holds the claim selection tool in his hand. **/
+    public static boolean doesHoldSelectionTool(@NotNull Player player) {
+        return (AbstractCustomItem.getCustomItemKey(player.getEquipment().getItemInMainHand()) instanceof NamespacedKey key) && Objects.equals(key, NamespacedKey.fromString("buildmc:claim_tool"));
+    }
 
     /**
      * Validates that the player's current area selection is eligible to be claimed.
@@ -231,7 +236,7 @@ public class ClaimCreate {
 
             case "server", "placeholder" -> {
                 if (!player.hasPermission("buildmc.admin")) {
-                    AudienceUtil.sendMessage(player, Component.translatable("messages.error.no-permission"));
+                     AudienceUtil.sendMessage(player, Component.translatable("messages.error.no-permission"));
                     CoreMain.soundManager.playSound(player, SoundUtil.mistake);
                     return 0;
                 }

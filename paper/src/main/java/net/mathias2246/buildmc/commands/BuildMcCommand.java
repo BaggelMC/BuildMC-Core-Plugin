@@ -1,9 +1,13 @@
 package net.mathias2246.buildmc.commands;
 
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
+import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
+import io.papermc.paper.command.brigadier.argument.resolvers.BlockPositionResolver;
+import io.papermc.paper.math.BlockPosition;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -11,14 +15,19 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.api.status.StatusInstance;
+import net.mathias2246.buildmc.claims.tools.NewClaimSelection;
 import net.mathias2246.buildmc.commands.debug.BenchmarkClaims;
 import net.mathias2246.buildmc.commands.debug.InvalidateCaches;
 import net.mathias2246.buildmc.commands.debug.OpenSign;
+import net.mathias2246.buildmc.commands.debug.TestBoundingBox;
 import net.mathias2246.buildmc.player.status.PlayerStatusUtil;
 import net.mathias2246.buildmc.player.status.SetStatusCommand;
 import net.mathias2246.buildmc.util.AudienceUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.util.BoundingBox;
 
 import java.io.IOException;
 
@@ -64,10 +73,95 @@ public class BuildMcCommand implements CustomCommand {
         );
 
         debugSub.then(
+                Commands.literal("create-bounding-box")
+                .executes(
+                        (command) -> {
+                            if (TestBoundingBox.testSelection == null && command.getSource().getSender() instanceof Player player) {
+                                Location aligned = player.getLocation().clone();
+                                aligned.setX(Math.floor(aligned.getX()));
+                                aligned.setY(Math.floor(aligned.getY()));
+                                aligned.setZ(Math.floor(aligned.getZ()));
+                                aligned.setRotation(0, 0);
+
+                                int ret = TestBoundingBox.createTestBox(aligned, new BoundingBox(0,0,0,1,2,3), Material.RED_STAINED_GLASS);
+                                TestBoundingBox.testSelection.showToPlayer(plugin, player);
+
+                                return ret;
+                            }
+                            command.getSource().getSender().sendMessage("Failed to create bounding box...");
+                            return 0;
+                        }
+                )
+        );
+
+        debugSub.then(
+                Commands.literal("bounding-box-interpolation")
+                        .then(
+                                Commands.argument("duration-ticks", IntegerArgumentType.integer(0))
+                                        .executes(
+                                                (command) -> {
+                                                    if (TestBoundingBox.testSelection != null && command.getSource().getSender() instanceof Player player) {
+                                                        TestBoundingBox.testSelection.setInterpolationDuration(command.getArgument("duration-ticks", Integer.class));
+                                                        return 1;
+                                                    }
+                                                    command.getSource().getSender().sendMessage("Failed to set bounding box interpolation duration...");
+                                                    return 0;
+                                                }
+                                        )
+                        )
+        );
+
+        debugSub.then(
+                Commands.literal("set-bounding-box")
+                        .then(
+                                Commands.argument("min-coords", ArgumentTypes.blockPosition())
+                                        .then(
+                                                Commands.argument("max-coords", ArgumentTypes.blockPosition())
+                                                        .executes(
+                                                                (command) -> {
+                                                                    if (TestBoundingBox.testSelection != null && command.getSource().getSender() instanceof Player player) {
+                                                                        BlockPosition minP = command.getArgument("min-coords", BlockPositionResolver.class).resolve(command.getSource());
+                                                                        BlockPosition maxP = command.getArgument("max-coords", BlockPositionResolver.class).resolve(command.getSource());
+
+                                                                        BoundingBox newBoundingBox = new BoundingBox(
+                                                                                minP.x(),
+                                                                                minP.y(),
+                                                                                minP.z(),
+                                                                                maxP.x(),
+                                                                                maxP.y(),
+                                                                                maxP.z()
+                                                                        );
+
+                                                                        TestBoundingBox.testSelection.setBoundingBox(newBoundingBox);
+                                                                        return 1;
+                                                                    }
+                                                                    command.getSource().getSender().sendMessage("Failed to set bounding box...");
+                                                                    return 0;
+                                                                }
+                                                        )
+                                        )
+                        )
+        );
+
+
+
+        debugSub.then(
                 Commands.literal("invalidate-caches")
                         .executes(
                                 (command) -> InvalidateCaches.invalidateCaches(command.getSource().getSender())
                         )
+        );
+
+        debugSub.then(
+                Commands.literal("set-selection-points-distance").then(
+                Commands.argument("new-distance", IntegerArgumentType.integer(1, 15))
+                        .executes(
+                                command -> {
+                                    NewClaimSelection.pointDistance = command.getArgument("new-distance", Integer.class);
+                                    return 1;
+                                }
+                        )
+                )
         );
 
         // --- MiniMessage debug command ---
