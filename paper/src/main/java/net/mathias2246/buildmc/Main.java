@@ -32,6 +32,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.intellij.lang.annotations.Subst;
@@ -245,6 +246,20 @@ public final class Main extends PluginMain implements Listener {
     // So as a safety check, all the non-persisting values stored inside the players PDC are removed here.
     @EventHandler
     private void onPlayerDisconnect(PlayerQuitEvent event) {
+        var pdc = event.getPlayer().getPersistentDataContainer();
+
+        pdc.remove(ClaimSelectionTool.SELECTION_EFFECT_KEY);
+
+        AbstractCustomItem.customItemsRegistry.getOptional(Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool")))
+                .ifPresent(customItem -> {
+                    ((AbstractSelectionTool)customItem).removeSelectionFromPlayer(event.getPlayer());
+                });
+    }
+
+    // Is also called here, because on paper non-persistent Metadata was replaced with PDC because it is deprecated.
+    // So as a safety check, all the non-persisting values stored inside the players PDC are removed here.
+    @EventHandler
+    private void onPlayerConnect(PlayerJoinEvent event) {
         var pdc = event.getPlayer().getPersistentDataContainer();
 
         pdc.remove(ClaimSelectionTool.SELECTION_EFFECT_KEY);
