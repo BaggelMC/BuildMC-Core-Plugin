@@ -165,7 +165,7 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
 
         if (!pdc.has(SELECTION_EFFECT_KEY)) {
             pdc.set(SELECTION_EFFECT_KEY, PersistentDataType.BOOLEAN, true);
-            var s = new ClaimSelectionDisplayAlt(player);
+            var s = new NewClaimSelection(player);
             s.tryShow();
         }
     }
@@ -187,7 +187,7 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
 
         if (!pdc.has(SELECTION_EFFECT_KEY)) {
             pdc.set(SELECTION_EFFECT_KEY, PersistentDataType.BOOLEAN, true);
-            var s = new ClaimSelectionDisplayAlt(player);
+            var s = new NewClaimSelection(player);
             s.tryShow();
         }
     }

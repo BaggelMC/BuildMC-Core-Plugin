@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.BlockDisplay;
+import org.bukkit.entity.Display;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Transformation;
@@ -78,6 +79,24 @@ public class ClaimSelectionDisplayAlt {
         AtomicBoolean isShowing = new AtomicBoolean(true);
         AtomicInteger counter = new AtomicInteger(0);
 
+        displayA.setTeleportDuration(0);
+        displayB.setTeleportDuration(0);
+
+        displayA.setInterpolationDuration(0);
+        displayB.setInterpolationDuration(0);
+
+        displayA.setBrightness(
+                new Display.Brightness(
+                        15, 0
+                )
+        );
+
+        displayB.setBrightness(
+                new Display.Brightness(
+                        15, 0
+                )
+        );
+
         player.getScheduler().runAtFixedRate(plugin,
                 task -> {
                     var updatedBounds = getBoundingBoxForDisplay();
@@ -116,12 +135,19 @@ public class ClaimSelectionDisplayAlt {
                         displayB.setBlock(Material.GREEN_STAINED_GLASS.createBlockData());
                     }
 
+                    location.set(updatedBounds.getMinX(), updatedBounds.getMinY(), updatedBounds.getMinZ());
+
+
+                    displayA.teleport(location);
+
+                    displayB.teleport(location);
+
                     displayA.setTransformation(
                             new Transformation(
                                     new Vector3f(
-                                            //(float) updatedBounds.getWidthX() / 2,
-                                            //(float) updatedBounds.getHeight() / 2,
-                                            //(float) updatedBounds.getWidthZ() / 2
+                                            0,
+                                            0,
+                                            0
                                     ),
                                     new Quaternionf().identity(),
                                     new Vector3f(
@@ -197,10 +223,10 @@ public class ClaimSelectionDisplayAlt {
 
         return new BoundingBox(
                 (Math.floor((double)Math.min(first.getBlockX(), second.getBlockX()) / 16)) * 16,
-                (Math.floor((double)Math.min(first.getBlockY(), second.getBlockY()) / 16)) * 16,
+                first.getBlockY(),
                 (Math.floor((double)Math.min(first.getBlockZ(), second.getBlockZ()) / 16)) * 16,
                 (Math.floor((double)Math.max(first.getBlockX(), second.getBlockX()) / 16) + 1) * 16,
-                (Math.floor((double)Math.max(first.getBlockY(), second.getBlockY()) / 16) + 1) * 16,
+                second.getBlockY(),
                 (Math.floor((double)Math.max(first.getBlockZ(), second.getBlockZ()) / 16) + 1) * 16
         );
     }
