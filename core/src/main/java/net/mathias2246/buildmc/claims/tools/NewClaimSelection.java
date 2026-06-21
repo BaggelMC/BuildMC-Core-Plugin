@@ -14,9 +14,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
 
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static net.mathias2246.buildmc.CoreMain.plugin;
 
@@ -25,6 +26,10 @@ public class NewClaimSelection {
 
     private Location lastMinCorner;
     private Location lastMaxCorner;
+
+    public static int pointDistance = 4;
+
+    private final @NotNull Set<Location> shownLocations = new HashSet<>();
 
     public NewClaimSelection(@NotNull Player player) {
         this.player = player;
@@ -41,80 +46,158 @@ public class NewClaimSelection {
 
         AtomicBoolean isShowing = new AtomicBoolean(true);
         AtomicInteger counter = new AtomicInteger(0);
+        AtomicBoolean wasLastToLarge = new AtomicBoolean(false);
 
         lastMaxCorner = location.clone();
         lastMinCorner = location.clone();
 
-        BlockData goldData = Material.GOLD_BLOCK.createBlockData();
+        AtomicReference<BlockData> goldData = new AtomicReference<>(Material.GOLD_BLOCK.createBlockData());
+
+        var world = location.getWorld();
 
         player.getScheduler().runAtFixedRate(plugin,
                 task -> {
                     var updatedBounds = getBoundingBoxForDisplay();
 
                     if (updatedBounds == null) {
+                        resetBlocks(player, shownLocations);   // <-- batch reset
+                        shownLocations.clear();
                         task.cancel();
                         remove();
                         player.getPersistentDataContainer().remove(ClaimSelectionTool.SELECTION_EFFECT_KEY);
                         return;
                     }
 
+                    // Always reset previously shown locations first (one batched packet set)
+                    resetBlocks(player, shownLocations);
+
+
                     if (!ClaimCreate.doesHoldSelectionTool(player)) {
-                        player.sendBlockChange(lastMinCorner, lastMinCorner.getBlock().getBlockData());
-                        player.sendBlockChange(lastMaxCorner, lastMaxCorner.getBlock().getBlockData());
                         isShowing.set(false);
                         return;
                     } else if (!isShowing.get()) {
                         isShowing.set(true);
                     }
 
-                    player.sendBlockChange(lastMinCorner, lastMinCorner.getBlock().getBlockData());
-                    player.sendBlockChange(lastMaxCorner, lastMaxCorner.getBlock().getBlockData());
-
-                    for (int x = (int)updatedBounds.getMinX() + 1; x < updatedBounds.getMinX() + updatedBounds.getWidthX() - 1; x += 8) {
-                        location.setZ(bounds.getMinZ());
-                        location.setX(x);
-                        location.setY(lastMinCorner.getWorld().getHighestBlockYAt(location.getBlockX(), location.getBlockZ(), HeightMap.MOTION_BLOCKING_NO_LEAVES));
-
-                        player.sendBlockChange(location, goldData);
-
-                        location.setZ(bounds.getMaxZ() - 1);
-                        location.setY(lastMinCorner.getWorld().getHighestBlockYAt(location.getBlockX(), location.getBlockZ(), HeightMap.MOTION_BLOCKING_NO_LEAVES));
-
-                        player.sendBlockChange(location, goldData);
+                    if (!wasLastToLarge.get() && (updatedBounds.getWidthX() / 16 > ClaimSelectionTool.maxSelectionSize || updatedBounds.getWidthZ() / 16 > ClaimSelectionTool.maxSelectionSize)) {
+                        goldData.set(Material.REDSTONE_BLOCK.createBlockData());
+                        wasLastToLarge.set(true);
+                    } else if (wasLastToLarge.get()) {
+                        goldData.set(Material.GOLD_BLOCK.createBlockData());
+                        wasLastToLarge.set(false);
                     }
 
-                    for (int z = (int)updatedBounds.getMinZ() + 1; z < updatedBounds.getMinZ() + updatedBounds.getWidthZ() - 1; z += 8) {
-                        location.setX(bounds.getMinX());
-                        location.setZ(z);
-                        location.setY(lastMinCorner.getWorld().getHighestBlockYAt(location.getBlockX(), location.getBlockZ(), HeightMap.MOTION_BLOCKING_NO_LEAVES));
+                    shownLocations.clear();
 
-                        player.sendBlockChange(location, goldData);
+                    // --- Build all changes for this tick ---
+                    List<BlockChange> changes = new ArrayList<>();
 
-                        location.setX(bounds.getMaxX() - 1);
-                        location.setY(lastMinCorner.getWorld().getHighestBlockYAt(location.getBlockX(), location.getBlockZ(), HeightMap.MOTION_BLOCKING_NO_LEAVES));
+                    // X-axis border markers
+                    for (int x = (int)updatedBounds.getMinX() + 1; x < updatedBounds.getMinX() + updatedBounds.getWidthX() - 1; x += pointDistance) {
+                        Location locMin = location.clone();
+                        locMin.setX(x);
+                        locMin.setZ(updatedBounds.getMinZ());
+                        locMin.setY(world.getHighestBlockYAt(x, (int)updatedBounds.getMinZ(), HeightMap.MOTION_BLOCKING_NO_LEAVES));
+                        changes.add(new BlockChange(locMin, goldData.get()));
+                        shownLocations.add(locMin.clone());
 
-                        player.sendBlockChange(location, goldData);
+                        Location locMax = location.clone();
+                        locMax.setX(x);
+                        locMax.setZ(updatedBounds.getMaxZ() - 1);
+                        locMax.setY(world.getHighestBlockYAt(x, (int)updatedBounds.getMaxZ() - 1, HeightMap.MOTION_BLOCKING_NO_LEAVES));
+                        changes.add(new BlockChange(locMax, goldData.get()));
+                        shownLocations.add(locMax.clone());
                     }
 
-                    lastMinCorner.setX(updatedBounds.getMinX());
-                    lastMinCorner.setZ(updatedBounds.getMinZ());
-                    lastMinCorner.setY(lastMinCorner.getWorld().getHighestBlockYAt((int)updatedBounds.getMinX(), (int)updatedBounds.getMinZ(), HeightMap.MOTION_BLOCKING_NO_LEAVES));
-                    player.sendBlockChange(lastMinCorner, Material.REDSTONE_BLOCK.createBlockData());
+                    // Z-axis border markers
+                    for (int z = (int)updatedBounds.getMinZ() + 1; z < updatedBounds.getMinZ() + updatedBounds.getWidthZ() - 1; z += pointDistance) {
+                        Location locMin = location.clone();
+                        locMin.setZ(z);
+                        locMin.setX(updatedBounds.getMinX());
+                        locMin.setY(world.getHighestBlockYAt((int)updatedBounds.getMinX(), z, HeightMap.MOTION_BLOCKING_NO_LEAVES));
+                        changes.add(new BlockChange(locMin, goldData.get()));
+                        shownLocations.add(locMin.clone());
 
-                    lastMaxCorner.setX(updatedBounds.getMaxX() - 1);
-                    lastMaxCorner.setZ(updatedBounds.getMaxZ() - 1);
-                    lastMaxCorner.setY(lastMaxCorner.getWorld().getHighestBlockYAt((int)updatedBounds.getMaxX() - 1 , (int)updatedBounds.getMaxZ() - 1, HeightMap.MOTION_BLOCKING_NO_LEAVES));
-                    player.sendBlockChange(lastMaxCorner, Material.REDSTONE_BLOCK.createBlockData());
+                        Location locMax = location.clone();
+                        locMax.setZ(z);
+                        locMax.setX(updatedBounds.getMaxX() - 1);
+                        locMax.setY(world.getHighestBlockYAt((int)updatedBounds.getMaxX() - 1, z, HeightMap.MOTION_BLOCKING_NO_LEAVES));
+                        changes.add(new BlockChange(locMax, goldData.get()));
+                        shownLocations.add(locMax.clone());
+                    }
 
-                    // Timeout for selection display
+                    // Corners (redstone blocks)
+                    BlockData redstone = Material.REDSTONE_BLOCK.createBlockData();
+
+                    Location minCorner = lastMinCorner.clone();
+                    minCorner.setX(updatedBounds.getMinX());
+                    minCorner.setZ(updatedBounds.getMinZ());
+                    minCorner.setY(world.getHighestBlockYAt((int)updatedBounds.getMinX(), (int)updatedBounds.getMinZ(), HeightMap.MOTION_BLOCKING_NO_LEAVES));
+                    changes.add(new BlockChange(minCorner, redstone));
+                    shownLocations.add(minCorner.clone());
+
+                    // Update lastMinCorner for next tick
+                    lastMinCorner.setX(minCorner.getX());
+                    lastMinCorner.setY(minCorner.getY());
+                    lastMinCorner.setZ(minCorner.getZ());
+
+                    Location maxCorner = lastMaxCorner.clone();
+                    maxCorner.setX(updatedBounds.getMaxX() - 1);
+                    maxCorner.setZ(updatedBounds.getMaxZ() - 1);
+                    maxCorner.setY(world.getHighestBlockYAt((int)updatedBounds.getMaxX() - 1, (int)updatedBounds.getMaxZ() - 1, HeightMap.MOTION_BLOCKING_NO_LEAVES));
+                    changes.add(new BlockChange(maxCorner, redstone));
+                    shownLocations.add(maxCorner.clone());
+
+                    Location maxXCorner = lastMaxCorner.clone();
+                    maxXCorner.setX(updatedBounds.getMaxX() - 2);
+                    maxXCorner.setZ(updatedBounds.getMaxZ() - 1);
+                    maxXCorner.setY(world.getHighestBlockYAt(maxXCorner.getBlockX(), maxXCorner.getBlockZ(), HeightMap.MOTION_BLOCKING_NO_LEAVES));
+                    changes.add(new BlockChange(maxXCorner, goldData.get()));
+                    shownLocations.add(maxXCorner.clone());
+
+                    Location maxZCorner = lastMaxCorner.clone();
+                    maxZCorner.setX(updatedBounds.getMaxX() - 1);
+                    maxZCorner.setZ(updatedBounds.getMaxZ() - 2);
+                    maxZCorner.setY(world.getHighestBlockYAt(maxZCorner.getBlockX(), maxZCorner.getBlockZ(), HeightMap.MOTION_BLOCKING_NO_LEAVES));
+                    changes.add(new BlockChange(maxZCorner, goldData.get()));
+                    shownLocations.add(maxZCorner.clone());
+
+                    Location corner1 = location.clone();
+                    corner1.setX(updatedBounds.getMinX());
+                    corner1.setZ(updatedBounds.getMaxZ()-1);
+                    corner1.setY(world.getHighestBlockYAt(corner1.getBlockX(), corner1.getBlockZ(), HeightMap.MOTION_BLOCKING_NO_LEAVES));
+                    changes.add(new BlockChange(corner1, redstone));
+                    shownLocations.add(corner1.clone());
+
+                    Location corner2 = location.clone();
+                    corner2.setX(updatedBounds.getMaxX()-1);
+                    corner2.setZ(updatedBounds.getMinZ());
+                    corner2.setY(world.getHighestBlockYAt(corner2.getBlockX(), corner2.getBlockZ(), HeightMap.MOTION_BLOCKING_NO_LEAVES));
+                    changes.add(new BlockChange(corner2, redstone));
+                    shownLocations.add(corner2.clone());
+
+                    // Update lastMaxCorner for next tick
+                    lastMaxCorner.setX(maxCorner.getX());
+                    lastMaxCorner.setY(maxCorner.getY());
+                    lastMaxCorner.setZ(maxCorner.getZ());
+
+                    // Send all fake blocks in one batch
+                    sendBatchedBlockChanges(player, changes);
+
+                    // Timeout
                     if (counter.getAndIncrement() > 200) {
+                        resetBlocks(player, shownLocations);
+                        shownLocations.clear();
                         task.cancel();
                         remove();
                         player.getPersistentDataContainer().remove(ClaimSelectionTool.SELECTION_EFFECT_KEY);
-
                     }
                 },
-                this::remove, // Destroy selection when player is gone
+                () -> {
+                    resetBlocks(player, shownLocations);
+                    shownLocations.clear();
+                    remove();
+                }, // Destroy selection when player is gone
                 1,
                 10
         );
@@ -173,5 +256,20 @@ public class NewClaimSelection {
             }
         }
         return loc;
+    }
+
+    // Simple record to pair a location with its block data
+    private record BlockChange(Location loc, BlockData data) {}
+
+    private void sendBatchedBlockChanges(Player player, List<BlockChange> changes) {
+        for (BlockChange bc : changes) {
+            player.sendBlockChange(bc.loc(), bc.data());
+        }
+    }
+
+    private void resetBlocks(Player player, Collection<Location> locations) {
+        for (Location loc : locations) {
+            player.sendBlockChange(loc, loc.getBlock().getBlockData());
+        }
     }
 }

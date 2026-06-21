@@ -15,6 +15,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.api.status.StatusInstance;
+import net.mathias2246.buildmc.claims.tools.NewClaimSelection;
 import net.mathias2246.buildmc.commands.debug.BenchmarkClaims;
 import net.mathias2246.buildmc.commands.debug.InvalidateCaches;
 import net.mathias2246.buildmc.commands.debug.OpenSign;
@@ -149,6 +150,18 @@ public class BuildMcCommand implements CustomCommand {
                         .executes(
                                 (command) -> InvalidateCaches.invalidateCaches(command.getSource().getSender())
                         )
+        );
+
+        debugSub.then(
+                Commands.literal("set-selection-points-distance").then(
+                Commands.argument("new-distance", IntegerArgumentType.integer(1, 15))
+                        .executes(
+                                command -> {
+                                    NewClaimSelection.pointDistance = command.getArgument("new-distance", Integer.class);
+                                    return 1;
+                                }
+                        )
+                )
         );
 
         // --- MiniMessage debug command ---
