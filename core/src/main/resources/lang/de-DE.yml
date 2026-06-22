@@ -144,7 +144,7 @@ messages:
         <red>In deiner Auswahl befindet sich ein fremder Claim!</red>
 
         "
-      no-chunks-left: <red>Du hast keine Chunks zum Claimen mehr verfügbar!</red>
+      no-chunks-left: <red>Du hast keine verfügbaren Chunks zum claimen!</red>
     create:
       missing-positions: <red>Du hast noch nicht beide Positionen gesetzt.</red>
       success: "<blue>------------------------</blue>
@@ -336,7 +336,7 @@ messages:
           title: "%player% entfernen?"
           success: <green>Spieler erfolgreich von der Whitelist entfernt.</green>
 claims:
-  flags:
+  protections:
     player-break:
       name: <green>Blöcke Abbauen</green>
       lore: <gray>Verhindert das abbauen von Blöcken.</gray>
