@@ -104,6 +104,7 @@ public final class Main extends PluginMain implements Listener {
 
         if (config.getBoolean("claims.enabled", true)) {
             AbstractCustomItem.customItemsRegistry.addEntry(
+                    plugin,
                     new ClaimSelectionTool(this,
                             Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool"))
                     )

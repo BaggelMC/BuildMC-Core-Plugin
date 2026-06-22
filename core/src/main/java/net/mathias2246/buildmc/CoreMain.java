@@ -125,6 +125,8 @@ public final class CoreMain {
         customItemsRegistry = (DeferredRegistry<AbstractCustomItem>) registriesHolder.addRegistry(DefaultRegistries.CUSTOM_ITEMS.toString(), AbstractCustomItem.customItemsRegistry);
 
         protectionsRegistry.addEntries(
+                plugin,
+
                 new Explosion(config.getConfigurationSection("claims.protections.damage.explosion-block-damage")),
                 new EntityExplosionDamage(config.getConfigurationSection("claims.protections.damage.explosion-entity-damage")),
                 new PlayerFriendlyFire(config.getConfigurationSection("claims.protections.damage.player-friendly-fire")),

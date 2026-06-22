@@ -78,4 +78,8 @@ public abstract class YamlConfigurationManager {
         if (!configFile.exists()) plugin.saveResource(resourceName, false);
 
     }
+
+    protected @NotNull Plugin getPlugin() {
+        return plugin;
+    }
 }

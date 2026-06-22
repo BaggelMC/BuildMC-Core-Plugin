@@ -5,6 +5,7 @@ import net.mathias2246.buildmc.api.status.StatusInstance;
 import net.mathias2246.buildmc.util.registry.BaseRegistry;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.HandlerList;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -20,12 +21,15 @@ public class StatusLoadEvent extends CustomEvent {
 
     private final BaseRegistry<StatusInstance> statusRegistry;
 
+    private final @NotNull Plugin plugin;
+
     /**
      * Creates a new {@code StatusLoadEvent}.
      *
      * @param statusRegistry the registry that will contain all loaded statuses
      */
-    public StatusLoadEvent(@NotNull BaseRegistry<StatusInstance> statusRegistry) {
+    public StatusLoadEvent(@NotNull Plugin plugin, @NotNull BaseRegistry<StatusInstance> statusRegistry) {
+        this.plugin = plugin;
         this.statusRegistry = statusRegistry;
     }
 
@@ -44,7 +48,7 @@ public class StatusLoadEvent extends CustomEvent {
      * @param status the status instance to register
      */
     public void addStatus(StatusInstance status) {
-        statusRegistry.addEntry(status);
+        statusRegistry.addEntry(plugin, status);
     }
 
     /**

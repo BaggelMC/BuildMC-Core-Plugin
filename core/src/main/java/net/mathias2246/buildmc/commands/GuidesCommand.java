@@ -102,6 +102,7 @@ public class GuidesCommand extends YamlConfigurationManager {
 
         for (var g : Objects.requireNonNull(configuration.getConfigurationSection("guides")).getValues(false).entrySet()) {
             guides.addEntry(
+                    plugin,
                     new KeyHolder<>(
                             Objects.requireNonNull(NamespacedKey.fromString("buildmc:" + g.getKey())),
                             (String) g.getValue()

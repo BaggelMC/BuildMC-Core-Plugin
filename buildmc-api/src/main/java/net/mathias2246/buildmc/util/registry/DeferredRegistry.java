@@ -6,6 +6,7 @@ import net.kyori.adventure.key.Key;
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -64,8 +65,14 @@ public class DeferredRegistry<T extends Keyed> implements Registry<T>, net.kyori
      * @return The entry you tried to add
      * */
     @SuppressWarnings("UnusedReturnValue")
-    public @NotNull T addEntry(@NotNull T entry) {
+    public @NotNull T addEntry(@NotNull Plugin plugin, @NotNull T entry) {
         if (isInitialized) return entry;
+
+        if (map.containsKey(entry.getKey())) {
+            showDuplicateWarningMsg(plugin, entry.getKey());
+            return entry;
+        }
+
         map.putIfAbsent(entry.getKey(), entry);
         return entry;
     }
@@ -103,9 +110,13 @@ public class DeferredRegistry<T extends Keyed> implements Registry<T>, net.kyori
      * @param entries The entries to add
      * */
     @SafeVarargs
-    public final void addEntries(@NotNull T... entries) {
+    public final void addEntries(@NotNull Plugin plugin, @NotNull T... entries) {
         if (isInitialized) return;
         for (var e : entries) {
+            if (map.containsKey(e.getKey())) {
+                showDuplicateWarningMsg(plugin, e.getKey());
+                continue;
+            }
             map.putIfAbsent(e.getKey(), e);
         }
     }
@@ -118,10 +129,12 @@ public class DeferredRegistry<T extends Keyed> implements Registry<T>, net.kyori
      *
      * @throws IllegalStateException when this registry is already initialized
      * */
-    public void addEntryOrThrow(@NotNull T entry) throws IllegalArgumentException, IllegalStateException {
+    public void addEntryOrThrow(@NotNull Plugin plugin, @NotNull T entry) throws IllegalArgumentException, IllegalStateException {
         if (isInitialized) throw new IllegalStateException("This Registry is already initialized! You can only change this registry before it is initialized!");
 
-        if (map.containsKey(entry.getKey())) throw new IllegalArgumentException("An entry with the same key already exists inside this registry!");
+        if (map.containsKey(entry.getKey())) {
+            throw new  IllegalArgumentException("The plugin '" + plugin.getName() + "' tries to register an element with a duplicate key '" + entry.getKey().asString() + "'");
+        }
         map.put(entry.getKey(), entry);
     }
 
@@ -314,5 +327,10 @@ public class DeferredRegistry<T extends Keyed> implements Registry<T>, net.kyori
     @Override
     public @NotNull Key key() {
         return regKey;
+    }
+
+    private static void showDuplicateWarningMsg(@NotNull Plugin plugin, @NotNull Key key) {
+        plugin.getLogger().warning("The plugin '" + plugin.getName() + "' tries to register an element with a duplicate key '" + key.asString() + "'");
+        plugin.getLogger().warning("Please notify the plugin authors (" + String.join(", ", plugin.getPluginMeta().getAuthors()) + ")");
     }
 }

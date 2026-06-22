@@ -45,10 +45,10 @@ public class StatusConfig extends YamlConfigurationManager {
             var s = configuration.getConfigurationSection(key);
             if (s == null) return;
             var v = s.getValues(false);
-            reg.addEntry(StatusInstance.deserialize(v, key.toLowerCase()));
+            reg.addEntry(getPlugin(), StatusInstance.deserialize(v, key.toLowerCase()));
         }
 
-        StatusLoadEvent statusLoadEvent = new StatusLoadEvent(reg);
+        StatusLoadEvent statusLoadEvent = new StatusLoadEvent(getPlugin(), reg);
         Bukkit.getPluginManager().callEvent(statusLoadEvent);
     }
 

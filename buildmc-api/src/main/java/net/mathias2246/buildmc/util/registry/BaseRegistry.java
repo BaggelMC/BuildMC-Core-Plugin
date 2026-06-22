@@ -6,6 +6,7 @@ import net.kyori.adventure.key.Key;
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -59,7 +60,11 @@ public class BaseRegistry<T extends Keyed> implements Registry<T>, Iterable<T>, 
      *
      * @throws NullPointerException if the key is {@code null} */
     @SuppressWarnings("UnusedReturnValue")
-    public @NotNull T addEntry(@NotNull T entry) {
+    public @NotNull T addEntry(@NotNull Plugin plugin, @NotNull T entry) {
+        if (registry.containsKey(entry.getKey())) {
+            showDuplicateWarningMsg(plugin, entry.getKey());
+            return entry;
+        }
         registry.put(entry.getKey(), entry);
         return entry;
     }
@@ -70,8 +75,12 @@ public class BaseRegistry<T extends Keyed> implements Registry<T>, Iterable<T>, 
      * @param entries The entry to add
      * */
     @SafeVarargs
-    public final void addEntries(@NotNull T... entries) {
+    public final void addEntries(@NotNull Plugin plugin, @NotNull T... entries) {
         for (var e : entries) {
+            if (registry.containsKey(e.getKey())) {
+                showDuplicateWarningMsg(plugin, e.getKey());
+                continue;
+            }
             registry.putIfAbsent(e.getKey(), e);
         }
     }
@@ -273,5 +282,10 @@ public class BaseRegistry<T extends Keyed> implements Registry<T>, Iterable<T>, 
     @Override
     public @NotNull Key key() {
         return regKey;
+    }
+
+    private static void showDuplicateWarningMsg(@NotNull Plugin plugin, @NotNull Key key) {
+        plugin.getLogger().warning("The plugin '" + plugin.getName() + "' tries to register an element with a duplicate key '" + key.asString() + "'");
+        plugin.getLogger().warning("Please notify the plugin authors (" + String.join(", ", plugin.getPluginMeta().getAuthors()) + ")");
     }
 }
