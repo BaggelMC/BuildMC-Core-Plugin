@@ -273,9 +273,9 @@ messages:
       create-dialog:
         title: "Erstelle einen Claim"
         notice: |-
-          <red>Stelle sicher, dass zuerst den Bereich mit dem <u><click:open_url:https://baggel.de/de/core/player/claims/introduction/#einen-claim-erstellen>Claim Tool</u> ausgewählt hast.</red>
+          <red>Stelle sicher, dass zuerst den Bereich mit dem <u><click:open_url:'https://baggel.de/de/core/player/claims/introduction/#einen-claim-erstellen'>Claim Tool</click></u> ausgewählt hast.</red>
 
-          <green>Wähle einen <yellow><u><click:open_url:https://baggel.de/de/core/player/claims/claim-types/>Claim Typ</u></yellow> aus und geben deinem Claim einen <yellow>Namen</yellow>.</green>
+          <green>Wähle einen <yellow><u><click:open_url:'https://baggel.de/de/core/player/claims/claim-types/'>Claim Typ</click></u></yellow> aus und geben deinem Claim einen <yellow>Namen</yellow>.</green>
         claim-type: "<yellow>Claim Typ</yellow>"
         claim-name: "<yellow>Claim Name:</yellow>"
 
