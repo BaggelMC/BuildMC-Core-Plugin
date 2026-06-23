@@ -9,6 +9,8 @@ messages:
     guide-not-found: "<red>This guide doesn't exist!</red>"
     dialog-title: "<green>Guide for: <dark_gray>'</dark_gray><gold><b>%guide%</b></gold><dark_gray>'</dark_gray></green>"
 
+    go-to-wiki: "Go to our wiki!"
+
     commands: |-
       ==================== <blue>Commands</blue> ====================
       <gray>Here is a list of custom commands you can use:</gray>
@@ -215,6 +217,8 @@ messages:
 
         confirm: "<red>Confirm</red>"
         cancel: "<green>Cancel</green>"
+
+        exit: "Exit"
 
       errors:
         no-item-meta: "<red>Error: Failed to generate item-meta."

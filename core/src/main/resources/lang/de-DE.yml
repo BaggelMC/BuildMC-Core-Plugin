@@ -9,6 +9,8 @@ messages:
     guide-not-found: "<red>Diesen Guide gibt es nicht!</red>"
     dialog-title: "<green>Guide für: <dark_gray>'</dark_gray><gold><b>%guide%</b></gold><dark_gray>'</dark_gray></green>"
 
+    go-to-wiki: "Besuche unser Wiki!"
+
     commands: |-
       ===================== <blue>Commands</blue> =====================
       <gray>Hier ist eine Liste an neuen Befehlen die du nutzen kannst:</gray>
@@ -262,6 +264,9 @@ messages:
         back: <red>Zurück</red>
         confirm: <red>Bestätigen</red>
         cancel: <green>Abbruch</green>
+
+        exit: "Schließen"
+
       errors:
         no-item-meta: "<red>Fehler: item-meta konnte nicht generiert werden."
 

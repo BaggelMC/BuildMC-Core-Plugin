@@ -100,7 +100,7 @@ public record SetStatusCommand(@NotNull StatusConfig config) implements CustomCo
             // Skip statuses the player cannot use
             if (!si.allowPlayer(player).equals(StatusInstance.AllowStatus.ALLOW)) continue;
 
-            var statusId = si.getKey().toString().replace("buildmc:", "");
+            var statusId = si.getKey().value();
             if (statusId.toLowerCase().startsWith(remaining)) {
                 builder.suggest(statusId);
             }

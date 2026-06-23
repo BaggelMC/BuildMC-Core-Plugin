@@ -99,7 +99,7 @@ public class ElytraZoneManager {
     }
 
     public void loadZoneFromConfig() {
-        String rawWorldKey = config.zoneWorld;
+        @SuppressWarnings("PatternValidation") String rawWorldKey = config.zoneWorld;
 
         if (rawWorldKey == null || rawWorldKey.isEmpty()) {
             CoreMain.plugin.getLogger().warning("ElytraZoneManager: World key is missing in elytra-zone.yml. Disable spawn-elytra in spawn-elytra.yml or configure it.");

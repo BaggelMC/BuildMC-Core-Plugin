@@ -32,7 +32,10 @@ import net.mathias2246.buildmc.ui.claims.ClaimUIs;
 import net.mathias2246.buildmc.util.BStats;
 import net.mathias2246.buildmc.util.SoundManager;
 import net.mathias2246.buildmc.util.language.LanguageManager;
-import net.mathias2246.buildmc.util.registry.*;
+import net.mathias2246.buildmc.util.registry.BaseRegistry;
+import net.mathias2246.buildmc.util.registry.DefaultRegistries;
+import net.mathias2246.buildmc.util.registry.DeferredRegistry;
+import net.mathias2246.buildmc.util.registry.RegistriesHolder;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -78,7 +81,7 @@ public final class CoreMain {
 
     public static DeferredRegistry<AbstractCustomItem> customItemsRegistry;
 
-    public static BaseRegistry<KeyHolder<String>> guides;
+    public static BaseRegistry<GuidesCommand.Guide> guidesRegistry;
 
     public final static Gson gson = new GsonBuilder()
             .serializeNulls()
@@ -113,7 +116,7 @@ public final class CoreMain {
 
         Bukkit.getServicesManager().register(BuildMcAPI.class, plugin, plugin, ServicePriority.High);
 
-        guides = (BaseRegistry<KeyHolder<String>>) registriesHolder.addRegistry(DefaultRegistries.GUIDES.toString(), new BaseRegistry<KeyHolder<String>>(Key.key("buildmc", "guide")));
+        guidesRegistry = (BaseRegistry<GuidesCommand.Guide>) registriesHolder.addRegistry(DefaultRegistries.GUIDES.toString(), new BaseRegistry<GuidesCommand.Guide>(Key.key("buildmc", "guide")));
 
         guideCommand = new GuidesCommand(plugin, "guides.yml");
         GuidesCommand.enabled = guideCommand.configuration.getBoolean("enabled", true);

@@ -60,6 +60,7 @@ public class DeferredRegistry<T extends Keyed> implements Registry<T>, net.kyori
      *     Nothing will change when this deferred-registry is initialized.
      * </p>
      *
+     * @param plugin The plugin that tries to register a new entry
      * @param entry The entry to add
      *
      * @return The entry you tried to add
@@ -107,6 +108,7 @@ public class DeferredRegistry<T extends Keyed> implements Registry<T>, net.kyori
      *     Nothing will change when this deferred-registry is initialized.
      * </p>
      *
+     * @param plugin The plugin that tries to register new entries
      * @param entries The entries to add
      * */
     @SafeVarargs
@@ -123,6 +125,7 @@ public class DeferredRegistry<T extends Keyed> implements Registry<T>, net.kyori
 
     /**Registers a new entry under a certain key.
      *
+     * @param plugin The plugin that tries to register a new entry
      * @param entry The entry to add
      *
      * @throws IllegalArgumentException when an entry is already registered under the same key.

@@ -54,6 +54,7 @@ public class BaseRegistry<T extends Keyed> implements Registry<T>, Iterable<T>, 
 
     /**Registers a new entry under a certain key.
      *
+     * @param plugin The plugin that tries to register a new entry
      * @param entry The entry to add
      *
      * @return The entry you tried to add
@@ -72,10 +73,27 @@ public class BaseRegistry<T extends Keyed> implements Registry<T>, Iterable<T>, 
     /**
      * Registers multiple new entries.
      *
+     * @param plugin The plugin that tries to register new entries
      * @param entries The entry to add
      * */
     @SafeVarargs
     public final void addEntries(@NotNull Plugin plugin, @NotNull T... entries) {
+        for (var e : entries) {
+            if (registry.containsKey(e.getKey())) {
+                showDuplicateWarningMsg(plugin, e.getKey());
+                continue;
+            }
+            registry.putIfAbsent(e.getKey(), e);
+        }
+    }
+
+    /**
+     * Registers multiple new entries.
+     *
+     * @param plugin The plugin that tries to register new entries
+     * @param entries The entry to add
+     * */
+    public final void addEntries(@NotNull Plugin plugin, @NotNull Collection<T> entries) {
         for (var e : entries) {
             if (registry.containsKey(e.getKey())) {
                 showDuplicateWarningMsg(plugin, e.getKey());
