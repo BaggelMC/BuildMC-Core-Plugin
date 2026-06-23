@@ -17,6 +17,7 @@ import net.mathias2246.buildmc.api.status.StatusInstance;
 import net.mathias2246.buildmc.api.status.StatusManager;
 import net.mathias2246.buildmc.claims.ClaimLogger;
 import net.mathias2246.buildmc.claims.ClaimManager;
+import net.mathias2246.buildmc.claims.ClaimSelectionChangeWorld;
 import net.mathias2246.buildmc.claims.protections.blocks.*;
 import net.mathias2246.buildmc.claims.protections.entities.*;
 import net.mathias2246.buildmc.claims.protections.misc.*;
@@ -27,7 +28,6 @@ import net.mathias2246.buildmc.event.claims.PlayerCrossClaimBoundariesListener;
 import net.mathias2246.buildmc.player.FirstTimeJoinListener;
 import net.mathias2246.buildmc.player.status.PlayerStatusUtil;
 import net.mathias2246.buildmc.player.status.StatusConfig;
-import net.mathias2246.buildmc.spawnElytra.DisableRiptideListener;
 import net.mathias2246.buildmc.ui.claims.ClaimUIs;
 import net.mathias2246.buildmc.util.BStats;
 import net.mathias2246.buildmc.util.SoundManager;
@@ -224,7 +224,7 @@ public final class CoreMain {
 
             registerListener(new ClaimUIs());
 
-            new DisableRiptideListener(plugin, protocolManager);
+            registerListener(new ClaimSelectionChangeWorld());
 
             ClaimLogger.init(plugin);
         }

@@ -304,7 +304,7 @@ public class ClaimCreate {
         return LocationUtil.tryDeserialize(l);
     }
 
-    private static void removeSelectionData(Player player) {
+    public static void removeSelectionData(Player player) {
         player.getPersistentDataContainer().remove(Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool_first_selection")));
         player.getPersistentDataContainer().remove(Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool_second_selection")));
     }
