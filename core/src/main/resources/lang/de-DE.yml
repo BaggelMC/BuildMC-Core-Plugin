@@ -185,6 +185,7 @@ messages:
 
       missing-input: "<red>Der Name kann nicht Leer sein.</red>"
       name-has-spaces: "<red>Der Name darf kein Leerzeichen enthalten.</red>"
+      invalid-name: "<red>Der Name ist ungültig.</red>"
     remove:
       invalid-type: "<red>Fehler: Argument 'type' muss entweder 'player' oder
         'team' sein.</red>"

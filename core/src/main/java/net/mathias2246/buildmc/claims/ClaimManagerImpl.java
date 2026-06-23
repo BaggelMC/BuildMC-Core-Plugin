@@ -276,17 +276,17 @@ public class ClaimManagerImpl implements ClaimManager {
     }
 
     @Override
-    public boolean doesOwnerHaveClaimWithName(String ownerId, String claimName) throws SQLException {
+    public boolean doesOwnerHaveClaimWithName(@NonNull String ownerId, @NonNull String claimName) throws SQLException {
         return net.mathias2246.buildmc.claims.ClaimManager.doesOwnerHaveClaimWithName(ownerId, claimName);
     }
 
     @Override
-    public @Nullable Integer getRemainingTeamClaims(String teamName) {
+    public @Nullable Integer getRemainingTeamClaims(@NonNull String teamName) {
         return net.mathias2246.buildmc.claims.ClaimManager.getRemainingTeamClaims(teamName);
     }
 
     @Override
-    public @Nullable Integer getRemainingPlayerClaims(String playerUUID) {
+    public @Nullable Integer getRemainingPlayerClaims(@NonNull String playerUUID) {
         return net.mathias2246.buildmc.claims.ClaimManager.getRemainingPlayerClaims(playerUUID);
     }
 
@@ -296,7 +296,7 @@ public class ClaimManagerImpl implements ClaimManager {
     }
 
     @Override
-    public void setRemainingTeamClaims(String teamName, @Nullable Integer remainingClaims) {
+    public void setRemainingTeamClaims(@NonNull String teamName, @Nullable Integer remainingClaims) {
         net.mathias2246.buildmc.claims.ClaimManager.setRemainingTeamClaims(teamName, remainingClaims);
     }
 

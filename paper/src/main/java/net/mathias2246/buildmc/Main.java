@@ -252,9 +252,7 @@ public final class Main extends PluginMain implements Listener {
         pdc.remove(ClaimSelectionTool.SELECTION_EFFECT_KEY);
 
         AbstractCustomItem.customItemsRegistry.getOptional(Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool")))
-                .ifPresent(customItem -> {
-                    ((AbstractSelectionTool)customItem).removeSelectionFromPlayer(event.getPlayer());
-                });
+                .ifPresent(customItem -> ((AbstractSelectionTool)customItem).removeSelectionFromPlayer(event.getPlayer()));
     }
 
     // Is also called here, because on paper non-persistent Metadata was replaced with PDC because it is deprecated.
@@ -266,8 +264,6 @@ public final class Main extends PluginMain implements Listener {
         pdc.remove(ClaimSelectionTool.SELECTION_EFFECT_KEY);
 
         AbstractCustomItem.customItemsRegistry.getOptional(Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool")))
-                .ifPresent(customItem -> {
-                    ((AbstractSelectionTool)customItem).removeSelectionFromPlayer(event.getPlayer());
-                });
+                .ifPresent(customItem -> ((AbstractSelectionTool)customItem).removeSelectionFromPlayer(event.getPlayer()));
     }
 }

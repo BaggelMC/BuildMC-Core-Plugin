@@ -6,6 +6,8 @@ import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.ClaimType;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.event.claims.*;
+import net.mathias2246.buildmc.util.InvalidStringException;
+import net.mathias2246.buildmc.util.ValidationPatterns;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
@@ -746,7 +748,8 @@ public class ClaimManager {
         setRemainingPlayerClaims(playerUUID.toString(), remainingClaims);
     }
 
-    public static void updateClaimName(@NotNull Claim claim,  @NotNull String newName) throws SQLException, IllegalArgumentException {
+    public static void updateClaimName(@NotNull Claim claim,  @NotNull String newName) throws SQLException, IllegalArgumentException, InvalidStringException {
+        InvalidStringException.throwIfInvalid(newName, ValidationPatterns.VALID_STRING_IN_COMMAND);
         Long claimId = claim.getId();
         if (claimId == null) {
             throw new IllegalArgumentException("Claim has no ID: " + claim.getName());
@@ -754,11 +757,13 @@ public class ClaimManager {
         updateClaimName(claimId, newName);
     }
 
-    public static void updateClaimName(long claimId,  @NotNull String newName) throws SQLException {
+    public static void updateClaimName(long claimId,  @NotNull String newName) throws SQLException, InvalidStringException {
+        InvalidStringException.throwIfInvalid(newName, ValidationPatterns.VALID_STRING_IN_COMMAND);
         claimTable.updateClaimName(CoreMain.databaseManager.getConnection(), claimId, newName);
     }
 
-    public static void updateClaimOwner(@NotNull Claim claim, @NotNull String newOwnerId) throws SQLException, IllegalArgumentException {
+    public static void updateClaimOwner(@NotNull Claim claim, @NotNull String newOwnerId) throws SQLException, IllegalArgumentException, InvalidStringException {
+        InvalidStringException.throwIfInvalid(newOwnerId, ValidationPatterns.VALID_CLAIM_OWNER);
         Long claimId = claim.getId();
         if (claimId == null) {
             throw new IllegalArgumentException("Claim has no ID: " + claim.getName());
@@ -771,7 +776,8 @@ public class ClaimManager {
         claimTable.updateClaimOwner(CoreMain.databaseManager.getConnection(), claim, newOwnerId);
     }
 
-    public static void updateClaimOwner(long claimId, @NotNull String newOwnerId) throws SQLException {
+    public static void updateClaimOwner(long claimId, @NotNull String newOwnerId) throws SQLException, InvalidStringException {
+        InvalidStringException.throwIfInvalid(newOwnerId, ValidationPatterns.VALID_CLAIM_OWNER);
         Claim claim = getClaimByID(claimId);
         if (claim == null) {
             throw new IllegalArgumentException("No claim exists with id " + claimId);

@@ -7,6 +7,7 @@ import com.google.gson.GsonBuilder;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.mathias2246.buildmc.api.BuildMcAPI;
+import net.mathias2246.buildmc.api.Guide;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.event.lifecycle.BuildMcFinishedLoadingEvent;
 import net.mathias2246.buildmc.api.event.lifecycle.BuildMcRegistryEvent;
@@ -81,7 +82,7 @@ public final class CoreMain {
 
     public static DeferredRegistry<AbstractCustomItem> customItemsRegistry;
 
-    public static BaseRegistry<GuidesCommand.Guide> guidesRegistry;
+    public static BaseRegistry<Guide> guidesRegistry;
 
     public final static Gson gson = new GsonBuilder()
             .serializeNulls()
@@ -116,7 +117,7 @@ public final class CoreMain {
 
         Bukkit.getServicesManager().register(BuildMcAPI.class, plugin, plugin, ServicePriority.High);
 
-        guidesRegistry = (BaseRegistry<GuidesCommand.Guide>) registriesHolder.addRegistry(DefaultRegistries.GUIDES.toString(), new BaseRegistry<GuidesCommand.Guide>(Key.key("buildmc", "guide")));
+        guidesRegistry = (BaseRegistry<Guide>) registriesHolder.addRegistry(DefaultRegistries.GUIDES.toString(), new BaseRegistry<Guide>(Key.key("buildmc", "guide")));
 
         guideCommand = new GuidesCommand(plugin, "guides.yml");
         GuidesCommand.enabled = guideCommand.configuration.getBoolean("enabled", true);

@@ -162,6 +162,7 @@ messages:
 
       missing-input: "<red>The name cannot be empty.</red>"
       name-has-spaces: "<red>The name cannot contain spaces.</red>"
+      invalid-name: "<red>The name is invalid.</red>"
 
     remove:
       invalid-type: "<red>Error: Argument 'type' must be either 'player' or 'team'.</red>"

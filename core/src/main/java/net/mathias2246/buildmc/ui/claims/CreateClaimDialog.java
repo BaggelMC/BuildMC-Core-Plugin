@@ -15,6 +15,7 @@ import net.mathias2246.buildmc.commands.claim.ClaimCreate;
 import net.mathias2246.buildmc.util.AudienceUtil;
 import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.SoundUtil;
+import net.mathias2246.buildmc.util.ValidationPatterns;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -73,6 +74,12 @@ public class CreateClaimDialog {
                                             if (name.contains(" ")) {
                                                 CoreMain.soundManager.playSound(p, SoundUtil.mistake);
                                                 AudienceUtil.sendMessage(p, Component.translatable("messages.claims.create.name-has-spaces"));
+                                                return;
+                                            }
+
+                                            if (!ValidationPatterns.VALID_STRING_IN_COMMAND.matcher(name).matches()) {
+                                                CoreMain.soundManager.playSound(p, SoundUtil.mistake);
+                                                AudienceUtil.sendMessage(p, Component.translatable("messages.claims.create.invalid-name"));
                                                 return;
                                             }
 

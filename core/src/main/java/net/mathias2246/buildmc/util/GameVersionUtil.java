@@ -4,14 +4,12 @@ import org.bukkit.Bukkit;
 
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public final class GameVersionUtil {
 
     public static void onVersion(String lowestRequiredVersion,  Consumer<String> onMatch) {
 
-        Pattern pattern = Pattern.compile("MC:\\s*([0-9]+(?:\\.[0-9]+){1,2})");
-        Matcher matcher = pattern.matcher(Bukkit.getServer().getVersion());
+        Matcher matcher = ValidationPatterns.MINECRAFT_VERSION.matcher(Bukkit.getServer().getVersion());
 
         if (matcher.find()) {
             String mcVersion = matcher.group(1);

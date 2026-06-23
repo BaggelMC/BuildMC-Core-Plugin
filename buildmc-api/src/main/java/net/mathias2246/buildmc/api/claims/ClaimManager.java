@@ -3,11 +3,13 @@ package net.mathias2246.buildmc.api.claims;
 import com.google.common.collect.ImmutableSet;
 import net.mathias2246.buildmc.api.event.claims.ClaimCreateEvent;
 import net.mathias2246.buildmc.api.event.claims.ClaimRemoveEvent;
+import net.mathias2246.buildmc.util.InvalidStringException;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
+import org.checkerframework.common.value.qual.MatchesRegex;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -253,7 +255,7 @@ public interface ClaimManager {
      * @throws IllegalArgumentException  if any of the {@link Location}s are null, or they're not in the same world.
      */
     @Contract("_, _, _, null, _ -> fail; _, _, _, _, null -> fail")
-    @Nullable Long tryClaimArea(@NotNull ClaimType type, @NotNull String claimOwner, @NotNull String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
+    @Nullable Long tryClaimArea(@NotNull ClaimType type, @MatchesRegex("^(?:server|[A-Za-z0-9_.:-]+)$") @NotNull String claimOwner, @MatchesRegex("^[A-Za-z0-9_.-]+$")  @NotNull String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
 
     /**
      * Attempts to register a {@link Claim} instance.
@@ -274,7 +276,7 @@ public interface ClaimManager {
      * @throws IllegalArgumentException  if any of the {@link Location}s are null, or they're not in the same world.
      */
     @Contract("_, _, null, _ -> fail; _, _, _, null -> fail")
-    @Nullable Long tryClaimPlayerArea(@NotNull Player player, @NotNull String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
+    @Nullable Long tryClaimPlayerArea(@NotNull Player player, @MatchesRegex("^[A-Za-z0-9_.-]+$") @NotNull String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
 
     /**
      * Attempts to create a claim for a {@link Team} between two positions.
@@ -287,7 +289,7 @@ public interface ClaimManager {
      * @throws IllegalArgumentException  if any of the {@link Location}s are null, or they're not in the same world.
      */
     @Contract("_, _, null, _ -> fail; _, _, _, null -> fail")
-    @Nullable Long tryClaimTeamArea(@NotNull Team team, @NotNull String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
+    @Nullable Long tryClaimTeamArea(@NotNull Team team, @MatchesRegex("^[A-Za-z0-9_.-]+$") @NotNull String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
 
     /**
      * Attempts to create a claim owned by the server between two positions.
@@ -299,7 +301,7 @@ public interface ClaimManager {
      * @throws IllegalArgumentException if any of the {@link Location}s are null, or they're not in the same world
      */
     @Contract("_, null, _ -> fail; _, _, null -> fail")
-    @Nullable Long tryClaimServerArea(@NotNull String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
+    @Nullable Long tryClaimServerArea(@MatchesRegex("^[A-Za-z0-9_.-]+$") @NotNull String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
 
     /**
      * Attempts to create a placeholder claim between two positions.
@@ -315,7 +317,7 @@ public interface ClaimManager {
      * @throws IllegalArgumentException if any of the {@link Location}s are null, or they're not in the same world
      */
     @Contract("_, null, _ -> fail; _, _, null -> fail")
-    @Nullable Long tryClaimPlaceholderArea(@NotNull String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
+    @Nullable Long tryClaimPlaceholderArea(@MatchesRegex("^[A-Za-z0-9_.-]+$") @NotNull String claimName, Location pos1, Location pos2) throws IllegalArgumentException;
 
     /**
      * Registers multiple {@link Claim} objects in the system and persists them to the database.
@@ -467,7 +469,7 @@ public interface ClaimManager {
      * @throws SQLException if a database error occurs
      */
     @Contract(pure = true)
-    boolean doesOwnerHaveClaimWithName(String ownerId, String claimName) throws SQLException;
+    boolean doesOwnerHaveClaimWithName(@MatchesRegex("^(?:server|[A-Za-z0-9_.:-]+)$") @NotNull String ownerId, @MatchesRegex("^[A-Za-z0-9_.-]+$") @NotNull String claimName) throws SQLException;
 
     /**
      * Gets how many claimable chunks a team has left.
@@ -477,7 +479,7 @@ public interface ClaimManager {
      *         or {@code null} if no data is available
      */
     @Contract(pure = true)
-    @Nullable Integer getRemainingTeamClaims(String teamName);
+    @Nullable Integer getRemainingTeamClaims(@MatchesRegex("^[A-Za-z0-9_.-]+$") @NotNull String teamName);
 
     /**
      * Gets how many claimable chunks a player has left.
@@ -487,7 +489,7 @@ public interface ClaimManager {
      *         or {@code null} if no data is available
      */
     @Contract(pure = true)
-    @Nullable Integer getRemainingPlayerClaims(String playerUUID);
+    @Nullable Integer getRemainingPlayerClaims(@MatchesRegex("^[A-Za-z0-9_.-]+$") @NotNull String playerUUID);
 
     /**
      * Gets how many claimable chunks a player has left.
@@ -510,7 +512,7 @@ public interface ClaimManager {
      * @param remainingClaims the new number of remaining claims,
      *                        or {@code null} to remove the record
      */
-    void setRemainingTeamClaims(String teamName, @Nullable Integer remainingClaims);
+    void setRemainingTeamClaims(@MatchesRegex("^[A-Za-z0-9_.-]+$") @NotNull String teamName, @Nullable Integer remainingClaims);
 
     /**
      * Sets the number of claimable chunks a player has left.
@@ -545,8 +547,9 @@ public interface ClaimManager {
      * @param newName the new claim name
      * @throws SQLException if a database error occurs
      * @throws IllegalArgumentException if the claim has no ID
+     * @throws InvalidStringException if the new name is invalid
      */
-    void updateClaimName(@NotNull Claim claim,  @NotNull String newName) throws SQLException, IllegalArgumentException;
+    void updateClaimName(@NotNull Claim claim, @MatchesRegex("^[A-Za-z0-9_.-]+$") @NotNull String newName) throws SQLException, IllegalArgumentException, InvalidStringException;
 
     /**
      * Update the name of a Claim
@@ -554,8 +557,9 @@ public interface ClaimManager {
      * @param claimId the claim ID
      * @param newName the new claim name
      * @throws SQLException if a database error occurs
+     * @throws InvalidStringException if the new name is invalid
      */
-    void updateClaimName(long claimId,  @NotNull String newName) throws SQLException;
+    void updateClaimName(long claimId, @MatchesRegex("^[A-Za-z0-9_.-]+$") @NotNull String newName) throws SQLException, InvalidStringException;
 
     /**
      * Update the owner of a Claim
@@ -564,8 +568,9 @@ public interface ClaimManager {
      * @param newOwnerId the new owner ID (usually a player UUID as string, a team name or "server" depending on the {@link ClaimType})
      * @throws SQLException if a database error occurs
      * @throws IllegalArgumentException if the claim has no ID
+     * @throws InvalidStringException if the new owner is invalid
      */
-    void updateClaimOwner(@NotNull Claim claim, @NotNull String newOwnerId) throws SQLException, IllegalArgumentException;
+    void updateClaimOwner(@NotNull Claim claim, @MatchesRegex("^(?:server|[A-Za-z0-9_.:-]+)$") @NotNull String newOwnerId) throws SQLException, IllegalArgumentException, InvalidStringException;
 
     /**
      * Update the owner of a Claim
@@ -573,6 +578,7 @@ public interface ClaimManager {
      * @param claimId   the claim ID
      * @param newOwnerId the new owner ID (usually a player UUID as string, a team name or "server" depending on the {@link ClaimType})
      * @throws SQLException if a database error occurs
+     * @throws InvalidStringException if the new owner is invalid
      */
-    void updateClaimOwner(long claimId, @NotNull String newOwnerId) throws SQLException;
+    void updateClaimOwner(long claimId, @MatchesRegex("^(?:server|[A-Za-z0-9_.:-]+)$") @NotNull String newOwnerId) throws SQLException, InvalidStringException;
 }

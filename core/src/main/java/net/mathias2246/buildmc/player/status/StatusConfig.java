@@ -6,6 +6,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.event.player.StatusLoadEvent;
 import net.mathias2246.buildmc.api.status.StatusInstance;
+import net.mathias2246.buildmc.util.InvalidStringException;
 import net.mathias2246.buildmc.util.config.YamlConfigurationManager;
 import net.mathias2246.buildmc.util.registry.BaseRegistry;
 import net.mathias2246.buildmc.util.registry.DefaultRegistries;
@@ -40,12 +41,16 @@ public class StatusConfig extends YamlConfigurationManager {
         reg.clear();
 
         for (var key : configuration.getKeys(false)) {
-            //if (!configuration.isConfigurationSection(key)) return;
+            try {
+                //if (!configuration.isConfigurationSection(key)) return;
 
-            var s = configuration.getConfigurationSection(key);
-            if (s == null) return;
-            var v = s.getValues(false);
-            reg.addEntry(getPlugin(), StatusInstance.deserialize(v, key.toLowerCase()));
+                var s = configuration.getConfigurationSection(key);
+                if (s == null) return;
+                var v = s.getValues(false);
+                reg.addEntry(getPlugin(), StatusInstance.deserialize(v, key.toLowerCase()));
+            } catch (InvalidStringException ignore) {
+                getPlugin().getLogger().log(Level.WARNING, "Invalid status id '" + key + "' (Status will be skipped)");
+            }
         }
 
         StatusLoadEvent statusLoadEvent = new StatusLoadEvent(getPlugin(), reg);

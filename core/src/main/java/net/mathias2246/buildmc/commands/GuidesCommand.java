@@ -9,13 +9,14 @@ import io.papermc.paper.registry.data.dialog.action.DialogAction;
 import io.papermc.paper.registry.data.dialog.body.DialogBody;
 import io.papermc.paper.registry.data.dialog.type.DialogType;
 import net.kyori.adventure.key.Key;
-import net.kyori.adventure.key.Keyed;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.mathias2246.buildmc.CoreMain;
+import net.mathias2246.buildmc.api.Guide;
 import net.mathias2246.buildmc.util.AudienceUtil;
 import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.SoundUtil;
+import net.mathias2246.buildmc.util.ValidationPatterns;
 import net.mathias2246.buildmc.util.config.YamlConfigurationManager;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
@@ -24,7 +25,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.NotNull;
-import org.jspecify.annotations.NonNull;
 
 import java.net.URI;
 import java.net.URL;
@@ -37,41 +37,6 @@ import static net.mathias2246.buildmc.CoreMain.plugin;
 public class GuidesCommand extends YamlConfigurationManager {
 
     public static boolean enabled = true;
-
-    @SuppressWarnings("ClassCanBeRecord")
-    public static class Guide implements Keyed, org.bukkit.Keyed {
-        private final @NotNull Key key;
-        private final @NotNull String textKey;
-        private final @NotNull Map<String, String>  urls;
-
-        public Guide(
-                @NotNull Key key,
-                @NotNull String textKey,
-                @NotNull Map<String, String> urls
-        ) {
-            this.key = key;
-            this.textKey = textKey;
-            this.urls = urls;
-        }
-
-        public @NotNull String getTextKey() {
-            return textKey;
-        }
-
-        public @NotNull Map<String, String> getUrls() {
-            return urls;
-        }
-
-        @Override
-        public @NotNull NamespacedKey getKey() {
-            return Objects.requireNonNull(NamespacedKey.fromString(key.asString()));
-        }
-
-        @Override
-        public @NonNull Key key() {
-            return key;
-        }
-    }
 
     /**
      * @param plugin       The plugin that owns this configuration
@@ -108,7 +73,7 @@ public class GuidesCommand extends YamlConfigurationManager {
         Component guideContent = Message.msg(player, Objects.requireNonNull(guidesRegistry.get(n)).getTextKey());
 
         String finalKey = key;
-        Collection<Map.Entry<String, String>> urlButtons = Objects.requireNonNull(guidesRegistry.get(n)).getUrls().entrySet();
+        Collection<Map.Entry<String, URL>> urlButtons = Objects.requireNonNull(guidesRegistry.get(n)).getUrls().entrySet();
 
         // Build the action buttons
         List<ActionButton> actions = new ArrayList<>();
@@ -122,23 +87,18 @@ public class GuidesCommand extends YamlConfigurationManager {
                         .build()
         );
 
-        for (Map.Entry<String, String> entry : urlButtons) {
-            try {
-                URL url = new URI(entry.getValue()).toURL();
-                actions.add(
-                        ActionButton.builder(
-                                Message.msg(player, entry.getKey())
-                        )
-                                .action(
-                                        DialogAction.staticAction(
-                                                ClickEvent.openUrl(url)
-                                        )
-                                )
-                                .build()
-                );
-            } catch (Exception ignore) {
-
-            }
+        for (Map.Entry<String, URL> entry : urlButtons) {
+            actions.add(
+                    ActionButton.builder(
+                            Message.msg(player, entry.getKey())
+                    )
+                            .action(
+                                    DialogAction.staticAction(
+                                            ClickEvent.openUrl(entry.getValue())
+                                    )
+                            )
+                            .build()
+            );
         }
 
         Dialog dialog = Dialog.create(builder -> builder.empty()
@@ -196,25 +156,53 @@ public class GuidesCommand extends YamlConfigurationManager {
 
             String textKey = section.getString("text-key");
             if (textKey == null) {
-                getPlugin().getLogger().warning("Could not find text key for guide '" + guideId + "' (Skipped guide)");
+                getPlugin().getLogger().warning("Could not find key 'text-key' for guide '" + guideId + "' (Skipped guide)");
                 continue;
             }
 
-            Map<String, String> urls = new LinkedHashMap<>();
+            // Skip if YAML path to the translation key is malformed
+            if (!ValidationPatterns.YAML_PATH.matcher(textKey).matches()) {
+                getPlugin().getLogger().warning("Invalid text-key in guide '" + guideId + "' (Skipped guide)");
+                return;
+            }
+
+            Map<String, URL> urls = new LinkedHashMap<>();
             ConfigurationSection urlsSection = section.getConfigurationSection("urls");
             if (urlsSection != null) {
                 urlsSection.getKeys(false).stream()
-                        .filter(k -> k.matches("-?\\d+"))
+                        .filter(k -> k.matches("-?\\d+")) // Allow positive and negative integers as keys
                         .map(Integer::parseInt)
                         .sorted()
                         .forEach(index -> {
                             ConfigurationSection entry = urlsSection.getConfigurationSection(String.valueOf(index));
                             if (entry == null) return;
                             String labelKey = entry.getString("label-key");
-                            String url      = entry.getString("url");
-                            if (labelKey != null && url != null) {
-                                urls.put(labelKey, url);
+                            String urlStr      = entry.getString("url");
+                            // Skip the URL is missing
+                            if (urlStr == null) {
+                                getPlugin().getLogger().warning("Missing key 'url' for url button in guide '" + guideId + "' with order number " + index + " (Skipped URL)");
+                                return;
                             }
+                            // Skip if the label for the button is missing
+                            if (labelKey == null) {
+                                getPlugin().getLogger().warning("Missing key 'label-key' for url button in guide '" + guideId + "' with order number " + index + " (Skipped URL)");
+                                return;
+                            }
+                            // Skip if YAML path to the translation key for the button label is malformed
+                            if (!ValidationPatterns.YAML_PATH.matcher(urlStr).matches()) {
+                                getPlugin().getLogger().warning("Invalid 'url' key for url button in guide '" + guideId + "' with order number " + index + " (Skipped URL)");
+                                return;
+                            }
+
+                            URL url;
+                            try {
+                                url = new URI(urlStr).toURL();
+                            } catch (Exception ignore) {
+                                getPlugin().getLogger().warning("Invalid URL '" + urlStr + "' for url button in guide '" + guideId + "' with order number " + index + " (Skipped URL)");
+                                return;
+                            }
+
+                            urls.put(labelKey, url);
                         });
             }
 
