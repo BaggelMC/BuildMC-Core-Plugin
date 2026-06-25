@@ -515,7 +515,7 @@ claims:
     players-friendly-fire:
       name: <green>Spieler Angreiffen</green>
       lore: <gray>Verhindert das Spieler sich gegenseitig Angreiffen können.</gray>
-      message:
+      message: "<red>Dieser Spieler ist geschützt</red>"
 
     projectile-interactions:
       name: <green>Projektil Interaktionen</green>

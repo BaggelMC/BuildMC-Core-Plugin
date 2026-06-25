@@ -485,7 +485,7 @@ claims:
     players-friendly-fire:
       name: "<green>Attack Players</green>"
       lore: "<gray>Blocks Players from attacking other players.</gray>"
-      message:
+      message: "<red>This player is protected</red>"
 
     projectile-interactions:
       name: "<green>Projectile Interactions</green>"
