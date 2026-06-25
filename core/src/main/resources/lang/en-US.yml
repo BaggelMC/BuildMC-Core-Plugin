@@ -340,7 +340,7 @@ claims:
     item-pickup:
       name: "<green>Item Pickup</green>"
       lore: "<gray>Prevents players from picking up items.</gray>"
-      message:
+      message: ""
 
     item-drop:
       name: "<green>Item Dropping</green>"

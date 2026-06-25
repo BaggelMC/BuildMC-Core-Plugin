@@ -95,10 +95,15 @@ class LangFileCompletenessTest {
             String fileName = path.getFileName().toString();
 
             return DynamicTest.dynamicTest(fileName, () -> {
-                Set<String> keys = flattenKeys(loadYaml(path));
+                Map<String, Object> yaml = loadYaml(path);
+                Set<String> keys       = flattenKeys(yaml);
+                Set<String> nullKeys   = flattenNullKeys(yaml);
+
                 Set<String> missing = referenceKeys.stream()
                         .filter(k -> !keys.contains(k))
                         .collect(Collectors.toSet());
+
+                StringBuilder errors = new StringBuilder();
 
                 if (!missing.isEmpty()) {
                     List<String> sorted = new ArrayList<>(missing);
@@ -106,11 +111,25 @@ class LangFileCompletenessTest {
                     String missingList = sorted.stream()
                             .map(k -> "  - " + k)
                             .collect(Collectors.joining("\n"));
-
-                    fail(String.format(
+                    errors.append(String.format(
                             "%s is missing %d key(s):%n%s",
-                            fileName, missing.size(), missingList
-                    ));
+                            fileName, missing.size(), missingList));
+                }
+
+                if (!nullKeys.isEmpty()) {
+                    if (!errors.isEmpty()) errors.append("%n%n".formatted());
+                    List<String> sorted = new ArrayList<>(nullKeys);
+                    Collections.sort(sorted);
+                    String nullList = sorted.stream()
+                            .map(k -> "  - " + k)
+                            .collect(Collectors.joining("\n"));
+                    errors.append(String.format(
+                            "%s has %d empty (null) value(s) — use \"\" instead of a bare key:%n%s",
+                            fileName, nullKeys.size(), nullList));
+                }
+
+                if (!errors.isEmpty()) {
+                    fail(errors.toString());
                 }
 
                 // Explicit pass message visible in IDE test output
@@ -151,6 +170,29 @@ class LangFileCompletenessTest {
                 return flattenKeysRecursive((Map<String, Object>) nested, fullKey);
             }
             return Stream.of(fullKey);
+        });
+    }
+
+    /**
+     * Recursively collects all leaf keys whose value is {@code null} —
+     * the result of a bare YAML key with no value (e.g. {@code item-pickup:}).
+     * Authors must use an explicit empty string ({@code ""}) instead.
+     */
+    private static Set<String> flattenNullKeys(Map<String, Object> map) {
+        return flattenNullKeysRecursive(map, "").collect(Collectors.toSet());
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Stream<String> flattenNullKeysRecursive(Map<String, Object> map, String prefix) {
+        return map.entrySet().stream().flatMap(entry -> {
+            String fullKey = prefix.isEmpty() ? entry.getKey() : prefix + "." + entry.getKey();
+            if (entry.getValue() instanceof Map<?, ?> nested) {
+                return flattenNullKeysRecursive((Map<String, Object>) nested, fullKey);
+            }
+            if (entry.getValue() == null) {
+                return Stream.of(fullKey);
+            }
+            return Stream.empty();
         });
     }
 

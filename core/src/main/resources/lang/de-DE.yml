@@ -368,7 +368,7 @@ claims:
     item-pickup:
       name: <green>Items Aufsammeln</green>
       lore: <gray>Verhindert das Spieler Items aufsammeln können.</gray>
-      message:
+      message: ""
 
     item-drop:
       name: <green>Items Fallen Lassen</green>
