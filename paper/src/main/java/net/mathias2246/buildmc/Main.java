@@ -6,6 +6,7 @@ import net.mathias2246.buildmc.api.endEvent.EndManager;
 import net.mathias2246.buildmc.api.item.AbstractCustomItem;
 import net.mathias2246.buildmc.api.item.CustomItemListener;
 import net.mathias2246.buildmc.api.item.abstractTypes.AbstractSelectionTool;
+import net.mathias2246.buildmc.api.messageBus.EventBus;
 import net.mathias2246.buildmc.api.permission.PermissionManager;
 import net.mathias2246.buildmc.api.spawnEyltra.ElytraManager;
 import net.mathias2246.buildmc.api.status.StatusManager;
@@ -15,6 +16,7 @@ import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.commands.*;
 import net.mathias2246.buildmc.endEvent.EndListener;
 import net.mathias2246.buildmc.endEvent.EndManagerImpl;
+import net.mathias2246.buildmc.messageBus.EventBusImpl;
 import net.mathias2246.buildmc.platform.SoundManagerPaperImpl;
 import net.mathias2246.buildmc.player.PlayerHeadDropDeathListener;
 import net.mathias2246.buildmc.player.PlayerHeadDropModifier;
@@ -64,6 +66,8 @@ public final class Main extends PluginMain implements Listener {
     public static ClaimManager apiClaimManager;
     public static EndManager apiEndManager;
     private static ElytraManager apiElytraManager;
+
+    private static EventBus eventBus;
 
     /** Internal value for skipping all the logic inside the onDisable method for a cleaner emergency plugin disable. **/
     private boolean disableImmediately = false;
@@ -207,6 +211,11 @@ public final class Main extends PluginMain implements Listener {
     @Override
     public PermissionManager getPermissionManager() {
         return CoreMain.permissionManager;
+    }
+
+    @Override
+    public EventBus getEventBus() {
+        return CoreMain.eventBus;
     }
 
     @Override
