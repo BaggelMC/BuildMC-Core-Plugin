@@ -9,6 +9,8 @@ messages:
     guide-not-found: "<red>This guide doesn't exist!</red>"
     dialog-title: "<green>Guide for: <dark_gray>'</dark_gray><gold><b>%guide%</b></gold><dark_gray>'</dark_gray></green>"
 
+    go-to-wiki: "Go to our wiki!"
+
     commands: |-
       ==================== <blue>Commands</blue> ====================
       <gray>Here is a list of custom commands you can use:</gray>
@@ -160,6 +162,7 @@ messages:
 
       missing-input: "<red>The name cannot be empty.</red>"
       name-has-spaces: "<red>The name cannot contain spaces.</red>"
+      invalid-name: "<red>The name is invalid.</red>"
 
     remove:
       invalid-type: "<red>Error: Argument 'type' must be either 'player' or 'team'.</red>"
@@ -216,15 +219,17 @@ messages:
         confirm: "<red>Confirm</red>"
         cancel: "<green>Cancel</green>"
 
+        exit: "Exit"
+
       errors:
         no-item-meta: "<red>Error: Failed to generate item-meta."
 
       create-dialog:
         title: "Create a Claim"
         notice: |-
-          <red>Make sure you have selected your area with the <u><click:open_url:https://baggel.de/core/player/claims/introduction/#creating-a-claim>claim tool</click></u> first!</red>
+          <red>Make sure you have selected your area with the <u><click:open_url:'https://baggel.de/core/player/claims/introduction/#creating-a-claim/'>claim tool</click></u> first!</red>
 
-          <green>Select a <yellow><u><click:open_url:https://baggel.de/core/player/claims/claim-types/>Claim Type</u></yellow> and give your claim a <yellow>name</yellow>.</green>
+          <green>Select a <yellow><u><click:open_url:'https://baggel.de/core/player/claims/claim-types/'>Claim Type</click></u></yellow> and give your claim a <yellow>name</yellow>.</green>
         claim-type: "<yellow>Claim Type</yellow>"
         claim-name: "<yellow>Claim Name:</yellow>"
 
@@ -256,8 +261,8 @@ messages:
 
         info-name: "<aqua>Claim Info</aqua>"
         info: |-
-          <gray>From:</gray> <green>X <blue>%minX%</blue> | Z <blue>%minZ%</blue></green>
-          <gray>To:</gray>    <green>X <blue>%maxX%</blue> | Z <blue>%maxZ%</blue></green>
+          <gray>From:</gray> <green>X </green><blue>%minX%</blue><green> | Z <blue>%minZ%</blue></green>
+          <gray>To:</gray>    <green>X </green><blue>%maxX%</blue><green> | Z <blue>%maxZ%</blue></green>
           <gray>In:</gray>    <green>%dimension%</green>
 
         protections: "<green>Protections</green>"
@@ -335,7 +340,7 @@ claims:
     item-pickup:
       name: "<green>Item Pickup</green>"
       lore: "<gray>Prevents players from picking up items.</gray>"
-      message: "<red>This item is protected</red>"
+      message: ""
 
     item-drop:
       name: "<green>Item Dropping</green>"
@@ -480,7 +485,7 @@ claims:
     players-friendly-fire:
       name: "<green>Attack Players</green>"
       lore: "<gray>Blocks Players from attacking other players.</gray>"
-      message:
+      message: "<red>This player is protected</red>"
 
     projectile-interactions:
       name: "<green>Projectile Interactions</green>"

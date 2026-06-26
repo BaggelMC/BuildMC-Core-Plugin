@@ -21,9 +21,13 @@ public abstract class AbstractSelectionTool extends AbstractTool {
     public AbstractSelectionTool(@NotNull Plugin plugin, @NotNull NamespacedKey key) {
         super(plugin, key);
 
-        // TODO: Make these selection values be reset when a player disconnects for safety
         firstSelectionKey = Objects.requireNonNull(NamespacedKey.fromString(key + "_first_selection"));
         secondSelectionKey = Objects.requireNonNull(NamespacedKey.fromString(key + "_second_selection"));
+    }
+
+    public void removeSelectionFromPlayer(@NotNull Player player) {
+        player.getPersistentDataContainer().remove(firstSelectionKey);
+        player.getPersistentDataContainer().remove(secondSelectionKey);
     }
 
     /**The NamespacedKey used to identify the first selection of this selection tool*/

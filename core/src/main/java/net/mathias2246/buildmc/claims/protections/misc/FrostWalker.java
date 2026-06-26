@@ -45,7 +45,7 @@ public class FrostWalker extends Protection {
         if (!(entity instanceof Player player)) return;
 
         ItemStack boots = player.getInventory().getBoots();
-        if (boots == null || !boots.containsEnchantment(Enchantment.FROST_WALKER)) return;
+        if (!boots.containsEnchantment(Enchantment.FROST_WALKER)) return;
 
         ProtectionUtil.handleProtection(event, this, entity.getLocation(), player);
     }

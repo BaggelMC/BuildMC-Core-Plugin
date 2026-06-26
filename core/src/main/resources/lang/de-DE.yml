@@ -9,6 +9,8 @@ messages:
     guide-not-found: "<red>Diesen Guide gibt es nicht!</red>"
     dialog-title: "<green>Guide für: <dark_gray>'</dark_gray><gold><b>%guide%</b></gold><dark_gray>'</dark_gray></green>"
 
+    go-to-wiki: "Besuche unser Wiki!"
+
     commands: |-
       ===================== <blue>Commands</blue> =====================
       <gray>Hier ist eine Liste an neuen Befehlen die du nutzen kannst:</gray>
@@ -144,7 +146,7 @@ messages:
         <red>In deiner Auswahl befindet sich ein fremder Claim!</red>
 
         "
-      no-chunks-left: <red>Du hast keine Chunks zum Claimen mehr verfügbar!</red>
+      no-chunks-left: <red>Du hast keine verfügbaren Chunks zum claimen!</red>
     create:
       missing-positions: <red>Du hast noch nicht beide Positionen gesetzt.</red>
       success: "<blue>------------------------</blue>
@@ -183,6 +185,7 @@ messages:
 
       missing-input: "<red>Der Name kann nicht Leer sein.</red>"
       name-has-spaces: "<red>Der Name darf kein Leerzeichen enthalten.</red>"
+      invalid-name: "<red>Der Name ist ungültig.</red>"
     remove:
       invalid-type: "<red>Fehler: Argument 'type' muss entweder 'player' oder
         'team' sein.</red>"
@@ -219,7 +222,7 @@ messages:
       removed: <green>Schutz <yellow>%flag%</yellow> wurde für diesen Claim <red>deaktiviert</red>.
     help-message:
       "<gold>------------- <green>Claims Help</green> -------------</gold>\
-      \ \n<aqua>Drücke <green><click:open_url:'https://baggel.de/docs/de/v1.1.0/players/claims/'>hier</click></green>\
+      \ \n<aqua>Drücke <green><click:open_url:'https://baggel.de/core/player/claims/introduction/#creating-a-claim'>hier</click></green>\
       \ um die vollständigen Docs zu öffnen.</aqua>\n<gray>- Benutze '<gold>/claim\
       \ claimtool</gold>' um das Claim Werkzeug zu erhalten.</gray>\n<gray>- Links-Klick\
       \ um den ersten Chunk auszuwählen.</gray>\n<gray>- Rechts-Klick um den zweiten\
@@ -262,15 +265,18 @@ messages:
         back: <red>Zurück</red>
         confirm: <red>Bestätigen</red>
         cancel: <green>Abbruch</green>
+
+        exit: "Schließen"
+
       errors:
         no-item-meta: "<red>Fehler: item-meta konnte nicht generiert werden."
 
       create-dialog:
         title: "Erstelle einen Claim"
         notice: |-
-          <red>Stelle sicher, dass zuerst den Bereich mit dem <u><click:open_url:https://baggel.de/de/core/player/claims/introduction/#einen-claim-erstellen>Claim Tool</u> ausgewählt hast.</red>
+          <red>Stelle sicher, dass zuerst den Bereich mit dem <u><click:open_url:'https://baggel.de/de/core/player/claims/introduction/#einen-claim-erstellen'>Claim Tool</click></u> ausgewählt hast.</red>
 
-          <green>Wähle einen <yellow><u><click:open_url:https://baggel.de/de/core/player/claims/claim-types/>Claim Typ</u></yellow> aus und geben deinem Claim einen <yellow>Namen</yellow>.</green>
+          <green>Wähle einen <yellow><u><click:open_url:'https://baggel.de/de/core/player/claims/claim-types/'>Claim Typ</click></u></yellow> aus und geben deinem Claim einen <yellow>Namen</yellow>.</green>
         claim-type: "<yellow>Claim Typ</yellow>"
         claim-name: "<yellow>Claim Name:</yellow>"
 
@@ -298,8 +304,8 @@ messages:
 
         info-name: "<aqua>Claim Info</aqua>"
         info: |-
-          <gray>Von:</gray>  <green>X <blue>%minX%</blue> | Z <blue>%minZ%</blue></green>
-          <gray>Zu:</gray>   <green>X <blue>%maxX%</blue> | Z <blue>%maxZ%</blue></green>
+          <gray>Von:</gray>  <green>X </green><blue>%minX%</blue><green> | Z <blue>%minZ%</blue></green>
+          <gray>Zu:</gray>   <green>X </green><blue>%maxX%</blue><green> | Z <blue>%maxZ%</blue></green>
           <gray>In:</gray>    <green>%dimension%</green>
 
         protections: <green>Schutz</green>
@@ -336,125 +342,202 @@ messages:
           title: "%player% entfernen?"
           success: <green>Spieler erfolgreich von der Whitelist entfernt.</green>
 claims:
-  flags:
+  protections:
     player-break:
       name: <green>Blöcke Abbauen</green>
       lore: <gray>Verhindert das abbauen von Blöcken.</gray>
+      message: "<red>Dieser Block ist geschützt</red>"
+
     player-place:
       name: <green>Blöcke Platzieren</green>
       lore: <gray>Verhindert das platzieren von Blöcken.</gray>
+      message: "<red>Dieser Bereich ist geschützt</red>"
+
     player-place-entity:
       name: <green>Entities Platzieren</green>
       lore:
         "<gray>Verhindert das Platzieren von Entities wie: Armor Stands, Boote,
         Minecarts oder End Crystals.</gray>"
+      message: "<red>Dieser Bereich ist geschützt</red>"
+
     container:
       name: <green>Behälter</green>
       lore: <gray>Verhinder das Spieler Behälter öffnen kann (Kisten, Trichter...).</gray>
+      message: "<red>Dieser Behälter ist geschützt</red>"
+
     item-pickup:
       name: <green>Items Aufsammeln</green>
       lore: <gray>Verhindert das Spieler Items aufsammeln können.</gray>
+      message: ""
+
     item-drop:
       name: <green>Items Fallen Lassen</green>
       lore: <gray>Verhindert das Spieler Items fallen lassen können.</gray>
+      message: "<red>Dieser Bereich ist geschützt</red>"
+
     sign-editing:
       name: <green>Schilder Bearbeiten</green>
       lore: <gray>Verhindert das Spieler Schilder umschreiben können.</gray>
+      message: "<red>Dieses Schild ist geschützt</red>"
+
     splash-potions:
       name: <green>Tränke Werfen</green>
       lore: <gray>Verindert das Spieler Tränke werfen.</gray>
+      message: "<red>Dieser Bereich ist geschützt</red>"
+
     vehicle-enter:
       name: <green>Fahrzeuge</green>
       lore:
         <gray>Verhindert das Spieler sich auf Fahrzeuge wie Boote, Pferde oder
         Minecarts setzen.</gray>
+      message: "<red>Dieses Fahrzeug ist geschützt</red>"
+
     bucket-usage:
       name: <green>Eimer</green>
       lore: <gray>Verhindert das Spieler Eimer verwenden können</gray>
+      message: "<red>Dieser Bereich ist geschützt</red>"
+
     frost-walker:
       name: <green>Eisläufer</green>
       lore: <gray>Verhindert Spielern das Eisläufer enchantment zu verwenden.</gray>
+      message: "<red>Du kannst hier kein <lang:enchantment.minecraft.frost_walker> verwenden</red>"
+
     sculk-sensor:
       name: <green>Sculk Sensoren</green>
       lore: <gray>Verhindert das Spieler Sculk Sensoren auslösen.</gray>
+      message: "<red>Dieser Bereich ist geschützt</red>"
+
     piston-movement-across-claim-borders:
       name: <green>Kolben Bewegung</green>
       lore: <gray>Verhindert das Kolben Blöcke über Chunk Grenzen bewegen können.</gray>
+      message: "<red>Dieser Bereich ist geschützt</red>"
+
     interaction-jukebox:
       name: <green>Plattenspieler</green>
       lore: <gray>Verhindert das Spieler mit Plattenspielern interagieren können</gray>
+      message: "<red>Dieser Plattenspieler ist geschützt</red>"
+
     interaction-button-and-lever:
       name: <green>Knöpfe & Hebel</green>
       lore: <gray>Verhindert das Spieler mit Knöpfen und Hebeln interagieren können.</gray>
+      message: "<red>Dieser Block ist geschützt</red>"
+
     interaction-redstone-components:
       name: <green>Redstone Teile</green>
       lore: <gray>Verhindert das Spieler Redstone Teile wie Verstärker, oder Tageslichtsensoren umstellen können.</gray>
+      message: "<red>Dieser Block ist geschützt</red>"
+
     interaction-pressure-plates-and-tripwire:
       name: <green>Druckplatten & Stolperdraht</green>
       lore: <gray>Verhindert das Spieler mit Druckplatten und Stolperdrähten interagieren können.</gray>
+      message: "<red>Dieser Block ist geschützt</red>"
+
     interaction-doors:
       name: <green>Türen</green>
       lore: <gray>Verhindert das Spieler mit Tühren, Falltüren oder Zauntoren interagieren können.</gray>
+      message: "<red>Diese Türe ist geschützt</red>"
+
     interaction-farmland:
       name: <green>Ackerboden</green>
       lore: <gray>Verhindert das Spieler Ackerboden zertrampeln können.</gray>
+      message: "<red>Dieser Ackerboden ist geschützt</red>"
+
     interaction-campfire:
       name: <green>Lagerfeuer</green>
       lore: <gray>Verhindert das Spieler mit Lagerfeuern interagieren können.</gray>
+      message: "<red>Dieses Lagerfeuer ist geschützt</red>"
+
     interaction-bells:
       name: <green>Glocke</green>
       lore: <gray>Verhindert das Spieler mit Glocken interagieren können.</gray>
+      message: "<red>Diese Glocke ist geschützt</red>"
+
     interaction-attach-leash:
       name: <green>Leinen</green>
       lore: <gray>Verhindert das Spieler Mobs an Leinen hängen können.</gray>
+      message: "<red>Du kannst hier keine Mobs an Leinen hängen</red>"
+
     interaction-bonemeal:
       name: <green>Knochenmehl</green>
       lore: <gray>Verhindert das Spieler mit Knochenmehl düngen können.</gray>
+      message: "<red>Dieser Bereich ist geschützt</red>"
+
     interaction-beehives:
       name: <green>Bienennest</green>
       lore: <gray>Verhindert das Spieler mit Bienennestern interagieren können.</gray>
+      message: "<red>Dieses Bienennest ist geschützt</red>"
+
     interaction-name-tags:
       name: <green>Namensschild</green>
       lore: <gray>Verhindert das Spieler Mobs mit Namensschildern umbennenen können.</gray>
+      message: "<red>Du kannst hier keine Entities umbenennen</red>"
+
     interaction-light-tnt:
       name: <green>TNT Anzünden</green>
       lore: <gray>Verhindert das Spieler TNT anzünden können.</gray>
+      message: "<red>Dieses TNT ist geschützt</red>"
+
     hanging-entities:
       name: <green>Hängende Entities</green>
       lore: <gray>Verhindert das Zerstören, Ändern oder Platzieren von Hängenden Entities wie Gemälde.</gray>
+      message: "<red>Dieser Entity ist geschützt</red>"
+
     interaction-item-frame:
       name: <green>Rahmen Interaktion</green>
       lore: <gray>Verhindert das Interagieren mit Rahmen.</gray>
+      message: "<red>Dieser Rahmen ist geschützt</red>"
+
     interaction-armor-stand:
       name: <green>Rüstungsständer</green>
       lore: <gray>Verhindert das Nehmen oder Platzieren von Rüstung auf Rüstungsständern.</gray>
+      message: "<red>Dieser Rüstungsständer ist geschützt</red>"
+
     interaction-candles:
       name: <green>Kerzen</green>
       lore: <gray>Verhindert das Spieler Kerzen aus machen oder anzünden.</gray>
+      message: "<red>Diese Kerze ist geschützt</red>"
+
     interaction-tame-entity:
       name: <green>Mobs Zähmen</green>
       lore: <gray>Verhindert das Mobs gezähmt werden können.</gray>
+      message: "<red>Dieser Mob ist geschützt</red>"
+
     interaction-shear-entity:
       name: <green>Schafe Scheren</green>
       lore: <gray>Verhindert das Spieler Schafe scheren.</gray>
+      message: "<red>Dieser Mob ist geschützt</red>"
+
     entity-damage:
       name: <green>Entity Schaden</green>
       lore: <gray>Verhindert das Spieler Entities Schaden können.</gray>
+      message: "<red>Dieser Entity ist geschützt</red>"
+
     players-friendly-fire:
       name: <green>Spieler Angreiffen</green>
       lore: <gray>Verhindert das Spieler sich gegenseitig Angreiffen können.</gray>
+      message: "<red>Dieser Spieler ist geschützt</red>"
+
     projectile-interactions:
       name: <green>Projektil Interaktionen</green>
       lore: '<gray>Verhindert das Projektile mit Blöcken interagieren können,</gray>\n<dark_gray>aber nicht den Schaden den die Projektile an Entities ausrichten.</dark_gray>'
+      message: "<red>Dieser Gegenstand ist geschützt</red>"
+
     fishing:
       name: <green>Angeln</green>
       lore: <gray>Verhindert das Spieler Angeln können.</gray>
+      message: "<red>Dieser Bereich ist geschützt</red>"
+
     explosion-block-damage:
       name: <green>Block Explosions Schaden</green>
       lore: <gray>Verhindert das Explosionen Blöcke zerstören.</gray>
+      message: "<red>Dieser Bereich ist geschützt</red>"
+
     explosion-entity-damage:
       name: <green>Entity Explosions Schaden</green>
       lore: <gray>Verhindert das Explosionen Entities Schaden zufügen.</gray>
+      message: "<red>Dieser Bereich ist geschützt</red>"
+
     entity-modifications:
       name: <green>Entity Block Änderungen</green>
       lore: <gray>Verhindert das Endermänner, Verwüster oder Wither Blöcke abbauen können.</gray>
+      message: "<red>Dieser Bereich ist geschützt</red>"

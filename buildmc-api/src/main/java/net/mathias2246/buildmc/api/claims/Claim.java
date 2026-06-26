@@ -1,8 +1,11 @@
 package net.mathias2246.buildmc.api.claims;
 
 import com.google.common.collect.ImmutableSet;
+import net.mathias2246.buildmc.util.InvalidStringException;
+import net.mathias2246.buildmc.util.ValidationPatterns;
 import org.bukkit.Chunk;
 import org.bukkit.NamespacedKey;
+import org.checkerframework.common.value.qual.MatchesRegex;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -52,9 +55,12 @@ public class Claim {
      * @param protections        The list of protections (as string keys).
      *                           If empty and the Claim is not a placeholder, the default protections will be applied.
      */
-    public Claim(@Nullable Long id, @NotNull ClaimType type, @NotNull String ownerId, @NotNull UUID worldId,
-                 int chunkX1, int chunkZ1, int chunkX2, int chunkZ2, @NotNull String name,
+    public Claim(@Nullable Long id, @NotNull ClaimType type, @MatchesRegex("^(?:server|[A-Za-z0-9_.:-]+)$") @NotNull String ownerId, @NotNull UUID worldId,
+                 int chunkX1, int chunkZ1, int chunkX2, int chunkZ2, @MatchesRegex("^[A-Za-z0-9_.-]+$") @NotNull String name,
                  @NotNull List<UUID> whitelistedPlayers, @NotNull List<String> protections) {
+
+        InvalidStringException.throwIfInvalid(name, ValidationPatterns.VALID_STRING_IN_COMMAND);
+        InvalidStringException.throwIfInvalid(name, ValidationPatterns.VALID_CLAIM_OWNER);
 
         this.id = id;
         this.type = type;
@@ -108,7 +114,8 @@ public class Claim {
      * @param ownerId The new owner ID.
      */
     @ApiStatus.Internal
-    public void setOwnerId(@NotNull String ownerId) {
+    public void setOwnerId(@MatchesRegex("^(?:server|[A-Za-z0-9_.:-]+)$") @NotNull String ownerId) {
+        InvalidStringException.throwIfInvalid(name, ValidationPatterns.VALID_CLAIM_OWNER);
         this.ownerId = ownerId;
     }
 
@@ -172,7 +179,8 @@ public class Claim {
      * @see ClaimManager#updateClaimName(long, String)
      */
     @ApiStatus.Internal
-    public void setName(@NotNull String name) {
+    public void setName(@MatchesRegex("^[A-Za-z0-9_.-]+$") @NotNull String name) {
+        InvalidStringException.throwIfInvalid(name, ValidationPatterns.VALID_STRING_IN_COMMAND);
         this.name = name;
     }
 

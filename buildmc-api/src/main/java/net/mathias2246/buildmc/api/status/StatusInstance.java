@@ -3,6 +3,8 @@ package net.mathias2246.buildmc.api.status;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.mathias2246.buildmc.util.InvalidStringException;
+import net.mathias2246.buildmc.util.ValidationPatterns;
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -21,7 +23,6 @@ import java.util.stream.Collectors;
 /**The instance of a status that shows up inside the '/status set ...' command when registered.*/
 @SerializableAs("StatusInstance")
 public class StatusInstance implements ConfigurationSerializable, Keyed {
-
 
     private final @NotNull String statusId;
     private final @Nullable Set<Permission> permissions;
@@ -58,7 +59,7 @@ public class StatusInstance implements ConfigurationSerializable, Keyed {
     /**
      * Constructs a new {@link StatusInstance} with optional {@link Team}s and {@link Permission} requirements.
      *
-     * @param statusId The id of the status. The key of a {@link NamespacedKey} that has to match this pattern <b>"[a-z0-9/._-]+$"</b>.
+     * @param statusId The id of the status. The key of a {@link NamespacedKey} that has to match this pattern <b>"^[A-Za-z0-9_.-]+$"</b>.
      *                 <p>
      *                 <b>NOTE:</b> You only need the key because the namespace will always be <b>"buildmc:"</b> when using statuses
      *                 </p>
@@ -71,7 +72,9 @@ public class StatusInstance implements ConfigurationSerializable, Keyed {
      *                When set to {@code null} the status will just display "null" before the players name.
      *                </p>
      * **/
-    public StatusInstance(@NotNull @MatchesRegex("[a-z0-9/._-]+$") String statusId, @Nullable Set<Permission> permissions, @Nullable Set<Team> teams, @Nullable Component display) {
+    public StatusInstance(@NotNull @MatchesRegex("^[A-Za-z0-9_.-]+$") String statusId, @Nullable Set<Permission> permissions, @Nullable Set<Team> teams, @Nullable Component display) {
+        InvalidStringException.throwIfInvalid(statusId, ValidationPatterns.VALID_STRING_IN_COMMAND);
+
         this.statusId = statusId;
         this.namespacedKey = Objects.requireNonNull(NamespacedKey.fromString("buildmc:" + statusId));
         if (permissions != null && permissions.isEmpty()) permissions = null;
@@ -131,7 +134,7 @@ public class StatusInstance implements ConfigurationSerializable, Keyed {
 
     /** Deserializes a {@link StatusInstance} that is represented using a Map.
      *
-     * @param statusId The key of a {@link NamespacedKey} that has to match this pattern <b>"[a-z0-9/._-]+$"</b>.
+     * @param statusId The key of a {@link NamespacedKey} that has to match this pattern <b>"^[A-Za-z0-9_.-]+$"</b>.
      *                 <p>
      *                 <b>NOTE:</b> You only need the key because the namespace will always be <b>"buildmc:"</b> when using statuses
      *                 </p>
@@ -141,8 +144,9 @@ public class StatusInstance implements ConfigurationSerializable, Keyed {
      *            </p>
      **/
     @Contract("_, _ -> new")
-    public static StatusInstance deserialize(@NotNull Map<String, Object> map, @NotNull @MatchesRegex("[a-z0-9/._-]+$") String statusId) {
+    public static StatusInstance deserialize(@NotNull Map<String, Object> map, @NotNull @MatchesRegex("^[A-Za-z0-9_.-]+$") String statusId) throws InvalidStringException {
         statusId = statusId.toLowerCase();
+        InvalidStringException.throwIfInvalid(statusId, ValidationPatterns.VALID_STRING_IN_COMMAND);
 
         // Permissions as names -> convert back to Permission objects
         Set<Permission> perms = null;

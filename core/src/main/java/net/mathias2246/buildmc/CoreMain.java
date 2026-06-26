@@ -5,9 +5,9 @@ import com.comphenix.protocol.ProtocolManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.kyori.adventure.key.Key;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.mathias2246.buildmc.api.BuildMcAPI;
+import net.mathias2246.buildmc.api.Guide;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.event.lifecycle.BuildMcFinishedLoadingEvent;
 import net.mathias2246.buildmc.api.event.lifecycle.BuildMcRegistryEvent;
@@ -18,6 +18,7 @@ import net.mathias2246.buildmc.api.status.StatusInstance;
 import net.mathias2246.buildmc.api.status.StatusManager;
 import net.mathias2246.buildmc.claims.ClaimLogger;
 import net.mathias2246.buildmc.claims.ClaimManager;
+import net.mathias2246.buildmc.claims.ClaimSelectionChangeWorld;
 import net.mathias2246.buildmc.claims.protections.blocks.*;
 import net.mathias2246.buildmc.claims.protections.entities.*;
 import net.mathias2246.buildmc.claims.protections.misc.*;
@@ -28,12 +29,14 @@ import net.mathias2246.buildmc.event.claims.PlayerCrossClaimBoundariesListener;
 import net.mathias2246.buildmc.player.FirstTimeJoinListener;
 import net.mathias2246.buildmc.player.status.PlayerStatusUtil;
 import net.mathias2246.buildmc.player.status.StatusConfig;
-import net.mathias2246.buildmc.spawnElytra.DisableRiptideListener;
 import net.mathias2246.buildmc.ui.claims.ClaimUIs;
 import net.mathias2246.buildmc.util.BStats;
 import net.mathias2246.buildmc.util.SoundManager;
 import net.mathias2246.buildmc.util.language.LanguageManager;
-import net.mathias2246.buildmc.util.registry.*;
+import net.mathias2246.buildmc.util.registry.BaseRegistry;
+import net.mathias2246.buildmc.util.registry.DefaultRegistries;
+import net.mathias2246.buildmc.util.registry.DeferredRegistry;
+import net.mathias2246.buildmc.util.registry.RegistriesHolder;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -79,7 +82,7 @@ public final class CoreMain {
 
     public static DeferredRegistry<AbstractCustomItem> customItemsRegistry;
 
-    public static BaseRegistry<KeyHolder<String>> guides;
+    public static BaseRegistry<Guide> guidesRegistry;
 
     public final static Gson gson = new GsonBuilder()
             .serializeNulls()
@@ -114,18 +117,20 @@ public final class CoreMain {
 
         Bukkit.getServicesManager().register(BuildMcAPI.class, plugin, plugin, ServicePriority.High);
 
-        guides = (BaseRegistry<KeyHolder<String>>) registriesHolder.addRegistry(DefaultRegistries.GUIDES.toString(), new BaseRegistry<KeyHolder<String>>(Key.key("buildmc:guide")));
+        guidesRegistry = (BaseRegistry<Guide>) registriesHolder.addRegistry(DefaultRegistries.GUIDES.toString(), new BaseRegistry<Guide>(Key.key("buildmc", "guide")));
 
         guideCommand = new GuidesCommand(plugin, "guides.yml");
         GuidesCommand.enabled = guideCommand.configuration.getBoolean("enabled", true);
 
-        statusesRegistry = (BaseRegistry<StatusInstance>) registriesHolder.addRegistry(DefaultRegistries.STATUSES.toString(), new BaseRegistry<StatusInstance>(Key.key("buildmc:status")));
+        statusesRegistry = (BaseRegistry<StatusInstance>) registriesHolder.addRegistry(DefaultRegistries.STATUSES.toString(), new BaseRegistry<StatusInstance>(Key.key("buildmc", "status")));
 
-        protectionsRegistry = (DeferredRegistry<Protection>) registriesHolder.addRegistry(DefaultRegistries.PROTECTIONS.toString(), new DeferredRegistry<Protection>(Key.key("buildmc:protection")));
+        protectionsRegistry = (DeferredRegistry<Protection>) registriesHolder.addRegistry(DefaultRegistries.PROTECTIONS.toString(), new DeferredRegistry<Protection>(Key.key("buildmc", "protection")));
 
         customItemsRegistry = (DeferredRegistry<AbstractCustomItem>) registriesHolder.addRegistry(DefaultRegistries.CUSTOM_ITEMS.toString(), AbstractCustomItem.customItemsRegistry);
 
         protectionsRegistry.addEntries(
+                plugin,
+
                 new Explosion(config.getConfigurationSection("claims.protections.damage.explosion-block-damage")),
                 new EntityExplosionDamage(config.getConfigurationSection("claims.protections.damage.explosion-entity-damage")),
                 new PlayerFriendlyFire(config.getConfigurationSection("claims.protections.damage.player-friendly-fire")),
@@ -220,7 +225,7 @@ public final class CoreMain {
 
             registerListener(new ClaimUIs());
 
-            new DisableRiptideListener(plugin, protocolManager);
+            registerListener(new ClaimSelectionChangeWorld());
 
             ClaimLogger.init(plugin);
         }

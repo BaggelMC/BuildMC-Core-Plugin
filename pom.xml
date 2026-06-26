@@ -39,14 +39,15 @@
     </developers>
 
     <properties>
-        <java.version>21</java.version>
+        <java.version>25</java.version>
+        <maven.compiler.release>25</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- Custom properties -->
         <project.buildVersion>1.1.0-beta</project.buildVersion>
 
-        <minecraft.supportedVersions>1.21.4-26.1.2</minecraft.supportedVersions>
-        <minecraft.bukkitApiVersion>26.1</minecraft.bukkitApiVersion>
+        <minecraft.supportedVersions>1.21.7-26.2</minecraft.supportedVersions>
+        <minecraft.bukkitApiVersion>26.2</minecraft.bukkitApiVersion>
     </properties>
 
     <!-- Transitive Dependencies for all modules (except the API module) -->

@@ -5,12 +5,12 @@ import net.mathias2246.buildmc.api.claims.ClaimManager;
 import net.mathias2246.buildmc.api.endEvent.EndManager;
 import net.mathias2246.buildmc.api.item.AbstractCustomItem;
 import net.mathias2246.buildmc.api.item.CustomItemListener;
+import net.mathias2246.buildmc.api.item.abstractTypes.AbstractSelectionTool;
 import net.mathias2246.buildmc.api.permission.PermissionManager;
 import net.mathias2246.buildmc.api.spawnEyltra.ElytraManager;
 import net.mathias2246.buildmc.api.status.StatusManager;
 import net.mathias2246.buildmc.claims.ClaimCommand;
 import net.mathias2246.buildmc.claims.ClaimManagerImpl;
-import net.mathias2246.buildmc.claims.tool.ClaimToolParticles;
 import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.commands.*;
 import net.mathias2246.buildmc.endEvent.EndListener;
@@ -32,6 +32,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.intellij.lang.annotations.Subst;
@@ -103,9 +104,9 @@ public final class Main extends PluginMain implements Listener {
 
         if (config.getBoolean("claims.enabled", true)) {
             AbstractCustomItem.customItemsRegistry.addEntry(
+                    plugin,
                     new ClaimSelectionTool(this,
-                            Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool")),
-                            new ClaimToolParticles.Builder()
+                            Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool"))
                     )
             );
         }
@@ -249,5 +250,20 @@ public final class Main extends PluginMain implements Listener {
         var pdc = event.getPlayer().getPersistentDataContainer();
 
         pdc.remove(ClaimSelectionTool.SELECTION_EFFECT_KEY);
+
+        AbstractCustomItem.customItemsRegistry.getOptional(Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool")))
+                .ifPresent(customItem -> ((AbstractSelectionTool)customItem).removeSelectionFromPlayer(event.getPlayer()));
+    }
+
+    // Is also called here, because on paper non-persistent Metadata was replaced with PDC because it is deprecated.
+    // So as a safety check, all the non-persisting values stored inside the players PDC are removed here.
+    @EventHandler
+    private void onPlayerConnect(PlayerJoinEvent event) {
+        var pdc = event.getPlayer().getPersistentDataContainer();
+
+        pdc.remove(ClaimSelectionTool.SELECTION_EFFECT_KEY);
+
+        AbstractCustomItem.customItemsRegistry.getOptional(Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool")))
+                .ifPresent(customItem -> ((AbstractSelectionTool)customItem).removeSelectionFromPlayer(event.getPlayer()));
     }
 }

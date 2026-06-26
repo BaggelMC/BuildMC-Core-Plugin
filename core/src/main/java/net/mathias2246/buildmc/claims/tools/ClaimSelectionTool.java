@@ -7,7 +7,6 @@ import net.mathias2246.buildmc.api.item.abstractTypes.AbstractSelectionTool;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.util.AudienceUtil;
 import net.mathias2246.buildmc.util.Message;
-import net.mathias2246.buildmc.util.ParticleSpawner;
 import net.mathias2246.buildmc.util.SoundUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -26,15 +25,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 public class ClaimSelectionTool extends AbstractSelectionTool {
-
-
-    public final @NotNull ParticleSpawner.Builder<?> particles;
-
     @ApiStatus.Internal
-    public ClaimSelectionTool(@NotNull Plugin plugin, @NotNull NamespacedKey key, @NotNull ParticleSpawner.Builder<?> particles) {
+    public ClaimSelectionTool(@NotNull Plugin plugin, @NotNull NamespacedKey key) {
         super(plugin, key);
-
-        this.particles = particles;
     }
 
     @Override
@@ -43,6 +36,8 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
     }
 
     public static final int maxSelectionSize = CoreMain.plugin.getConfig().getInt("claims.tool.limit-selection", 8);
+
+
 
 
     @Override
@@ -155,7 +150,7 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
     }
 
     // PDC data Key. Needed in the paper implementation because Metadata is deprecated
-    public static final @NotNull NamespacedKey SELECTION_EFFECT_KEY = Objects.requireNonNull(NamespacedKey.fromString("nations:show_claim_selection"));
+    public static final @NotNull NamespacedKey SELECTION_EFFECT_KEY = Objects.requireNonNull(NamespacedKey.fromString("buildmc:show_claim_selection"));
 
     @Override
     public void onSuccessfulFirstSelection(@NotNull ItemStack item, @NotNull Location at, @NotNull PlayerInteractEvent event) {
@@ -170,8 +165,8 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
 
         if (!pdc.has(SELECTION_EFFECT_KEY)) {
             pdc.set(SELECTION_EFFECT_KEY, PersistentDataType.BOOLEAN, true);
-            var p = particles.build(player);
-            p.run();
+            var s = new NewClaimSelection(player);
+            s.tryShow();
         }
     }
 
@@ -186,6 +181,14 @@ public class ClaimSelectionTool extends AbstractSelectionTool {
 
         if (player.getPersistentDataContainer().has(firstSelectionKey) && player.getPersistentDataContainer().has(secondSelectionKey)) {
             AudienceUtil.sendMessage(player, Component.translatable("messages.claims.tool.both-positions-set"));
+        }
+
+        var pdc = player.getPersistentDataContainer();
+
+        if (!pdc.has(SELECTION_EFFECT_KEY)) {
+            pdc.set(SELECTION_EFFECT_KEY, PersistentDataType.BOOLEAN, true);
+            var s = new NewClaimSelection(player);
+            s.tryShow();
         }
     }
 }

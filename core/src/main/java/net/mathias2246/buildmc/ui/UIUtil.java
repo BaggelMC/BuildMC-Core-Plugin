@@ -152,7 +152,7 @@ public class UIUtil {
                 "messages.claims.ui.general.page-indicator",
                 Map.of(
                         "current", Integer.toString(pages.getPage()+1),
-                        "total", Integer.toString(pages.getPages())
+                        "total", Integer.toString(Math.max(pages.getPages(), 1)) // Clamp so that it doesn't show "Page 1/0" but instead "Page 1/1"
                 )
         ))
         );

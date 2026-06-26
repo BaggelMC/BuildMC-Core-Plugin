@@ -26,12 +26,13 @@ import java.util.UUID;
 
 public class DisableRiptideListener extends PacketAdapter implements Listener {
 
+    // TODO: Add handler for when players Disconnect to give trident back
     private final Set<UUID> chargingRiptide = new HashSet<>();
 
     public DisableRiptideListener(Plugin plugin, ProtocolManager protocolManager) {
         super(plugin, ListenerPriority.HIGHEST,
                 PacketType.Play.Client.USE_ITEM,
-                PacketType.Play.Client.BLOCK_PLACE,
+                PacketType.Play.Client.USE_ITEM_ON,
                 PacketType.Play.Client.BLOCK_DIG);
 
         protocolManager.addPacketListener(this);

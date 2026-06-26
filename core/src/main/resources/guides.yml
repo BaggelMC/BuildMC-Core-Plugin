@@ -5,11 +5,17 @@
 #
 # HOW TO ADD A GUIDE
 # ──────────────────
-# 1. Pick a short name for your guide (lowercase, no spaces, e.g. "pvp" or "claim-land").
+# 1. Pick a short name for your guide (no spaces, e.g. "pvp" or "claim-land").
 #
 # 2. Add a line here in the format:
-#       your-guide-name: "messages.guides.your-guide-name"
-#    The value on the right is just a key. It tells the plugin where to find the actual text.
+##         your-guide-name:
+##           text-key: "messages.guides.your-guide-name"
+## (Optional)urls:
+##             0:
+##               label-key: "messages.guides.label-name-here"
+##               url: "https://example.com"
+##    The value on the right of text-key is just a key. It tells the plugin where to find the actual text.
+##    Optionally you can add a list of url buttons with a translatable label. The number describes the order, the lower the number the earlier it will appear inside the list of buttons.
 #
 # 3. Open the language file:
 #       plugins/BuildMC-Core/lang/en-US.yml   (or whichever language you use)
@@ -32,5 +38,12 @@
 enabled: true # Default: true
 
 guides:
-  commands: "messages.guides.commands"
-  spawn-elytra: "messages.guides.spawn-elytra"
+  commands:
+    text-key: "messages.guides.commands"
+
+  spawn-elytra:
+    text-key: "messages.guides.spawn-elytra"
+    urls:
+      0:
+        label-key: "messages.guides.go-to-wiki"
+        url: "https://baggel.de/core/player/spawn-elytra/"

@@ -16,6 +16,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+import static net.mathias2246.buildmc.CoreMain.plugin;
+import static net.mathias2246.buildmc.CoreMain.protocolManager;
+
 /** Class for storing and managing the spawn-elytra zone */
 public class ElytraZoneManager {
 
@@ -28,6 +31,7 @@ public class ElytraZoneManager {
 
     public ElytraZoneManager(@NotNull SpawnElytraConfig config) {
         this.config = config;
+        CoreMain.registerListener(new DisableRiptideListener(plugin, protocolManager));
     }
 
     public World getWorld() {
@@ -99,10 +103,10 @@ public class ElytraZoneManager {
     }
 
     public void loadZoneFromConfig() {
-        String rawWorldKey = config.zoneWorld;
+        @SuppressWarnings("PatternValidation") String rawWorldKey = config.zoneWorld;
 
         if (rawWorldKey == null || rawWorldKey.isEmpty()) {
-            CoreMain.plugin.getLogger().warning("ElytraZoneManager: World key is missing in elytra-zone.yml");
+            plugin.getLogger().warning("ElytraZoneManager: World key is missing in elytra-zone.yml. Disable spawn-elytra in spawn-elytra.yml or configure it.");
             return;
         }
 
@@ -111,13 +115,13 @@ public class ElytraZoneManager {
             //noinspection PatternValidation
             worldKey = Key.key(rawWorldKey);
         } catch (InvalidKeyException e) {
-            CoreMain.plugin.getLogger().warning("ElytraZoneManager: World key '" + rawWorldKey + "' is invalid in elytra-zone.yml");
+            plugin.getLogger().warning("ElytraZoneManager: World key '" + rawWorldKey + "' is invalid in elytra-zone.yml");
             return;
         }
 
         world = Bukkit.getWorld(worldKey);
         if (world == null) {
-            CoreMain.plugin.getLogger().warning("ElytraZoneManager: World '" + worldKey + "' not found.");
+            plugin.getLogger().warning("ElytraZoneManager: World '" + worldKey + "' not found.");
             return;
         }
 

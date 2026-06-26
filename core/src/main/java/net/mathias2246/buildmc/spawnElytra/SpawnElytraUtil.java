@@ -185,11 +185,9 @@ public class SpawnElytraUtil {
         });
         GameVersionUtil.onVersion("26.1", v -> {
             try {
-                //noinspection RedundantCollectionOperation
-                effectiveBlockList.addAll(
-                        List.of(
-                                Objects.requireNonNull(Material.matchMaterial("GOLDEN_DANDELION"))
-                        )
+
+                effectiveBlockList.add(
+                        Objects.requireNonNull(Material.matchMaterial("GOLDEN_DANDELION"))
                 );
             } catch (Exception ignore) {}
         });

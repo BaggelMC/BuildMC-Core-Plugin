@@ -28,7 +28,7 @@ import java.util.Objects;
 public abstract class AbstractCustomItem implements Keyed {
 
     /// Shared registry instance for {@link AbstractCustomItem} instances
-    public static final @NotNull DeferredRegistry<AbstractCustomItem> customItemsRegistry = new DeferredRegistry<>(Key.key("buildmc:custom_item"));
+    public static final @NotNull DeferredRegistry<AbstractCustomItem> customItemsRegistry = new DeferredRegistry<>(Key.key("buildmc", "custom_item"));
 
     private final @NotNull NamespacedKey key;
 

@@ -15,10 +15,10 @@ import org.jetbrains.annotations.NotNull;
 @ApiStatus.NonExtendable
 public interface PermissionManager {
 
-    public abstract void addPermission(@NotNull Player player, @NotNull String permission, boolean persist);
+    void addPermission(@NotNull Player player, @NotNull String permission, boolean persist);
 
-    public abstract void removePermission(@NotNull Player player, @NotNull String permission);
+    void removePermission(@NotNull Player player, @NotNull String permission);
 
     @Contract(pure = true)
-    public abstract boolean hasPermission(@NotNull Player player, @NotNull String permission);
+    boolean hasPermission(@NotNull Player player, @NotNull String permission);
 }

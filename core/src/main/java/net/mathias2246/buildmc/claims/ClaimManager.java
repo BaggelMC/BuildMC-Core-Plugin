@@ -6,6 +6,8 @@ import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.ClaimType;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.event.claims.*;
+import net.mathias2246.buildmc.util.InvalidStringException;
+import net.mathias2246.buildmc.util.ValidationPatterns;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
@@ -165,52 +167,26 @@ public class ClaimManager {
         // Allow if no claim found
         if (claim == null) return true;
 
-        // Bypass all Protections
-        if (player.hasPermission("buildmc.bypass-claims")) return true;
-
-        // Allow if claim is a placeholder
-        if (claim.getType() == ClaimType.PLACEHOLDER) return true;
-
-        // Allow if player is explicitly whitelisted
-        if (claim.getWhitelistedPlayers().contains(player.getUniqueId())) return true;
-
-        String playerId = player.getUniqueId().toString();
-
-        switch (claim.getType()) {
-            case SERVER:
-                return !hasProtection(claim, protection);
-
-            case PLAYER:
-                if (Objects.equals(claim.getOwnerId(), playerId)) return true;
-                return !hasProtection(claim, protection);
-
-            case TEAM:
-                Team playerTeam = getPlayerTeam(player);
-                if (playerTeam != null && Objects.equals(playerTeam.getName(), claim.getOwnerId())) return true;
-                return !hasProtection(claim, protection);
-
-            default:
-                return true;
-        }
+        return isPlayerAllowedCheck(player, protection, claim);
     }
 
     /**Checks if the given player is allowed on this claim.
      * <p>This means that the player is allowed to do anything on the claim at that location.</p>
      * @return True if, the player is the owner or whitelisted and the ProtectionFlags are set at the given location.*/
     public static boolean isPlayerAllowed(@NotNull Player player, @NotNull NamespacedKey protection, Location location) {
-        if (player.hasPermission("buildmc.bypass-claims")) return true;
-
         Claim claim = getClaim(location);
 
-        // Allow if no claim found
-        if (claim == null) return true;
+        return isPlayerAllowed(player, protection, claim);
+    }
+
+    private static boolean isPlayerAllowedCheck(@NotNull Player player, @NotNull NamespacedKey protection, @NotNull Claim claim) {
+        if (player.hasPermission("buildmc.bypass-claims")) return true;
 
         // Allow if claim is a placeholder
         if (claim.getType() == ClaimType.PLACEHOLDER) return true;
 
         // Allow if player is explicitly whitelisted
         if (claim.getWhitelistedPlayers().contains(player.getUniqueId())) return true;
-
 
         String playerId = player.getUniqueId().toString();
 
@@ -266,7 +242,11 @@ public class ClaimManager {
         return false;
     }
 
-    public static boolean hasProtection(Claim claim, NamespacedKey protection) {
+    public static boolean hasProtection(Claim claim, @NotNull NamespacedKey protection) {
+        return claim.hasProtection(protection);
+    }
+
+    public static boolean hasProtection(Claim claim, @NotNull Protection protection) {
         return claim.hasProtection(protection);
     }
 
@@ -431,17 +411,7 @@ public class ClaimManager {
         //noinspection deprecation
         claim.setID(claimId);
 
-        // Update ownership mapping
-        switch (claim.getType()) {
-            case PLAYER -> {
-                UUID uuid = UUID.fromString(claim.getOwnerId());
-                playerOwner.computeIfAbsent(uuid, k -> new ArrayList<>()).add(claimId);
-            }
-            case TEAM -> teamOwner.computeIfAbsent(claim.getOwnerId(), k -> new ArrayList<>()).add(claimId);
-
-            case SERVER -> serverClaims.add(claimId);
-            case PLACEHOLDER -> placeholderClaims.add(claimId);
-        }
+        updateClaimOwnershipMapping(claim);
 
         return claimId;
     }
@@ -458,17 +428,7 @@ public class ClaimManager {
             //noinspection deprecation
             claim.setID(id);
 
-            switch (claim.getType()) {
-                case PLAYER -> {
-                    UUID uuid = UUID.fromString(claim.getOwnerId());
-                    playerOwner.computeIfAbsent(uuid, k -> new ArrayList<>()).add(id);
-                }
-                case TEAM -> teamOwner
-                        .computeIfAbsent(claim.getOwnerId(), k -> new ArrayList<>())
-                        .add(id);
-                case SERVER -> serverClaims.add(id);
-                case PLACEHOLDER -> placeholderClaims.add(id);
-            }
+            updateClaimOwnershipMapping(claim);
         }
 
         ClaimCreateEvent event = new ClaimCreateEvent(
@@ -478,6 +438,20 @@ public class ClaimManager {
         if (event.isCancelled()) return null;
 
         return claimIDs;
+    }
+
+    private static void updateClaimOwnershipMapping(Claim claim) {
+        // Update ownership mapping
+        switch (claim.getType()) {
+            case PLAYER -> {
+                UUID uuid = UUID.fromString(claim.getOwnerId());
+                playerOwner.computeIfAbsent(uuid, k -> new ArrayList<>()).add(claim.getId());
+            }
+            case TEAM -> teamOwner.computeIfAbsent(claim.getOwnerId(), k -> new ArrayList<>()).add(claim.getId());
+
+            case SERVER -> serverClaims.add(claim.getId());
+            case PLACEHOLDER -> placeholderClaims.add(claim.getId());
+        }
     }
 
     public static void deleteClaims(Collection<Claim> claims) throws SQLException, IllegalArgumentException {
@@ -499,17 +473,7 @@ public class ClaimManager {
             }
             ids.add(id);
 
-            switch (claim.getType()) {
-                case PLAYER -> {
-                    UUID uuid = UUID.fromString(claim.getOwnerId());
-                    playerOwner.computeIfAbsent(uuid, k -> new ArrayList<>()).add(id);
-                }
-                case TEAM -> teamOwner
-                        .computeIfAbsent(claim.getOwnerId(), k -> new ArrayList<>())
-                        .add(id);
-                case SERVER -> serverClaims.add(id);
-                case PLACEHOLDER -> placeholderClaims.add(id);
-            }
+            updateClaimOwnershipMapping(claim);
         }
 
         claimTable.deleteClaimsByIds(CoreMain.databaseManager.getConnection(), ids);
@@ -784,7 +748,8 @@ public class ClaimManager {
         setRemainingPlayerClaims(playerUUID.toString(), remainingClaims);
     }
 
-    public static void updateClaimName(@NotNull Claim claim,  @NotNull String newName) throws SQLException, IllegalArgumentException {
+    public static void updateClaimName(@NotNull Claim claim,  @NotNull String newName) throws SQLException, IllegalArgumentException, InvalidStringException {
+        InvalidStringException.throwIfInvalid(newName, ValidationPatterns.VALID_STRING_IN_COMMAND);
         Long claimId = claim.getId();
         if (claimId == null) {
             throw new IllegalArgumentException("Claim has no ID: " + claim.getName());
@@ -792,11 +757,13 @@ public class ClaimManager {
         updateClaimName(claimId, newName);
     }
 
-    public static void updateClaimName(long claimId,  @NotNull String newName) throws SQLException {
+    public static void updateClaimName(long claimId,  @NotNull String newName) throws SQLException, InvalidStringException {
+        InvalidStringException.throwIfInvalid(newName, ValidationPatterns.VALID_STRING_IN_COMMAND);
         claimTable.updateClaimName(CoreMain.databaseManager.getConnection(), claimId, newName);
     }
 
-    public static void updateClaimOwner(@NotNull Claim claim, @NotNull String newOwnerId) throws SQLException, IllegalArgumentException {
+    public static void updateClaimOwner(@NotNull Claim claim, @NotNull String newOwnerId) throws SQLException, IllegalArgumentException, InvalidStringException {
+        InvalidStringException.throwIfInvalid(newOwnerId, ValidationPatterns.VALID_CLAIM_OWNER);
         Long claimId = claim.getId();
         if (claimId == null) {
             throw new IllegalArgumentException("Claim has no ID: " + claim.getName());
@@ -809,7 +776,8 @@ public class ClaimManager {
         claimTable.updateClaimOwner(CoreMain.databaseManager.getConnection(), claim, newOwnerId);
     }
 
-    public static void updateClaimOwner(long claimId, @NotNull String newOwnerId) throws SQLException {
+    public static void updateClaimOwner(long claimId, @NotNull String newOwnerId) throws SQLException, InvalidStringException {
+        InvalidStringException.throwIfInvalid(newOwnerId, ValidationPatterns.VALID_CLAIM_OWNER);
         Claim claim = getClaimByID(claimId);
         if (claim == null) {
             throw new IllegalArgumentException("No claim exists with id " + claimId);
