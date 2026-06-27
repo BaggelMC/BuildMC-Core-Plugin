@@ -5,14 +5,12 @@ import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
 import net.mathias2246.buildmc.util.AudienceUtil;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityInteractEvent;
@@ -58,6 +56,7 @@ public class ProjectileInteractions extends Protection {
             projectile.remove();
             event.setCancelled(true);
             AudienceUtil.sendActionBar(player, Component.translatable(getTranslationBaseKey()+".message"));
+            returnProjectileToPlayer(player, projectile);
         }
 
     }
@@ -76,5 +75,33 @@ public class ProjectileInteractions extends Protection {
             event.setCancelled(true);
             // Message sending should already be handled by onProjectileHit()
         }
+    }
+
+    private void returnProjectileToPlayer(Player player, Projectile projectile) {
+        GameMode gameMode = player.getGameMode();
+        if (gameMode != GameMode.SURVIVAL && gameMode != GameMode.ADVENTURE) return;
+
+        ItemStack item = getProjectileItem(projectile);
+        if (item == null) return;
+
+        player.getInventory().addItem(item).forEach((slot, leftover) ->
+                player.getWorld().dropItemNaturally(player.getLocation(), leftover)
+        );
+    }
+
+    private @Nullable ItemStack getProjectileItem(Projectile projectile) {
+        // Covers: arrow, tipped arrow, spectral arrow
+        if (projectile instanceof Arrow arrow) {
+            return arrow.getItemStack().clone();
+        }
+
+        // Trident
+        if (projectile instanceof Trident trident) {
+            return trident.getItemStack().clone();
+        }
+
+        // TODO: Snowball, Egg, Ender Pearl, Splash/Lingering Potion, Xp Bottle
+
+        return null;
     }
 }
