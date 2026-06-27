@@ -1,5 +1,7 @@
 package net.mathias2246.buildmc.claims.protections.misc;
 
+import com.destroystokyo.paper.event.entity.EntityKnockbackByEntityEvent;
+import io.papermc.paper.event.entity.EntityKnockbackEvent;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.claims.ClaimManager;
@@ -8,14 +10,12 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.WindCharge;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
 import org.jetbrains.annotations.NotNull;
@@ -63,6 +63,17 @@ public class UseWindCharge extends Protection {
 
         if (cancelledWindCharges.remove(windCharge.getUniqueId())) {
             windCharge.setYield(0);
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onKockback(EntityKnockbackByEntityEvent event) {
+
+        Location location = event.getEntity().getLocation();
+        if (!(event.getHitBy() instanceof Player player) || !(event.getCause() == EntityKnockbackEvent.Cause.EXPLOSION)) return;
+
+        if (!ClaimManager.isPlayerAllowed(player, getKey(), location)) {
             event.setCancelled(true);
         }
     }
