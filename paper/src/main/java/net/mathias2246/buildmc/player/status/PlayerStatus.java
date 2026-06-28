@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+import static net.mathias2246.buildmc.Main.statusConfig;
 import static net.mathias2246.buildmc.player.status.PlayerStatusUtil.PLAYER_STATUS_PDC;
 
 public class PlayerStatus implements Listener, StatusManager {
@@ -37,6 +38,15 @@ public class PlayerStatus implements Listener, StatusManager {
         player.displayName(null);
         player.customName(null);
         player.setCustomNameVisible(true);
+    }
+
+    @Override
+    public void reloadStatus() {
+        statusConfig.reload();
+        PlayerStatusUtil.reloadDeathPrefix();
+        for (var player : Bukkit.getOnlinePlayers()) {
+            PlayerStatusUtil.reloadPlayerStatus(player);
+        }
     }
 
     @SuppressWarnings("UnusedReturnValue")

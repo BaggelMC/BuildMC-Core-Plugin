@@ -235,6 +235,10 @@ claims:
       default: true
       is-hidden: false
 
+    wind-charge:
+      default: false
+      is-hidden: false
+
     fishing:
       default: true
       is-hidden: false

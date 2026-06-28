@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -28,14 +29,15 @@ public class Explosion extends Protection {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onExplosion(EntityExplodeEvent event) {
-        Location location = event.getLocation();
+        if (event.getEntityType() == EntityType.WIND_CHARGE) return;
 
+        Location location = event.getLocation();
 
         Claim claim  = ClaimManager.getClaim(location);
         if (claim == null) return;
 
         if (claim.hasProtection(getKey())) {
-            event.setCancelled(true);
+            event.blockList().clear();
         }
     }
 
@@ -49,7 +51,7 @@ public class Explosion extends Protection {
         }
 
         if (claim.hasProtection(getKey())) {
-            event.setCancelled(true);
+            event.blockList().clear();
         }
     }
 

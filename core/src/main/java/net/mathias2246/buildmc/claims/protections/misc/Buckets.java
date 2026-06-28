@@ -57,7 +57,8 @@ public class Buckets extends Protection {
         public BucketPacketListener(@NotNull Plugin plugin, @NotNull Buckets protection) {
             super(plugin, ListenerPriority.NORMAL,
                     PacketType.Play.Client.USE_ITEM_ON,
-                    PacketType.Play.Client.USE_ITEM
+                    PacketType.Play.Client.USE_ITEM,
+                    PacketType.Play.Client.USE_ENTITY
             );
             this.protection = protection;
             this.plugin = plugin;
@@ -87,6 +88,52 @@ public class Buckets extends Protection {
                             sendBlockChangedAck(player, useItemSequence)
                     );
                 }
+                return;
+            }
+
+            if (event.getPacketType() == PacketType.Play.Client.USE_ENTITY) {
+                if (!isBucket(item)) return;
+
+                int entityId = event.getPacket().getIntegers().read(0);
+
+                // Set the flag NOW on the Netty thread, before UseItemPacket can arrive
+                cancelNextUseItem.add(player.getUniqueId());
+                event.setCancelled(true);
+
+                Bukkit.getScheduler().runTask(plugin, () -> {
+                    var entity = player.getWorld().getEntities().stream()
+                            .filter(e -> e.getEntityId() == entityId)
+                            .findFirst().orElse(null);
+
+                    if (entity == null || entity.getType() != org.bukkit.entity.EntityType.SULFUR_CUBE) {
+                        // Not a sulfur cube — undo everything
+                        cancelNextUseItem.remove(player.getUniqueId());
+                        try {
+                            ProtocolLibrary.getProtocolManager()
+                                    .receiveClientPacket(player, event.getPacket(), false);
+                        } catch (Exception e) {
+                            plugin.getLogger().log(Level.WARNING, "Failed to re-dispatch interact packet", e);
+                        }
+                        return;
+                    }
+
+                    Claim claim = ClaimManager.getClaim(entity.getLocation());
+                    if (claim == null || ClaimManager.isPlayerAllowed(player, protection.getKey(), claim)) {
+                        cancelNextUseItem.remove(player.getUniqueId());
+                        try {
+                            ProtocolLibrary.getProtocolManager()
+                                    .receiveClientPacket(player, event.getPacket(), false);
+                        } catch (Exception e) {
+                            plugin.getLogger().log(Level.WARNING, "Failed to re-dispatch interact packet", e);
+                        }
+                        return;
+                    }
+
+                    // Confirmed blocked — flag is already set, just show the message
+                    AudienceUtil.sendActionBar(player,
+                            Component.translatable(protection.getTranslationBaseKey() + ".message"));
+                });
+
                 return;
             }
 
