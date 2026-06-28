@@ -170,7 +170,8 @@ public final class CoreMain {
                 new SignEdit(config.getConfigurationSection("claims.protections.sign-editing")),
                 new VehicleEnter(config.getConfigurationSection("claims.protections.vehicle-enter")),
                 new PistonMovement(config.getConfigurationSection("claims.protections.piston-movement-across-claim-borders")),
-                new UseWindCharge(config.getConfigurationSection("claims.protections.projectile-interactions"))
+                new UseWindCharge(config.getConfigurationSection("claims.protections.projectile-interactions")),
+                new SulfurCubeChange(config.getConfigurationSection("claims.protections.interactions.sulfur-cube-change"))
         );
 
         Bukkit.getPluginManager().registerEvents(new Listener() {

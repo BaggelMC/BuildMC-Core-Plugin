@@ -516,3 +516,8 @@ claims:
       name: "<green>Wind Charges</green>"
       lore: "<gray>Prevents using Wind Charges</gray>"
       message: "<red>You cannot use Wind Charges here.</red>"
+
+    sulfur-cube-change:
+      name: "<green>Sulfur Cube Change</green>"
+      lore: "<gray>Prevents placing blocks into Sulfur Cubes.</gray>"
+      message: "<red>This sulfur cube is protected.</red>"

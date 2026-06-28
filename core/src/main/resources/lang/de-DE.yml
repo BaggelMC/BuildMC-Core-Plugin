@@ -546,3 +546,8 @@ claims:
       name: "<green>Wind Charges</green>"
       lore: "<gray>Verhindert das verwenden von Wind Charges</gray>"
       message: "<red>Du kannst hier keine Wind Charges verwenden.</red>"
+
+    sulfur-cube-change:
+      name: "<green>Schwefelwürfel ändern</green>"
+      lore: "<gray>Verhindert platzieren von Blöcken in Schwefelwürfel.</gray>"
+      message: "<red>Dieser Schwefelwürfel ist geschützt.</red>"
