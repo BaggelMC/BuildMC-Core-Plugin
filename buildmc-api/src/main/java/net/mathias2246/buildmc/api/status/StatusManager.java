@@ -19,4 +19,6 @@ public interface StatusManager {
     void setPlayerName(@NotNull Player player, @Nullable Component component);
 
     void resetPlayerName(@NotNull Player player);
+
+    void reloadStatus();
 }
