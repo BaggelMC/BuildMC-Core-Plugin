@@ -551,3 +551,13 @@ claims:
       name: "<green>Schwefelwürfel ändern</green>"
       lore: "<gray>Verhindert platzieren von Blöcken in Schwefelwürfel.</gray>"
       message: "<red>Dieser Schwefelwürfel ist geschützt.</red>"
+
+    water-flow:
+      name: "<green>Wasser Flow</green>"
+      lore: "<gray>Verhindert, dass Wasser in deinen Claim fließt.</gray>"
+      message: ""
+
+    lava-flow:
+      name: "<green>Lava Flow</green>"
+      lore: "<gray>Verhindert, dass Lava in deinen Claim fließt.</gray>"
+      message: ""

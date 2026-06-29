@@ -172,7 +172,9 @@ public final class CoreMain {
                 new VehicleEnter(config.getConfigurationSection("claims.protections.vehicle-enter")),
                 new PistonMovement(config.getConfigurationSection("claims.protections.piston-movement-across-claim-borders")),
                 new UseWindCharge(config.getConfigurationSection("claims.protections.projectile-interactions")),
-                new SulfurCubeChange(config.getConfigurationSection("claims.protections.interactions.sulfur-cube-change"))
+                new SulfurCubeChange(config.getConfigurationSection("claims.protections.interactions.sulfur-cube-change")),
+                new WaterFlow(config.getConfigurationSection("claims.protections.water-flow")),
+                new LavaFlow(config.getConfigurationSection("claims.protections.lava-flow"))
         );
 
         Bukkit.getPluginManager().registerEvents(new Listener() {
@@ -185,11 +187,13 @@ public final class CoreMain {
     }
 
     public static void finishLoading() {
+
+        initializeDatabase();
+
         if (plugin.getConfig().getBoolean("claims.enabled", true)) {
 
             protectionsRegistry.initialize();
 
-            initializeDatabase();
 
             var dimensionListSect = config.getConfigurationSection("claims.dimensions");
             if (dimensionListSect != null) {

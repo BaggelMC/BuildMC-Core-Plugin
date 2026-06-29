@@ -521,3 +521,13 @@ claims:
       name: "<green>Sulfur Cube Change</green>"
       lore: "<gray>Prevents placing blocks into Sulfur Cubes.</gray>"
       message: "<red>This sulfur cube is protected.</red>"
+
+    water-flow:
+      name: "<green>Water Flow</green>"
+      lore: "<gray>Prevents water from flowing into your claim.</gray>"
+      message: ""
+
+    lava-flow:
+      name: "<green>Lava Flow</green>"
+      lore: "<gray>Prevents lava from flowing into your claim.</gray>"
+      message: ""
