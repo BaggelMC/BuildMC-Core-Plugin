@@ -31,7 +31,8 @@ public class DeathsCommand {
 
         UUID uuid = target.getUniqueId();
 
-        try (Connection conn = CoreMain.databaseManager.getConnection()) {
+        try {
+            Connection conn = CoreMain.databaseManager.getConnection();
             var deaths = CoreMain.deathTable.getDeathsByPlayer(conn, uuid);
 
             if (deaths.isEmpty()) {
@@ -74,8 +75,8 @@ public class DeathsCommand {
             return 0;
         }
 
-        try (Connection conn = CoreMain.databaseManager.getConnection()) {
-
+        try {
+            Connection conn = CoreMain.databaseManager.getConnection();
             DeathRecord record = CoreMain.deathTable.getDeathById(conn, deathId);
             if (record == null) {
                   AudienceUtil.sendMessage(sender, Component.translatable("messages.deaths.error.not-found"));

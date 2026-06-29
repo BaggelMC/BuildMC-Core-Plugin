@@ -30,6 +30,7 @@ import net.mathias2246.buildmc.deaths.DeathListener;
 import net.mathias2246.buildmc.event.claims.PlayerCrossClaimBoundariesListener;
 import net.mathias2246.buildmc.messageBus.EventBusImpl;
 import net.mathias2246.buildmc.player.FirstTimeJoinListener;
+import net.mathias2246.buildmc.player.FirstTimeJoinMessage;
 import net.mathias2246.buildmc.player.status.PlayerStatusUtil;
 import net.mathias2246.buildmc.player.status.StatusConfig;
 import net.mathias2246.buildmc.ui.claims.ClaimUIs;
@@ -178,7 +179,9 @@ public final class CoreMain {
                 new EntityShear(config.getConfigurationSection("claims.protections.interactions.shear-entity")),
                 new SignEdit(config.getConfigurationSection("claims.protections.sign-editing")),
                 new VehicleEnter(config.getConfigurationSection("claims.protections.vehicle-enter")),
-                new PistonMovement(config.getConfigurationSection("claims.protections.piston-movement-across-claim-borders"))
+                new PistonMovement(config.getConfigurationSection("claims.protections.piston-movement-across-claim-borders")),
+                new UseWindCharge(config.getConfigurationSection("claims.protections.projectile-interactions")),
+                new SulfurCubeChange(config.getConfigurationSection("claims.protections.interactions.sulfur-cube-change"))
         );
 
         channelRegistry = new DeferredRegistry<>(Key.key("buildmc", "event_channels"));
@@ -251,9 +254,7 @@ public final class CoreMain {
         }
 
         registerListener(new FirstTimeJoinListener());
-
-        String firstJoinMessage = config.getString("first-time-join.first-join-message", "");
-        if (!firstJoinMessage.isBlank()) registerListener(new FirstTimeJoinListener());
+        if (config.getBoolean("first-time-join.show-first-join-message")) registerListener(new FirstTimeJoinMessage());
 
         registerListener(new DeathListener());
 

@@ -368,7 +368,7 @@ claims:
     item-pickup:
       name: <green>Items Aufsammeln</green>
       lore: <gray>Verhindert das Spieler Items aufsammeln können.</gray>
-      message:
+      message: ""
 
     item-drop:
       name: <green>Items Fallen Lassen</green>
@@ -541,3 +541,13 @@ claims:
       name: <green>Entity Block Änderungen</green>
       lore: <gray>Verhindert das Endermänner, Verwüster oder Wither Blöcke abbauen können.</gray>
       message: "<red>Dieser Bereich ist geschützt</red>"
+
+    wind-charge:
+      name: "<green>Wind Charges</green>"
+      lore: "<gray>Verhindert das verwenden von Wind Charges</gray>"
+      message: "<red>Du kannst hier keine Wind Charges verwenden.</red>"
+
+    sulfur-cube-change:
+      name: "<green>Schwefelwürfel ändern</green>"
+      lore: "<gray>Verhindert platzieren von Blöcken in Schwefelwürfel.</gray>"
+      message: "<red>Dieser Schwefelwürfel ist geschützt.</red>"

@@ -30,43 +30,41 @@ public class DeathListener implements Listener {
         int totalExp = player.getTotalExperience();
         var uuid = player.getUniqueId();
 
-        CoreMain.plugin.getServer().getScheduler().runTaskAsynchronously(CoreMain.plugin, () -> {
-            Map<Integer, byte[]> items = new HashMap<>();
+        Map<Integer, byte[]> items = new HashMap<>();
 
-            // inventory
-            for (int i = 0; i < contents.length; i++) {
-                ItemStack item = contents[i];
-                if (item != null && item.getType() != Material.AIR) {
-                    items.put(i, ItemStackSerialization.serialize(item));
-                }
+        // inventory
+        for (int i = 0; i < contents.length; i++) {
+            ItemStack item = contents[i];
+            if (item != null && item.getType() != Material.AIR) {
+                items.put(i, ItemStackSerialization.serialize(item));
             }
+        }
 
-            // armor slots (36–39)
-            for (int i = 0; i < armor.length; i++) {
-                ItemStack a = armor[i];
-                if (a != null && a.getType() != Material.AIR) {
-                    items.put(36 + i, ItemStackSerialization.serialize(a));
-                }
+        // armor slots (36–39)
+        for (int i = 0; i < armor.length; i++) {
+            ItemStack a = armor[i];
+            if (a != null && a.getType() != Material.AIR) {
+                items.put(36 + i, ItemStackSerialization.serialize(a));
             }
+        }
 
-            // offhand (40)
-            if (offhand.getType() != Material.AIR) {
-                items.put(40, ItemStackSerialization.serialize(offhand));
-            }
+        // offhand (40)
+        if (offhand.getType() != Material.AIR) {
+            items.put(40, ItemStackSerialization.serialize(offhand));
+        }
 
-            try {
-                CoreMain.deathTable.insertDeath(
-                        CoreMain.databaseManager.getConnection(),
-                        uuid,
-                        totalExp,
-                        CoreMain.gsonComponentSerializer.serialize(deathMessage != null ? deathMessage : Component.text("---")),
-                        items
-                );
-            } catch (Exception e) {
-                CoreMain.plugin.getLogger().severe(
-                        "Error while adding Death to database: " + e.getMessage()
-                );
-            }
-        });
+        try {
+            CoreMain.deathTable.insertDeath(
+                    CoreMain.databaseManager.getConnection(),
+                    uuid,
+                    totalExp,
+                    CoreMain.gsonComponentSerializer.serialize(deathMessage != null ? deathMessage : Component.text("---")),
+                    items
+            );
+        } catch (Exception e) {
+            CoreMain.plugin.getLogger().severe(
+                    "Error while adding Death to database: " + e.getMessage()
+            );
+        }
     }
 }

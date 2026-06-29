@@ -26,7 +26,8 @@ end-event:
 # Change behaviour when players join for the first time
 first-time-join:
   # Display a message for the player, when joining for the first time.
-  # The translation key is 'messages.first-time-join.message'.
+  # To edit the message, go to each file in the lang/ folder
+  # Find the 'messages.first-time-join.message' key and edit it.
   show-first-join-message: false # Default: false
 
 # Some sounds that are used generally
@@ -230,9 +231,16 @@ claims:
       shear-entity:
         default: true
         is-hidden: false
+      sulfur-cube-change:
+        default: true
+        is-hidden: false
 
     projectile-interactions:
       default: true
+      is-hidden: false
+
+    wind-charge:
+      default: false
       is-hidden: false
 
     fishing:

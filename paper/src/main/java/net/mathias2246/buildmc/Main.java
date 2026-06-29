@@ -25,6 +25,7 @@ import net.mathias2246.buildmc.player.status.PlayerStatus;
 import net.mathias2246.buildmc.player.status.SetStatusCommand;
 import net.mathias2246.buildmc.player.status.StatusConfig;
 import net.mathias2246.buildmc.spawnElytra.*;
+import net.mathias2246.buildmc.ui.claims.ClaimSelectMenuListener;
 import net.mathias2246.buildmc.util.SoundManager;
 import net.mathias2246.buildmc.util.SoundUtil;
 import net.mathias2246.buildmc.util.registry.RegistriesHolder;
@@ -233,6 +234,8 @@ public final class Main extends PluginMain implements Listener {
         getServer().getPluginManager().registerEvents(new CustomItemListener(), this);
 
         getServer().getPluginManager().registerEvents(new EndListener(), this);
+
+        getServer().getPluginManager().registerEvents(new ClaimSelectMenuListener(), this);
 
         if (spawnElytraConfig.enabled) {
             getServer().getPluginManager().registerEvents(new ElytraJoinListener(spawnElytraConfig), this);
