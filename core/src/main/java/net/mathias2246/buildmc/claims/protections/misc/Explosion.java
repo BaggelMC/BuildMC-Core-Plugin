@@ -7,6 +7,7 @@ import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -19,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
 
+import java.util.List;
 import java.util.Objects;
 
 public class Explosion extends Protection {
@@ -30,15 +32,7 @@ public class Explosion extends Protection {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onExplosion(EntityExplodeEvent event) {
         if (event.getEntityType() == EntityType.WIND_CHARGE) return;
-
-        Location location = event.getLocation();
-
-        Claim claim  = ClaimManager.getClaim(location);
-        if (claim == null) return;
-
-        if (claim.hasProtection(getKey())) {
-            event.blockList().clear();
-        }
+        filterBlockList(event.blockList());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -55,6 +49,13 @@ public class Explosion extends Protection {
         }
     }
 
+
+    private void filterBlockList(List<Block> blocks) {
+        blocks.removeIf(block -> {
+            Claim claim = ClaimManager.getClaim(block.getChunk().getBlock(0, 0, 0).getLocation());
+            return claim != null && claim.hasProtection(getKey());
+        });
+    }
 
     @Override
     public @NotNull ItemStack getDisplay(@NotNull Player uiHolder) {
