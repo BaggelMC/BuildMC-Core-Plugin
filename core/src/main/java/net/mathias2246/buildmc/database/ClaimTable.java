@@ -28,11 +28,77 @@ public class ClaimTable implements DatabaseTable {
             .expireAfterAccess(10, TimeUnit.MINUTES)
             .build();
 
+    /**
+     * Sentinel value stored in {@link #locationCache} to represent a confirmed empty chunk
+     * (i.e. the DB was queried and returned no claim). This avoids re-querying the DB for
+     * chunks that are known to be unclaimed.
+     */
+    private static final long NO_CLAIM_SENTINEL = Long.MIN_VALUE;
+
+    /**
+     * Spatial cache keyed by (worldId, chunkX, chunkZ). Values are either a real claim ID
+     * or {@link #NO_CLAIM_SENTINEL} when the chunk is confirmed empty.
+     * <p>
+     * Kept in sync with {@link #claimCache}: entries are added on insert/load and invalidated
+     * on delete. The expiry matches {@link #claimCache} so stale spatial entries cannot outlive
+     * their corresponding claim objects.
+     */
+    private final Cache<@NotNull ChunkKey, @NotNull Long> locationCache = CacheBuilder.newBuilder()
+            .maximumSize(5000)
+            .expireAfterAccess(10, TimeUnit.MINUTES)
+            .build();
+
+    /**
+     * Composite key for the spatial cache.
+     *
+     * @param worldId The UUID of the world.
+     * @param chunkX  The chunk X coordinate.
+     * @param chunkZ  The chunk Z coordinate.
+     */
+    private record ChunkKey(@NotNull UUID worldId, int chunkX, int chunkZ) {}
+
+    /**
+     * Populates {@link #locationCache} for every chunk covered by the given claim.
+     * Called whenever a claim is inserted or loaded into {@link #claimCache}.
+     */
+    private void populateLocationCache(long claimId, @NotNull Claim claim) {
+        UUID worldId = claim.getWorldId();
+        int minX = Math.min(claim.getChunkX1(), claim.getChunkX2());
+        int maxX = Math.max(claim.getChunkX1(), claim.getChunkX2());
+        int minZ = Math.min(claim.getChunkZ1(), claim.getChunkZ2());
+        int maxZ = Math.max(claim.getChunkZ1(), claim.getChunkZ2());
+        for (int x = minX; x <= maxX; x++) {
+            for (int z = minZ; z <= maxZ; z++) {
+                locationCache.put(new ChunkKey(worldId, x, z), claimId);
+            }
+        }
+    }
+
+    /**
+     * Evicts all chunk entries belonging to the given claim from {@link #locationCache}.
+     * Called on deletion so subsequent spatial lookups correctly fall through to the DB.
+     */
+    private void evictLocationCache(long claimId, @NotNull Claim claim) {
+        UUID worldId = claim.getWorldId();
+        int minX = Math.min(claim.getChunkX1(), claim.getChunkX2());
+        int maxX = Math.max(claim.getChunkX1(), claim.getChunkX2());
+        int minZ = Math.min(claim.getChunkZ1(), claim.getChunkZ2());
+        int maxZ = Math.max(claim.getChunkZ1(), claim.getChunkZ2());
+        for (int x = minX; x <= maxX; x++) {
+            for (int z = minZ; z <= maxZ; z++) {
+                locationCache.invalidate(new ChunkKey(worldId, x, z));
+            }
+        }
+    }
+
     public void invalidateCache() {
         claimCache.invalidateAll();
+        locationCache.invalidateAll();
     }
 
     public void invalidateCache(long id) {
+        Claim claim = claimCache.getIfPresent(id);
+        if (claim != null) evictLocationCache(id, claim);
         claimCache.invalidate(id);
     }
 
@@ -151,6 +217,7 @@ public class ClaimTable implements DatabaseTable {
                     }
 
                     claimCache.put(id, claim);
+                    populateLocationCache(id, claim);
 
                     updateRemainingClaims(claim);
 
@@ -168,6 +235,13 @@ public class ClaimTable implements DatabaseTable {
         int chunkX = LocationUtil.blockToChunk(location.getBlockX());
         int chunkZ = LocationUtil.blockToChunk(location.getBlockZ());
         UUID worldId = Objects.requireNonNull(location.getWorld()).getUID();
+
+        ChunkKey key = new ChunkKey(worldId, chunkX, chunkZ);
+        Long cached = locationCache.getIfPresent(key);
+        if (cached != null) {
+            System.out.println("Cache hit");
+            return cached == NO_CLAIM_SENTINEL ? null : cached;
+        }
 
         try (PreparedStatement ps = conn.prepareStatement("""
         SELECT id
@@ -188,13 +262,17 @@ public class ClaimTable implements DatabaseTable {
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getLong("id");
+                    long id = rs.getLong("id");
+                    locationCache.put(key, id);
+                    return id;
+                } else {
+                    locationCache.put(key, NO_CLAIM_SENTINEL);
+                    return null;
                 }
             }
         } catch (SQLException ignore) {
             return null;
         }
-        return null;
     }
 
     public boolean isInsideClaim(@NotNull Connection conn, @NotNull Location location) {
@@ -240,6 +318,7 @@ public class ClaimTable implements DatabaseTable {
                     generatedIds.put(claim, id);
                     claim.setID(id);
                     claimCache.put(id, claim);
+                    populateLocationCache(id, claim);
                 }
             }
 
@@ -355,7 +434,8 @@ public class ClaimTable implements DatabaseTable {
             ps.executeUpdate();
         }
 
-        // Invalidate cache
+        // Invalidate both caches
+        evictLocationCache(claimId, claim);
         claimCache.invalidate(claimId);
 
         // Remove from ownership mappings
@@ -459,6 +539,7 @@ public class ClaimTable implements DatabaseTable {
                     );
 
                     claimCache.put(id, claim);
+                    populateLocationCache(id, claim);
                     return claim;
                 } else {
                     return null;
@@ -534,6 +615,7 @@ public class ClaimTable implements DatabaseTable {
                     );
 
                     claimCache.put(id, claim);
+                    populateLocationCache(id, claim);
                     allClaims.add(claim);
                 }
             }
@@ -634,6 +716,7 @@ public class ClaimTable implements DatabaseTable {
 
                     overlappingClaims.add(claim);
                     claimCache.put(id, claim);
+                    populateLocationCache(id, claim);
                 }
             }
         }
