@@ -27,7 +27,7 @@ public class PlayerCrossClaimBoundariesListener implements Listener {
         Location newLoc = event.getTo();
 
         // Ignore movement within the same chunk
-        if (oldLoc.equals(newLoc)) return;
+        if (oldLoc.getChunk().equals(newLoc.getChunk())) return;
 
         Player player = event.getPlayer();
 
