@@ -239,7 +239,6 @@ public class ClaimTable implements DatabaseTable {
         ChunkKey key = new ChunkKey(worldId, chunkX, chunkZ);
         Long cached = locationCache.getIfPresent(key);
         if (cached != null) {
-            System.out.println("Cache hit");
             return cached == NO_CLAIM_SENTINEL ? null : cached;
         }
 
