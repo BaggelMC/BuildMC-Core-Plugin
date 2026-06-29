@@ -191,50 +191,7 @@ public final class CoreMain {
         initializeDatabase();
 
         if (plugin.getConfig().getBoolean("claims.enabled", true)) {
-
-            protectionsRegistry.initialize();
-
-
-            var dimensionListSect = config.getConfigurationSection("claims.dimensions");
-            if (dimensionListSect != null) {
-                ClaimManager.isDimensionBlacklist = dimensionListSect.getBoolean("blacklist", true);
-                List<String> str = dimensionListSect.getStringList("list");
-                for (World w : Bukkit.getWorlds()) {
-                    if (str.contains(w.getKey().toString())) ClaimManager.dimensionList.add(w);
-                }
-            }
-
-
-            var hideAllProtections = CoreMain.plugin.getConfig().getBoolean("claims.hide-all-protections");
-
-            protectionsRegistry.getOptional("buildmc:bucket_usage").ifPresent(
-                    protection -> protocolManager.addPacketListener(
-                            new Buckets.BucketPacketListener(plugin, (Buckets) protection)
-                    )
-            );
-
-            for (Protection protection : protectionsRegistry) {
-                var def = protection.isDefaultEnabled();
-
-                // Register the protection's event listener
-                registerListener(protection);
-
-                // Don't register protection events if, they are disabled and cannot be changed
-                if (hideAllProtections) {
-                    protection.setHidden(true);
-                }
-
-                // Add to the default protection list if applicable
-                if (def) Protection.defaultProtections.add(protection.getKey().toString());
-            }
-
-            registerListener(new PlayerCrossClaimBoundariesListener());
-
-            registerListener(new ClaimUIs());
-
-            registerListener(new ClaimSelectionChangeWorld());
-
-            ClaimLogger.init(plugin);
+            ClaimManager.initializeClaimSystem();
         }
 
         registerListener(new FirstTimeJoinListener());

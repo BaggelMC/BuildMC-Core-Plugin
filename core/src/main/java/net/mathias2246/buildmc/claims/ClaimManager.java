@@ -6,6 +6,9 @@ import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.ClaimType;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.event.claims.*;
+import net.mathias2246.buildmc.claims.protections.misc.Buckets;
+import net.mathias2246.buildmc.event.claims.PlayerCrossClaimBoundariesListener;
+import net.mathias2246.buildmc.ui.claims.ClaimUIs;
 import net.mathias2246.buildmc.util.InvalidStringException;
 import net.mathias2246.buildmc.util.ValidationPatterns;
 import org.bukkit.*;
@@ -51,6 +54,52 @@ public class ClaimManager {
     public static boolean isDimensionBlacklist = true;
 
     public final static @NotNull List<World> dimensionList = new ArrayList<>();
+
+    public static void initializeClaimSystem() {
+        CoreMain.protectionsRegistry.initialize();
+
+
+        var dimensionListSect = CoreMain.config.getConfigurationSection("claims.dimensions");
+        if (dimensionListSect != null) {
+            ClaimManager.isDimensionBlacklist = dimensionListSect.getBoolean("blacklist", true);
+            List<String> str = dimensionListSect.getStringList("list");
+            for (World w : Bukkit.getWorlds()) {
+                if (str.contains(w.getKey().toString())) ClaimManager.dimensionList.add(w);
+            }
+        }
+
+
+        var hideAllProtections = CoreMain.plugin.getConfig().getBoolean("claims.hide-all-protections");
+
+        CoreMain.protectionsRegistry.getOptional("buildmc:bucket_usage").ifPresent(
+                protection -> CoreMain.protocolManager.addPacketListener(
+                        new Buckets.BucketPacketListener(plugin, (Buckets) protection)
+                )
+        );
+
+        for (Protection protection : CoreMain.protectionsRegistry) {
+            var def = protection.isDefaultEnabled();
+
+            // Register the protection's event listener
+            CoreMain.registerListener(protection);
+
+            // Don't register protection events if, they are disabled and cannot be changed
+            if (hideAllProtections) {
+                protection.setHidden(true);
+            }
+
+            // Add to the default protection list if applicable
+            if (def) Protection.defaultProtections.add(protection.getKey().toString());
+        }
+
+        CoreMain.registerListener(new PlayerCrossClaimBoundariesListener());
+
+        CoreMain.registerListener(new ClaimUIs());
+
+        CoreMain.registerListener(new ClaimSelectionChangeWorld());
+
+        ClaimLogger.init(plugin);
+    }
 
     public static boolean isWorldAllowed(@NotNull World world) {
         if (isDimensionBlacklist) {
