@@ -43,10 +43,18 @@ public class DisableRiptideListener extends PacketAdapter implements Listener {
         Player player = event.getPlayer();
         PacketType type = event.getPacketType();
 
+        EnumWrappers.PlayerDigType digType;
+
         // Clean up tracking on release regardless
         if (type == PacketType.Play.Client.BLOCK_DIG) {
-            EnumWrappers.PlayerDigType digType = event.getPacket()
-                    .getPlayerDigTypes().read(0);
+            try {
+                digType = event.getPacket()
+                        .getPlayerDigTypes().read(0);
+            } catch (IllegalArgumentException e) {
+                // Unknown dig type (e.g. STAB from spear)
+                return;
+            }
+
             if (digType == EnumWrappers.PlayerDigType.RELEASE_USE_ITEM) {
                 chargingRiptide.remove(player.getUniqueId());
             }
