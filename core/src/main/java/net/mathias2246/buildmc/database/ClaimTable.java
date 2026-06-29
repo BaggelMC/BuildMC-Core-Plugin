@@ -269,7 +269,8 @@ public class ClaimTable implements DatabaseTable {
                     return null;
                 }
             }
-        } catch (SQLException ignore) {
+        } catch (SQLException e) {
+            plugin.getLogger().severe("DB-Fehler beim Claim-Lookup bei " + location + ": " + e.getMessage());
             return null;
         }
     }
