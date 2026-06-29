@@ -15,10 +15,6 @@ import java.util.Map;
 import static net.mathias2246.buildmc.CoreMain.plugin;
 
 public class FirstTimeJoinMessage implements Listener {
-
-    public FirstTimeJoinMessage() {
-    }
-
     @EventHandler
     public void onPlayerFistTimeJoin(PlayerFirstTimeJoinEvent event) {
         showMessage(event.getPlayer());

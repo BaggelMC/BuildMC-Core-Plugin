@@ -27,6 +27,7 @@ import net.mathias2246.buildmc.database.*;
 import net.mathias2246.buildmc.deaths.DeathListener;
 import net.mathias2246.buildmc.event.claims.PlayerCrossClaimBoundariesListener;
 import net.mathias2246.buildmc.player.FirstTimeJoinListener;
+import net.mathias2246.buildmc.player.FirstTimeJoinMessage;
 import net.mathias2246.buildmc.player.status.PlayerStatusUtil;
 import net.mathias2246.buildmc.player.status.StatusConfig;
 import net.mathias2246.buildmc.ui.claims.ClaimUIs;
@@ -233,9 +234,7 @@ public final class CoreMain {
         }
 
         registerListener(new FirstTimeJoinListener());
-
-        String firstJoinMessage = config.getString("first-time-join.first-join-message", "");
-        if (!firstJoinMessage.isBlank()) registerListener(new FirstTimeJoinListener());
+        if (config.getBoolean("first-time-join.show-first-join-message")) registerListener(new FirstTimeJoinMessage());
 
         registerListener(new DeathListener());
 
