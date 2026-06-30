@@ -9,8 +9,12 @@ public enum DefaultRegistries {
     STATUSES ("statuses"),
     /// The default custom-item registry
     CUSTOM_ITEMS ("custom_items"),
-    /** The default guides registry. **/
-    GUIDES ("guides");
+    /** The default guides registry **/
+    GUIDES ("guides"),
+    /** The event channel registry **/
+    EVENT_CHANNELS ("event_channels"),
+    /** The event subscription registry **/
+    EVENT_SUBSCRIPTIONS ("event_subscriptions");
 
     @Override
     public String toString() {

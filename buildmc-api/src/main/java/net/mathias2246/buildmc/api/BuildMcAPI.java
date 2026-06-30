@@ -2,6 +2,7 @@ package net.mathias2246.buildmc.api;
 
 import net.mathias2246.buildmc.api.claims.ClaimManager;
 import net.mathias2246.buildmc.api.endEvent.EndManager;
+import net.mathias2246.buildmc.api.messageBus.EventBus;
 import net.mathias2246.buildmc.api.permission.PermissionManager;
 import net.mathias2246.buildmc.api.spawnEyltra.ElytraManager;
 import net.mathias2246.buildmc.api.status.StatusManager;
@@ -106,4 +107,11 @@ public interface BuildMcAPI {
      * @return the PermissionManager instance
      */
     PermissionManager getPermissionManager();
+
+    /**
+     * Gets the {@link EventBus}
+     *
+     * @return the EventBus instance
+     */
+    EventBus getEventBus();
 }

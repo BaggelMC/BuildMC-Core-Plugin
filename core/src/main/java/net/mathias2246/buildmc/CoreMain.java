@@ -13,6 +13,8 @@ import net.mathias2246.buildmc.api.event.lifecycle.BuildMcFinishedLoadingEvent;
 import net.mathias2246.buildmc.api.event.lifecycle.BuildMcRegistryEvent;
 import net.mathias2246.buildmc.api.item.AbstractCustomItem;
 import net.mathias2246.buildmc.api.item.ItemDropTracker;
+import net.mathias2246.buildmc.api.messageBus.EventChannel;
+import net.mathias2246.buildmc.api.messageBus.EventSubscription;
 import net.mathias2246.buildmc.api.permission.PermissionManager;
 import net.mathias2246.buildmc.api.status.StatusInstance;
 import net.mathias2246.buildmc.api.status.StatusManager;
@@ -26,6 +28,7 @@ import net.mathias2246.buildmc.commands.GuidesCommand;
 import net.mathias2246.buildmc.database.*;
 import net.mathias2246.buildmc.deaths.DeathListener;
 import net.mathias2246.buildmc.event.claims.PlayerCrossClaimBoundariesListener;
+import net.mathias2246.buildmc.messageBus.EventBusImpl;
 import net.mathias2246.buildmc.player.FirstTimeJoinListener;
 import net.mathias2246.buildmc.player.FirstTimeJoinMessage;
 import net.mathias2246.buildmc.player.status.PlayerStatusUtil;
@@ -83,6 +86,10 @@ public final class CoreMain {
 
     public static DeferredRegistry<AbstractCustomItem> customItemsRegistry;
 
+    public static DeferredRegistry<EventChannel> channelRegistry;
+
+    public static DeferredRegistry<EventSubscription> subscriptionRegistry;
+
     public static BaseRegistry<Guide> guidesRegistry;
 
     public final static Gson gson = new GsonBuilder()
@@ -99,6 +106,8 @@ public final class CoreMain {
     public static PermissionManager permissionManager;
 
     public static PermissionsTable permissionsTable;
+
+    public static EventBusImpl eventBus;
 
     @ApiStatus.Internal
     public static void initialize(@NotNull PluginMain plugin) {
@@ -172,10 +181,15 @@ public final class CoreMain {
                 new VehicleEnter(config.getConfigurationSection("claims.protections.vehicle-enter")),
                 new PistonMovement(config.getConfigurationSection("claims.protections.piston-movement-across-claim-borders")),
                 new UseWindCharge(config.getConfigurationSection("claims.protections.projectile-interactions")),
-                new SulfurCubeChange(config.getConfigurationSection("claims.protections.interactions.sulfur-cube-change")),
-                new WaterFlow(config.getConfigurationSection("claims.protections.water-flow")),
-                new LavaFlow(config.getConfigurationSection("claims.protections.lava-flow"))
+                new SulfurCubeChange(config.getConfigurationSection("claims.protections.interactions.sulfur-cube-change"))
         );
+
+        channelRegistry = new DeferredRegistry<>(Key.key("buildmc", "event_channels"));
+        registriesHolder.addRegistry(DefaultRegistries.EVENT_CHANNELS.toString(), channelRegistry);
+        subscriptionRegistry = new DeferredRegistry<>(Key.key("buildmc", "event_subscriptions"));
+        registriesHolder.addRegistry(DefaultRegistries.EVENT_SUBSCRIPTIONS.toString(), subscriptionRegistry);
+
+        eventBus = new EventBusImpl(channelRegistry, subscriptionRegistry, plugin.getLogger());
 
         Bukkit.getPluginManager().registerEvents(new Listener() {
             @EventHandler
@@ -187,6 +201,9 @@ public final class CoreMain {
     }
 
     public static void finishLoading() {
+        channelRegistry.initialize();
+        subscriptionRegistry.initialize();
+        eventBus.initialize();
 
         initializeDatabase();
 
