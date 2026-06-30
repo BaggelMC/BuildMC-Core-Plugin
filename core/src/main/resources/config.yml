@@ -251,6 +251,10 @@ claims:
       default: true
       is-hidden: false
 
+    lava-flow:
+      default: true
+      is-hidden: false
+
     # Damage related protections
     damage:
       # Cancels all damage dealt by players to protected entities

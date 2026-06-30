@@ -181,7 +181,9 @@ public final class CoreMain {
                 new VehicleEnter(config.getConfigurationSection("claims.protections.vehicle-enter")),
                 new PistonMovement(config.getConfigurationSection("claims.protections.piston-movement-across-claim-borders")),
                 new UseWindCharge(config.getConfigurationSection("claims.protections.projectile-interactions")),
-                new SulfurCubeChange(config.getConfigurationSection("claims.protections.interactions.sulfur-cube-change"))
+                new SulfurCubeChange(config.getConfigurationSection("claims.protections.interactions.sulfur-cube-change")),
+                new WaterFlow(config.getConfigurationSection("claims.protections.water-flow")),
+                new LavaFlow(config.getConfigurationSection("claims.protections.lava-flow"))
         );
 
         channelRegistry = new DeferredRegistry<>(Key.key("buildmc", "event_channels"));
