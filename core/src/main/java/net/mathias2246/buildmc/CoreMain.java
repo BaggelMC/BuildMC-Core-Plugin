@@ -20,20 +20,17 @@ import net.mathias2246.buildmc.api.status.StatusInstance;
 import net.mathias2246.buildmc.api.status.StatusManager;
 import net.mathias2246.buildmc.claims.ClaimLogger;
 import net.mathias2246.buildmc.claims.ClaimManager;
-import net.mathias2246.buildmc.claims.ClaimSelectionChangeWorld;
 import net.mathias2246.buildmc.claims.protections.blocks.*;
 import net.mathias2246.buildmc.claims.protections.entities.*;
 import net.mathias2246.buildmc.claims.protections.misc.*;
 import net.mathias2246.buildmc.commands.GuidesCommand;
 import net.mathias2246.buildmc.database.*;
 import net.mathias2246.buildmc.deaths.DeathListener;
-import net.mathias2246.buildmc.event.claims.PlayerCrossClaimBoundariesListener;
 import net.mathias2246.buildmc.messageBus.EventBusImpl;
 import net.mathias2246.buildmc.player.FirstTimeJoinListener;
 import net.mathias2246.buildmc.player.FirstTimeJoinMessage;
 import net.mathias2246.buildmc.player.status.PlayerStatusUtil;
 import net.mathias2246.buildmc.player.status.StatusConfig;
-import net.mathias2246.buildmc.ui.claims.ClaimUIs;
 import net.mathias2246.buildmc.util.BStats;
 import net.mathias2246.buildmc.util.SoundManager;
 import net.mathias2246.buildmc.util.language.LanguageManager;
@@ -42,7 +39,6 @@ import net.mathias2246.buildmc.util.registry.DefaultRegistries;
 import net.mathias2246.buildmc.util.registry.DeferredRegistry;
 import net.mathias2246.buildmc.util.registry.RegistriesHolder;
 import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -54,7 +50,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.sql.SQLException;
-import java.util.List;
 
 import static net.mathias2246.buildmc.commands.disabledCommands.DisableCommands.disableCommand;
 
@@ -182,6 +177,7 @@ public final class CoreMain {
                 new PistonMovement(config.getConfigurationSection("claims.protections.piston-movement-across-claim-borders")),
                 new UseWindCharge(config.getConfigurationSection("claims.protections.projectile-interactions")),
                 new SulfurCubeChange(config.getConfigurationSection("claims.protections.interactions.sulfur-cube-change")),
+                // new EntityPush(config.getConfigurationSection("claims.protections.entity-push")),
                 new WaterFlow(config.getConfigurationSection("claims.protections.water-flow")),
                 new LavaFlow(config.getConfigurationSection("claims.protections.lava-flow"))
         );
