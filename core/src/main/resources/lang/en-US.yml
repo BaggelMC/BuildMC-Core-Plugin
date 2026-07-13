@@ -38,6 +38,13 @@ messages:
     error:
       different-worlds: "<red>Positions must be in the same world!</red>"
 
+  permission-change:
+    success: "<green>Permission changed successfully</green>"
+    success-for: "<green>Permission changed successfully for %player%</green>"
+    success-disable-for: "<green>Permission successfully revoked from %player%</green>"
+    set-success-for: "<green>Permission set successfully for %player%</green>"
+    error: "<red>Failed to change permission</red>"
+
   end-event:
     opened: "<green>The end is now 'open'."
     closed: "<green>The end is now 'closed'."
@@ -53,6 +60,7 @@ messages:
     no-permission-str: "You do not have permission to perform this action."
     not-a-player: "<red>This command can only be used by players.</red>"
     not-a-player-str: "This command can only be used by players."
+    not-a-player-target: "<red>This command can only be used on a player.</red>"
 
     not-in-a-team: "<red>You need to be in a team to perform this action.</red>"
 

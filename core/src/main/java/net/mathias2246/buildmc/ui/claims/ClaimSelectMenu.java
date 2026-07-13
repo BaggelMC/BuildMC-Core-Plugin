@@ -191,7 +191,6 @@ public class ClaimSelectMenu {
                 case TEAM -> Material.IRON_SWORD;
                 case SERVER -> Material.COMMAND_BLOCK;
                 case PLACEHOLDER -> Material.STRUCTURE_VOID;
-                default -> Material.PAPER;
             };
 
             ItemStack item = new ItemStack(material);
@@ -209,7 +208,6 @@ public class ClaimSelectMenu {
                 case TEAM -> Message.msg(player, "messages.claims.ui.select-menu.team-type");
                 case SERVER -> Message.msg(player, "messages.claims.ui.select-menu.server-type");
                 case PLACEHOLDER -> Message.msg(player, "messages.claims.ui.select-menu.placeholder-type");
-                default -> Message.msg(player, "messages.claims.ui.select-menu.unknown-type");
             };
 
             List<Component> lore = new ArrayList<>();

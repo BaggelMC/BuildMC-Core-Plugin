@@ -16,7 +16,6 @@ import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.commands.*;
 import net.mathias2246.buildmc.endEvent.EndListener;
 import net.mathias2246.buildmc.endEvent.EndManagerImpl;
-import net.mathias2246.buildmc.messageBus.EventBusImpl;
 import net.mathias2246.buildmc.platform.SoundManagerPaperImpl;
 import net.mathias2246.buildmc.player.PlayerHeadDropDeathListener;
 import net.mathias2246.buildmc.player.PlayerHeadDropModifier;

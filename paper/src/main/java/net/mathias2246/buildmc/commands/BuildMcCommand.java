@@ -23,6 +23,7 @@ import net.mathias2246.buildmc.commands.debug.TestBoundingBox;
 import net.mathias2246.buildmc.player.status.PlayerStatusUtil;
 import net.mathias2246.buildmc.player.status.SetStatusCommand;
 import net.mathias2246.buildmc.util.AudienceUtil;
+import net.mathias2246.buildmc.util.PermCommandHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -197,6 +198,16 @@ public class BuildMcCommand implements CustomCommand {
 
         debugSub.then(miniMsgSub);
         cmd.then(debugSub);
+
+        var pSettingsSub = Commands.literal("psettings")
+                .requires(c -> c.getSender().hasPermission("buildmc.admin"))
+                .then(
+                        PermCommandHelper.createPermCommand("buildmc.show-all-claims", "show-all-claims")
+                ).then(
+                        PermCommandHelper.createPermCommand("buildmc.bypass-claims", "bypass-claims")
+                );
+
+        cmd.then(pSettingsSub);
 
         var statusSub =
                 Commands.literal("status")

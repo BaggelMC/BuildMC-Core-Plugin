@@ -34,6 +34,14 @@ messages:
     success: <green>Elytra-Zone erstellt.</green>
     error:
       different-worlds: "<red>Positionen müssen in der gleichen Welt sein!</red>"
+
+  permission-change:
+    success: "<green>Berechtigung erfolgreich geändert</green>"
+    success-for: "<green>Berechtigung erfolgreich vergeben für %player% </green>"
+    success-disable-for: "<green>Berechtigung erfolgreich entzogen von %player%</green>"
+    set-success-for: "<green>Berechtigung erfolgreich für %player% gesetzt</green>"
+    error: "<red>Berechtigungsänderung ist fehlgeschlagen</red>"
+
   end-event:
     opened: <green>Das Ende ist jetzt 'geöffnet'.</green>
     closed: <green>Das Ende ist jetzt 'geschlossen'.</green>
@@ -69,6 +77,7 @@ messages:
     no-permission-str: Du hast keine Berechtigung, dies zu tun.
     not-a-player: <red>Dieser Befehl kann nur von Spielern verwendet werden.</red>
     not-a-player-str: Dieser Befehl kann nur von Spielern verwendet werden.
+    not-a-player-target: "<red>Dieser Befehl kann nur auf einem Spieler angewendet werden.</red>"
     not-in-a-team: <red>Du musst in einem Team sein, um dies zu tun.</red>
     command-disabled: <red>Dieser Befehl wurde deaktiviert.</red>
     sql: <red>Ein SQL Fehler ist aufgetretten.</red>

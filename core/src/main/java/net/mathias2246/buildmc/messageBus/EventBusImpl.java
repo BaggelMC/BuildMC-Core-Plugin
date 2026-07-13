@@ -18,7 +18,7 @@ public class EventBusImpl implements EventBus {
     private final Logger logger;
 
     // Built once at lock time, used on every publish
-    private Map<String, List<EventSubscription>> subscriptionIndex = new HashMap<>();
+    private final Map<String, List<EventSubscription>> subscriptionIndex = new HashMap<>();
 
     public EventBusImpl(
             DeferredRegistry<EventChannel> channelRegistry,
