@@ -199,6 +199,8 @@ public class WhitelistMenu {
 
                                                             ClaimManager.addPlayerToWhitelist(claim, target.getUniqueId());
 
+                                                            ClaimLogger.logWhitelistAdded(player, claim.getName(), target);
+
                                                             CoreMain.soundManager.playSound(player, SoundUtil.success);
                                                             AudienceUtil.sendMessage(player, Component.translatable("messages.claims.whitelist.added"));
 
