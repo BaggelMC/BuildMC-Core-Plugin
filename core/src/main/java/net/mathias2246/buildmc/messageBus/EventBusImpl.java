@@ -53,7 +53,6 @@ public class EventBusImpl implements EventBus {
     public void publish(@NotNull NamespacedKey channelId, @NotNull JsonObject payload) {
         EventChannel channel = channelRegistry.get(channelId);
         if (channel == null) {
-            logger.warning("[EventBus] Publish to unregistered channel '" + channelId.asString() + "'");
             return;
         }
 

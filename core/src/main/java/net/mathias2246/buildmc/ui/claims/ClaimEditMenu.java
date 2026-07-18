@@ -11,6 +11,7 @@ import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.ClaimType;
 import net.mathias2246.buildmc.api.item.ItemUtil;
+import net.mathias2246.buildmc.claims.ClaimLogger;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.ui.UIUtil;
 import net.mathias2246.buildmc.util.AudienceUtil;
@@ -181,6 +182,7 @@ public class ClaimEditMenu {
                                 e.setCancelled(true);
                                 CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
                                 boolean removed = ClaimManager.removeClaimById(claim.getId());
+                                ClaimLogger.logClaimDeleted(player, claim.getName());
                                 if (removed) {
                                     AudienceUtil.sendMessage(player, 
                                             Component.translatable("messages.claims.ui.edit-menu.delete-confirm-menu.success"));
