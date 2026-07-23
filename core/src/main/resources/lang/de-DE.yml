@@ -103,6 +103,13 @@ messages:
     restored: "<green>Tode erfolgreich widerhergestellt."
 
   claims:
+
+    move:
+      leave-claim: "<italic><gray>Du hast den Claim verlassen</gray></italic>"
+
+      # Color will be overwritten by the color of the team owning the claim if the claim is owned by a team.
+      enter-claim: "<italic>Claim betreten von %owner-type% <bold>'%owner%'</bold></italic>"
+
     tool:
       tool-name: Claim-Ecken auswählen
       tool-tooltip-line1: Benutze dieses Tool, um die Ecken deines Claims festzulegen.
@@ -308,6 +315,13 @@ messages:
         id: "<dark_gray>ID: %id%</dark_gray>"
         empty: <red>Du hast noch keine Claims.</red>
         new-claim-button: "<green>Neuen Claim erstellen</green>"
+
+        toggle-on-claim-action-bar: "<green>(An) Zeige Nachricht beim betreten von Claims</green>"
+        toggle-off-claim-action-bar: "<gray>(Aus) Keine Nachricht beim betreten von Claims</gray>"
+        toggle-claim-action-bar-lore: |-
+          <gray><italic>(Klicke zum ändern)</italic></gray>
+          <gray>Wenn diese Einstellung auf an ist, siehst du eine kleine Nachricht wenn du ein Claim betritts oder verläst.</gray>
+
       edit-menu:
         title: "<gold>Claim bearbeiten: '%claim%'</gold>"
 

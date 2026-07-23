@@ -37,6 +37,9 @@ sounds:
   notification: "minecraft:entity.item.pickup" # Default: "minecraft:entity.item.pickup"
   ui:
     click: "minecraft:ui.button.click" # Default: "minecraft:ui.button.click"
+    # Click sounds for e.g., Toggleable buttons, or elements that increase/decrease a value
+    click-high: "minecraft:block.copper_bulb.turn_on" # Default: "minecraft:block.copper_bulb.turn_on"
+    click-low: "minecraft:block.copper_bulb.turn_off" # Default: "minecraft:block.copper_bulb.turn_off"
 
 # World spawn teleport command
 # Players require the default permission 'buildmc.allow-spawn-teleport' to use this command!

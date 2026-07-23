@@ -89,6 +89,12 @@ messages:
     restored: "<green>Death restored successfully."
 
   claims:
+    move:
+      leave-claim: "<italic><gray>You left the Claim</gray></italic>"
+
+      # Color will be overwritten by the color of the team owning the claim if the claim is owned by a team.
+      enter-claim: "<italic>Entered Claim of %owner-type% <bold>'%owner%'</bold></italic>"
+
     tool:
       tool-name: "Select Claim Corners"
 
@@ -258,6 +264,12 @@ messages:
         server-type: "<gray>Type: Server Claim</gray>"
         placeholder-type: "<gray>Type: Placeholder Claim</gray>"
         unknown-type: "<gray>Type: Unknown</gray>"
+
+        toggle-on-claim-action-bar: "<green>(Enabled) Showing message when entering a claim</green>"
+        toggle-off-claim-action-bar: "<gray>(Disabled) Hiding message when entering a claim</gray>"
+        toggle-claim-action-bar-lore: |-
+          <gray><italic>(Click to toggle)</italic></gray>
+          <gray>When enabled, you will see a small message when entering or leaving someone else's claim.</gray>
 
         id: "<dark_gray>ID: %id%</dark_gray>"
         empty: "<red>You have not claimed anything yet.</red>"

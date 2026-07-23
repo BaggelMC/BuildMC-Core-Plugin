@@ -12,9 +12,11 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.item.ItemUtil;
+import net.mathias2246.buildmc.claims.ClaimActionBarHandler;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.ui.UIUtil;
 import net.mathias2246.buildmc.util.AudienceUtil;
+import net.mathias2246.buildmc.util.ComponentUtil;
 import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.SoundUtil;
 import org.bukkit.Bukkit;
@@ -96,6 +98,45 @@ public class ClaimSelectMenu {
 
             bottomBar = UIUtil.BOTTOM_BAR.copy();
             bottomBar.addItem(UIUtil.EXIT_BUTTON, 8, 0);
+
+            ItemStack toggleClaimActionBar = new ItemStack(Material.NAME_TAG);
+            toggleClaimActionBar.lore(
+                    ComponentUtil.splitComponentByNewline(Message.msg(player, "messages.claims.ui.select-menu.toggle-claim-action-bar-lore"))
+            );
+
+            if (ClaimActionBarHandler.hasActionBarMessageEnabled(player)) ItemUtil.setName(toggleClaimActionBar, Message.msg(player, "messages.claims.ui.select-menu.toggle-on-claim-action-bar"));
+            else ItemUtil.setName(toggleClaimActionBar, Message.msg(player, "messages.claims.ui.select-menu.toggle-off-claim-action-bar"));
+
+            GuiItem actionBarToogle = new GuiItem(toggleClaimActionBar, (e) -> {});
+
+            actionBarToogle.setAction(
+                    (e) -> {
+                        e.setCancelled(true);
+                        CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
+                        Bukkit.getScheduler().runTask(plugin, () -> {
+                            var enabled = ClaimActionBarHandler.hasActionBarMessageEnabled(player);
+                            enabled = !enabled;
+                            ClaimActionBarHandler.setPlayerEnabled(player, enabled);
+
+                            if (enabled) {
+                                ItemUtil.setName(actionBarToogle.getItem(), Message.msg(player, "messages.claims.ui.select-menu.toggle-on-claim-action-bar"));
+                                CoreMain.soundManager.playSound(player, SoundUtil.clickHigh);
+                            }
+                            else {
+                                ItemUtil.setName(actionBarToogle.getItem(), Message.msg(player, "messages.claims.ui.select-menu.toggle-off-claim-action-bar"));
+                                CoreMain.soundManager.playSound(player, SoundUtil.clickLow);
+                            }
+
+                            bottomBar.addItem(actionBarToogle, 1, 0);
+
+                            gui.update();
+                        });
+                    }
+            );
+
+            bottomBar.addItem(actionBarToogle, 1, 0);
+
+
 
             ItemStack newClaimItem = new ItemStack(Material.LIME_STAINED_GLASS_PANE);
             ItemUtil.setName(newClaimItem, Message.msg(player, "messages.claims.ui.select-menu.new-claim-button"));

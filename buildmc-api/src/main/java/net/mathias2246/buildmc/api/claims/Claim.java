@@ -28,7 +28,7 @@ public class Claim {
 
     private Long id;
 
-    private final ClaimType type;
+    private final @NotNull ClaimType type;
     private String ownerId;
     private final UUID worldId;
     private final int chunkX1, chunkZ1;
@@ -95,7 +95,7 @@ public class Claim {
      * @return The claim type.
      */
     @Contract(pure = true)
-    public ClaimType getType() { return type; }
+    public @NotNull ClaimType getType() { return type; }
 
     /**
      * Gets the owner ID of this claim.

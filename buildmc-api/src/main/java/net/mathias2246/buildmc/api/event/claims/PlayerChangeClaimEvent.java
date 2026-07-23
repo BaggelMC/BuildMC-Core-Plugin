@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Called when a {@link Player} leaves a claim and enters another area.
+ * Called when a {@link Player} moves from one claim into another.
  * <p>
  * Both the "from" and "to" claim IDs may be {@code null}, and there is no guarantee
  * that the claim IDs correspond to an existing claim at the time of the event.
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
  * </ul>
  * <p>
  */
-public class PlayerLeaveClaimEvent extends CustomPlayerEvent {
+public class PlayerChangeClaimEvent extends CustomPlayerEvent {
 
     private static final @NotNull HandlerList HANDLERS = new HandlerList();
 
@@ -25,13 +25,13 @@ public class PlayerLeaveClaimEvent extends CustomPlayerEvent {
     private final @Nullable Long toClaim;
 
     /**
-     * Constructs a new {@link PlayerLeaveClaimEvent}.
+     * Constructs a new {@link PlayerChangeClaimEvent}.
      *
-     * @param who         the player leaving the claim (never {@code null})
+     * @param who         the player entering the claim (never {@code null})
      * @param fromClaimId the ID of the claim the player is leaving, or {@code null} if none
-     * @param toClaimId   the ID of the claim the player is entering, or {@code null} if unclaimed land
+     * @param toClaimId   the ID of the claim the player is entering, or {@code null} if none
      */
-    public PlayerLeaveClaimEvent(@NotNull Player who, @Nullable Long fromClaimId, @Nullable Long toClaimId) {
+    public PlayerChangeClaimEvent(@NotNull Player who, @Nullable Long fromClaimId, @Nullable Long toClaimId) {
         super(who);
         this.fromClaim = fromClaimId;
         this.toClaim = toClaimId;
