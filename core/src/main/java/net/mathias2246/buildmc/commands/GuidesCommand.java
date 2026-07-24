@@ -177,7 +177,7 @@ public class GuidesCommand extends YamlConfigurationManager {
                             ConfigurationSection entry = urlsSection.getConfigurationSection(String.valueOf(index));
                             if (entry == null) return;
                             String labelKey = entry.getString("label-key");
-                            String urlStr      = entry.getString("url");
+                            String urlStr   = entry.getString("url");
                             // Skip the URL is missing
                             if (urlStr == null) {
                                 getPlugin().getLogger().warning("Missing key 'url' for url button in guide '" + guideId + "' with order number " + index + " (Skipped URL)");
@@ -186,11 +186,6 @@ public class GuidesCommand extends YamlConfigurationManager {
                             // Skip if the label for the button is missing
                             if (labelKey == null) {
                                 getPlugin().getLogger().warning("Missing key 'label-key' for url button in guide '" + guideId + "' with order number " + index + " (Skipped URL)");
-                                return;
-                            }
-                            // Skip if YAML path to the translation key for the button label is malformed
-                            if (!ValidationPatterns.YAML_PATH.matcher(urlStr).matches()) {
-                                getPlugin().getLogger().warning("Invalid 'url' key for url button in guide '" + guideId + "' with order number " + index + " (Skipped URL)");
                                 return;
                             }
 
