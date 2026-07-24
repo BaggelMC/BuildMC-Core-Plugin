@@ -1,3 +1,6 @@
+# BuildMC-Core-Plugin Spawn-Elytra Configuration
+# Join our discord server https://discord.gg/p8wBMZXAfb
+
 # Enable or Disable the spawn elytra feature
 enabled: true # Default: true
 # The strength of the spawn elytra boost

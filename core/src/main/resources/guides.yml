@@ -8,27 +8,26 @@
 # 1. Pick a short name for your guide (no spaces, e.g. "pvp" or "claim-land").
 #
 # 2. Add a line here in the format:
-##         your-guide-name:
-##           text-key: "messages.guides.your-guide-name"
-## (Optional)urls:
-##             0:
-##               label-key: "messages.guides.label-name-here"
-##               url: "https://example.com"
-##    The value on the right of text-key is just a key. It tells the plugin where to find the actual text.
-##    Optionally you can add a list of url buttons with a translatable label. The number describes the order, the lower the number the earlier it will appear inside the list of buttons.
+#         your-guide-name:
+#           text-key: "guides.your-guide-name"
+# (Optional)urls:
+#             0:
+#               label-key: "guides.label-name-here"
+#               url: "https://example.com"
+#    The value on the right of text-key is just a key. It tells the plugin where to find the actual text.
+#    Optionally, you can add a list of url buttons with a translatable label. The number describes the order, the lower the number the earlier it will appear inside the list of buttons.
 #
 # 3. Open the language file:
-#       plugins/BuildMC-Core/lang/en-US.yml   (or whichever language you use)
-#    Find (or create) the "guides:" section under "messages:" and add your text there:
+#       plugins/BuildMC-Core/lang/en-US.yml (or whichever language you use)
+#    Find (or create) the "guides:" section and add your text there:
 #
-#       messages:
 #         guides:
 #           your-guide-name: |-
 #             Your guide text goes here.
 #             You can use multiple lines.
 #             MiniMessage formatting like <gold>gold text</gold> or <bold>bold</bold> works here too.
 #
-# 4. Save both files and reload the plugin (e.g. /plugman reload BuildMC-Core).
+# 4. Save both files and reload the server
 #
 # TIP: The "|-" on the line with the key lets you write text across multiple lines.
 #      Every line after it that is indented further belongs to that guide.
@@ -39,11 +38,11 @@ enabled: true # Default: true
 
 guides:
   commands:
-    text-key: "messages.guides.commands"
+    text-key: "guides.commands"
 
   spawn-elytra:
-    text-key: "messages.guides.spawn-elytra"
+    text-key: "guides.spawn-elytra"
     urls:
       0:
-        label-key: "messages.guides.go-to-wiki"
+        label-key: "guides.go-to-wiki"
         url: "https://baggel.de/core/player/spawn-elytra/"
