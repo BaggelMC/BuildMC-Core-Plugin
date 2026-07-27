@@ -42,6 +42,7 @@ public class TeleportTimer extends PlayerTimer {
             Bukkit.getPluginManager().callEvent(e);
             if (e.isCancelled()) {
                 AudienceUtil.sendMessage(player, Component.translatable("messages.spawn-teleport.not-working"));
+                CoreMain.soundManager.playSound(player, mistake);
                 return 0;
             }
 
@@ -63,6 +64,7 @@ public class TeleportTimer extends PlayerTimer {
                 var now = LocalDateTime.now();
                 if (timeAfterCooldown.isAfter(LocalDateTime.now())) {
                     AudienceUtil.sendMessage(player, Message.msg(player, "messages.teleport.cooldown", Map.of("cooldown", String.valueOf(cooldown))));
+                    CoreMain.soundManager.playSound(player, mistake);
                     return 0;
                 }
             }
