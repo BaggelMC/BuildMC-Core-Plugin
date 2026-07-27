@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -22,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 import static net.mathias2246.buildmc.CoreMain.config;
+import static net.mathias2246.buildmc.CoreMain.plugin;
 
 public class PlayerStatusUtil implements Listener {
 
@@ -176,15 +178,23 @@ public class PlayerStatusUtil implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerDeath(PlayerDeathEvent event) {
         if (!config.getBoolean("status.death-counter", false)) return;
-        Player player = event.getEntity();
-        if (hasStatus(player)) {
-            reloadPlayerStatus(player);
-        } else {
-            refreshTabListNameNoStatus(player);
-        }
+
+        // Update later to let statistics value catch up
+        Bukkit.getScheduler().runTaskLater(
+                plugin,
+                task -> {
+                    Player player = event.getEntity();
+                    if (hasStatus(player)) {
+                        reloadPlayerStatus(player);
+                    } else {
+                        refreshTabListNameNoStatus(player);
+                    }
+                },
+                10
+        );
     }
 
 }
