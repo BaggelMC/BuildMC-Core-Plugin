@@ -11,24 +11,62 @@ import net.mathias2246.buildmc.api.event.player.PlayerSpawnTeleportEvent;
 import net.mathias2246.buildmc.util.AudienceUtil;
 import net.mathias2246.buildmc.util.Message;
 import net.mathias2246.buildmc.util.PlayerTimer;
+import net.mathias2246.buildmc.util.persistentDataTypes.PersistentDateTimeType;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.TimeZone;
 
 import static net.mathias2246.buildmc.util.SoundUtil.*;
 
 public class TeleportTimer extends PlayerTimer {
+
+        public static final @NotNull NamespacedKey TELEPORT_COOLDOWN_KEY = new NamespacedKey("buildmc", "spawn_teleport_cooldown");
+        public static final @NotNull NamespacedKey TELEPORT_ACTIVE_KEY = new NamespacedKey("buildmc", "spawn_teleport_active");
+
+
+        public static @Nullable Integer cooldown = null;
+
         public static final int seconds = CoreMain.plugin.getConfig().getInt("spawn-teleport.wait-for");
 
         public static int teleportCommandLogic(@NotNull Player player) {
             PlayerSpawnTeleportEvent e = new PlayerSpawnTeleportEvent(player, Bukkit.getWorlds().getFirst().getSpawnLocation());
             Bukkit.getPluginManager().callEvent(e);
             if (e.isCancelled()) {
-                 AudienceUtil.sendMessage(player, Component.translatable("messages.spawn-teleport.not-working"));
+                AudienceUtil.sendMessage(player, Component.translatable("messages.spawn-teleport.not-working"));
                 return 0;
             }
+
+            var pdc = player.getPersistentDataContainer();
+
+            if (pdc.has(TELEPORT_ACTIVE_KEY)) {
+                return 0;
+            }
+
+            if (cooldown != null && pdc.has(TELEPORT_COOLDOWN_KEY)) {
+                var time = pdc.getOrDefault(TELEPORT_COOLDOWN_KEY, PersistentDateTimeType.INSTANCE, LocalDateTime.MIN);
+
+                if (time.equals(LocalDateTime.MIN)) {
+                    pdc.remove(TELEPORT_COOLDOWN_KEY);
+                }
+
+                var timeAfterCooldown = time.plusSeconds(cooldown);
+
+                var now = LocalDateTime.now();
+                if (timeAfterCooldown.isAfter(LocalDateTime.now())) {
+                    AudienceUtil.sendMessage(player, Message.msg(player, "messages.teleport.cooldown", Map.of("cooldown", String.valueOf(cooldown))));
+                    return 0;
+                }
+            }
+
 
             var timer = new TeleportTimer(player, e.getTo());
 
@@ -50,13 +88,16 @@ public class TeleportTimer extends PlayerTimer {
         @Override
         public void onExit() {
             unregisterInputListener();
-             AudienceUtil.sendMessage(player, Component.translatable("messages.teleport.successful"));
+            AudienceUtil.sendMessage(player, Component.translatable("messages.teleport.successful"));
             player.teleport(to, PlayerTeleportEvent.TeleportCause.PLUGIN);
             CoreMain.soundManager.playSound(player, success);
+            player.getPersistentDataContainer().remove(TELEPORT_ACTIVE_KEY);
+            player.getPersistentDataContainer().set(TELEPORT_COOLDOWN_KEY, PersistentDateTimeType.INSTANCE, LocalDateTime.now());
         }
 
         @Override
         protected void init() {
+            player.getPersistentDataContainer().set(TELEPORT_ACTIVE_KEY, PersistentDataType.BOOLEAN, true);
             registerInputListener();
         }
 
@@ -67,8 +108,9 @@ public class TeleportTimer extends PlayerTimer {
 
         @Override
         protected void onCancel() {
+            player.getPersistentDataContainer().remove(TELEPORT_ACTIVE_KEY);
             unregisterInputListener();
-             AudienceUtil.sendActionBar(player, Component.translatable("messages.teleport.cancelled"));
+            AudienceUtil.sendActionBar(player, Component.translatable("messages.teleport.cancelled"));
             CoreMain.soundManager.playSound(player, mistake);
         }
 

@@ -55,6 +55,7 @@ messages:
   teleport:
     not-working: "<red>You cannot use '/spawn' right now!</red>"
     cancelled: "<red>The teleport was cancelled!</red>"
+    cooldown: "<red>You need to wait %cooldown% seconds between uses!</red>"
     successful: "<green>Successfully teleported you!</green>"
     counter: "<white>Don't move for %seconds% seconds...</white>"
 

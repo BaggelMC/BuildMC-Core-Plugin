@@ -52,6 +52,10 @@ spawn-teleport:
   # Set to 0 or smaller to disable.
   wait-for: 8 # Default: 8
 
+  # The cooldown in seconds between each teleport.
+  # Set to 0 or smaller to disable.
+  cooldown: 120 # Default: 120
+
 
 # Here are all settings related to claims.
 # A player can use the claim-tool to select an area to claim.
