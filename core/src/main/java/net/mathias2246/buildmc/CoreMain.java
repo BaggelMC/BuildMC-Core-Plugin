@@ -54,6 +54,7 @@ import java.sql.SQLException;
 import java.util.Objects;
 
 import static net.mathias2246.buildmc.commands.disabledCommands.DisableCommands.disableCommand;
+import static net.mathias2246.buildmc.player.TeleportTimer.cooldown;
 
 @ApiStatus.Internal
 public final class CoreMain {
@@ -209,6 +210,9 @@ public final class CoreMain {
         channelRegistry.initialize();
         subscriptionRegistry.initialize();
         eventBus.initialize();
+
+        cooldown = CoreMain.plugin.getConfig().getInt("spawn-teleport.cooldown", 120);
+        if (cooldown < 0) cooldown = null;
 
         initializeDatabase();
 
