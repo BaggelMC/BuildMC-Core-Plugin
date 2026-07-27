@@ -187,14 +187,17 @@ public class PlayerStatusUtil implements Listener {
                 plugin,
                 task -> {
                     Player player = event.getEntity();
-                    if (hasStatus(player)) {
-                        reloadPlayerStatus(player);
-                    } else {
-                        refreshTabListNameNoStatus(player);
-                    }
+                    refreshDeathCounter(player);
                 },
                 10
         );
     }
 
+    public static void refreshDeathCounter(@NotNull Player player) {
+        if (hasStatus(player)) {
+            reloadPlayerStatus(player);
+        } else {
+            refreshTabListNameNoStatus(player);
+        }
+    }
 }

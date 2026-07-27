@@ -37,6 +37,7 @@ import java.io.IOException;
 import static net.mathias2246.buildmc.CoreMain.gson;
 import static net.mathias2246.buildmc.Main.plugin;
 import static net.mathias2246.buildmc.Main.statusConfig;
+import static net.mathias2246.buildmc.player.status.PlayerStatusUtil.*;
 
 public class BuildMcCommand implements CustomCommand {
 
@@ -222,7 +223,9 @@ public class BuildMcCommand implements CustomCommand {
                                                                             var player = command.getArgument("player", PlayerSelectorArgumentResolver.class).resolve(command.getSource()).getFirst();
                                                                             player.setStatistic(Statistic.DEATHS, command.getArgument("new-value", Integer.class));
 
-                                                                            AudienceUtil.sendMessage(player, Component.text("Death count set to " + command.getArgument("new-value", Integer.class)).color(NamedTextColor.GREEN));
+                                                                            AudienceUtil.sendMessage(command.getSource().getSender(), Component.text("Death count set to " + command.getArgument("new-value", Integer.class)).color(NamedTextColor.GREEN));
+
+                                                                            PlayerStatusUtil.refreshDeathCounter(player);
 
                                                                             return 1;
                                                                         }
@@ -246,7 +249,7 @@ public class BuildMcCommand implements CustomCommand {
                                                 PlayerStatusUtil.reloadDeathPrefix();
 
                                                 for (var player : Bukkit.getOnlinePlayers()) {
-                                                    PlayerStatusUtil.reloadPlayerStatus(player);
+                                                    reloadPlayerStatus(player);
                                                 }
                                             });
 
