@@ -59,7 +59,7 @@ public class StatusInstance implements ConfigurationSerializable, Keyed {
     /**
      * Constructs a new {@link StatusInstance} with optional {@link Team}s and {@link Permission} requirements.
      *
-     * @param statusId The id of the status. The key of a {@link NamespacedKey} that has to match this pattern <b>"^[A-Za-z0-9_.-]+$"</b>.
+     * @param statusId The id of the status. The key of a {@link NamespacedKey} that has to match this pattern <b>"^[a-z0-9_.-]+$"</b>.
      *                 <p>
      *                 <b>NOTE:</b> You only need the key because the namespace will always be <b>"buildmc:"</b> when using statuses
      *                 </p>
@@ -72,7 +72,7 @@ public class StatusInstance implements ConfigurationSerializable, Keyed {
      *                When set to {@code null} the status will just display "null" before the players name.
      *                </p>
      * **/
-    public StatusInstance(@NotNull @MatchesRegex("^[A-Za-z0-9_.-]+$") String statusId, @Nullable Set<Permission> permissions, @Nullable Set<Team> teams, @Nullable Component display) {
+    public StatusInstance(@NotNull @MatchesRegex("^[a-z0-9_.-]+$") String statusId, @Nullable Set<Permission> permissions, @Nullable Set<Team> teams, @Nullable Component display) {
         InvalidStringException.throwIfInvalid(statusId, ValidationPatterns.VALID_STRING_IN_COMMAND);
 
         this.statusId = statusId;
