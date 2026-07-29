@@ -173,7 +173,7 @@ public final class ClaimLogger {
             plugin.getLogger().info("[ClaimLogs] " + message);
         }
 
-        if (CoreMain.isDiscordExtensionInstalled) {
+        if (CoreMain.isDiscordExtensionInstalled && logToDiscord) {
             DiscordUtil.sendDiscordWebhook(buildEmbed("Claim Log", message));
         }
     }
