@@ -281,7 +281,7 @@ messages:
         claim-name: "<yellow>Claim Name:</yellow>"
 
         claim-types:
-          player: "Speiler"
+          player: "Spieler"
           team: "Team"
           server: "Server"
           placeholder: "Platzhalter"
