@@ -32,11 +32,24 @@ public final class SoundUtil {
                 1f,
                 1f
         );
+        clickHigh = Sound.sound(
+                Key.key(CoreMain.config.getString("sounds.ui.click-high", "minecraft:block.copper_bulb.turn_on")),
+                Sound.Source.UI,
+                1f,
+                1f
+        );
+        clickLow = Sound.sound(
+                Key.key(CoreMain.config.getString("sounds.ui.click-low", "minecraft:block.copper_bulb.turn_off")),
+                Sound.Source.UI,
+                1f,
+                1f
+        );
     }
 
     public static Sound notification;
     public static Sound mistake;
     public static Sound success;
     public static Sound uiClick;
-
+    public static Sound clickHigh;
+    public static Sound clickLow;
 }

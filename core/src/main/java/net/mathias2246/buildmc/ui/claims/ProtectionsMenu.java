@@ -179,6 +179,8 @@ public class ProtectionsMenu {
             CoreMain.soundManager.playSound(player, SoundUtil.uiClick);
 
             boolean currentlyEnabled = claim.hasProtection(protection);
+            if (currentlyEnabled) CoreMain.soundManager.playSound(player, SoundUtil.clickHigh);
+            else CoreMain.soundManager.playSound(player, SoundUtil.clickLow);
 
             if (claim.getId() == null) return;
 

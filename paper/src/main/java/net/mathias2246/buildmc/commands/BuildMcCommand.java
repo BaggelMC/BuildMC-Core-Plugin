@@ -7,6 +7,7 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.BlockPositionResolver;
+import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
 import io.papermc.paper.math.BlockPosition;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -23,9 +24,11 @@ import net.mathias2246.buildmc.commands.debug.TestBoundingBox;
 import net.mathias2246.buildmc.player.status.PlayerStatusUtil;
 import net.mathias2246.buildmc.player.status.SetStatusCommand;
 import net.mathias2246.buildmc.util.AudienceUtil;
+import net.mathias2246.buildmc.util.PermCommandHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 
@@ -34,6 +37,7 @@ import java.io.IOException;
 import static net.mathias2246.buildmc.CoreMain.gson;
 import static net.mathias2246.buildmc.Main.plugin;
 import static net.mathias2246.buildmc.Main.statusConfig;
+import static net.mathias2246.buildmc.player.status.PlayerStatusUtil.*;
 
 public class BuildMcCommand implements CustomCommand {
 
@@ -198,6 +202,40 @@ public class BuildMcCommand implements CustomCommand {
         debugSub.then(miniMsgSub);
         cmd.then(debugSub);
 
+        var pSettingsSub = Commands.literal("psettings")
+                .requires(c -> c.getSender().hasPermission("buildmc.admin"))
+                .then(
+                        PermCommandHelper.createPermCommand("buildmc.show-all-claims", "show-all-claims")
+                ).then(
+                        PermCommandHelper.createPermCommand("buildmc.bypass-claims", "bypass-claims")
+                ).then(
+                        PermCommandHelper.createPermCommand("buildmc.bypass-claims", "bypass-end-event")
+                ).then(
+                        PermCommandHelper.createPermCommand("buildmc.broadcast", "allow-broadcast")
+                ).then(
+                        Commands.literal("set-death-count")
+                                .then(
+                                        Commands.argument("player", ArgumentTypes.player())
+                                                .then(
+                                                        Commands.argument("new-value", IntegerArgumentType.integer(0))
+                                                                .executes(
+                                                                        command -> {
+                                                                            var player = command.getArgument("player", PlayerSelectorArgumentResolver.class).resolve(command.getSource()).getFirst();
+                                                                            player.setStatistic(Statistic.DEATHS, command.getArgument("new-value", Integer.class));
+
+                                                                            AudienceUtil.sendMessage(command.getSource().getSender(), Component.text("Death count set to " + command.getArgument("new-value", Integer.class)).color(NamedTextColor.GREEN));
+
+                                                                            PlayerStatusUtil.refreshDeathCounter(player);
+
+                                                                            return 1;
+                                                                        }
+                                                                )
+                                                )
+                                )
+                );
+
+        cmd.then(pSettingsSub);
+
         var statusSub =
                 Commands.literal("status")
                         .requires(c -> c.getSender().hasPermission("buildmc.admin"))
@@ -211,7 +249,7 @@ public class BuildMcCommand implements CustomCommand {
                                                 PlayerStatusUtil.reloadDeathPrefix();
 
                                                 for (var player : Bukkit.getOnlinePlayers()) {
-                                                    PlayerStatusUtil.reloadPlayerStatus(player);
+                                                    reloadPlayerStatus(player);
                                                 }
                                             });
 

@@ -9,22 +9,6 @@ messages:
     guide-not-found: "<red>Diesen Guide gibt es nicht!</red>"
     dialog-title: "<green>Guide für: <dark_gray>'</dark_gray><gold><b>%guide%</b></gold><dark_gray>'</dark_gray></green>"
 
-    go-to-wiki: "Besuche unser Wiki!"
-
-    commands: |-
-      ===================== <blue>Commands</blue> =====================
-      <gray>Hier ist eine Liste an neuen Befehlen die du nutzen kannst:</gray>
-
-      <gray>- </gray><gold>/rules</gold>  | Gibt dir die Regeln des Servers
-      <gray>- </gray><gold>/spawn</gold> | Teleportiert dich zum Weltspawn
-      <gray>- </gray><gold>/claim</gold>   | Verwalte deine Claims
-      <gray>- </gray><gold>/status</gold> | Setze oder entferne deinen Status
-    spawn-elytra: |-
-      ==================== <blue>Spawn-Elytra</blue> ====================
-      Wenn du in einem Bereich bist indem die Spawn-Elytra aktiv ist
-      kannst du mit einem <gold>doppel Sprung fliegen</gold>, und wenn 
-      du <gold><key:key.swapOffhand> drückst wirst du geboostet</gold>.
-
   spawn-elytra:
     boost-hint: Drücke <key:key.swapOffhand> um zu beschleunigen!
     firework-disabled-hint: <red>Raketen sind für Spawn-Elytren deaktiviert.</red>
@@ -34,6 +18,14 @@ messages:
     success: <green>Elytra-Zone erstellt.</green>
     error:
       different-worlds: "<red>Positionen müssen in der gleichen Welt sein!</red>"
+
+  permission-change:
+    success: "<green>Berechtigung erfolgreich geändert</green>"
+    success-for: "<green>Berechtigung erfolgreich vergeben für %player% </green>"
+    success-disable-for: "<green>Berechtigung erfolgreich entzogen von %player%</green>"
+    set-success-for: "<green>Berechtigung erfolgreich für %player% gesetzt</green>"
+    error: "<red>Berechtigungsänderung ist fehlgeschlagen</red>"
+
   end-event:
     opened: <green>Das Ende ist jetzt 'geöffnet'.</green>
     closed: <green>Das Ende ist jetzt 'geschlossen'.</green>
@@ -69,6 +61,7 @@ messages:
     no-permission-str: Du hast keine Berechtigung, dies zu tun.
     not-a-player: <red>Dieser Befehl kann nur von Spielern verwendet werden.</red>
     not-a-player-str: Dieser Befehl kann nur von Spielern verwendet werden.
+    not-a-player-target: "<red>Dieser Befehl kann nur auf einem Spieler angewendet werden.</red>"
     not-in-a-team: <red>Du musst in einem Team sein, um dies zu tun.</red>
     command-disabled: <red>Dieser Befehl wurde deaktiviert.</red>
     sql: <red>Ein SQL Fehler ist aufgetretten.</red>
@@ -77,6 +70,7 @@ messages:
     not-working: "<red>Du kannst gerade '/spawn' nicht verwenden!</red>"
     cancelled: "<red>Dein teleport wurde abgebrochen.</red>"
     successful: "<green>Du wurdest erfolgreich teleportiert!</green>"
+    cooldown: "<red>Du musst %cooldown% Sekunden zwischen teleports warten!</red>"
     counter: "<white>Bewege dich nicht für %seconds% sekunden...</white>"
 
   deaths:
@@ -94,6 +88,13 @@ messages:
     restored: "<green>Tode erfolgreich widerhergestellt."
 
   claims:
+
+    move:
+      leave-claim: "<italic><gray>Du hast den Claim verlassen</gray></italic>"
+
+      # Color will be overwritten by the color of the team owning the claim if the claim is owned by a team.
+      enter-claim: "<italic>Claim betreten von %owner-type% <bold>'%owner%'</bold></italic>"
+
     tool:
       tool-name: Claim-Ecken auswählen
       tool-tooltip-line1: Benutze dieses Tool, um die Ecken deines Claims festzulegen.
@@ -299,6 +300,13 @@ messages:
         id: "<dark_gray>ID: %id%</dark_gray>"
         empty: <red>Du hast noch keine Claims.</red>
         new-claim-button: "<green>Neuen Claim erstellen</green>"
+
+        toggle-on-claim-action-bar: "<green>(An) Zeige Nachricht beim betreten von Claims</green>"
+        toggle-off-claim-action-bar: "<gray>(Aus) Keine Nachricht beim betreten von Claims</gray>"
+        toggle-claim-action-bar-lore: |-
+          <gray><italic>(Klicke zum ändern)</italic></gray>
+          <gray>Wenn diese Einstellung auf an ist, siehst du eine kleine Nachricht wenn du ein Claim betritts oder verläst.</gray>
+
       edit-menu:
         title: "<gold>Claim bearbeiten: '%claim%'</gold>"
 
@@ -341,6 +349,24 @@ messages:
         delete-confirm-menu:
           title: "%player% entfernen?"
           success: <green>Spieler erfolgreich von der Whitelist entfernt.</green>
+
+guides:
+  go-to-wiki: "Besuche unser Wiki!"
+
+  commands: |-
+    ===================== <blue>Commands</blue> =====================
+    <gray>Hier ist eine Liste an neuen Befehlen die du nutzen kannst:</gray>
+
+    <gray>- </gray><gold>/rules</gold>  | Gibt dir die Regeln des Servers
+    <gray>- </gray><gold>/spawn</gold> | Teleportiert dich zum Weltspawn
+    <gray>- </gray><gold>/claim</gold>   | Verwalte deine Claims
+    <gray>- </gray><gold>/status</gold> | Setze oder entferne deinen Status
+  spawn-elytra: |-
+    ==================== <blue>Spawn-Elytra</blue> ====================
+    Wenn du in einem Bereich bist indem die Spawn-Elytra aktiv ist
+    kannst du mit einem <gold>doppel Sprung fliegen</gold>, und wenn 
+    du <gold><key:key.swapOffhand> drückst wirst du geboostet</gold>.
+
 claims:
   protections:
     player-break:

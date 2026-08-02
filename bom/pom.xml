@@ -73,7 +73,7 @@
             <dependency>
                 <groupId>net.kyori</groupId>
                 <artifactId>adventure-bom</artifactId>
-                <version>5.2.1-SNAPSHOT</version>
+                <version>5.2.0</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>

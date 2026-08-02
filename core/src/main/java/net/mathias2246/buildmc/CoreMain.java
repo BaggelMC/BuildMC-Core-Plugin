@@ -39,6 +39,7 @@ import net.mathias2246.buildmc.util.registry.DefaultRegistries;
 import net.mathias2246.buildmc.util.registry.DeferredRegistry;
 import net.mathias2246.buildmc.util.registry.RegistriesHolder;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -50,8 +51,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.sql.SQLException;
+import java.util.Objects;
 
 import static net.mathias2246.buildmc.commands.disabledCommands.DisableCommands.disableCommand;
+import static net.mathias2246.buildmc.player.TeleportTimer.cooldown;
 
 @ApiStatus.Internal
 public final class CoreMain {
@@ -103,6 +106,11 @@ public final class CoreMain {
     public static PermissionsTable permissionsTable;
 
     public static EventBusImpl eventBus;
+
+    public static boolean isDiscordExtensionInstalled = false;
+    public static NamespacedKey discordExtensionChannelKey = Objects.requireNonNull(
+            NamespacedKey.fromString("buildmc:discord_webhook")
+    );
 
     @ApiStatus.Internal
     public static void initialize(@NotNull PluginMain plugin) {
@@ -203,7 +211,14 @@ public final class CoreMain {
         subscriptionRegistry.initialize();
         eventBus.initialize();
 
+        cooldown = CoreMain.plugin.getConfig().getInt("spawn-teleport.cooldown", 120);
+        if (cooldown < 0) cooldown = null;
+
         initializeDatabase();
+
+        if (channelRegistry.get(discordExtensionChannelKey) != null) {
+            isDiscordExtensionInstalled = true;
+        }
 
         if (plugin.getConfig().getBoolean("claims.enabled", true)) {
             ClaimManager.initializeClaimSystem();

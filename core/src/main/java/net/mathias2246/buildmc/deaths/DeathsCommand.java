@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.util.AudienceUtil;
+import net.mathias2246.buildmc.util.DiscordUtil;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -90,6 +91,16 @@ public class DeathsCommand {
 
             DeathRestoreUtil.restore(target, record, config.getBoolean("death-restore.update-statistics", false));
             AudienceUtil.sendMessage(sender, Component.translatable("messages.deaths.restored"));
+
+            if (CoreMain.isDiscordExtensionInstalled && config.getBoolean("death-restore.log-to-discord")) {
+                DiscordUtil.sendDiscordWebhook(DiscordUtil.buildEmbed(
+                        "Death Restored",
+                        "Death '" + record.id() + "' of player " + target.getName() + "(" + target.getUniqueId() + ") was restored by " + sender.getName() + ".",
+                        0xDAA3A3,
+                        "BuildMC • Death Restore",
+                        "death-restore-logs"
+                ));
+            }
 
             return 1;
 

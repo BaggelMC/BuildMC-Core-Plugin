@@ -83,7 +83,7 @@ public class ClaimManager {
             // Register the protection's event listener
             CoreMain.registerListener(protection);
 
-            // Don't register protection events if, they are disabled and cannot be changed
+            // Don't register protection events if they are disabled and cannot be changed
             if (hideAllProtections) {
                 protection.setHidden(true);
             }
@@ -97,6 +97,8 @@ public class ClaimManager {
         CoreMain.registerListener(new ClaimUIs());
 
         CoreMain.registerListener(new ClaimSelectionChangeWorld());
+
+        CoreMain.registerListener(new ClaimActionBarHandler());
 
         ClaimLogger.init(plugin);
     }
@@ -369,7 +371,8 @@ public class ClaimManager {
         return null;
     }
 
-    @Nullable public static Claim getClaimByID(long claimID) {
+    @Nullable public static Claim getClaimByID(@Nullable Long claimID) {
+        if (claimID == null) return null;
         try {
             return CoreMain.claimTable.getClaimById(CoreMain.databaseManager.getConnection(), claimID);
         } catch (SQLException e) {

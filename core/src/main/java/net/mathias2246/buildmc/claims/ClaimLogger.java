@@ -1,13 +1,18 @@
 package net.mathias2246.buildmc.claims;
 
+import com.google.gson.JsonObject;
+import net.mathias2246.buildmc.CoreMain;
 import net.mathias2246.buildmc.api.claims.Protection;
+import net.mathias2246.buildmc.util.DiscordUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.h2.util.json.JSONObject;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -143,7 +148,7 @@ public final class ClaimLogger {
         }
     }
 
-    public static void log(String message) {
+    public static void log(String message, boolean logToDiscord) {
         if (!enabled) return;
 
         String timestamp = LocalDateTime.now().format(LOG_TIME_FORMAT);
@@ -167,6 +172,10 @@ public final class ClaimLogger {
         if (mirrorToConsole) {
             plugin.getLogger().info("[ClaimLogs] " + message);
         }
+
+        if (CoreMain.isDiscordExtensionInstalled && logToDiscord) {
+            DiscordUtil.sendDiscordWebhook(buildEmbed("Claim Log", message));
+        }
     }
 
     // ----------
@@ -182,7 +191,7 @@ public final class ClaimLogger {
                 "[CLAIM CREATED] %s created claim '%s'",
                 formatPlayer(player),
                 claimName
-        ));
+        ), CoreMain.config.getBoolean("claims.logs.discord.log-claim-created"));
     }
 
     public static void logClaimDeleted(Player player, String claimName) {
@@ -190,7 +199,7 @@ public final class ClaimLogger {
                 "[CLAIM DELETED] %s deleted claim '%s'",
                 formatPlayer(player),
                 claimName
-        ));
+        ), CoreMain.config.getBoolean("claims.logs.discord.log-claim-removed"));
     }
 
     public static void logProtectionChanged(
@@ -205,7 +214,7 @@ public final class ClaimLogger {
                 protectionName,
                 newValue,
                 claimName
-        ));
+        ), CoreMain.config.getBoolean("claims.logs.discord.log-claim-protection-change"));
     }
 
     public static void logProtectionChanged(
@@ -233,7 +242,7 @@ public final class ClaimLogger {
                 target.getName(),
                 target.getUniqueId(),
                 claimName
-        ));
+        ), CoreMain.config.getBoolean("claims.logs.discord.log-claim-whitelist-added"));
     }
 
     public static void logWhitelistRemoved(
@@ -247,7 +256,7 @@ public final class ClaimLogger {
                 target.getName(),
                 target.getUniqueId(),
                 claimName
-        ));
+        ), CoreMain.config.getBoolean("claims.logs.discord.log-claim-whitelist-removed"));
     }
 
     public static void logWhitelistAdded(
@@ -262,7 +271,7 @@ public final class ClaimLogger {
                 targetName,
                 targetUUID,
                 claimName
-        ));
+        ), CoreMain.config.getBoolean("claims.logs.discord.log-claim-whitelist-added"));
     }
 
     public static void logWhitelistRemoved(
@@ -277,6 +286,17 @@ public final class ClaimLogger {
                 targetName,
                 targetUUID,
                 claimName
-        ));
+        ), CoreMain.config.getBoolean("claims.logs.discord.log-claim-whitelist-removed"));
     }
+
+    private static JsonObject buildEmbed(String title, String description) {
+        return DiscordUtil.buildEmbed(
+                title,
+                description,
+                0x006EE8,
+                "BuildMC • Claim Logs",
+                "claim-logs"
+        );
+    }
+
 }

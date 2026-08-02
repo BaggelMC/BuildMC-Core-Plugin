@@ -16,11 +16,11 @@ import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
 import net.mathias2246.buildmc.commands.*;
 import net.mathias2246.buildmc.endEvent.EndListener;
 import net.mathias2246.buildmc.endEvent.EndManagerImpl;
-import net.mathias2246.buildmc.messageBus.EventBusImpl;
 import net.mathias2246.buildmc.platform.SoundManagerPaperImpl;
 import net.mathias2246.buildmc.player.PlayerHeadDropDeathListener;
 import net.mathias2246.buildmc.player.PlayerHeadDropModifier;
 import net.mathias2246.buildmc.player.PlayerSpawnTeleportCommand;
+import net.mathias2246.buildmc.player.TeleportTimer;
 import net.mathias2246.buildmc.player.status.PlayerStatus;
 import net.mathias2246.buildmc.player.status.SetStatusCommand;
 import net.mathias2246.buildmc.player.status.StatusConfig;
@@ -274,6 +274,8 @@ public final class Main extends PluginMain implements Listener {
         var pdc = event.getPlayer().getPersistentDataContainer();
 
         pdc.remove(ClaimSelectionTool.SELECTION_EFFECT_KEY);
+
+        pdc.remove(TeleportTimer.TELEPORT_ACTIVE_KEY);
 
         AbstractCustomItem.customItemsRegistry.getOptional(Objects.requireNonNull(NamespacedKey.fromString("buildmc:claim_tool")))
                 .ifPresent(customItem -> ((AbstractSelectionTool)customItem).removeSelectionFromPlayer(event.getPlayer()));

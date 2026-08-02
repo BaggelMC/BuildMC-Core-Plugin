@@ -4,7 +4,7 @@ status:
   # If players should be able to use the '/status' command
   enabled: true # Default: true
 
-  # If it should show the players death count in the tablist
+  # If it should show the player death count in the tab-list
   death-counter: false
   # The prefix shown in front of the death count. A MiniMessage string
   death-prefix: " <dark_gray>|</dark_gray> <head:entity/wither/wither:false> "
@@ -37,6 +37,9 @@ sounds:
   notification: "minecraft:entity.item.pickup" # Default: "minecraft:entity.item.pickup"
   ui:
     click: "minecraft:ui.button.click" # Default: "minecraft:ui.button.click"
+    # Click sounds for e.g., Toggleable buttons, or elements that increase/decrease a value
+    click-high: "minecraft:block.copper_bulb.turn_on" # Default: "minecraft:block.copper_bulb.turn_on"
+    click-low: "minecraft:block.copper_bulb.turn_off" # Default: "minecraft:block.copper_bulb.turn_off"
 
 # World spawn teleport command
 # Players require the default permission 'buildmc.allow-spawn-teleport' to use this command!
@@ -48,6 +51,10 @@ spawn-teleport:
   # The amount of seconds the player has to stand still to get teleported.
   # Set to 0 or smaller to disable.
   wait-for: 8 # Default: 8
+
+  # The cooldown in seconds between each teleport.
+  # Set to 0 or smaller to disable.
+  cooldown: 120 # Default: 120
 
 
 # Here are all settings related to claims.
@@ -287,6 +294,13 @@ claims:
     retention-days: 14 # How many days of logs to keep (set to -1 to disable limit)
     mirror-to-console: false # If the events should be printed into the console
 
+    # What is logged to discord if the discord extension is installed
+    discord:
+      log-claim-created: true
+      log-claim-removed: true
+      log-claim-protection-change: false
+      log-claim-whitelist-added: true
+      log-claim-whitelist-removed: true
 
 disable-commands: true
 disabled-commands:
@@ -306,3 +320,6 @@ death-restore:
   # When true, restoring a death will update the game statistics to remove a death
   # This also controls the status death counter
   update-statistics: true
+
+  # Logs claim restoring to discord if the discord extension is installed
+  log-to-discord: true

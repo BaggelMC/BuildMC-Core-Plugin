@@ -18,7 +18,7 @@ public class EventBusImpl implements EventBus {
     private final Logger logger;
 
     // Built once at lock time, used on every publish
-    private Map<String, List<EventSubscription>> subscriptionIndex = new HashMap<>();
+    private final Map<String, List<EventSubscription>> subscriptionIndex = new HashMap<>();
 
     public EventBusImpl(
             DeferredRegistry<EventChannel> channelRegistry,
@@ -53,7 +53,6 @@ public class EventBusImpl implements EventBus {
     public void publish(@NotNull NamespacedKey channelId, @NotNull JsonObject payload) {
         EventChannel channel = channelRegistry.get(channelId);
         if (channel == null) {
-            logger.warning("[EventBus] Publish to unregistered channel '" + channelId.asString() + "'");
             return;
         }
 

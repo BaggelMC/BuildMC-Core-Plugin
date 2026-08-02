@@ -9,22 +9,6 @@ messages:
     guide-not-found: "<red>This guide doesn't exist!</red>"
     dialog-title: "<green>Guide for: <dark_gray>'</dark_gray><gold><b>%guide%</b></gold><dark_gray>'</dark_gray></green>"
 
-    go-to-wiki: "Go to our wiki!"
-
-    commands: |-
-      ==================== <blue>Commands</blue> ====================
-      <gray>Here is a list of custom commands you can use:</gray>
-
-      <gray>- </gray><gold>/rules</gold>  | Gives you the rules of the server
-      <gray>- </gray><gold>/spawn</gold> | Teleports you to the worldspawn
-      <gray>- </gray><gold>/claim</gold>   | Manage your claims
-      <gray>- </gray><gold>/status</gold> | Set or Remove your status
-    spawn-elytra: |-
-      ==================== <blue>Spawn-Elytra</blue> ====================
-      When you are in an area where the spawn-elytra is enabled.
-      You can <gold>double jump to glide</gold>,
-      and press <gold><key:key.swapOffhand> to boost</gold> yourself of the ground.
-
   spawn-elytra:
     boost-hint: "Press <key:key.swapOffhand> to boost!"
     firework-disabled-hint: "<red>Firework boost is disabled for spawn elytra.</red>"
@@ -37,6 +21,13 @@ messages:
 
     error:
       different-worlds: "<red>Positions must be in the same world!</red>"
+
+  permission-change:
+    success: "<green>Permission changed successfully</green>"
+    success-for: "<green>Permission changed successfully for %player%</green>"
+    success-disable-for: "<green>Permission successfully revoked from %player%</green>"
+    set-success-for: "<green>Permission set successfully for %player%</green>"
+    error: "<red>Failed to change permission</red>"
 
   end-event:
     opened: "<green>The end is now 'open'."
@@ -53,6 +44,7 @@ messages:
     no-permission-str: "You do not have permission to perform this action."
     not-a-player: "<red>This command can only be used by players.</red>"
     not-a-player-str: "This command can only be used by players."
+    not-a-player-target: "<red>This command can only be used on a player.</red>"
 
     not-in-a-team: "<red>You need to be in a team to perform this action.</red>"
 
@@ -63,6 +55,7 @@ messages:
   teleport:
     not-working: "<red>You cannot use '/spawn' right now!</red>"
     cancelled: "<red>The teleport was cancelled!</red>"
+    cooldown: "<red>You need to wait %cooldown% seconds between uses!</red>"
     successful: "<green>Successfully teleported you!</green>"
     counter: "<white>Don't move for %seconds% seconds...</white>"
 
@@ -81,6 +74,12 @@ messages:
     restored: "<green>Death restored successfully."
 
   claims:
+    move:
+      leave-claim: "<italic><gray>You left the Claim</gray></italic>"
+
+      # Color will be overwritten by the color of the team owning the claim if the claim is owned by a team.
+      enter-claim: "<italic>Entered Claim of %owner-type% <bold>'%owner%'</bold></italic>"
+
     tool:
       tool-name: "Select Claim Corners"
 
@@ -251,6 +250,12 @@ messages:
         placeholder-type: "<gray>Type: Placeholder Claim</gray>"
         unknown-type: "<gray>Type: Unknown</gray>"
 
+        toggle-on-claim-action-bar: "<green>(Enabled) Showing message when entering a claim</green>"
+        toggle-off-claim-action-bar: "<gray>(Disabled) Hiding message when entering a claim</gray>"
+        toggle-claim-action-bar-lore: |-
+          <gray><italic>(Click to toggle)</italic></gray>
+          <gray>When enabled, you will see a small message when entering or leaving someone else's claim.</gray>
+
         id: "<dark_gray>ID: %id%</dark_gray>"
         empty: "<red>You have not claimed anything yet.</red>"
 
@@ -314,6 +319,23 @@ messages:
     not-in-team: "<red>You are not in the required team for this status!</red>"
     no-permission: "<red>You don't have the required permissions for this status!</red>"
     cannot-set: "<red>Your status can't be set!</red>"
+
+guides:
+  go-to-wiki: "Go to our wiki!"
+
+  commands: |-
+    ==================== <blue>Commands</blue> ====================
+    <gray>Here is a list of custom commands you can use:</gray>
+
+    <gray>- </gray><gold>/rules</gold>  | Gives you the rules of the server
+    <gray>- </gray><gold>/spawn</gold> | Teleports you to the worldspawn
+    <gray>- </gray><gold>/claim</gold>   | Manage your claims
+    <gray>- </gray><gold>/status</gold> | Set or Remove your status
+  spawn-elytra: |-
+    ==================== <blue>Spawn-Elytra</blue> ====================
+    When you are in an area where the spawn-elytra is enabled.
+    You can <gold>double jump to glide</gold>,
+    and press <gold><key:key.swapOffhand> to boost</gold> yourself of the ground.
 
 claims:
   protections:
