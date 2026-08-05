@@ -3,6 +3,7 @@ package net.mathias2246.buildmc.claims.protections.misc;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.claims.ClaimManager;
+import net.mathias2246.buildmc.claims.protections.ProtectionConfig;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -21,6 +22,7 @@ import org.jspecify.annotations.NonNull;
 import java.util.List;
 import java.util.Objects;
 
+@ProtectionConfig(value = "claims.protections.piston-movement-across-claim-borders", defaultEnabled = true)
 public class PistonMovement extends Protection {
     public PistonMovement(@Nullable ConfigurationSection section) {
         //noinspection SimplifiableConditionalExpression

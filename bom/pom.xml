@@ -40,6 +40,12 @@
                 <scope>provided</scope>
             </dependency>
 
+            <dependency>
+                <groupId>io.github.classgraph</groupId>
+                <artifactId>classgraph</artifactId>
+                <version>4.8.179</version>
+            </dependency>
+
             <!-- The main paper API version shared across all modules -->
             <dependency>
                 <groupId>io.papermc.paper</groupId>

@@ -5,6 +5,7 @@ import io.papermc.paper.event.entity.EntityKnockbackEvent;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.claims.ClaimManager;
+import net.mathias2246.buildmc.claims.protections.ProtectionConfig;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -22,12 +23,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
 
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-import java.util.WeakHashMap;
+import java.util.*;
 
+@ProtectionConfig(value = "claims.protections.wind-charge", defaultEnabled = true)
 public class UseWindCharge extends Protection {
 
     // Tracks wind charges that should be fully suppressed

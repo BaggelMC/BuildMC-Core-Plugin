@@ -1,6 +1,7 @@
 package net.mathias2246.buildmc.claims.protections.blocks;
 
 import net.mathias2246.buildmc.api.claims.Protection;
+import net.mathias2246.buildmc.claims.protections.ProtectionConfig;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -17,6 +18,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
+@ProtectionConfig(value = "claims.protections.interactions.bone-meal", defaultEnabled = true)
 public class BoneMeal extends Protection {
 
     public BoneMeal(@Nullable ConfigurationSection section) {

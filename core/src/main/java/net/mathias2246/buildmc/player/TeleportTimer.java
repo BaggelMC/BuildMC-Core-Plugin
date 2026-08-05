@@ -21,9 +21,9 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Map;
-import java.util.TimeZone;
 
 import static net.mathias2246.buildmc.util.SoundUtil.*;
 
@@ -60,10 +60,12 @@ public class TeleportTimer extends PlayerTimer {
                 }
 
                 var timeAfterCooldown = time.plusSeconds(cooldown);
-
                 var now = LocalDateTime.now();
-                if (timeAfterCooldown.isAfter(LocalDateTime.now())) {
-                    AudienceUtil.sendMessage(player, Message.msg(player, "messages.teleport.cooldown", Map.of("cooldown", String.valueOf(cooldown))));
+
+                if (timeAfterCooldown.isAfter(now)) {
+                    var remainingSeconds = Duration.between(now, timeAfterCooldown).getSeconds();
+
+                    AudienceUtil.sendMessage(player, Message.msg(player, "messages.teleport.cooldown", Map.of("cooldown", formatCooldown(remainingSeconds))));
                     CoreMain.soundManager.playSound(player, mistake);
                     return 0;
                 }
@@ -75,6 +77,19 @@ public class TeleportTimer extends PlayerTimer {
             timer.start(0);
 
             return 1;
+        }
+
+        private static String formatCooldown(long totalSeconds) {
+            if (totalSeconds <= 0) {
+                return "0s";
+            }
+
+            if (totalSeconds > 60) {
+                long minutes = (long) Math.ceil(totalSeconds / 60.0);
+                return minutes + "m";
+            }
+
+            return totalSeconds + "s";
         }
 
         private boolean playerInputReceived = false;

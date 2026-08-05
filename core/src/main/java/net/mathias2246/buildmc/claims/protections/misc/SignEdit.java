@@ -3,6 +3,7 @@ package net.mathias2246.buildmc.claims.protections.misc;
 import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.claims.ClaimManager;
+import net.mathias2246.buildmc.claims.protections.ProtectionConfig;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
 import net.mathias2246.buildmc.util.AudienceUtil;
 import org.bukkit.Material;
@@ -20,6 +21,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
+@ProtectionConfig(value = "claims.protections.sign-editing", defaultEnabled = true)
 public class SignEdit extends Protection {
     public SignEdit(@Nullable ConfigurationSection section) {
         //noinspection SimplifiableConditionalExpression

@@ -3,6 +3,7 @@ package net.mathias2246.buildmc.claims.protections.misc;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.claims.ClaimManager;
+import net.mathias2246.buildmc.claims.protections.ProtectionConfig;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -19,6 +20,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
+@ProtectionConfig(value = "claims.protections.damage.explosion-block-damage", defaultEnabled = true)
 public class EntityExplosionDamage extends Protection {
     public EntityExplosionDamage(@Nullable ConfigurationSection section) {
         //noinspection SimplifiableConditionalExpression

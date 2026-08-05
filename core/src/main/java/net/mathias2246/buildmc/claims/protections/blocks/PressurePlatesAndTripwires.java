@@ -1,6 +1,7 @@
 package net.mathias2246.buildmc.claims.protections.blocks;
 
 import net.mathias2246.buildmc.api.claims.Protection;
+import net.mathias2246.buildmc.claims.protections.ProtectionConfig;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -19,6 +20,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
+@ProtectionConfig(value = "claims.protections.interactions.pressure-plates-and-tripwire", defaultEnabled = true)
 public class PressurePlatesAndTripwires extends Protection {
     public PressurePlatesAndTripwires(@Nullable ConfigurationSection section) {
         //noinspection SimplifiableConditionalExpression

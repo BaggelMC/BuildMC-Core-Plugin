@@ -1,6 +1,7 @@
 package net.mathias2246.buildmc.claims.protections.entities;
 
 import net.mathias2246.buildmc.api.claims.Protection;
+import net.mathias2246.buildmc.claims.protections.ProtectionConfig;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -16,6 +17,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
+@ProtectionConfig(value = "claims.protections.interactions.tame-entity", defaultEnabled = true)
 public class EntityTame extends Protection {
 
     public EntityTame(@Nullable ConfigurationSection section) {

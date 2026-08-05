@@ -12,6 +12,7 @@ import net.kyori.adventure.text.Component;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.claims.ClaimManager;
+import net.mathias2246.buildmc.claims.protections.ProtectionConfig;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
 import net.mathias2246.buildmc.util.AudienceUtil;
 import org.bukkit.Bukkit;
@@ -28,6 +29,7 @@ import org.jspecify.annotations.NonNull;
 import java.util.Objects;
 import java.util.logging.Level;
 
+@ProtectionConfig(value = "claims.protections.bucket-usage", defaultEnabled = true)
 public class Buckets extends Protection {
 
     private final java.util.Map<java.util.UUID, Integer> pendingSequences = new java.util.concurrent.ConcurrentHashMap<>();

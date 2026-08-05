@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.api.item.ItemUtil;
+import net.mathias2246.buildmc.claims.protections.ProtectionConfig;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
 import net.mathias2246.buildmc.util.ComponentUtil;
 import net.mathias2246.buildmc.util.Message;
@@ -24,6 +25,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
+@ProtectionConfig(value = "claims.protections.splash-potions", defaultEnabled = true)
 public class PotionSplash extends Protection {
     public PotionSplash(@Nullable ConfigurationSection section) {
         //noinspection SimplifiableConditionalExpression

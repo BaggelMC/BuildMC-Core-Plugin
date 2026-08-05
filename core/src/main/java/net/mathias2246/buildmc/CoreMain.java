@@ -20,9 +20,7 @@ import net.mathias2246.buildmc.api.status.StatusInstance;
 import net.mathias2246.buildmc.api.status.StatusManager;
 import net.mathias2246.buildmc.claims.ClaimLogger;
 import net.mathias2246.buildmc.claims.ClaimManager;
-import net.mathias2246.buildmc.claims.protections.blocks.*;
-import net.mathias2246.buildmc.claims.protections.entities.*;
-import net.mathias2246.buildmc.claims.protections.misc.*;
+import net.mathias2246.buildmc.claims.protections.ProtectionConfig;
 import net.mathias2246.buildmc.commands.GuidesCommand;
 import net.mathias2246.buildmc.database.*;
 import net.mathias2246.buildmc.deaths.DeathListener;
@@ -31,7 +29,9 @@ import net.mathias2246.buildmc.player.FirstTimeJoinListener;
 import net.mathias2246.buildmc.player.FirstTimeJoinMessage;
 import net.mathias2246.buildmc.player.status.PlayerStatusUtil;
 import net.mathias2246.buildmc.player.status.StatusConfig;
+import net.mathias2246.buildmc.util.AnnotatedRegistry;
 import net.mathias2246.buildmc.util.BStats;
+import net.mathias2246.buildmc.util.EnabledUtils;
 import net.mathias2246.buildmc.util.SoundManager;
 import net.mathias2246.buildmc.util.language.LanguageManager;
 import net.mathias2246.buildmc.util.registry.BaseRegistry;
@@ -40,6 +40,7 @@ import net.mathias2246.buildmc.util.registry.DeferredRegistry;
 import net.mathias2246.buildmc.util.registry.RegistriesHolder;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -52,6 +53,8 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static net.mathias2246.buildmc.commands.disabledCommands.DisableCommands.disableCommand;
 import static net.mathias2246.buildmc.player.TeleportTimer.cooldown;
@@ -143,52 +146,16 @@ public final class CoreMain {
 
         protectionsRegistry.addEntries(
                 plugin,
-
-                new Explosion(config.getConfigurationSection("claims.protections.damage.explosion-block-damage")),
-                new EntityExplosionDamage(config.getConfigurationSection("claims.protections.damage.explosion-entity-damage")),
-                new PlayerFriendlyFire(config.getConfigurationSection("claims.protections.damage.player-friendly-fire")),
-                new ArmorStand(config.getConfigurationSection("claims.protections.interactions.armor-stands")),
-                new Beehive(config.getConfigurationSection("claims.protections.interactions.beehives")),
-                new BoneMeal(config.getConfigurationSection("claims.protections.interactions.bone-meal")),
-                new Break(config.getConfigurationSection("claims.protections.player-break")),
-                new Buckets(config.getConfigurationSection("claims.protections.bucket-usage")),
-                new Containers(config.getConfigurationSection("claims.protections.container")),
-                new EntityDamage(config.getConfigurationSection("claims.protections.damage.entity-damage")),
-                new EntityBlockModifications(config.getConfigurationSection("claims.protections.entity-modifications")),
-                new EntityLeash(config.getConfigurationSection("claims.protections.interactions.attach-leash")),
-                new EntityPlace(config.getConfigurationSection("claims.protections.player-place-entity")),
-                new EntityTame(config.getConfigurationSection("claims.protections.interactions.tame-entity")),
-                new Fishing(config.getConfigurationSection("claims.protections.fishing")),
-                new FrostWalker(config.getConfigurationSection("claims.protections.frostwalker")),
-                new HangingEntities(config.getConfigurationSection("claims.protections.hanging-entities")),
-                new DoorInteractions(config.getConfigurationSection("claims.protections.interactions.doors")),
-                new ButtonAndLever(config.getConfigurationSection("claims.protections.interactions.buttons-and-levers")),
-                new RedstoneComponents(config.getConfigurationSection("claims.protections.interactions.redstone-components")),
-                new LightTNT(config.getConfigurationSection("claims.protections.interactions.light-tnt")),
-                new PressurePlatesAndTripwires(config.getConfigurationSection("claims.protections.interactions.pressure-plates-and-tripwire")),
-                new Candles(config.getConfigurationSection("claims.protections.interactions.candles")),
-                new Farmland(config.getConfigurationSection("claims.protections.interactions.farmland")),
-                new Jukebox(config.getConfigurationSection("claims.protections.interactions.jukebox")),
-                new Campfire(config.getConfigurationSection("claims.protections.interactions.campfire")),
-                new Bells(config.getConfigurationSection("claims.protections.interactions.bells")),
-                new ItemFrameInteractions(config.getConfigurationSection("claims.protections.interactions.item-frame")),
-                new ItemDrop(config.getConfigurationSection("claims.protections.item-drop")),
-                new ItemPickup(config.getConfigurationSection("claims.protections.item-pickup")),
-                new EntityNameTag(config.getConfigurationSection("claims.protections.interactions.name-tag")),
-                new Place(config.getConfigurationSection("claims.protections.player-place")),
-                new PotionSplash(config.getConfigurationSection("claims.protections.splash-potions")),
-                new ProjectileInteractions(config.getConfigurationSection("claims.protections.projectile-interactions")),
-                new SculkSensors(config.getConfigurationSection("claims.protections.sculk-sensor")),
-                new EntityShear(config.getConfigurationSection("claims.protections.interactions.shear-entity")),
-                new SignEdit(config.getConfigurationSection("claims.protections.sign-editing")),
-                new VehicleEnter(config.getConfigurationSection("claims.protections.vehicle-enter")),
-                new PistonMovement(config.getConfigurationSection("claims.protections.piston-movement-across-claim-borders")),
-                new UseWindCharge(config.getConfigurationSection("claims.protections.projectile-interactions")),
-                new SulfurCubeChange(config.getConfigurationSection("claims.protections.interactions.sulfur-cube-change")),
-                // new EntityPush(config.getConfigurationSection("claims.protections.entity-push")),
-                new WaterFlow(config.getConfigurationSection("claims.protections.water-flow")),
-                new LavaFlow(config.getConfigurationSection("claims.protections.lava-flow"))
+                AnnotatedRegistry.loadSafe(
+                        config,
+                        "net.mathias2246.buildmc.claims.protections",
+                        Protection.class,
+                        ProtectionConfig.class,
+                        info -> (String) info.getParameterValues().getValue("value"),
+                        info -> (Boolean) info.getParameterValues().getValue("defaultEnabled")
+                )
         );
+        plugin.getLogger().info("Initialized " + protectionsRegistry.size() + " protections in core!");
 
         channelRegistry = new DeferredRegistry<>(Key.key("buildmc", "event_channels"));
         registriesHolder.addRegistry(DefaultRegistries.EVENT_CHANNELS.toString(), channelRegistry);
@@ -297,5 +264,14 @@ public final class CoreMain {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static EnabledUtils.Enabled<Supplier<Protection>> protection(String path, Function<ConfigurationSection, Protection> factory) {
+        return protection(path, factory, true);
+    }
+
+    private static EnabledUtils.Enabled<Supplier<Protection>> protection(String path, Function<ConfigurationSection, Protection> factory, boolean defaultEnabled) {
+        ConfigurationSection section = config.getConfigurationSection(path);
+        return new EnabledUtils.Enabled<>(() -> factory.apply(section), section, defaultEnabled);
     }
 }

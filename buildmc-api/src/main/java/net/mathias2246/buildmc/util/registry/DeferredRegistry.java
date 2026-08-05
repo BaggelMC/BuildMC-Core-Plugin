@@ -123,6 +123,26 @@ public class DeferredRegistry<T extends Keyed> implements Registry<T>, net.kyori
         }
     }
 
+    /**
+     * Registers multiple new entries.
+     * <p>
+     *     Nothing will change when this deferred-registry is initialized.
+     * </p>
+     *
+     * @param plugin The plugin that tries to register new entries
+     * @param entries The entries to add
+     * */
+    public final void addEntries(@NotNull Plugin plugin, @NotNull Collection<T> entries) {
+        if (isInitialized) return;
+        for (var e : entries) {
+            if (map.containsKey(e.getKey())) {
+                showDuplicateWarningMsg(plugin, e.getKey());
+                continue;
+            }
+            map.putIfAbsent(e.getKey(), e);
+        }
+    }
+
     /**Registers a new entry under a certain key.
      *
      * @param plugin The plugin that tries to register a new entry

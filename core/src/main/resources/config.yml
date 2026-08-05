@@ -102,163 +102,221 @@ claims:
   # Can be used if players should only be able to use the default protections.
   hide-all-protections: false # Default: false
 
-  # What aspects are protected when claimed
+  # What aspects are protected when claimed.
+  # When disabling a protection, it will not show up and have any effect on any claim. Even on server claims.
+  # Important: When a disabled protection is re-enabled it won't be active by default on existing claims, even if configured as a default protection
   protections:
     # Players cannot break blocks
     player-break:
+      enabled: true
       default: true
       is-hidden: false
     # Players cannot place blocks
     player-place:
+      enabled: true
       default: true
       is-hidden: false
 
     # Players cannot place entities (armor stands, boats, minecarts, and end crystals.)
     player-place-entity:
+      enabled: true
       default: true
       is-hidden: false
 
     # Players cannot open containers (e.g. Chests, Barrels...)
     containers:
+      enabled: true
       default: true
       is-hidden: false
 
+      # If true, this protection will also protect block with an inventory, like chests
+      protect-container-blocks: true # Default: true
+
+      # If true, this protection stops to protect villager trading in claims.
+      exclude-villagers: true # Default: true
+
     # Players cannot pick up items
     item-pickup:
+      enabled: true
       default: false
       is-hidden: false
 
     # Players cannot drop items
     item-drop:
+      enabled: true
       default: false
       is-hidden: false
 
     # Players cannot edit signs
     sign-editing:
+      enabled: true
       default: true
       is-hidden: false
 
     # Players can't use splash potions
     splash-potions:
+      enabled: true
       default: true
       is-hidden: false
 
     # Players can't enter vehicles
     vehicle-enter:
+      enabled: true
       default: false
       is-hidden: false
 
     # Players can't use buckets
     bucket-usage:
+      enabled: true
       default: true
       is-hidden: false
 
     # Players can't use frost walker enchantment
-    frostwalker:
+    frost-walker:
+      enabled: true
       default: true
       is-hidden: false
 
     # Players can't trigger sculk sensors
     sculk-sensor:
+      enabled: true
       default: true
       is-hidden: false
 
     # Prevents pistons from moving into claims and pulling out of claims
     piston-movement-across-claim-borders:
+      enabled: true
       default: true
       is-hidden: false
 
     # Prevents placing and destroying entities like item frames or paintings
     hanging-entities:
+      enabled: true
       default: true
       is-hidden: false
 
     # Interaction related protections
     interactions:
       jukebox:
+        enabled: true
         default: true
         is-hidden: false
 
       buttons-and-levers:
+        enabled: true
         default: false
         is-hidden: false
 
       # Includes Repeaters, Comparators, and daylight-sensors
       redstone-components:
+        enabled: true
         default: true
         is-hidden: false
 
       pressure-plates-and-tripwire:
+        enabled: true
         default: false
         is-hidden: false
 
       # Includes Fence Gates, Trapdoors and doors
       doors:
+        enabled: true
         default: false
         is-hidden: false
 
       # Disables jumping on farmland
       farmland:
+        enabled: true
         default: true
         is-hidden: false
 
       item-frame:
+        enabled: true
         default: true
         is-hidden: false
+
       campfire:
+        enabled: true
         default: true
         is-hidden: false
+
       bells:
+        enabled: true
         default: true
         is-hidden: false
+
       attach-leash:
+        enabled: true
         default: true
         is-hidden: false
+
       bone-meal:
+        enabled: true
         default: true
         is-hidden: false
+
       beehives:
+        enabled: true
         default: true
         is-hidden: false
+
       name-tag:
+        enabled: true
         default: true
         is-hidden: false
+
       candles:
+        enabled: true
         default: true
         is-hidden: false
+
       light-tnt:
+        enabled: true
         default: true
         is-hidden: false
+
       armor-stands:
+        enabled: true
         default: true
         is-hidden: false
+
       tame-entity:
+        enabled: true
         default: true
         is-hidden: false
+
       shear-entity:
+        enabled: true
         default: true
         is-hidden: false
+
       sulfur-cube-change:
+        enabled: true
         default: true
         is-hidden: false
 
     projectile-interactions:
+      enabled: true
       default: true
       is-hidden: false
 
     wind-charge:
+      enabled: true
       default: false
       is-hidden: false
 
     fishing:
+      enabled: true
       default: true
       is-hidden: false
 
     water-flow:
+      enabled: true
       default: true
       is-hidden: false
 
     lava-flow:
+      enabled: true
       default: true
       is-hidden: false
 

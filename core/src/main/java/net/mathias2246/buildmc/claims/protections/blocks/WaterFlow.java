@@ -3,6 +3,7 @@ package net.mathias2246.buildmc.claims.protections.blocks;
 import net.mathias2246.buildmc.api.claims.Claim;
 import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.claims.ClaimManager;
+import net.mathias2246.buildmc.claims.protections.ProtectionConfig;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -19,6 +20,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
+@ProtectionConfig(value = "claims.protections.water-flow", defaultEnabled = true)
 public class WaterFlow extends Protection {
     public WaterFlow(@Nullable ConfigurationSection section) {
         //noinspection SimplifiableConditionalExpression

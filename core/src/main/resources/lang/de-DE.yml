@@ -70,7 +70,7 @@ messages:
     not-working: "<red>Du kannst gerade '/spawn' nicht verwenden!</red>"
     cancelled: "<red>Dein teleport wurde abgebrochen.</red>"
     successful: "<green>Du wurdest erfolgreich teleportiert!</green>"
-    cooldown: "<red>Du musst %cooldown% Sekunden zwischen teleports warten!</red>"
+    cooldown: "<red>Du musst %cooldown% zwischen teleports warten!</red>"
     counter: "<white>Bewege dich nicht für %seconds% sekunden...</white>"
 
   deaths:

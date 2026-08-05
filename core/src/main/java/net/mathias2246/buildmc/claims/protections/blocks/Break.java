@@ -1,6 +1,7 @@
 package net.mathias2246.buildmc.claims.protections.blocks;
 
 import net.mathias2246.buildmc.api.claims.Protection;
+import net.mathias2246.buildmc.claims.protections.ProtectionConfig;
 import net.mathias2246.buildmc.claims.protections.ProtectionUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -15,6 +16,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
+@ProtectionConfig(value = "claims.protections.player-break", defaultEnabled = true)
 public class Break extends Protection {
 
     public Break(@Nullable ConfigurationSection section) {
@@ -31,7 +33,7 @@ public class Break extends Protection {
     public @NotNull ItemStack getDisplay(@NotNull Player uiHolder) {
         String t = getTranslationBaseKey();
 
-        return ProtectionUtil.createDisplayItem(uiHolder, Material.CAMPFIRE, t);
+        return ProtectionUtil.createDisplayItem(uiHolder, Material.IRON_PICKAXE, t);
     }
 
     @EventHandler

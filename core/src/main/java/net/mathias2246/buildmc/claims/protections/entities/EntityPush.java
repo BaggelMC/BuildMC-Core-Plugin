@@ -17,6 +17,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
+// WIP, so not registered in game
 public class EntityPush extends Protection {
     public EntityPush(@Nullable ConfigurationSection section) {
         //noinspection SimplifiableConditionalExpression
