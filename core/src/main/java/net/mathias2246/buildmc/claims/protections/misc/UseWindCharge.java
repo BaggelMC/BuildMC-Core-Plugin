@@ -11,11 +11,11 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.WindCharge;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
@@ -62,6 +62,21 @@ public class UseWindCharge extends Protection {
 
         if (cancelledWindCharges.remove(windCharge.getUniqueId())) {
             windCharge.setYield(0);
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onProjectileInteract(EntityInteractEvent event) {
+        Entity entity = event.getEntity();
+        if (event.getEntityType() != EntityType.WIND_CHARGE) return;
+
+        if (!(entity instanceof Projectile projectile)) return;
+
+        ProjectileSource shooter = projectile.getShooter();
+        if (!(shooter instanceof Player player)) return;
+
+        if (!ClaimManager.isPlayerAllowed(player, getKey(), event.getBlock().getLocation())) {
             event.setCancelled(true);
         }
     }
