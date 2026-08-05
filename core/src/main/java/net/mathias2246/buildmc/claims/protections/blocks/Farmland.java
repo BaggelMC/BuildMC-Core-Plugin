@@ -17,7 +17,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.interactions.farmland", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.interactions.farmland")
 public class Farmland extends Protection {
     public Farmland(@Nullable ConfigurationSection section) {
         //noinspection SimplifiableConditionalExpression

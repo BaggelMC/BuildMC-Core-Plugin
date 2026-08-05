@@ -17,7 +17,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.player-place", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.player-place")
 public class Place extends Protection {
     public Place(@Nullable ConfigurationSection section) {
         //noinspection SimplifiableConditionalExpression

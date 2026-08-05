@@ -21,7 +21,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.sign-editing", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.sign-editing")
 public class SignEdit extends Protection {
     public SignEdit(@Nullable ConfigurationSection section) {
         //noinspection SimplifiableConditionalExpression

@@ -25,7 +25,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.container", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.container")
 public class Containers extends Protection {
 
     public Containers(@Nullable ConfigurationSection section) {

@@ -18,7 +18,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.hanging-entities", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.hanging-entities")
 public class HangingEntities extends Protection {
 
     public HangingEntities(@Nullable ConfigurationSection section) {

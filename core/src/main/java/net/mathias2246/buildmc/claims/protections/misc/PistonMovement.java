@@ -22,7 +22,7 @@ import org.jspecify.annotations.NonNull;
 import java.util.List;
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.piston-movement-across-claim-borders", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.piston-movement-across-claim-borders")
 public class PistonMovement extends Protection {
     public PistonMovement(@Nullable ConfigurationSection section) {
         //noinspection SimplifiableConditionalExpression

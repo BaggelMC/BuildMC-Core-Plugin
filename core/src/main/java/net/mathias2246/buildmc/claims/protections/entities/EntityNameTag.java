@@ -17,7 +17,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.interactions.name-tag", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.interactions.name-tag")
 public class EntityNameTag extends Protection {
 
     public EntityNameTag(@Nullable ConfigurationSection section) {

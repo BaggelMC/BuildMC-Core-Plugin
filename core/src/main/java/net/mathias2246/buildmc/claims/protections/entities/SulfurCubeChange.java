@@ -18,7 +18,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.interactions.sulfur-cube-change", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.interactions.sulfur-cube-change")
 public class SulfurCubeChange extends Protection {
 
     public SulfurCubeChange(@Nullable ConfigurationSection section) {

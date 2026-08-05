@@ -19,7 +19,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.sculk-sensor", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.sculk-sensor")
 public class SculkSensors extends Protection {
     public SculkSensors(@Nullable ConfigurationSection section) {
         //noinspection SimplifiableConditionalExpression

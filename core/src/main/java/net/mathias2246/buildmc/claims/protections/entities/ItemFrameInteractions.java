@@ -18,7 +18,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.interactions.item-frame", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.interactions.item-frame")
 public class ItemFrameInteractions extends Protection {
 
     public ItemFrameInteractions(@Nullable ConfigurationSection section) {

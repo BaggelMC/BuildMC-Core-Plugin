@@ -21,7 +21,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.entity-modifications", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.entity-modifications")
 public class EntityBlockModifications extends Protection {
 
     public EntityBlockModifications(@Nullable ConfigurationSection section) {

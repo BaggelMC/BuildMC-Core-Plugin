@@ -23,7 +23,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.damage.player-friendly-fire", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.damage.player-friendly-fire")
 public class PlayerFriendlyFire extends Protection {
 
     public PlayerFriendlyFire(@Nullable ConfigurationSection section) {

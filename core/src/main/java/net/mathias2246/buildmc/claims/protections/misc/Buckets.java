@@ -29,7 +29,7 @@ import org.jspecify.annotations.NonNull;
 import java.util.Objects;
 import java.util.logging.Level;
 
-@ProtectionConfig(value = "claims.protections.bucket-usage", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.bucket-usage")
 public class Buckets extends Protection {
 
     private final java.util.Map<java.util.UUID, Integer> pendingSequences = new java.util.concurrent.ConcurrentHashMap<>();

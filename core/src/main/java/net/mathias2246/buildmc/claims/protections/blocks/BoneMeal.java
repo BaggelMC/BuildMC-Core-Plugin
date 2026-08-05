@@ -18,7 +18,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.interactions.bone-meal", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.interactions.bone-meal")
 public class BoneMeal extends Protection {
 
     public BoneMeal(@Nullable ConfigurationSection section) {

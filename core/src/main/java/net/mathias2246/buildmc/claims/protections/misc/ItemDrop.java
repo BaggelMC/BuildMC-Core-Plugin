@@ -17,7 +17,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.item-drop", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.item-drop")
 public class ItemDrop extends Protection {
 
     public ItemDrop(@Nullable ConfigurationSection section) {

@@ -99,7 +99,6 @@ public final class AnnotatedRegistry {
                     var ctor = loaded.getConstructor(ConfigurationSection.class);
                     set.add(ctor.newInstance(section));
                 } catch (ReflectiveOperationException ignore) {
-                    continue;
                 }
             }
         }

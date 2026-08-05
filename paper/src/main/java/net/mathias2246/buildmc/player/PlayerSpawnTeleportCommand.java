@@ -8,7 +8,6 @@ import net.mathias2246.buildmc.commands.CustomCommand;
 import org.bukkit.entity.Player;
 
 import static net.mathias2246.buildmc.commands.CommandUtil.requiresPlayer;
-import static net.mathias2246.buildmc.player.TeleportTimer.cooldown;
 
 public class PlayerSpawnTeleportCommand implements CustomCommand {
 

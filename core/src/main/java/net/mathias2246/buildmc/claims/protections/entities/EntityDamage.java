@@ -24,7 +24,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.damage.entity-damage", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.damage.entity-damage")
 public class EntityDamage extends Protection {
 
     public EntityDamage(@Nullable ConfigurationSection section) {

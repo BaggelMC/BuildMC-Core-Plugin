@@ -18,7 +18,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.interactions.shear-entity", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.interactions.shear-entity")
 public class EntityShear extends Protection {
     public EntityShear(@Nullable ConfigurationSection section) {
         //noinspection SimplifiableConditionalExpression

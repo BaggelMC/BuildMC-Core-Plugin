@@ -24,7 +24,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.projectile-interactions", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.projectile-interactions")
 public class ProjectileInteractions extends Protection {
     public ProjectileInteractions(@Nullable ConfigurationSection section) {
         //noinspection SimplifiableConditionalExpression

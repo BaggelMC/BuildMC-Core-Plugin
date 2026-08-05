@@ -18,7 +18,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.fishing", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.fishing")
 public class Fishing extends Protection {
 
     public Fishing(@Nullable ConfigurationSection section) {

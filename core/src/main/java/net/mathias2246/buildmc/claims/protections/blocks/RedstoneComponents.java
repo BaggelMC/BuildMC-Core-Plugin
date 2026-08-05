@@ -18,7 +18,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.interactions.redstone-components", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.interactions.redstone-components")
 public class RedstoneComponents extends Protection {
     public RedstoneComponents(@Nullable ConfigurationSection section) {
         //noinspection SimplifiableConditionalExpression

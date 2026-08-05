@@ -19,7 +19,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.interactions.buttons-and-levers", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.interactions.buttons-and-levers")
 public class ButtonAndLever extends Protection {
 
     public ButtonAndLever(@Nullable ConfigurationSection section) {

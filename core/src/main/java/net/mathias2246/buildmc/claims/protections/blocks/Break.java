@@ -16,7 +16,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.player-break", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.player-break")
 public class Break extends Protection {
 
     public Break(@Nullable ConfigurationSection section) {

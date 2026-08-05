@@ -20,7 +20,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.interactions.pressure-plates-and-tripwire", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.interactions.pressure-plates-and-tripwire")
 public class PressurePlatesAndTripwires extends Protection {
     public PressurePlatesAndTripwires(@Nullable ConfigurationSection section) {
         //noinspection SimplifiableConditionalExpression

@@ -25,7 +25,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.*;
 
-@ProtectionConfig(value = "claims.protections.wind-charge", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.wind-charge")
 public class UseWindCharge extends Protection {
 
     // Tracks wind charges that should be fully suppressed
@@ -52,6 +52,7 @@ public class UseWindCharge extends Protection {
 
         this.cancelledWindCharges.add(windCharge.getUniqueId());
         windCharge.setYield(0);
+        event.blockList().clear();
         event.setCancelled(true);
     }
 

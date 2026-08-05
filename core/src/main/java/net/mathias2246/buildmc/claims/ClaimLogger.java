@@ -6,13 +6,11 @@ import net.mathias2246.buildmc.api.claims.Protection;
 import net.mathias2246.buildmc.util.DiscordUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.h2.util.json.JSONObject;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

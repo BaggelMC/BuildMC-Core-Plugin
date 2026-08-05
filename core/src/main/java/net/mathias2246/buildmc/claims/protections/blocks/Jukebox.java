@@ -18,7 +18,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.interactions.jukebox", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.interactions.jukebox")
 public class Jukebox extends Protection {
     public Jukebox(@Nullable ConfigurationSection section) {
         //noinspection SimplifiableConditionalExpression

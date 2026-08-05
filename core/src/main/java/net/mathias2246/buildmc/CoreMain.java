@@ -111,7 +111,7 @@ public final class CoreMain {
     public static EventBusImpl eventBus;
 
     public static boolean isDiscordExtensionInstalled = false;
-    public static NamespacedKey discordExtensionChannelKey = Objects.requireNonNull(
+    public static final NamespacedKey discordExtensionChannelKey = Objects.requireNonNull(
             NamespacedKey.fromString("buildmc:discord_webhook")
     );
 

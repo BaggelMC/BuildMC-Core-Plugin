@@ -18,7 +18,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.interactions.bells", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.interactions.bells")
 public class Bells extends Protection {
 
     public Bells(@Nullable ConfigurationSection section) {

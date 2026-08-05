@@ -20,7 +20,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.interactions.doors", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.interactions.doors")
 public class DoorInteractions extends Protection {
 
     public DoorInteractions(@Nullable ConfigurationSection section) {

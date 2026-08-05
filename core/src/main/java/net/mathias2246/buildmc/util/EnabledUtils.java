@@ -28,8 +28,8 @@ public class EnabledUtils
 
 
     public static class  Enabled <T>{
-        public T value;
-        public boolean enabled;
+        public final T value;
+        public final boolean enabled;
 
         public Enabled(T value, boolean enabled) {
             this.value = value;

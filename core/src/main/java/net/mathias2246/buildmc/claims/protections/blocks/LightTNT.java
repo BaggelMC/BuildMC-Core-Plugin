@@ -18,7 +18,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.interactions.light-tnt", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.interactions.light-tnt")
 public class LightTNT extends Protection {
     public LightTNT(@Nullable ConfigurationSection section) {
         //noinspection SimplifiableConditionalExpression

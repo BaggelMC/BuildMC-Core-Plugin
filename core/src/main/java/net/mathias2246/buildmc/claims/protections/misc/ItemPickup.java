@@ -19,7 +19,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.item-pickup", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.item-pickup")
 public class ItemPickup extends Protection {
 
     public ItemPickup(@Nullable ConfigurationSection section) {

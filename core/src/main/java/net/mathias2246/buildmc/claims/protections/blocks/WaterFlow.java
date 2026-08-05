@@ -20,7 +20,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.water-flow", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.water-flow")
 public class WaterFlow extends Protection {
     public WaterFlow(@Nullable ConfigurationSection section) {
         //noinspection SimplifiableConditionalExpression

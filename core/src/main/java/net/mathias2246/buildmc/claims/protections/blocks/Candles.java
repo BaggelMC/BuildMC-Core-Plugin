@@ -19,7 +19,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.interactions.candles", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.interactions.candles")
 public class Candles extends Protection {
 
     public Candles(@Nullable ConfigurationSection section) {

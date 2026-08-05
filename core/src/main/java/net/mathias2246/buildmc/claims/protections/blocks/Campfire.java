@@ -18,7 +18,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.interactions.campfire", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.interactions.campfire")
 public class Campfire extends Protection {
     public Campfire(@Nullable ConfigurationSection section) {
         //noinspection SimplifiableConditionalExpression

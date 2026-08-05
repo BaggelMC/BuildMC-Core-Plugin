@@ -19,7 +19,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.vehicle-enter", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.vehicle-enter")
 public class VehicleEnter extends Protection {
     public VehicleEnter(@Nullable ConfigurationSection section) {
         //noinspection SimplifiableConditionalExpression

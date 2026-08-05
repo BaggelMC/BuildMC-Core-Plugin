@@ -18,7 +18,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.interactions.attach-leash", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.interactions.attach-leash")
 public class EntityLeash extends Protection {
     public EntityLeash(@Nullable ConfigurationSection section) {
         //noinspection SimplifiableConditionalExpression

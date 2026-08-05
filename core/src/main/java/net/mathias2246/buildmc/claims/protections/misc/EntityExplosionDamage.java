@@ -20,7 +20,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.damage.explosion-block-damage", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.damage.explosion-block-damage")
 public class EntityExplosionDamage extends Protection {
     public EntityExplosionDamage(@Nullable ConfigurationSection section) {
         //noinspection SimplifiableConditionalExpression

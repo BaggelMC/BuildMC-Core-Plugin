@@ -16,7 +16,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.interactions.armor-stands", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.interactions.armor-stands")
 public class ArmorStand extends Protection {
 
     public ArmorStand(@Nullable ConfigurationSection section) {

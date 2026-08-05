@@ -20,7 +20,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.lava-flow", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.lava-flow")
 public class LavaFlow extends Protection {
 
     public LavaFlow(@Nullable ConfigurationSection section) {

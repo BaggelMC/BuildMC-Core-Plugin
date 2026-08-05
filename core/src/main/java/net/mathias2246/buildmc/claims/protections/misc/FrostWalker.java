@@ -19,7 +19,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.frost-walker", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.frost-walker")
 public class FrostWalker extends Protection {
     public FrostWalker(@Nullable ConfigurationSection section) {
         //noinspection SimplifiableConditionalExpression

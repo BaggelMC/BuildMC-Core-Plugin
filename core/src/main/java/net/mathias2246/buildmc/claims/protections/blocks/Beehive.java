@@ -18,7 +18,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.interactions.beehives", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.interactions.beehives")
 public class Beehive extends Protection {
 
     @SuppressWarnings("SimplifiableConditionalExpression")

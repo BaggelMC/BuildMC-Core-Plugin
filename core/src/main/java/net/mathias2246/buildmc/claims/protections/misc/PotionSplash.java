@@ -25,7 +25,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.splash-potions", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.splash-potions")
 public class PotionSplash extends Protection {
     public PotionSplash(@Nullable ConfigurationSection section) {
         //noinspection SimplifiableConditionalExpression

@@ -17,7 +17,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
-@ProtectionConfig(value = "claims.protections.interactions.tame-entity", defaultEnabled = true)
+@ProtectionConfig(value = "claims.protections.interactions.tame-entity")
 public class EntityTame extends Protection {
 
     public EntityTame(@Nullable ConfigurationSection section) {
