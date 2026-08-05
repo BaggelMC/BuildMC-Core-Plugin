@@ -95,6 +95,9 @@ messages:
       # Color will be overwritten by the color of the team owning the claim if the claim is owned by a team.
       enter-claim: "<italic>Claim betreten von %owner-type% <bold>'%owner%'</bold></italic>"
 
+      unknown-owner: "?"
+      unknown-owner-type: "?"
+
     tool:
       tool-name: Claim-Ecken auswählen
       tool-tooltip-line1: Benutze dieses Tool, um die Ecken deines Claims festzulegen.
@@ -194,6 +197,7 @@ messages:
       failed: <red>Claim konnte nicht entfernt werden.</red>
       success: <green>Claim erfolgreich entfernt.</green>
     who:
+      unknown-player: "Unbekannt"
       team-message: <gold>Dieser Chunk gehört dem Team <white>%owner%</white>.</gold>
       player-message: <gold>Dieser Chunk gehört dem Spieler <white>%owner%</white>.</gold>
       server-message: <gold>Dieser Chunk gehört dem Server.</gold>

@@ -10,6 +10,7 @@ import net.mathias2246.buildmc.util.AudienceUtil;
 import net.mathias2246.buildmc.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -67,11 +68,14 @@ public class ClaimActionBarHandler implements Listener {
                 return;
             case PLAYER:
                 ownerTypeStr = Message.msgStr(player, "messages.claims.ui.create-dialog.claim-types.player");
-                var ownerPlayer = Bukkit.getPlayer(UUID.fromString(claim.getOwnerId()));
-                if (ownerPlayer == null) ownerName = "?";
 
-                else ownerName = SERIALIZER.serialize(ownerPlayer.name());
+                UUID ownerId = UUID.fromString(claim.getOwnerId());
+                OfflinePlayer owner = Bukkit.getOfflinePlayer(ownerId);
+                ownerName = owner.getName();
 
+                if (ownerName == null) {
+                    ownerName = Message.msgStr(player, "messages.claims.move.unknown-owner");
+                }
                 break;
             case TEAM:
                 ownerTypeStr = Message.msgStr(player, "messages.claims.ui.create-dialog.claim-types.team");
@@ -87,11 +91,11 @@ public class ClaimActionBarHandler implements Listener {
                 } catch (Exception ignore) { }
                 try {
                     ownerName = SERIALIZER.serialize(team.displayName());
-                } catch (Exception ignore) { ownerName = "?"; }
+                } catch (Exception ignore) { ownerName = Message.msgStr(player, "messages.claims.move.unknown-owner"); }
                 break;
             default:
-                ownerTypeStr = "?";
-                ownerName = "?";
+                ownerTypeStr = Message.msgStr(player, "messages.claims.move.unknown-owner-type");
+                ownerName = Message.msgStr(player, "messages.claims.move.unknown-owner");
         }
 
         AudienceUtil.sendActionBar(

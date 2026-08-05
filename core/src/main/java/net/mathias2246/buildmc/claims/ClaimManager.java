@@ -465,10 +465,21 @@ public class ClaimManager {
 
         updateClaimOwnershipMapping(claim);
 
+        ClaimRegisteredEvent claimRegisteredEvent = new ClaimRegisteredEvent(
+                claim
+        );
+        Bukkit.getPluginManager().callEvent(claimRegisteredEvent);
+
         return claimId;
     }
 
     public static Map<Claim, Long> registerClaims(List<Claim> claims) throws SQLException {
+        ClaimCreateEvent event = new ClaimCreateEvent(
+                claims
+        );
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return null;
+
         Map<Claim, Long> claimIDs = claimTable.insertClaims(CoreMain.databaseManager.getConnection(), claims);
 
         for (Map.Entry<Claim, Long> entry : claimIDs.entrySet()) {
@@ -483,11 +494,10 @@ public class ClaimManager {
             updateClaimOwnershipMapping(claim);
         }
 
-        ClaimCreateEvent event = new ClaimCreateEvent(
+        ClaimRegisteredEvent claimRegisteredEvent = new ClaimRegisteredEvent(
                 claims
         );
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) return null;
+        Bukkit.getPluginManager().callEvent(claimRegisteredEvent);
 
         return claimIDs;
     }

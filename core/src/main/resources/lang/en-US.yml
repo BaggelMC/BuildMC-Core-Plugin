@@ -79,6 +79,8 @@ messages:
 
       # Color will be overwritten by the color of the team owning the claim if the claim is owned by a team.
       enter-claim: "<italic>Entered Claim of %owner-type% <bold>'%owner%'</bold></italic>"
+      unknown-owner: "?"
+      unknown-owner-type: "?"
 
     tool:
       tool-name: "Select Claim Corners"
@@ -170,6 +172,7 @@ messages:
       success: "<green>Claim successfully removed.</green>"
 
     who:
+      unknown-player: "Unknown"
       team-message: "<gold>This chunk is owned by team <white>%owner%</white>.</gold>"
       player-message: "<gold>This chunk is owned by player <white>%owner%</white>.</gold>"
       server-message: "<gold>This chunk is owned by the server.</gold>"

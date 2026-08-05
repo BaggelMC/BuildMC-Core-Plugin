@@ -38,7 +38,7 @@ public class ClaimWho {
             String ownerName = owner.getName();
 
             if (ownerName == null) {
-                ownerName = "Unknown";
+                ownerName = Message.msgStr(player, "messages.claims.who.unknown-player");
             }
 
              AudienceUtil.sendMessage(player, Message.msg(player, "messages.claims.who.player-message", Map.of("owner", ownerName)));
