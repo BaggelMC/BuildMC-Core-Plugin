@@ -37,7 +37,7 @@ import java.io.IOException;
 import static net.mathias2246.buildmc.CoreMain.gson;
 import static net.mathias2246.buildmc.Main.plugin;
 import static net.mathias2246.buildmc.Main.statusConfig;
-import static net.mathias2246.buildmc.player.status.PlayerStatusUtil.*;
+import static net.mathias2246.buildmc.player.status.PlayerStatusUtil.reloadPlayerStatus;
 
 public class BuildMcCommand implements CustomCommand {
 
@@ -209,7 +209,7 @@ public class BuildMcCommand implements CustomCommand {
                 ).then(
                         PermCommandHelper.createPermCommand("buildmc.bypass-claims", "bypass-claims")
                 ).then(
-                        PermCommandHelper.createPermCommand("buildmc.bypass-claims", "bypass-end-event")
+                        PermCommandHelper.createPermCommand("buildmc.bypass-end-event", "bypass-end-event")
                 ).then(
                         PermCommandHelper.createPermCommand("buildmc.broadcast", "allow-broadcast")
                 ).then(
