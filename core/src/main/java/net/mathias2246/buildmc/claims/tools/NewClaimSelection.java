@@ -79,12 +79,14 @@ public class NewClaimSelection {
                         isShowing.set(true);
                     }
 
-                    if (!wasLastToLarge.get() && (updatedBounds.getWidthX() / 16 > ClaimSelectionTool.maxSelectionSize || updatedBounds.getWidthZ() / 16 > ClaimSelectionTool.maxSelectionSize)) {
-                        goldData.set(Material.REDSTONE_BLOCK.createBlockData());
-                        wasLastToLarge.set(true);
-                    } else if (wasLastToLarge.get()) {
-                        goldData.set(Material.GOLD_BLOCK.createBlockData());
-                        wasLastToLarge.set(false);
+                    if (ClaimSelectionTool.maxSelectionSize > 0) {
+                        if (!wasLastToLarge.get() && (updatedBounds.getWidthX() / 16 > ClaimSelectionTool.maxSelectionSize || updatedBounds.getWidthZ() / 16 > ClaimSelectionTool.maxSelectionSize)) {
+                            goldData.set(Material.REDSTONE_BLOCK.createBlockData());
+                            wasLastToLarge.set(true);
+                        } else if (wasLastToLarge.get()) {
+                            goldData.set(Material.GOLD_BLOCK.createBlockData());
+                            wasLastToLarge.set(false);
+                        }
                     }
 
                     shownLocations.clear();
