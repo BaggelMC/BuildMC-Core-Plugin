@@ -15,23 +15,25 @@ import net.mathias2246.buildmc.api.item.AbstractCustomItem;
 import net.mathias2246.buildmc.api.item.ItemDropTracker;
 import net.mathias2246.buildmc.api.messageBus.EventChannel;
 import net.mathias2246.buildmc.api.messageBus.EventSubscription;
-import net.mathias2246.buildmc.api.permission.PermissionManager;
 import net.mathias2246.buildmc.api.status.StatusInstance;
 import net.mathias2246.buildmc.api.status.StatusManager;
 import net.mathias2246.buildmc.claims.ClaimLogger;
 import net.mathias2246.buildmc.claims.ClaimManager;
 import net.mathias2246.buildmc.claims.protections.ProtectionConfig;
 import net.mathias2246.buildmc.commands.GuidesCommand;
-import net.mathias2246.buildmc.database.*;
+import net.mathias2246.buildmc.database.ClaimTable;
+import net.mathias2246.buildmc.database.DatabaseConfig;
+import net.mathias2246.buildmc.database.DatabaseManager;
+import net.mathias2246.buildmc.database.DeathTable;
 import net.mathias2246.buildmc.deaths.DeathListener;
 import net.mathias2246.buildmc.messageBus.EventBusImpl;
 import net.mathias2246.buildmc.player.FirstTimeJoinListener;
 import net.mathias2246.buildmc.player.FirstTimeJoinMessage;
 import net.mathias2246.buildmc.player.status.PlayerStatusUtil;
 import net.mathias2246.buildmc.player.status.StatusConfig;
+import net.mathias2246.buildmc.team.TeamManager;
 import net.mathias2246.buildmc.util.AnnotatedRegistry;
 import net.mathias2246.buildmc.util.BStats;
-import net.mathias2246.buildmc.util.EnabledUtils;
 import net.mathias2246.buildmc.util.SoundManager;
 import net.mathias2246.buildmc.util.language.LanguageManager;
 import net.mathias2246.buildmc.util.registry.BaseRegistry;
@@ -40,7 +42,6 @@ import net.mathias2246.buildmc.util.registry.DeferredRegistry;
 import net.mathias2246.buildmc.util.registry.RegistriesHolder;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -52,9 +53,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.sql.SQLException;
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 import static net.mathias2246.buildmc.commands.disabledCommands.DisableCommands.disableCommand;
 import static net.mathias2246.buildmc.player.TeleportTimer.cooldown;
@@ -104,16 +102,13 @@ public final class CoreMain {
 
     public static StatusManager statusManager;
 
-    public static PermissionManager permissionManager;
-
-    public static PermissionsTable permissionsTable;
-
     public static EventBusImpl eventBus;
 
+    public static TeamManager teamManager;
+
     public static boolean isDiscordExtensionInstalled = false;
-    public static final NamespacedKey discordExtensionChannelKey = Objects.requireNonNull(
-            NamespacedKey.fromString("buildmc:discord_webhook")
-    );
+    public static final @NotNull NamespacedKey discordExtensionChannelKey =
+            new NamespacedKey("buildmc", "discord_webhook");
 
     @ApiStatus.Internal
     public static void initialize(@NotNull PluginMain plugin) {
@@ -255,8 +250,14 @@ public final class CoreMain {
         deathTable = new DeathTable();
         databaseManager.registerTable(deathTable);
 
-        permissionsTable = new PermissionsTable();
-        databaseManager.registerTable(permissionsTable);
+        teamManager = new net.mathias2246.buildmc.team.TeamManager();
+        databaseManager.registerTable(teamManager);
+
+        try {
+            teamManager.loadAllTeams(databaseManager.getConnection());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         try {
             claimTable.loadClaimOwners(databaseManager.getConnection());
@@ -266,12 +267,5 @@ public final class CoreMain {
         }
     }
 
-    private static EnabledUtils.Enabled<Supplier<Protection>> protection(String path, Function<ConfigurationSection, Protection> factory) {
-        return protection(path, factory, true);
-    }
 
-    private static EnabledUtils.Enabled<Supplier<Protection>> protection(String path, Function<ConfigurationSection, Protection> factory, boolean defaultEnabled) {
-        ConfigurationSection section = config.getConfigurationSection(path);
-        return new EnabledUtils.Enabled<>(() -> factory.apply(section), section, defaultEnabled);
-    }
 }

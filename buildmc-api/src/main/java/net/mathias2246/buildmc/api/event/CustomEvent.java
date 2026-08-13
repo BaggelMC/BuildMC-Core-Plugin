@@ -1,5 +1,6 @@
 package net.mathias2246.buildmc.api.event;
 
+import net.mathias2246.buildmc.util.MetadataHolder;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;

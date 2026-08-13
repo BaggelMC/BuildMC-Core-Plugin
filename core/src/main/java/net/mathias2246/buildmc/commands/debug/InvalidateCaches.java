@@ -8,7 +8,6 @@ public final class InvalidateCaches {
 
     public static int invalidateCaches(@NotNull CommandSender sender) {
         CoreMain.claimTable.invalidateCache();
-        CoreMain.permissionsTable.invalidateCache();
 
         sender.sendMessage("Invalidated all internal caches successfully.");
 

@@ -42,7 +42,7 @@ permissions:
     default: op
     description: Allows to use the '/broadcast' command
   buildmc.bypass-claim-dimension-list:
-    default: op
+    default: false
     description: Allows players to bypass the dimension whitelist / blacklist
   buildmc.allow-edit-statuses:
     default: op
@@ -53,3 +53,6 @@ permissions:
   buildmc.deaths.list:
     default: op
     description: Allows to use commands to list deaths of players
+  manage-teams:
+    default: op
+    description: Allows to manage teams using the /teams command

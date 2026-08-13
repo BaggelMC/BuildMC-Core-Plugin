@@ -50,7 +50,7 @@
             <dependency>
                 <groupId>io.papermc.paper</groupId>
                 <artifactId>paper-api</artifactId>
-                <version>26.2.build.40-alpha</version>
+                <version>26.2.build.112-stable</version>
                 <scope>provided</scope>
             </dependency>
 

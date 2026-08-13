@@ -7,9 +7,9 @@ import net.mathias2246.buildmc.api.item.AbstractCustomItem;
 import net.mathias2246.buildmc.api.item.CustomItemListener;
 import net.mathias2246.buildmc.api.item.abstractTypes.AbstractSelectionTool;
 import net.mathias2246.buildmc.api.messageBus.EventBus;
-import net.mathias2246.buildmc.api.permission.PermissionManager;
 import net.mathias2246.buildmc.api.spawnEyltra.ElytraManager;
 import net.mathias2246.buildmc.api.status.StatusManager;
+import net.mathias2246.buildmc.api.team.TeamManager;
 import net.mathias2246.buildmc.claims.ClaimCommand;
 import net.mathias2246.buildmc.claims.ClaimManagerImpl;
 import net.mathias2246.buildmc.claims.tools.ClaimSelectionTool;
@@ -133,6 +133,7 @@ public final class Main extends PluginMain implements Listener {
 
             commands.registrar().register(new DeathsCommandPlatform().getCommand());
 
+            commands.registrar().register(new TeamCommand().getCommand());
         });
 
         try {
@@ -210,13 +211,13 @@ public final class Main extends PluginMain implements Listener {
     }
 
     @Override
-    public PermissionManager getPermissionManager() {
-        return CoreMain.permissionManager;
+    public @NotNull EventBus getEventBus() {
+        return CoreMain.eventBus;
     }
 
     @Override
-    public EventBus getEventBus() {
-        return CoreMain.eventBus;
+    public @NotNull TeamManager getTeamManager() {
+        return CoreMain.teamManager;
     }
 
     @Override

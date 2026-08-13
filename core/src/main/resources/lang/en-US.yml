@@ -1,6 +1,21 @@
 messages:
   rules: "<gray>==============================</gray>\n\n<gold>Check out the full rules <blue><click:open_url:'https://baggel.de/projects/buildmc/rules/'>[HERE]</click></blue>!</gold>\n\n<gray>==============================</gray>"
 
+  teams:
+    no-teams-to-list: "<yellow>There are no teams to list.</yellow>"
+    team-list-hover: "Click to show team members"
+    team-not-found: "<red>Cannot find the given team</red>"
+    team-members-count: "<yellow><italic>%members%</italic> members are in team <italic>%team%</italic></yellow>"
+    added-entities-to-team: "<green>Successfully added <italic>%count%</italic> entities to team <italic>%team%</italic></green>"
+    added-single-entity-to-team: "<green>Successfully added <italic>%name%</italic> to team <italic>%team%</italic></green>"
+    removed-entities-from-team: "<green>Successfully removed <italic>%count%</italic> entities from the team <italic>%team%</italic></green>"
+    removed-single-entity-from-team: "<green>Successfully removed <italic>%name%</italic> from the team <italic>%team%</italic></green>"
+    team-already-registered: "<red>This team is already registered</red>"
+    team-registered: "<green>Successfully registered team</green>"
+    team-unregistered: "<green>Successfully removed team</green>"
+    team-set-color: "<green>Successfully changed team color</green>"
+    team-set-display-name: "<green>Successfully changed team display name</green>"
+
   first-time-join:
     # Use %player_name% as a placeholder for the name of the player.
     message: "<green>Welcome %player_name%!</green>"

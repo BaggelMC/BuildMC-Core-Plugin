@@ -2,6 +2,7 @@ package net.mathias2246.buildmc.api.messageBus;
 
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 public class EventChannel implements Keyed {
@@ -15,15 +16,18 @@ public class EventChannel implements Keyed {
         this.publisherId = publisherId;
     }
 
+    @Contract(pure = true)
     @Override
     public @NotNull NamespacedKey getKey() {
         return key;
     }
 
+    @Contract(pure = true)
     public @NotNull SemVer getVersion() {
         return version;
     }
 
+    @Contract(pure = true)
     public @NotNull String getPublisherId() {
         return publisherId;
     }

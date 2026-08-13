@@ -17,10 +17,7 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.mathias2246.buildmc.Main;
 import net.mathias2246.buildmc.api.status.StatusInstance;
 import net.mathias2246.buildmc.claims.tools.NewClaimSelection;
-import net.mathias2246.buildmc.commands.debug.BenchmarkClaims;
-import net.mathias2246.buildmc.commands.debug.InvalidateCaches;
-import net.mathias2246.buildmc.commands.debug.OpenSign;
-import net.mathias2246.buildmc.commands.debug.TestBoundingBox;
+import net.mathias2246.buildmc.commands.debug.*;
 import net.mathias2246.buildmc.player.status.PlayerStatusUtil;
 import net.mathias2246.buildmc.player.status.SetStatusCommand;
 import net.mathias2246.buildmc.util.AudienceUtil;
@@ -168,6 +165,35 @@ public class BuildMcCommand implements CustomCommand {
                 )
         );
 
+        debugSub.then(
+                Commands.literal("give-team-manager-debug")
+                        .executes(
+                                command -> {
+                                    if (!(command.getSource().getSender() instanceof Player player)) {
+                                        return 0;
+                                    }
+                                    TeamManagerDebuging.giveDebugBook(player);
+                                    return 1;
+                                }
+                        )
+        );
+
+        debugSub.then(
+                Commands.literal("show-player-team")
+                        .then(
+                                Commands.argument("player", ArgumentTypes.player())
+                                        .executes(
+                                                command -> {
+                                                    var player = command.getArgument("player", PlayerSelectorArgumentResolver.class).resolve(command.getSource()).getFirst();
+
+                                                    TeamManagerDebuging.getAssignedTeam(command.getSource().getSender(), player);
+
+                                                    return 1;
+                                                }
+                                        )
+                        )
+        );
+
         // --- MiniMessage debug command ---
          var miniMsgSub = Commands.literal("minimessage")
                 .then(
@@ -212,6 +238,8 @@ public class BuildMcCommand implements CustomCommand {
                         PermCommandHelper.createPermCommand("buildmc.bypass-end-event", "bypass-end-event")
                 ).then(
                         PermCommandHelper.createPermCommand("buildmc.broadcast", "allow-broadcast")
+                ).then(
+                        PermCommandHelper.createPermCommand("buildmc.bypass-claim-dimension-list", "bypass-claim-dimension-list")
                 ).then(
                         Commands.literal("set-death-count")
                                 .then(

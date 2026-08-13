@@ -1,5 +1,6 @@
-package net.mathias2246.buildmc.api.event;
+package net.mathias2246.buildmc.util;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -7,11 +8,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Base class providing metadata support for custom events.
+ * Base class providing metadata storage.
  * <p>
- * Metadata allows additional context to be stored and shared with plugins
- * without needing to subclass the event. Each entry is a key-value pair.
- * Keys must be unique within a single event instance.
+ * Metadata allows additional context to be stored and shared with plugins.
+ * Each entry is a key-value pair.
+ * Keys must be unique within a metadata holder instance.
  * <p>
  * This class provides an unmodifiable view for external access to prevent
  * accidental modification of the internal state.
@@ -19,10 +20,10 @@ import java.util.Map;
 public abstract class MetadataHolder {
 
     /** Internal storage for metadata entries. */
-    private final Map<String, Object> metadata = new HashMap<>();
+    private final @NotNull Map<String, Object> metadata = new HashMap<>();
 
     /**
-     * Returns an unmodifiable view of all metadata entries associated with this event.
+     * Returns an unmodifiable view of all metadata entries stored in this instance.
      * <p>
      * This map should not be modified directly; use {@link #putMetadata(String, Object)}
      * or {@link #removeMetadata(String)} to update entries.
@@ -37,12 +38,23 @@ public abstract class MetadataHolder {
      * Provides internal access to the mutable metadata map.
      * <p>
      * Intended for subclasses or internal use only. Modifications to this map
-     * will affect the event's metadata directly.
+     * will affect the instance's metadata directly.
      *
      * @return the mutable map of metadata entries (never {@code null})
      */
-    protected Map<String, Object> mutableMetadata() {
+    protected @NotNull Map<String, Object> mutableMetadata() {
         return metadata;
+    }
+
+    /**
+     * Checks if a certain metadata key is present in this instance.
+     *
+     * @param key The key to check
+     * @return {@code true} if the given metadata key is present in this instance.
+     * **/
+    @Contract(pure = true)
+    public boolean containsMetadataKey(@NotNull String key) {
+        return metadata.containsKey(key);
     }
 
     /**
@@ -57,7 +69,7 @@ public abstract class MetadataHolder {
     }
 
     /**
-     * Removes a metadata entry from the event.
+     * Removes a metadata entry from this instance.
      * <p>
      * If the key does not exist, this method does nothing.
      *

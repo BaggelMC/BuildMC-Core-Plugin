@@ -12,6 +12,7 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Map;
 
@@ -20,20 +21,7 @@ import static net.mathias2246.buildmc.CoreMain.plugin;
 /** Builds a command for changing a certain permission for a player.**/
 public final class PermCommandHelper {
     public static LiteralArgumentBuilder<CommandSourceStack> createPermCommand(Permission permission, @Nullable String displayAs) {
-        var base = Commands.literal(displayAs == null ? permission.getName() : displayAs);
-
-        base.executes(
-                command -> {
-                    var sender = command.getSource().getSender();
-
-                    if (!(sender instanceof Player player)) {
-                        AudienceUtil.sendMessage(sender, Message.msg(sender, "messages.error.not-a-player-target"));
-                        return 1;
-                    }
-
-                    return playerToggle(permission, sender, player, null);
-                }
-        );
+        var base = getLiteralArgumentBuilder(permission, displayAs);
 
         base.then(
                 Commands.argument("player", ArgumentTypes.player())
@@ -57,6 +45,24 @@ public final class PermCommandHelper {
                         )
         );
 
+        return base;
+    }
+
+    private static @NonNull LiteralArgumentBuilder<CommandSourceStack> getLiteralArgumentBuilder(Permission permission, @org.jspecify.annotations.Nullable String displayAs) {
+        var base = Commands.literal(displayAs == null ? permission.getName() : displayAs);
+
+        base.executes(
+                command -> {
+                    var sender = command.getSource().getSender();
+
+                    if (!(sender instanceof Player player)) {
+                        AudienceUtil.sendMessage(sender, Message.msg(sender, "messages.error.not-a-player-target"));
+                        return 1;
+                    }
+
+                    return playerToggle(permission, sender, player, null);
+                }
+        );
         return base;
     }
 

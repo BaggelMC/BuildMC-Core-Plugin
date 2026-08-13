@@ -2,6 +2,7 @@ package net.mathias2246.buildmc.api.messageBus;
 
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -21,13 +22,16 @@ public class EventSubscription implements Keyed {
         this.handler = handler;
     }
 
+    @Contract(pure = true)
     @Override
     public @NotNull NamespacedKey getKey() { return key; }
 
+    @Contract(pure = true)
     public @NotNull NamespacedKey getChannelId() { return channelId; }
 
     public @NotNull Set<SemVer> getAcceptedVersions() { return acceptedVersions; }
 
+    @Contract(pure = true)
     public @NotNull String getSubscriberId() { return subscriberId; }
 
     public @NotNull EventHandler getHandler() { return handler; }

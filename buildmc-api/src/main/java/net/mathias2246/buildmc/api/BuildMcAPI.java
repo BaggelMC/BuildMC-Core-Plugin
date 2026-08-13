@@ -3,9 +3,9 @@ package net.mathias2246.buildmc.api;
 import net.mathias2246.buildmc.api.claims.ClaimManager;
 import net.mathias2246.buildmc.api.endEvent.EndManager;
 import net.mathias2246.buildmc.api.messageBus.EventBus;
-import net.mathias2246.buildmc.api.permission.PermissionManager;
 import net.mathias2246.buildmc.api.spawnEyltra.ElytraManager;
 import net.mathias2246.buildmc.api.status.StatusManager;
+import net.mathias2246.buildmc.api.team.TeamManager;
 import net.mathias2246.buildmc.util.SoundManager;
 import net.mathias2246.buildmc.util.registry.RegistriesHolder;
 import org.bukkit.Bukkit;
@@ -102,16 +102,16 @@ public interface BuildMcAPI {
     RegistriesHolder getRegistriesHolder();
 
     /**
-     * Gets the {@link net.mathias2246.buildmc.api.permission.PermissionManager}
-     *
-     * @return the PermissionManager instance
-     */
-    PermissionManager getPermissionManager();
-
-    /**
      * Gets the {@link EventBus}
      *
      * @return the EventBus instance
      */
+    @NotNull
     EventBus getEventBus();
+
+    /** Gets the main {@link TeamManager}
+     *
+     * @return the TeamManager instance
+     * **/
+    @NotNull TeamManager getTeamManager();
 }

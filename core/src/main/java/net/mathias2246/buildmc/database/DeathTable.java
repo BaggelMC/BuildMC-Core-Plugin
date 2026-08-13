@@ -9,8 +9,8 @@ import java.util.*;
 public class DeathTable implements DatabaseTable {
 
     @Override
-    public void createTable(Connection conn) throws SQLException {
-        try (Statement stmt = conn.createStatement()) {
+    public void createTable(Connection connection) throws SQLException {
+        try (Statement stmt = connection.createStatement()) {
             stmt.execute("""
                 CREATE TABLE IF NOT EXISTS player_deaths (
                     id IDENTITY PRIMARY KEY,
