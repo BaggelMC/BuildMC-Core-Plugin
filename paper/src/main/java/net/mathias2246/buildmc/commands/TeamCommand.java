@@ -10,8 +10,6 @@ import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.EntitySelectorArgumentResolver;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -27,6 +25,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static net.mathias2246.buildmc.util.AudienceUtil.sendRichMessage;
 
 public class TeamCommand implements CustomCommand {
 
@@ -60,13 +60,14 @@ public class TeamCommand implements CustomCommand {
                                         displayName = Component.text("\"").color(null).append(displayName).append(Component.text("\"").color(null));
                                     }
 
-                                    // When you click on the team key, show the members of the team
-                                    AudienceUtil.sendMessage(
+                                    sendRichMessage(
                                             sender,
-                                            Component.text(team.getKey()).clickEvent(ClickEvent.runCommand("/teams list "+team.getKey())).hoverEvent(HoverEvent.showText(Component.translatable("messages.teams.team-list-hover"))).color(NamedTextColor.GRAY)
-                                                    .append(displayName == null ? Component.empty() : Component.text(" - ").append(displayName))
-                                                    // If the team has a color set, show a small square with that color
-                                                    .append(team.getValue().getColor() == null ? Component.empty() : Component.text(" - ").color(NamedTextColor.WHITE).append(Component.text("■")).color(team.getValue().getColor()))
+                                            "| <hover:show_text:'<lang:messages.teams.team-list-hover>'><click:run_command:'/teams list " + team.getKey() + "'><gray><team></gray><display-name><color-display></click></hover>",
+                                            Map.of(
+                                                    "team", team.getKey(),
+                                                    "display-name", displayName == null ? Component.empty() : Component.text(" - ", NamedTextColor.WHITE).append(displayName),
+                                                    "color-display", team.getValue().getColor() == null ? Component.empty() : "<white> - Color </white><"+ team.getValue().getColor().asHexString() + ">■"
+                                            )
                                     );
                                 }
 
@@ -147,7 +148,8 @@ public class TeamCommand implements CustomCommand {
                                                                         if (team.addMember(entity)) {
                                                                             addedCount++;
                                                                             entityName = entity.name();
-                                                                        }
+                                                                            CoreMain.plugin.getLogger().info("Adding member true");
+                                                                        } else CoreMain.plugin.getLogger().info("Adding member false");
                                                                     }
 
                                                                     if (addedCount == 1) {
@@ -181,7 +183,7 @@ public class TeamCommand implements CustomCommand {
                 Commands.literal("leave")
                         .then(
                                 Commands.argument("team", StringArgumentType.word())
-                                        .suggests(TeamCommand::suggestTeamKeysWithWildcard)
+                                        .suggests(TeamCommand::suggestTeamKeys)
                                         .then(
                                                 Commands.argument("members", ArgumentTypes.entities())
                                                         .executes(
@@ -197,7 +199,9 @@ public class TeamCommand implements CustomCommand {
                                                                             var team = CoreMain.teamManager.getTeamFromMember(entity);
                                                                             if (team == null) continue;
 
-                                                                            team.removeMember(entity);
+                                                                            if (team.removeMember(entity)) {
+                                                                                CoreMain.plugin.getLogger().info("Removing member true");
+                                                                            } else CoreMain.plugin.getLogger().info("Removing member false");
                                                                         }
                                                                     }
 
@@ -217,7 +221,8 @@ public class TeamCommand implements CustomCommand {
                                                                         if (team.removeMember(entity)) {
                                                                             removedCount++;
                                                                             entityName = entity.name();
-                                                                        }
+                                                                            CoreMain.plugin.getLogger().info("Removing member true");
+                                                                        } else CoreMain.plugin.getLogger().info("Removing member false");
                                                                     }
 
                                                                     if (removedCount == 1) {

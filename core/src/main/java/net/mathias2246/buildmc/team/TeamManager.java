@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 import java.util.stream.Stream;
 
 public class TeamManager implements net.mathias2246.buildmc.api.team.TeamManager, DatabaseTable {
@@ -50,6 +51,23 @@ public class TeamManager implements net.mathias2246.buildmc.api.team.TeamManager
                 );
                 CREATE INDEX IF NOT EXISTS idx_team_members_team_id ON team_members(team_id);
            """);
+        }
+    }
+
+    /** Looks up a team's numerical id by its unique name.
+     *
+     * @return the team's id, or {@code null} if no team with that name exists.
+     **/
+    public @Nullable Long getTeamId(@NotNull Connection conn, @NotNull String name) {
+        String sql = "SELECT id FROM teams WHERE name = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, name);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? rs.getLong("id") : null;
+            }
+        } catch (SQLException ignor) {
+            return null;
         }
     }
 
@@ -86,6 +104,49 @@ public class TeamManager implements net.mathias2246.buildmc.api.team.TeamManager
         }
     }
 
+    public long updateOrInsertTeam(@NotNull Connection conn, @NotNull String name, @Nullable Integer color,
+                           @Nullable Component displayName, @NotNull Map<String, Object> metadata) throws SQLException {
+        Long id = getTeamId(conn, name);
+        if (id == null) return insertTeam(conn, name, color, displayName, metadata);
+        else updateTeam(conn, id, name, color, displayName, metadata);
+        return id;
+    }
+
+    public long updateOrInsertTeam(@NotNull Connection conn, @NotNull Team team) throws SQLException {
+        return updateOrInsertTeam(
+                conn,
+                team.getName(),
+                team.getColor() == null ? null : team.getColor().value(),
+                team.getDisplayName(),
+                team.getMetadata()
+                );
+    }
+
+    /** Inserts or updates a team member inside the database.
+     * When teamId is {@code null}, the member will be deleted from the database.
+     * **/
+    public boolean updateOrInsertMember(@NotNull Connection conn, @Nullable Long teamId, @NotNull UUID uuid) {
+        try (PreparedStatement del = conn.prepareStatement(
+                "DELETE FROM team_members WHERE MEMBER_UUID = ?")) {
+            del.setObject(1, uuid);
+            del.execute();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (teamId == null) return false;
+
+        try (PreparedStatement ins = conn.prepareStatement(
+                    "INSERT INTO team_members (member_uuid, team_id) VALUES (?, ?)")) {
+                ins.setObject(1, uuid);
+                ins.setLong(2, teamId);
+                ins.execute();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return true;
+    }
+
     public void deleteTeam(@NotNull Connection conn, long id) throws SQLException {
         // team_members rows are removed automatically via ON DELETE CASCADE
         String sql = "DELETE FROM teams WHERE id = ?";
@@ -113,17 +174,62 @@ public class TeamManager implements net.mathias2246.buildmc.api.team.TeamManager
         }
     }
 
+    public void removeMembers(@NotNull Connection conn, long teamId, @NotNull Stream<UUID> members) throws SQLException {
+        String sql = "DELETE FROM team_members WHERE team_id = ? AND member_uuid = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            members.forEach(
+                    memberUuid -> {
+                        try {
+                            ps.setLong(1, teamId);
+                            ps.setObject(2, memberUuid);
+                            ps.addBatch();
+                        } catch (SQLException e) {
+                            CoreMain.plugin.getLogger().log(Level.SEVERE, "Failed to remove team member from database: " + memberUuid, e);
+                        }
+                    }
+            );
+            ps.executeBatch();
+        }
+    }
+
     /** Bulk-inserts members for a team, e.g. when registering an already-populated in-memory team. */
-    public void insertMembers(@NotNull Connection conn, long teamId, @NotNull Collection<UUID> memberUuids) throws SQLException {
-        if (memberUuids.isEmpty()) return;
+    public void insertMembers(@NotNull Connection conn, long teamId, @NotNull Iterator<UUID> memberUuids) throws SQLException {
+        if (!memberUuids.hasNext()) return;
         String sql = "INSERT INTO team_members (member_uuid, team_id) VALUES (?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            for (UUID uuid : memberUuids) {
+            for (UUID uuid = memberUuids.next(); uuid != null; uuid = memberUuids.next()) {
                 ps.setObject(1, uuid);
                 ps.setLong(2, teamId);
                 ps.addBatch();
             }
             ps.executeBatch();
+        }
+    }
+
+    public void saveMembers(@NotNull Connection conn, long teamId, @NotNull Collection<UUID> members) throws SQLException {
+        try {
+            try (PreparedStatement del = conn.prepareStatement(
+                    "DELETE FROM team_members WHERE MEMBER_UUID = ?")) {
+                for (UUID uuid : members) {
+                    del.setObject(1, uuid);
+                    del.addBatch();
+                }
+                del.executeBatch();
+            }
+
+            if (!members.isEmpty()) {
+                try (PreparedStatement ins = conn.prepareStatement(
+                        "INSERT INTO team_members (member_uuid, team_id) VALUES (?, ?)")) {
+                    for (UUID uuid : members) {
+                        ins.setObject(1, uuid);
+                        ins.setLong(2, teamId);
+                        ins.addBatch();
+                    }
+                    ins.executeBatch();
+                }
+            }
+
+        } catch (SQLException ignore) {
         }
     }
 
@@ -167,7 +273,7 @@ public class TeamManager implements net.mathias2246.buildmc.api.team.TeamManager
             if (record.displayName != null) team.setDisplayName(record.displayName);
 
             for (UUID uuid : record.members()) {
-                team.addMember(uuid, false);
+                team.addMember(uuid, false, false);
             }
 
             for (var metadataEntry : record.metadata().entrySet()) {
@@ -200,8 +306,6 @@ public class TeamManager implements net.mathias2246.buildmc.api.team.TeamManager
 
         return record;
     }
-
-    // ---------- helpers ----------
 
     private TeamRecord readTeamRecord(ResultSet rs) throws SQLException {
         long id = rs.getLong("id");
@@ -242,6 +346,7 @@ public class TeamManager implements net.mathias2246.buildmc.api.team.TeamManager
     private void addTeamToManager(@NotNull String teamIdentifier, @NotNull Team team) {
         var result = teams.putIfAbsent(teamIdentifier, team);
         if (result == null) {
+            team.register(this, true);
             persistentTeams.put(teamIdentifier, true);
 
             for (Iterator<UUID> it = team.members().iterator(); it.hasNext(); ) {
@@ -271,10 +376,24 @@ public class TeamManager implements net.mathias2246.buildmc.api.team.TeamManager
                     Bukkit.getPluginManager().callEvent(new TeamMemberRemovedEvent(member, team));
                 }
                 memberTeams.put(member, team);
+                updateOrInsertMember(CoreMain.databaseManager.getConnection(), getTeamId(CoreMain.databaseManager.getConnection(), team.getName()), member);
+
                 Bukkit.getPluginManager().callEvent(new TeamMemberAddEvent(member, team, false));
             }
-
+            
             Bukkit.getPluginManager().callEvent(new TeamRegisteredEvent(team));
+            try {
+                var nId = insertTeam(
+                        CoreMain.databaseManager.getConnection(),
+                        team.getName(),
+                        team.getColor() == null ? null : team.getColor().value(),
+                        team.getDisplayName(),
+                        team.getMetadata()
+                        );
+                insertMembers(CoreMain.databaseManager.getConnection(), nId, team.members().iterator());
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
         return result == null;
     }
@@ -298,21 +417,35 @@ public class TeamManager implements net.mathias2246.buildmc.api.team.TeamManager
 
     @Override
     public void unregisterTeam(@NotNull Team team) {
-        var v = teams.remove(team.getName());
-        persistentTeams.remove(team.getName());
-        if (v != null) {
-            for (Iterator<UUID> it = v.members().iterator(); it.hasNext(); ) {
+
+        if (teams.containsKey(team.getName())) {
+            var events = team.getTeamManager() != null && team.getTeamManager().isRegisteredTeam(team.getName());
+            for (Iterator<UUID> it = team.members().iterator(); it.hasNext(); ) {
                 var member = it.next();
                 memberTeams.remove(member);
-                Bukkit.getPluginManager().callEvent(new TeamMemberRemovedEvent(member, v));
+                if (events) Bukkit.getPluginManager().callEvent(new TeamMemberRemovedEvent(member, team));
             }
 
-            if (team.getTeamManager() != null) {
+            if (events) {
+                Bukkit.getPluginManager().callEvent(new TeamUnregisterEvent(team));
                 team.unregister();
-                return;
             }
 
-            Bukkit.getPluginManager().callEvent(new TeamUnregisterEvent(v));
+            teams.remove(team.getName());
+            persistentTeams.remove(team.getName());
+
+            try {
+                var conn = CoreMain.databaseManager.getConnection();
+
+                var nId = getTeamId(conn, team.getName());
+                if (nId == null) return;
+
+                deleteTeam(conn, nId);
+
+                removeMembers(conn, nId, team.members());
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
 
     }
@@ -349,12 +482,38 @@ public class TeamManager implements net.mathias2246.buildmc.api.team.TeamManager
 
     @Override
     public boolean joinTeam(@NotNull UUID uuid, @NotNull Team team) {
-        var v = memberTeams.put(uuid, team);
-        if (v == null) {
-            return team.addMember(uuid);
+        var previous = memberTeams.get(uuid);
+        if (previous != null) {
+            if (previous.equals(team)) return false;
+
+            leaveTeam(uuid, team);
         }
 
-        return false;
+        if (team.isMember(uuid) && memberTeams.containsKey(uuid)) {
+            return true;
+        }
+        if (!team.isMember(uuid)) if (!team.addMember(uuid)) return false;
+        memberTeams.put(uuid, team);
+
+
+        var in = memberTeams.get(uuid);
+        var result = in != null && in.equals(team) && team.isMember(uuid);
+
+        if (result) {
+            var nId = getTeamId(CoreMain.databaseManager.getConnection(), team.getName());
+            if (!updateOrInsertMember(
+                    CoreMain.databaseManager.getConnection(),
+                    nId,
+                    uuid
+            )) {
+                CoreMain.plugin.getLogger().log(
+                        Level.WARNING,
+                        "The team member " + uuid + " could not be added to the database!\nThis member will not persist."
+                );
+            }
+        }
+
+        return result;
     }
 
     @Override
@@ -366,7 +525,22 @@ public class TeamManager implements net.mathias2246.buildmc.api.team.TeamManager
     public boolean leaveTeam(@NotNull UUID uuid, @NotNull Team team) {
         var v = memberTeams.remove(uuid);
         if (v != null) {
-            return team.removeMember(uuid);
+            var result = team.removeMember(uuid);
+
+            try {
+                var nId = getTeamId(CoreMain.databaseManager.getConnection(), team.getName());
+                if (nId != null) {
+                    removeMember(
+                            CoreMain.databaseManager.getConnection(),
+                            nId,
+                            uuid
+                    );
+                }
+            } catch (SQLException e) {
+                CoreMain.plugin.getLogger().log(Level.WARNING, "Could not remove team member " + uuid + " from database", e);
+            }
+
+            return result;
         }
 
         return false;

@@ -111,18 +111,35 @@ public class Team extends MetadataHolder {
      *
      * @see Team#addMember(UUID)
      * **/
-    public boolean addMember(@NotNull UUID uuid, boolean cancellable) {
+    public boolean addMember(@NotNull UUID uuid, boolean cancellable, boolean fireEvent) {
         if (teamManager != null) {
-            var e = new TeamMemberAddEvent(uuid, this, cancellable);
-            if (cancellable && e.isCancelled()) {
-                return false;
+            var mTeam = teamManager.getTeamFromMember(uuid);
+            if (mTeam != null && !mTeam.equals(this)) {
+                mTeam.removeMember(uuid);
             }
 
-            teamManager.joinTeam(uuid, this);
-            return members.add(uuid);
+            if (!members.contains(uuid)) {
+
+                if (fireEvent) {
+                    var event = new TeamMemberAddEvent(uuid, this, cancellable);
+                    Bukkit.getPluginManager().callEvent(event);
+                    if (cancellable && event.isCancelled()) return false;
+                }
+            }
+
+            members.add(uuid);
+            return teamManager.joinTeam(uuid, this);
         }
 
         return members.add(uuid);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Team t) {
+            return t.name.equals(this.name);
+        }
+        return false;
     }
 
     /** Adds a member by his {@link UUID} to this team.
@@ -133,10 +150,10 @@ public class Team extends MetadataHolder {
      *
      * @return {@code true} if the {@link UUID} if the member wasn't added.
      *
-     * @see Team#addMember(UUID, boolean) Ignore Cancelled
+     * @see Team#addMember(UUID, boolean, boolean) Ignore Cancelled
      * **/
     public boolean addMember(@NotNull UUID uuid) {
-        return addMember(uuid, false);
+        return addMember(uuid, false, true);
     }
 
     /** Removes an {@link Entity} from this team.
@@ -159,7 +176,7 @@ public class Team extends MetadataHolder {
         var result = members.remove(uuid);
         if (teamManager != null) {
             teamManager.leaveTeam(uuid, this);
-            Bukkit.getPluginManager().callEvent(new TeamMemberRemovedEvent(uuid, this));
+            if (result) Bukkit.getPluginManager().callEvent(new TeamMemberRemovedEvent(uuid, this));
         }
 
         return result;

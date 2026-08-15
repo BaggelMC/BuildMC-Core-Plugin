@@ -32,6 +32,7 @@ import net.mathias2246.buildmc.player.FirstTimeJoinMessage;
 import net.mathias2246.buildmc.player.status.PlayerStatusUtil;
 import net.mathias2246.buildmc.player.status.StatusConfig;
 import net.mathias2246.buildmc.team.TeamManager;
+import net.mathias2246.buildmc.team.TeamSync;
 import net.mathias2246.buildmc.util.AnnotatedRegistry;
 import net.mathias2246.buildmc.util.BStats;
 import net.mathias2246.buildmc.util.SoundManager;
@@ -207,6 +208,8 @@ public final class CoreMain {
                 }
             }
         }
+
+        registerListener(new TeamSync());
 
         customItemsRegistry.initialize();
 
