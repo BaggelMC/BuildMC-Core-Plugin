@@ -1,16 +1,20 @@
 package net.mathias2246.buildmc.api.event.team;
 
 import net.mathias2246.buildmc.api.team.Team;
+import net.mathias2246.buildmc.api.team.TeamManager;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
 /** An event that fires after a member is removed from a team. **/
-public class TeamMemberRemovedEvent extends TeamMemberEvent{
+public class TeamMemberRemovedEvent extends TeamMemberEvent {
 
     private static final @NotNull HandlerList HANDLERS = new HandlerList();
 
+    /**
+     * @throws IllegalStateException if the given {@link Team} is not registered in a {@link TeamManager}.
+     * */
     public TeamMemberRemovedEvent(@NotNull UUID memberId, @NotNull Team team) {
         super(memberId, team);
     }

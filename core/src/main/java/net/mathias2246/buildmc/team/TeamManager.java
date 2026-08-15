@@ -404,8 +404,18 @@ public class TeamManager implements net.mathias2246.buildmc.api.team.TeamManager
     }
 
     @Override
+    public boolean isRegisteredTeam(@NotNull Team team) {
+        return isRegisteredTeam(team.getName());
+    }
+
+    @Override
     public @Nullable Boolean isPersistent(@NotNull String teamIdentifier) {
         return persistentTeams.get(teamIdentifier);
+    }
+
+    @Override
+    public @Nullable Boolean isPersistent(@NotNull Team team) {
+        return isPersistent(team.getName());
     }
 
     @Override

@@ -6,10 +6,14 @@ messages:
     team-list-hover: "Klicke um alle Teammitglieder anzuzeigen"
     team-not-found: "<red>Das angegebene Team wurde nicht gefunden</red>"
     team-members-count: "<yellow><italic>%members%</italic> Mitglieder sind in Team <italic>%team%</italic></yellow>"
+
     added-entities-to-team: "<green><italic>%count%</italic> Entities wurden erfolgreich zum Team <italic>%team%</italic> hinzugefügt</green>"
     added-single-entity-to-team: "<green><italic>%name%</italic> wurde erfolgreich zum Team <italic>%team%</italic> hinzugefügt</green>"
+    team-override: "<yellow>Team überschrieben</team>"
+
     removed-entities-from-team: "<green><italic>%count%</italic> Entities wurden aus dem Team <italic>%team%</italic> entfernt.</green>"
     removed-single-entity-from-team: "<green><italic>%name%</italic> wurde erfolgreich aus dem Team <italic>%team%</italic> entfernt.</green>"
+
     team-already-registered: "<red>Dieses Team ist bereits registriert</red>"
     team-registered: "<green>Team wurde erfolgreich registriert</green>"
     team-unregistered: "<green>Team wurde erfolgreich entfernt</green>"

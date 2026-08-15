@@ -88,13 +88,14 @@ public final class ClaimLogger {
     }
 
     private static void startRotationTask() {
-        long period = 20L * 60 * 10; // every 10 minutes
+        long period = 60 * 10; // every 10 minutes
 
-        plugin.getServer().getScheduler().runTaskTimerAsynchronously(
+        plugin.getServer().getAsyncScheduler().runAtFixedRate(
                 plugin,
-                ClaimLogger::rotateIfNeeded,
+                task -> ClaimLogger.rotateIfNeeded(),
                 0L,
-                period
+                period,
+                TimeUnit.SECONDS
         );
     }
 

@@ -7,6 +7,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
+/** An event that is fired before a member is added to a {@link Team}.
+ * <p>
+ *     This event can be optionally marked as cancellable.
+ * </p>
+ *
+ * */
 public class TeamMemberAddEvent extends TeamMemberEvent implements Cancellable {
 
     private static final @NotNull HandlerList HANDLERS = new HandlerList();

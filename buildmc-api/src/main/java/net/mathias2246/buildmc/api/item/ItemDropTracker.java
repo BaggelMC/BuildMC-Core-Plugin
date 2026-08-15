@@ -44,10 +44,13 @@ public class ItemDropTracker implements Listener {
         Bukkit.getPluginManager().registerEvents(this, plugin);
 
         // cleanup
-        Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-            long cutoff = System.nanoTime() - sameTickNanos * 10; // buffer
-            lastDropNano.entrySet().removeIf(e -> e.getValue() < cutoff);
-        }, 20L * 30L, 20L * 30L); // every 30 seconds
+        Bukkit.getGlobalRegionScheduler().runAtFixedRate(
+                plugin,
+                task -> {
+                    long cutoff = System.nanoTime() - sameTickNanos * 10; // buffer
+                    lastDropNano.entrySet().removeIf(e -> e.getValue() < cutoff);
+                },
+                20L * 30L, 20L * 30L); // every 30 seconds
     }
 
     @EventHandler(priority = EventPriority.LOW)

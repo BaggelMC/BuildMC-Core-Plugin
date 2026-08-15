@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 
 import static net.mathias2246.buildmc.util.AudienceUtil.sendRichMessage;
 
@@ -129,51 +130,60 @@ public class TeamCommand implements CustomCommand {
                                                                 command -> {
                                                                     var sender = command.getSource().getSender();
 
-                                                                    String teamKey = StringArgumentType.getString(command, "team");
                                                                     Collection<Entity> entities = command.getArgument("members", EntitySelectorArgumentResolver.class).resolve(command.getSource());
 
-                                                                    Team team = CoreMain.teamManager.getTeam(teamKey);
-                                                                    if (team == null) {
-                                                                        AudienceUtil.sendMessage(
-                                                                                sender,
-                                                                                Component.translatable("messages.teams.team-not-found")
-                                                                        );
+                                                                    return consumeTeam(command, team -> {
 
-                                                                        return 0;
-                                                                    }
+                                                                        // If only one entity is affected, then store the entity's team before changing it, for a pretty message.
+                                                                        Team oldTeam = null;
+                                                                        if (entities.size() == 1) {
 
-                                                                    int addedCount = 0;
-                                                                    Component entityName = Component.text("?");
-                                                                    for (Entity entity : entities) {
-                                                                        if (team.addMember(entity)) {
-                                                                            addedCount++;
-                                                                            entityName = entity.name();
-                                                                            CoreMain.plugin.getLogger().info("Adding member true");
-                                                                        } else CoreMain.plugin.getLogger().info("Adding member false");
-                                                                    }
+                                                                            oldTeam = CoreMain.teamManager.getTeamFromMember(entities.stream().findFirst().get());
+                                                                        }
 
-                                                                    if (addedCount == 1) {
+                                                                        int addedCount = 0;
+                                                                        Component entityName = Component.text("?");
+
+                                                                        for (Entity entity : entities) {
+                                                                            if (team.addMember(entity)) {
+                                                                                addedCount++;
+                                                                                entityName = entity.name();
+                                                                            }
+                                                                        }
+
+                                                                        if (addedCount == 1) {
+                                                                            AudienceUtil.sendMessage(
+                                                                                    sender,
+                                                                                    Message.msg(
+                                                                                            sender,
+                                                                                            "messages.teams.added-single-entity-to-team",
+                                                                                            Map.of("name", PlainTextComponentSerializer.plainText().serialize(entityName), "team", team.getName())
+                                                                                    )
+                                                                            );
+
+                                                                            if (oldTeam != null) AudienceUtil.sendRichMessage(
+                                                                                    sender,
+                                                                                    "<lang:'messages.teams.team-override'><white> - </white>'<oldTeam>'<white> -> </white>'<newTeam>'",
+                                                                                    Map.of(
+                                                                                            "oldTeam", oldTeam.getDisplayName() == null ? oldTeam.getName() : oldTeam.getDisplayName(),
+                                                                                            "newTeam", team.getDisplayName() == null ? team.getName() : team.getDisplayName()
+                                                                                    )
+                                                                            );
+
+                                                                            return 1;
+                                                                        }
+
                                                                         AudienceUtil.sendMessage(
                                                                                 sender,
                                                                                 Message.msg(
                                                                                         sender,
-                                                                                        "messages.teams.added-single-entity-to-team",
-                                                                                        Map.of("name", PlainTextComponentSerializer.plainText().serialize(entityName), "team", teamKey)
+                                                                                        "messages.teams.added-entities-to-team",
+                                                                                        Map.of("count", Integer.toString(addedCount), "team", team.getName())
                                                                                 )
                                                                         );
+
                                                                         return 1;
-                                                                    }
-
-                                                                    AudienceUtil.sendMessage(
-                                                                            sender,
-                                                                            Message.msg(
-                                                                                    sender,
-                                                                                    "messages.teams.added-entities-to-team",
-                                                                                    Map.of("count", Integer.toString(addedCount), "team", teamKey)
-                                                                            )
-                                                                    );
-
-                                                                    return 1;
+                                                                    });
                                                                 }
                                                         )
                                         )
@@ -182,75 +192,66 @@ public class TeamCommand implements CustomCommand {
         ).then(
                 Commands.literal("leave")
                         .then(
-                                Commands.argument("team", StringArgumentType.word())
-                                        .suggests(TeamCommand::suggestTeamKeys)
-                                        .then(
-                                                Commands.argument("members", ArgumentTypes.entities())
-                                                        .executes(
-                                                                command -> {
-                                                                    var sender = command.getSource().getSender();
+                                Commands.argument("members", ArgumentTypes.entities())
+                                        .executes(
+                                                command -> {
+                                                    var sender = command.getSource().getSender();
 
-                                                                    String teamKey = StringArgumentType.getString(command, "team");
+                                                    Collection<Entity> entities = command.getArgument("members", EntitySelectorArgumentResolver.class).resolve(command.getSource());
 
-                                                                    Collection<Entity> entities = command.getArgument("members", EntitySelectorArgumentResolver.class).resolve(command.getSource());
+                                                    // Some placeholder values for pretty messages
+                                                    int removedCount = 0;
+                                                    Component entityName = Component.text("?");
+                                                    String teamKey = "";
 
-                                                                    if (teamKey.equals("*")) {
-                                                                        for (Entity entity : entities) {
-                                                                            var team = CoreMain.teamManager.getTeamFromMember(entity);
-                                                                            if (team == null) continue;
+                                                    for (Entity entity : entities) {
+                                                        var team =  CoreMain.teamManager.getTeam(entity.getName());
+                                                        if (team == null) continue;
 
-                                                                            if (team.removeMember(entity)) {
-                                                                                CoreMain.plugin.getLogger().info("Removing member true");
-                                                                            } else CoreMain.plugin.getLogger().info("Removing member false");
-                                                                        }
-                                                                    }
+                                                        if (team.removeMember(entity)) {
+                                                            removedCount++;
+                                                            entityName = entity.name();
+                                                            teamKey = team.getName();
+                                                        }
+                                                    }
 
-                                                                    Team team = CoreMain.teamManager.getTeam(teamKey);
-                                                                    if (team == null) {
-                                                                        AudienceUtil.sendMessage(
-                                                                                sender,
-                                                                                Component.translatable("messages.teams.team-not-found")
-                                                                        );
+                                                    if (removedCount == 1) {
+                                                        AudienceUtil.sendMessage(
+                                                                sender,
+                                                                Message.msg(
+                                                                        sender,
+                                                                        "messages.teams.removed-single-entity-from-team",
+                                                                        Map.of("name", PlainTextComponentSerializer.plainText().serialize(entityName), "team", teamKey)
+                                                                )
+                                                        );
+                                                        return 1;
+                                                    }
 
-                                                                        return 0;
-                                                                    }
+                                                    AudienceUtil.sendMessage(
+                                                            sender,
+                                                            Message.msg(
+                                                                    sender,
+                                                                    "messages.teams.removed-entities-from-team",
+                                                                    Map.of("count", Integer.toString(removedCount))
+                                                            )
+                                                    );
 
-                                                                    int removedCount = 0;
-                                                                    Component entityName = Component.text("?");
-                                                                    for (Entity entity : entities) {
-                                                                        if (team.removeMember(entity)) {
-                                                                            removedCount++;
-                                                                            entityName = entity.name();
-                                                                            CoreMain.plugin.getLogger().info("Removing member true");
-                                                                        } else CoreMain.plugin.getLogger().info("Removing member false");
-                                                                    }
-
-                                                                    if (removedCount == 1) {
-                                                                        AudienceUtil.sendMessage(
-                                                                                sender,
-                                                                                Message.msg(
-                                                                                        sender,
-                                                                                        "messages.teams.removed-single-entity-from-team",
-                                                                                        Map.of("name", PlainTextComponentSerializer.plainText().serialize(entityName), "team", teamKey)
-                                                                                )
-                                                                        );
-                                                                        return 1;
-                                                                    }
-
-                                                                    AudienceUtil.sendMessage(
-                                                                            sender,
-                                                                            Message.msg(
-                                                                                    sender,
-                                                                                    "messages.teams.removed-entities-from-team",
-                                                                                    Map.of("count", Integer.toString(removedCount), "team", teamKey)
-                                                                            )
-                                                                    );
-
-                                                                    return 1;
-                                                                }
-                                                        )
+                                                    return 1;
+                                                }
                                         )
+        ).then(
+                Commands.literal("empty")
+                        .then(
+                                Commands.argument("team-name", StringArgumentType.string())
+                                        .executes(
+                                                command -> {
+                                                    return consumeTeam(command, team -> {
+                                                        team.empty();
 
+                                                        return 1;
+                                                    });
+                                                }
+                                        )
                         )
         ).then(
                 Commands.literal("add")
@@ -292,97 +293,90 @@ public class TeamCommand implements CustomCommand {
                                                 command -> {
                                                     var sender = command.getSource().getSender();
 
-                                                    String teamKey = StringArgumentType.getString(command, "team-name");
-                                                    if (!CoreMain.teamManager.isRegisteredTeam(teamKey)) {
+                                                    return consumeTeam(command, team -> {
+                                                        CoreMain.teamManager.unregisterTeam(team.getName());
+
                                                         AudienceUtil.sendMessage(
                                                                 sender,
-                                                                Component.translatable("messages.teams.team-not-found")
+                                                                Component.translatable("messages.teams.team-unregistered")
                                                         );
-                                                        return 0;
-                                                    }
 
-                                                    CoreMain.teamManager.unregisterTeam(teamKey);
+                                                        return 1;
+                                                    });
 
-                                                    AudienceUtil.sendMessage(
-                                                            sender,
-                                                            Component.translatable("messages.teams.team-unregistered")
-                                                    );
 
-                                                    return 1;
                                                 }
                                         )
                         )
         ).then(
-                Commands.literal("settings")
+                Commands.literal("modify")
                         .then(
                                 Commands.argument("team", StringArgumentType.string())
                                         .suggests(TeamCommand::suggestTeamKeys)
                                         .then(
-                                                Commands.literal("set-color")
+                                                Commands.literal("color")
                                                         .then(
                                                                 Commands.argument("color", ArgumentTypes.hexColor())
                                                                         .executes(
                                                                                 command -> {
                                                                                     var sender = command.getSource().getSender();
 
-                                                                                    var teamKey = StringArgumentType.getString(command, "team");
-                                                                                    var team = CoreMain.teamManager.getTeam(teamKey);
-                                                                                    if  (team == null) {
+                                                                                    return consumeTeam(command, team -> {
+                                                                                        TextColor color = command.getArgument("color", TextColor.class);
+                                                                                        team.setColor(color);
+
                                                                                         AudienceUtil.sendMessage(
                                                                                                 sender,
-                                                                                                Component.translatable("messages.teams.team-not-found")
+                                                                                                Component.translatable("messages.teams.team-set-color")
                                                                                         );
-                                                                                        return 0;
-                                                                                    }
 
-                                                                                    TextColor color = command.getArgument("color", TextColor.class);
-                                                                                    team.setColor(color);
-
-                                                                                    AudienceUtil.sendMessage(
-                                                                                            sender,
-                                                                                            Component.translatable("messages.teams.team-set-color")
-                                                                                    );
-
-                                                                                    return 1;
+                                                                                        return 1;
+                                                                                    });
                                                                                 }
                                                                         )
                                                         )
                                         )
                                         .then(
-                                                Commands.literal("set-display-name")
+                                                Commands.literal("displayName")
                                                         .then(
                                                                 Commands.argument("name-minimessage", StringArgumentType.greedyString())
                                                                         .executes(
                                                                                 command -> {
                                                                                     var sender = command.getSource().getSender();
 
-                                                                                    var teamKey = StringArgumentType.getString(command, "team");
-                                                                                    var team = CoreMain.teamManager.getTeam(teamKey);
-                                                                                    if  (team == null) {
+                                                                                    return consumeTeam(command, team -> {
+                                                                                        var component = MiniMessage.miniMessage().deserialize(StringArgumentType.getString(command, "name-minimessage"));
+                                                                                        team.setDisplayName(component);
+
                                                                                         AudienceUtil.sendMessage(
                                                                                                 sender,
-                                                                                                Component.translatable("messages.teams.team-not-found")
+                                                                                                Component.translatable("messages.teams.team-set-display-name")
                                                                                         );
-                                                                                        return 0;
-                                                                                    }
-
-                                                                                    var component = MiniMessage.miniMessage().deserialize(StringArgumentType.getString(command, "name-minimessage"));
-                                                                                    team.setDisplayName(component);
-
-                                                                                    AudienceUtil.sendMessage(
-                                                                                            sender,
-                                                                                            Component.translatable("messages.teams.team-set-display-name")
-                                                                                    );
-
-                                                                                    return 1;
+                                                                                        return 1;
+                                                                                    });
                                                                                 }
                                                                         )
                                                         )
                                         )
                         )
+                        )
         );
 
         return cmd.build();
+    }
+
+    /** Handle team querying, and show message to the {@link org.bukkit.command.CommandSender} if the team wasn't found. **/
+    private static int consumeTeam(CommandContext<CommandSourceStack> command, Function<Team, Integer> function) {
+        var teamKey = StringArgumentType.getString(command, "team");
+        var team = CoreMain.teamManager.getTeam(teamKey);
+        if  (team == null) {
+            AudienceUtil.sendMessage(
+                    command.getSource().getSender(),
+                    Component.translatable("messages.teams.team-not-found")
+            );
+            return 0;
+        }
+        return function.apply(team);
     }
 
     public static CompletableFuture<Suggestions> suggestTeamKeys(
@@ -393,18 +387,6 @@ public class TeamCommand implements CustomCommand {
         for (var team : CoreMain.teamManager.getTeams().values()) {
             builder.suggest(team.getName());
         }
-        return builder.buildFuture();
-    }
-
-    public static CompletableFuture<Suggestions> suggestTeamKeysWithWildcard(
-            CommandContext<CommandSourceStack> ctx,
-            SuggestionsBuilder builder
-    )
-    {
-        for (var team : CoreMain.teamManager.getTeams().values()) {
-            builder.suggest(team.getName());
-        }
-        builder.suggest("*");
         return builder.buildFuture();
     }
 }
