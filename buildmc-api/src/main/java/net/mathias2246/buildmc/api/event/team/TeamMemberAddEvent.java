@@ -32,6 +32,10 @@ public class TeamMemberAddEvent extends TeamMemberEvent implements Cancellable {
         this.cancellable = cancellable;
     }
 
+    public boolean isCancellable() {
+        return cancellable;
+    }
+
     @Override
     public @NotNull HandlerList getHandlers() {
         return HANDLERS;
