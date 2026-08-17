@@ -239,18 +239,17 @@ public class TeamCommand implements CustomCommand {
                                                     return 1;
                                                 }
                                         )
+                        )
         ).then(
                 Commands.literal("empty")
                         .then(
                                 Commands.argument("team-name", StringArgumentType.string())
                                         .executes(
-                                                command -> {
-                                                    return consumeTeam(command, team -> {
-                                                        team.empty();
+                                                command -> consumeTeam(command, team -> {
+                                                    team.empty();
 
-                                                        return 1;
-                                                    });
-                                                }
+                                                    return 1;
+                                                })
                                         )
                         )
         ).then(
@@ -359,7 +358,7 @@ public class TeamCommand implements CustomCommand {
                                                         )
                                         )
                         )
-                        )
+
         );
 
         return cmd.build();

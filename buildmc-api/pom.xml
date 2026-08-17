@@ -9,7 +9,7 @@
     <name>BuildMC-API</name>
     <description>The BuildMC-Core API module for Minecraft plugin development.</description>
     <url>https://baggel.de/tools/core/</url>
-    <version>1.1.0-SNAPSHOT</version>
+    <version>1.1.0-beta-SNAPSHOT</version>
     <groupId>net.mathias2246</groupId>
 
     <properties>
@@ -168,6 +168,30 @@
                     <autoPublish>true</autoPublish>
                     <waitUntil>published</waitUntil>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>deploy-javadoc</id>
+                        <phase>deploy</phase>
+                        <goals><goal>exec</goal></goals>
+                        <configuration>
+                            <executable>${project.basedir}/deploy-javadoc.sh</executable>
+                            <arguments>
+                                <argument>${javadoc.deploy.host}</argument>
+                                <argument>${javadoc.deploy.basePath}</argument>
+                                <argument>${project.artifactId}</argument>
+                                <argument>${project.version}</argument>
+                                <argument>${javadoc.deploy.remoteUser}</argument>
+                                <argument>${javadoc.deploy.sshIdentity}</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
