@@ -1,5 +1,8 @@
 # BuildMC-Core
 
+> [!WARNING]
+> We moved this entire Repository over to our Forgejo instance https://git.mathias2246.net/BuildMC/BuildMC-Core-Plugin
+
 *A powerful, core plugin for the BuildMC SMP project. Made for modern Minecraft development, crafted with care for 26.1*\*
 
 ---
