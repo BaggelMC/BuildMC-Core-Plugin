@@ -251,6 +251,8 @@ messages:
           <red>Make sure you have selected your area with the <u><click:open_url:'https://baggel.de/core/player/claims/introduction/#creating-a-claim/'>claim tool</click></u> first!</red>
 
           <green>Select a <yellow><u><click:open_url:'https://baggel.de/core/player/claims/claim-types/'>Claim Type</click></u></yellow> and give your claim a <yellow>name</yellow>.</green>
+          
+          <gray><i>The name can only inlcude letters, numbers, _, -, and .</i></gray>
         claim-type: "<yellow>Claim Type</yellow>"
         claim-name: "<yellow>Claim Name:</yellow>"
 
