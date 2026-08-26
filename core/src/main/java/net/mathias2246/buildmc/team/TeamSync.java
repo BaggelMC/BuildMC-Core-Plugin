@@ -1,32 +1,52 @@
 package net.mathias2246.buildmc.team;
 
-import net.mathias2246.buildmc.CoreMain;
-import net.mathias2246.buildmc.api.event.team.TeamMemberAddEvent;
-import net.mathias2246.buildmc.api.event.team.TeamMemberRemovedEvent;
-import net.mathias2246.buildmc.api.event.team.TeamRegisteredEvent;
-import net.mathias2246.buildmc.api.event.team.TeamUnregisterEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.mathias2246.buildmc.api.event.team.*;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.scoreboard.Scoreboard;
+import org.jetbrains.annotations.NotNull;
 
 public class TeamSync implements Listener {
 
+    public final @NotNull Scoreboard scoreboard;
+
+    public TeamSync() {
+        scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+    }
+
     @EventHandler
     public void onUnregister(TeamUnregisterEvent event) {
-        CoreMain.plugin.getLogger().info("Unregistering team " + event.getTeam().getName());
+        var team = scoreboard.getTeam(event.getTeam().getName());
+        if (team == null) return;
+        team.unregister();
     }
 
     @EventHandler
     public void onRegister(TeamRegisteredEvent event) {
-        CoreMain.plugin.getLogger().info("Registering team " + event.getTeam().getName());
+        scoreboard.registerNewTeam(event.getTeam().getName());
     }
 
     @EventHandler
     public void onMemberAdd(TeamMemberAddEvent event) {
-        CoreMain.plugin.getLogger().info("Adding team member to team " + event.getTeam().getName());
+        var  team = scoreboard.getTeam(event.getTeam().getName());
+        if (team == null) return;
+        team.addEntry(event.getMemberId().toString());
     }
 
     @EventHandler
     public void onMemberRemove(TeamMemberRemovedEvent event) {
-        CoreMain.plugin.getLogger().info("Removing team member from team " + event.getTeam().getName());
+        var  team = scoreboard.getTeam(event.getTeam().getName());
+        if (team == null) return;
+        team.removeEntry(event.getMemberId().toString());
+    }
+
+    @EventHandler
+    public void onPropertyChanged(TeamPropertyChangedEvent event) {
+        var team = scoreboard.getTeam(event.getTeam().getName());
+        if (team == null) return;
+        team.color(event.getTeam().getColor() == null ? null : NamedTextColor.nearestTo(event.getTeam().getColor()));
+        team.displayName(event.getTeam().getDisplayName());
     }
 }

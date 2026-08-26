@@ -177,6 +177,10 @@ public final class CoreMain {
         cooldown = CoreMain.plugin.getConfig().getInt("spawn-teleport.cooldown", 120);
         if (cooldown < 0) cooldown = null;
 
+        if (!isFolia()) {
+            registerListener(new TeamSync());
+        }
+
         initializeDatabase();
 
         if (channelRegistry.get(discordExtensionChannelKey) != null) {
@@ -209,8 +213,6 @@ public final class CoreMain {
             }
         }
 
-        registerListener(new TeamSync());
-
         customItemsRegistry.initialize();
 
         new ItemDropTracker(plugin);
@@ -220,7 +222,15 @@ public final class CoreMain {
         isInitialized = true;
 
         Bukkit.getPluginManager().callEvent(new BuildMcFinishedLoadingEvent(plugin));
+    }
 
+    private static boolean isFolia() {
+        try {
+            Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
     }
 
     public static void registerListener(@NotNull Listener event) {

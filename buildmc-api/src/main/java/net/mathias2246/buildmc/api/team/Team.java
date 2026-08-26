@@ -8,6 +8,7 @@ import net.kyori.adventure.text.format.TextColor;
 import net.mathias2246.buildmc.api.BuildMcAPI;
 import net.mathias2246.buildmc.api.event.team.TeamMemberAddEvent;
 import net.mathias2246.buildmc.api.event.team.TeamMemberRemovedEvent;
+import net.mathias2246.buildmc.api.event.team.TeamPropertyChangedEvent;
 import net.mathias2246.buildmc.util.MetadataHolder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -56,6 +57,9 @@ public class Team extends MetadataHolder
     }
 
     public void setColor(@Nullable TextColor color) {
+        if (teamManager != null) {
+            Bukkit.getPluginManager().callEvent(new TeamPropertyChangedEvent(this));
+        }
         this.color = color;
     }
 
@@ -64,6 +68,9 @@ public class Team extends MetadataHolder
     }
 
     public void setDisplayName(@Nullable Component displayName) {
+        if (teamManager != null) {
+            Bukkit.getPluginManager().callEvent(new TeamPropertyChangedEvent(this));
+        }
         this.displayName = displayName;
     }
 
@@ -167,7 +174,7 @@ public class Team extends MetadataHolder
 
     /** Checks if there are any members on this team.
      *
-     * @return {@code true} if there is at least one member on this team.
+     * @return {@code true} if there is no member on this team.
      *
      * @see Team#empty()
      * **/
